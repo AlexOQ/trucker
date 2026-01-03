@@ -1,8 +1,9 @@
 import { getCityCargoPool, getAllCargoTrailerMappings, getAllTrailerTypes } from '../db/queries.js'
 
 interface CargoPoolEntry {
-  depot_id: number
-  company_name: string
+  depot_type_id: number
+  depot_name: string
+  depot_count: number
   cargo_id: number
   cargo_name: string
   value: number
@@ -53,17 +54,20 @@ export async function optimizeTrailerSet(
   }
 
   // Calculate total pool value and unique cargoes
-  const totalPoolValue = cargoPool.reduce((sum, entry) => sum + entry.value, 0)
+  // Each cargo's contribution = value * depot_count (for multiplicity)
   const uniqueCargoIds = new Set(cargoPool.map((e) => e.cargo_id))
 
-  // Build weighted cargo value map (accounts for depot multiplicity)
-  // Each cargo's weight = sum of values across all depot appearances
+  // Build weighted cargo value map (accounts for depot count multiplicity)
+  // Each cargo's weight = sum of (value * depot_count) across all depot appearances
   const cargoWeights = new Map<number, number>()
   const cargoNames = new Map<number, string>()
   for (const entry of cargoPool) {
-    cargoWeights.set(entry.cargo_id, (cargoWeights.get(entry.cargo_id) ?? 0) + entry.value)
+    const contribution = entry.value * entry.depot_count
+    cargoWeights.set(entry.cargo_id, (cargoWeights.get(entry.cargo_id) ?? 0) + contribution)
     cargoNames.set(entry.cargo_id, entry.cargo_name)
   }
+
+  const totalPoolValue = [...cargoWeights.values()].reduce((sum, v) => sum + v, 0)
 
   // Greedy selection
   const selectedTrailers: Map<number, number> = new Map() // trailer_id -> count

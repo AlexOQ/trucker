@@ -2,10 +2,11 @@ import type { Generated, Insertable, Selectable, Updateable } from 'kysely'
 
 export interface Database {
   cities: CityTable
-  depots: DepotTable
+  depot_types: DepotTypeTable
+  city_depots: CityDepotTable
   cargo_types: CargoTypeTable
   trailer_types: TrailerTypeTable
-  depot_cargoes: DepotCargoTable
+  depot_type_cargoes: DepotTypeCargoTable
   cargo_trailers: CargoTrailerTable
 }
 
@@ -15,10 +16,15 @@ export interface CityTable {
   country: string
 }
 
-export interface DepotTable {
+export interface DepotTypeTable {
   id: Generated<number>
+  name: string
+}
+
+export interface CityDepotTable {
   city_id: number
-  company_name: string
+  depot_type_id: number
+  count: number
 }
 
 export interface CargoTypeTable {
@@ -32,8 +38,8 @@ export interface TrailerTypeTable {
   name: string
 }
 
-export interface DepotCargoTable {
-  depot_id: number
+export interface DepotTypeCargoTable {
+  depot_type_id: number
   cargo_type_id: number
 }
 
@@ -47,14 +53,15 @@ export type City = Selectable<CityTable>
 export type NewCity = Insertable<CityTable>
 export type CityUpdate = Updateable<CityTable>
 
-export type Depot = Selectable<DepotTable>
-export type NewDepot = Insertable<DepotTable>
+export type DepotType = Selectable<DepotTypeTable>
+export type NewDepotType = Insertable<DepotTypeTable>
 
+export type CityDepot = Selectable<CityDepotTable>
 export type CargoType = Selectable<CargoTypeTable>
 export type NewCargoType = Insertable<CargoTypeTable>
 
 export type TrailerType = Selectable<TrailerTypeTable>
 export type NewTrailerType = Insertable<TrailerTypeTable>
 
-export type DepotCargo = Selectable<DepotCargoTable>
+export type DepotTypeCargo = Selectable<DepotTypeCargoTable>
 export type CargoTrailer = Selectable<CargoTrailerTable>

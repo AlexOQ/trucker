@@ -8,16 +8,21 @@ export async function getCityById(id: number) {
   return db.selectFrom('cities').selectAll().where('id', '=', id).executeTakeFirst()
 }
 
-export async function getDepotsForCity(cityId: number) {
-  return db.selectFrom('depots').selectAll().where('city_id', '=', cityId).execute()
+export async function getDepotTypesForCity(cityId: number) {
+  return db
+    .selectFrom('city_depots')
+    .innerJoin('depot_types', 'depot_types.id', 'city_depots.depot_type_id')
+    .select(['depot_types.id', 'depot_types.name', 'city_depots.count'])
+    .where('city_depots.city_id', '=', cityId)
+    .execute()
 }
 
-export async function getCargoesForDepot(depotId: number) {
+export async function getCargoesForDepotType(depotTypeId: number) {
   return db
-    .selectFrom('depot_cargoes')
-    .innerJoin('cargo_types', 'cargo_types.id', 'depot_cargoes.cargo_type_id')
+    .selectFrom('depot_type_cargoes')
+    .innerJoin('cargo_types', 'cargo_types.id', 'depot_type_cargoes.cargo_type_id')
     .select(['cargo_types.id', 'cargo_types.name', 'cargo_types.value'])
-    .where('depot_cargoes.depot_id', '=', depotId)
+    .where('depot_type_cargoes.depot_type_id', '=', depotTypeId)
     .execute()
 }
 
@@ -38,20 +43,26 @@ export async function getAllCargoTypes() {
   return db.selectFrom('cargo_types').selectAll().orderBy('name').execute()
 }
 
-// Get full cargo pool for a city (with depot multiplicity)
+export async function getAllDepotTypes() {
+  return db.selectFrom('depot_types').selectAll().orderBy('name').execute()
+}
+
+// Get full cargo pool for a city (with depot count multiplicity)
 export async function getCityCargoPool(cityId: number) {
   return db
-    .selectFrom('depots')
-    .innerJoin('depot_cargoes', 'depot_cargoes.depot_id', 'depots.id')
-    .innerJoin('cargo_types', 'cargo_types.id', 'depot_cargoes.cargo_type_id')
+    .selectFrom('city_depots')
+    .innerJoin('depot_types', 'depot_types.id', 'city_depots.depot_type_id')
+    .innerJoin('depot_type_cargoes', 'depot_type_cargoes.depot_type_id', 'depot_types.id')
+    .innerJoin('cargo_types', 'cargo_types.id', 'depot_type_cargoes.cargo_type_id')
     .select([
-      'depots.id as depot_id',
-      'depots.company_name',
+      'depot_types.id as depot_type_id',
+      'depot_types.name as depot_name',
+      'city_depots.count as depot_count',
       'cargo_types.id as cargo_id',
       'cargo_types.name as cargo_name',
       'cargo_types.value',
     ])
-    .where('depots.city_id', '=', cityId)
+    .where('city_depots.city_id', '=', cityId)
     .execute()
 }
 
