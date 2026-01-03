@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ETS2 Trucker Advisor</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #f39c12;
+      margin-bottom: 1.5rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .selector {
+      margin-bottom: 2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    select {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.75rem;
+      font-size: 1rem;
+      background: #16213e;
+      color: #eee;
+      border: 1px solid #0f3460;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: #f39c12;
+    }
+
+    .stats {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      background: #16213e;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      border-left: 3px solid #f39c12;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #f39c12;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #16213e;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid #0f3460;
+    }
+
+    th {
+      background: #0f3460;
+      color: #f39c12;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #1a2744;
+    }
+
+    .amount {
+      font-weight: bold;
+      color: #f39c12;
+    }
+
+    .coverage {
+      color: #2ecc71;
+    }
+
+    .cargoes {
+      font-size: 0.85rem;
+      color: #888;
+      max-width: 300px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ETS2 Trailer Advisor</h1>
+
+    <div class="selector">
+      <label for="city-select">Select City</label>
+      <select id="city-select">
+        <option value="">-- Choose a city --</option>
+      </select>
+    </div>
+
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const citySelect = document.getElementById('city-select');
+    const resultsDiv = document.getElementById('results');
+
+    async function loadCities() {
+      try {
+        const res = await fetch('/api/cities');
+        const cities = await res.json();
+
+        cities.forEach(city => {
+          const option = document.createElement('option');
+          option.value = city.id;
+          option.textContent = `${city.name}, ${city.country}`;
+          citySelect.appendChild(option);
+        });
+      } catch (err) {
+        console.error('Failed to load cities:', err);
+      }
+    }
+
+    async function loadTrailers(cityId) {
+      if (!cityId) {
+        resultsDiv.innerHTML = '';
+        return;
+      }
+
+      resultsDiv.innerHTML = '<div class="loading">Loading recommendations...</div>';
+
+      try {
+        const res = await fetch(`/api/cities/${cityId}/trailers`);
+        const data = await res.json();
+
+        if (data.recommendations.length === 0) {
+          resultsDiv.innerHTML = '<div class="empty-state">No data available for this city yet.</div>';
+          return;
+        }
+
+        const totalTrailers = data.recommendations.reduce((sum, r) => sum + r.amount, 0);
+
+        resultsDiv.innerHTML = `
+          <div class="stats">
+            <div class="stat">
+              <div class="stat-value">${data.total_unique_cargoes}</div>
+              <div class="stat-label">Unique Cargoes</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">${data.total_pool_value}</div>
+              <div class="stat-label">Total Pool Value</div>
+            </div>
+            <div class="stat">
+              <div class="stat-value">${totalTrailers}</div>
+              <div class="stat-label">Recommended Trailers</div>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Trailer</th>
+                <th>Amount</th>
+                <th>Coverage</th>
+                <th>Cargoes Covered</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.recommendations.map(r => `
+                <tr>
+                  <td>${r.trailer_name}</td>
+                  <td class="amount">${r.amount}</td>
+                  <td class="coverage">${r.coverage_percent}%</td>
+                  <td class="cargoes">${r.covered_cargoes.join(', ')}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (err) {
+        console.error('Failed to load trailers:', err);
+        resultsDiv.innerHTML = '<div class="empty-state">Failed to load recommendations.</div>';
+      }
+    }
+
+    citySelect.addEventListener('change', (e) => {
+      loadTrailers(e.target.value);
+    });
+
+    loadCities();
+  </script>
+</body>
+</html>

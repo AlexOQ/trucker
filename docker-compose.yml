@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ets2_postgres
+    environment:
+      POSTGRES_USER: trucker
+      POSTGRES_PASSWORD: trucker
+      POSTGRES_DB: ets2
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
