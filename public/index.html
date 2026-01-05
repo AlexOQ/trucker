@@ -196,17 +196,18 @@
 
         rankingsDiv.innerHTML = `
           <div class="table-section">
-            <h2>City Profitability Rankings</h2>
+            <h2>City Rankings</h2>
             <table>
               <thead>
                 <tr>
-                  <th>Rank</th>
+                  <th>#</th>
                   <th>City</th>
                   <th>Country</th>
                   <th>Depots</th>
                   <th>Jobs</th>
-                  <th>€/Job/km</th>
-                  <th>Profitability</th>
+                  <th>Value</th>
+                  <th>€/Job</th>
+                  <th>Score</th>
                 </tr>
               </thead>
               <tbody>
@@ -215,10 +216,11 @@
                     <td>${i + 1}</td>
                     <td>${r.name}</td>
                     <td>${r.country}</td>
-                    <td class="amount">${r.depot_count}</td>
-                    <td>${r.job_opportunities}</td>
-                    <td class="value">€${r.avg_value_per_job.toFixed(2)}</td>
-                    <td class="profitability">${r.trailer_profitability.toFixed(1)}</td>
+                    <td>${r.depot_count}</td>
+                    <td class="amount">${r.jobs}</td>
+                    <td class="value">€${r.total_value.toLocaleString()}</td>
+                    <td>€${r.avg_value_per_job.toFixed(2)}</td>
+                    <td class="profitability">${r.score.toFixed(0)}</td>
                   </tr>
                 `).join('')}
               </tbody>

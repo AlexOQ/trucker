@@ -24,29 +24,30 @@ router.get('/cities/rankings', async (_req, res) => {
       cities.map(async (city) => {
         const result = await optimizeTrailerSet(city.id, 10)
 
-        // Sum of avg_value from recommendations (normalized profitability indicator)
-        const sumAvgValue = result.recommendations.reduce((sum, r) => sum + r.avg_value, 0)
+        const jobs = result.total_cargo_instances
+        const value = result.total_value
 
-        // Avg value per job opportunity
-        const avgValuePerJob = result.total_cargo_instances > 0
-          ? result.total_value / result.total_cargo_instances
-          : 0
+        // Geometric mean: balances job availability and total value
+        const score = Math.sqrt(jobs * value)
+
+        // Avg value per job
+        const avgValuePerJob = jobs > 0 ? value / jobs : 0
 
         return {
           id: city.id,
           name: city.name,
           country: city.country,
           depot_count: Number(city.depot_count) || 0,
-          job_opportunities: result.total_cargo_instances,
-          total_value: result.total_value,
+          jobs,
+          total_value: Math.round(value),
           avg_value_per_job: Math.round(avgValuePerJob * 100) / 100,
-          trailer_profitability: Math.round(sumAvgValue * 100) / 100,
+          score: Math.round(score * 10) / 10,
         }
       })
     )
 
-    // Sort by trailer_profitability descending
-    rankings.sort((a, b) => b.trailer_profitability - a.trailer_profitability)
+    // Sort by score descending
+    rankings.sort((a, b) => b.score - a.score)
 
     res.json(rankings)
   } catch (error) {
