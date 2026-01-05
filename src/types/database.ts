@@ -36,6 +36,7 @@ export interface CargoTypeTable {
 export interface TrailerTypeTable {
   id: Generated<number>
   name: string
+  ownable: boolean
 }
 
 export interface DepotTypeCargoTable {

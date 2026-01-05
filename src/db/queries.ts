@@ -39,6 +39,10 @@ export async function getAllTrailerTypes() {
   return db.selectFrom('trailer_types').selectAll().orderBy('name').execute()
 }
 
+export async function getOwnableTrailerTypes() {
+  return db.selectFrom('trailer_types').selectAll().where('ownable', '=', true).orderBy('name').execute()
+}
+
 export async function getAllCargoTypes() {
   return db.selectFrom('cargo_types').selectAll().orderBy('name').execute()
 }
@@ -76,5 +80,21 @@ export async function getAllCargoTrailerMappings() {
       'cargo_trailers.trailer_type_id',
       'trailer_types.name as trailer_name',
     ])
+    .execute()
+}
+
+// Get cities with depot counts for ranking
+export async function getCitiesWithDepotCounts() {
+  return db
+    .selectFrom('cities')
+    .leftJoin('city_depots', 'city_depots.city_id', 'cities.id')
+    .select([
+      'cities.id',
+      'cities.name',
+      'cities.country',
+      db.fn.sum<number>('city_depots.count').as('depot_count'),
+    ])
+    .groupBy(['cities.id', 'cities.name', 'cities.country'])
+    .orderBy('cities.name')
     .execute()
 }

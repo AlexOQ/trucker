@@ -1,47 +1,53 @@
-import { getCityCargoPool, getAllCargoTrailerMappings, getAllTrailerTypes } from '../db/queries.js'
-
-interface CargoPoolEntry {
-  depot_type_id: number
-  depot_name: string
-  depot_count: number
-  cargo_id: number
-  cargo_name: string
-  value: number
-}
+import { getCityCargoPool, getAllCargoTrailerMappings, getOwnableTrailerTypes } from '../db/queries.js'
 
 interface TrailerRecommendation {
   trailer_id: number
   trailer_name: string
-  amount: number
-  coverage_percent: number
-  covered_cargoes: string[]
+  coverage_pct: number
+  avg_value: number
+  score: number
+  count: number
+}
+
+interface TrailerStats {
+  id: number
+  name: string
+  jobOpportunities: number
+  totalValue: number
+  avgValue: number
+  coveragePct: number
+  valuePct: number
 }
 
 interface OptimizationResult {
   city_id: number
-  total_pool_value: number
-  total_unique_cargoes: number
+  total_depots: number
+  total_cargo_instances: number
+  total_value: number
   recommendations: TrailerRecommendation[]
 }
+
+const DIMINISHING_FACTOR = 0.75
 
 export async function optimizeTrailerSet(
   cityId: number,
   maxTrailers: number = 10
 ): Promise<OptimizationResult> {
-  // Get cargo pool for city
   const cargoPool = await getCityCargoPool(cityId)
 
-  if (cargoPool.length === 0) {
-    return {
-      city_id: cityId,
-      total_pool_value: 0,
-      total_unique_cargoes: 0,
-      recommendations: [],
-    }
+  const emptyResult: OptimizationResult = {
+    city_id: cityId,
+    total_depots: 0,
+    total_cargo_instances: 0,
+    total_value: 0,
+    recommendations: [],
   }
 
-  // Get all trailer types and cargo-trailer mappings
-  const allTrailers = await getAllTrailerTypes()
+  if (cargoPool.length === 0) {
+    return emptyResult
+  }
+
+  const allTrailers = await getOwnableTrailerTypes()
   const cargoTrailerMappings = await getAllCargoTrailerMappings()
 
   // Build trailer -> cargo set mapping
@@ -53,87 +59,115 @@ export async function optimizeTrailerSet(
     trailerCargoes.get(mapping.trailer_type_id)!.add(mapping.cargo_type_id)
   }
 
-  // Calculate total pool value and unique cargoes
-  // Each cargo's contribution = value * depot_count (for multiplicity)
-  const uniqueCargoIds = new Set(cargoPool.map((e) => e.cargo_id))
-
-  // Build weighted cargo value map (accounts for depot count multiplicity)
-  // Each cargo's weight = sum of (value * depot_count) across all depot appearances
-  const cargoWeights = new Map<number, number>()
-  const cargoNames = new Map<number, string>()
+  // Count total depots
+  const depotCounts = new Map<number, number>()
   for (const entry of cargoPool) {
-    const contribution = entry.value * entry.depot_count
-    cargoWeights.set(entry.cargo_id, (cargoWeights.get(entry.cargo_id) ?? 0) + contribution)
-    cargoNames.set(entry.cargo_id, entry.cargo_name)
+    depotCounts.set(entry.depot_type_id, entry.depot_count)
+  }
+  const totalDepotCount = [...depotCounts.values()].reduce((sum, c) => sum + c, 0)
+
+  // Count total cargo instances and total value
+  let totalCargoInstances = 0
+  let totalCityValue = 0
+  for (const entry of cargoPool) {
+    totalCargoInstances += entry.depot_count
+    totalCityValue += Number(entry.value) * entry.depot_count
   }
 
-  const totalPoolValue = [...cargoWeights.values()].reduce((sum, v) => sum + v, 0)
+  // Calculate stats for each trailer
+  const trailerStats: TrailerStats[] = []
 
-  // Greedy selection
-  const selectedTrailers: Map<number, number> = new Map() // trailer_id -> count
-  const remainingCargoWeights = new Map(cargoWeights)
+  for (const trailer of allTrailers) {
+    const cargoes = trailerCargoes.get(trailer.id)
+    if (!cargoes) continue
 
-  for (let i = 0; i < maxTrailers; i++) {
-    let bestTrailerId: number | null = null
-    let bestValue = 0
+    let totalValue = 0
+    let jobOpportunities = 0
 
-    // Find trailer with highest remaining coverage value
-    for (const trailer of allTrailers) {
-      const cargoes = trailerCargoes.get(trailer.id)
-      if (!cargoes) continue
-
-      let coverageValue = 0
-      for (const cargoId of cargoes) {
-        coverageValue += remainingCargoWeights.get(cargoId) ?? 0
-      }
-
-      if (coverageValue > bestValue) {
-        bestValue = coverageValue
-        bestTrailerId = trailer.id
+    for (const entry of cargoPool) {
+      if (cargoes.has(entry.cargo_id)) {
+        totalValue += Number(entry.value) * entry.depot_count
+        jobOpportunities += entry.depot_count
       }
     }
 
-    if (bestTrailerId === null || bestValue === 0) break
-
-    // Add trailer to selection
-    selectedTrailers.set(bestTrailerId, (selectedTrailers.get(bestTrailerId) ?? 0) + 1)
-
-    // Reduce remaining weights for covered cargoes (diminishing returns)
-    const coveredCargoes = trailerCargoes.get(bestTrailerId)!
-    for (const cargoId of coveredCargoes) {
-      const currentWeight = remainingCargoWeights.get(cargoId) ?? 0
-      // Each additional trailer covering same cargo has 50% diminishing returns
-      remainingCargoWeights.set(cargoId, currentWeight * 0.5)
+    if (jobOpportunities > 0) {
+      trailerStats.push({
+        id: trailer.id,
+        name: trailer.name,
+        jobOpportunities,
+        totalValue,
+        avgValue: totalValue / jobOpportunities,
+        coveragePct: (jobOpportunities / totalCargoInstances) * 100,
+        valuePct: (totalValue / totalCityValue) * 100,
+      })
     }
+  }
+
+  // Find max avg value for normalization
+  const maxAvgValue = Math.max(...trailerStats.map((t) => t.avgValue))
+
+  // Algorithm G: Coverage × Value - balanced approach
+  // score = coverage% × (1 + normalized_avg_value)
+  const scores = new Map<number, number>()
+  for (const t of trailerStats) {
+    const normalizedValue = t.avgValue / maxAvgValue
+    const score = (t.coveragePct / 100) * (1 + normalizedValue)
+    scores.set(t.id, score)
+  }
+
+  // Coverage-based diminishing factor
+  // High coverage trailers get less diminishing (need more copies)
+  // factor = 0.5 + (coverage% / 100) × 0.5
+  // At 0% coverage: factor = 0.5 (strong diminishing)
+  // At 40% coverage: factor = 0.7 (moderate diminishing)
+  // At 100% coverage: factor = 1.0 (no diminishing)
+  function getFactor(trailerId: number): number {
+    const stats = trailerStats.find(t => t.id === trailerId)!
+    return 0.5 + (stats.coveragePct / 100) * 0.5
+  }
+
+  // Greedy selection with coverage-based diminishing factor
+  const selected = new Map<number, number>()
+  for (let round = 0; round < maxTrailers; round++) {
+    let bestId: number | null = null
+    let bestScore = 0
+
+    for (const [id, baseScore] of scores) {
+      const picked = selected.get(id) ?? 0
+      const factor = getFactor(id)
+      const effective = baseScore * Math.pow(factor, picked)
+
+      if (effective > bestScore) {
+        bestScore = effective
+        bestId = id
+      }
+    }
+
+    if (bestId === null) break
+    selected.set(bestId, (selected.get(bestId) ?? 0) + 1)
   }
 
   // Build recommendations
   const recommendations: TrailerRecommendation[] = []
-
-  for (const [trailerId, amount] of selectedTrailers) {
-    const trailer = allTrailers.find((t) => t.id === trailerId)!
-    const coveredCargoIds = trailerCargoes.get(trailerId) ?? new Set()
-
-    // Coverage = cargoes this trailer can haul / total unique cargoes in pool
-    const poolCargoIdsCovered = [...coveredCargoIds].filter((id) => uniqueCargoIds.has(id))
-    const coveragePercent = (poolCargoIdsCovered.length / uniqueCargoIds.size) * 100
-
+  for (const [id, count] of selected) {
+    const stats = trailerStats.find(t => t.id === id)!
     recommendations.push({
-      trailer_id: trailerId,
-      trailer_name: trailer.name,
-      amount,
-      coverage_percent: Math.round(coveragePercent * 10) / 10,
-      covered_cargoes: poolCargoIdsCovered.map((id) => cargoNames.get(id)!),
+      trailer_id: id,
+      trailer_name: stats.name,
+      coverage_pct: Math.round(stats.coveragePct * 10) / 10,
+      avg_value: Math.round(stats.avgValue * 100) / 100,
+      score: Math.round((scores.get(id) ?? 0) * 1000) / 1000,
+      count,
     })
   }
-
-  // Sort by amount (descending), then coverage
-  recommendations.sort((a, b) => b.amount - a.amount || b.coverage_percent - a.coverage_percent)
+  recommendations.sort((a, b) => b.count - a.count || b.score - a.score)
 
   return {
     city_id: cityId,
-    total_pool_value: totalPoolValue,
-    total_unique_cargoes: uniqueCargoIds.size,
+    total_depots: totalDepotCount,
+    total_cargo_instances: totalCargoInstances,
+    total_value: Math.round(totalCityValue * 100) / 100,
     recommendations,
   }
 }
