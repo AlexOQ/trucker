@@ -7,15 +7,15 @@ Euro Truck Simulator 2 trucking company analyzer - optimizes trailer sets per ci
 **Goal**: Recommend optimal set of 10 trailers per city to maximize income coverage.
 
 **Core Logic**:
-- Cities contain depots
-- Depots export cargoes (same cargo at multiple depots = multiplied in pool)
+- Cities contain depot types (company facilities)
+- Depot types export cargoes (same cargo at multiple depots = multiplied in pool)
 - Cargoes have value and compatible trailer types
 - Algorithm: greedy weighted set cover to find best trailer mix
 
 ## Tech Stack
 
 - **Runtime**: Node.js + TypeScript
-- **Database**: PostgreSQL (Docker)
+- **Database**: PostgreSQL (Docker, port 5433, user/pass: trucker/trucker)
 - **Web**: Express + vanilla frontend (fuzzy autocomplete)
 - **ORM**: Kysely (type-safe query builder)
 
@@ -23,10 +23,13 @@ Euro Truck Simulator 2 trucking company analyzer - optimizes trailer sets per ci
 
 ```sql
 cities (id SERIAL, name TEXT, country TEXT)
-depots (id SERIAL, city_id INT, company_name TEXT)
-cargo_types (id SERIAL, name TEXT, value INT)
-trailer_types (id SERIAL, name TEXT)
-depot_cargoes (depot_id INT, cargo_type_id INT)
+depot_types (id SERIAL, name TEXT)
+cargo_types (id SERIAL, name TEXT, value NUMERIC, excluded BOOLEAN)
+trailer_types (id SERIAL, name TEXT, ownable BOOLEAN)
+
+-- Junction tables
+city_depots (city_id INT, depot_type_id INT, count INT)
+depot_type_cargoes (depot_type_id INT, cargo_type_id INT)
 cargo_trailers (cargo_type_id INT, trailer_type_id INT)
 ```
 
@@ -58,7 +61,35 @@ npm run dev
 ## Data Entry
 
 Data is entered via conversation with Claude - no UI for data entry.
-User provides: cities, depots, cargoes, trailers, relationships, values.
+
+### Data Entry Rules
+
+**Skip vehicle cargoes** (not in game data):
+- Campervans, Cars, Luxury SUVs, Panter, Vans, Pickups
+
+**Excluded cargoes** (mark `excluded=true`):
+- Trailer delivery jobs (Feldbinder trailers, Krone trailers) - these are "drive this trailer" type jobs with no trailer choice
+
+**City names**:
+- Use proper Unicode/diacritics (Córdoba not Cordoba, Zürich not Zurich)
+- Fix duplicates by migrating city_depots to accented version, delete ASCII duplicate
+
+**Multi-type depots**:
+- Create separate depot_types entries with naming: "Company Name Depot Type"
+- Example: "ITCC Factory", "ITCC Scrapyard"
+
+**SQL Pattern for bulk cargo insert**:
+```sql
+WITH cargo_list AS (
+  SELECT LOWER(name) as cargo_name FROM (VALUES
+    ('Cargo1'),('Cargo2')
+  ) AS t(name)
+)
+INSERT INTO depot_type_cargoes (depot_type_id, cargo_type_id)
+SELECT [depot_id], ct.id FROM cargo_types ct
+JOIN cargo_list cl ON LOWER(ct.name) = cl.cargo_name
+ON CONFLICT DO NOTHING;
+```
 
 ## Project Structure
 

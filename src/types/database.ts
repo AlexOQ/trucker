@@ -31,6 +31,7 @@ export interface CargoTypeTable {
   id: Generated<number>
   name: string
   value: number
+  excluded: boolean
 }
 
 export interface TrailerTypeTable {
