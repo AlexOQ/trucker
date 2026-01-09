@@ -114,7 +114,7 @@ nav a:hover, nav a.active {
 
 .slider-label {
   font-size: 0.75rem;
-  color: #666;
+  color: #999;
   min-width: 60px;
 }
 
@@ -154,7 +154,7 @@ input[type="range"]::-moz-range-thumb {
 .reset-btn, .btn {
   background: transparent;
   border: 1px solid #666;
-  color: #888;
+  color: #9a9a9a;
   padding: 0.4rem 0.8rem;
   border-radius: 4px;
   cursor: pointer;
@@ -189,7 +189,7 @@ input[type="range"]::-moz-range-thumb {
 
 .stat-label {
   font-size: 0.8rem;
-  color: #888;
+  color: #9a9a9a;
   margin-top: 0.25rem;
 }
 
@@ -276,7 +276,7 @@ tr.clickable:focus td:first-child {
 }
 
 .country-name, .country {
-  color: #888;
+  color: #9a9a9a;
 }
 
 /* City Detail View */
@@ -386,7 +386,7 @@ a.link:hover {
 }
 
 .card-subtitle {
-  color: #888;
+  color: #9a9a9a;
   font-size: 0.85rem;
 }
 
@@ -466,7 +466,7 @@ a.link:hover {
 }
 
 .search-box input::placeholder {
-  color: #666;
+  color: #999;
 }
 
 /* States */
