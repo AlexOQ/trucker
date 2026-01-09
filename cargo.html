@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cargo - ETS2 Trucker Advisor</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ETS2 Trucker Advisor</h1>
+      <nav>
+        <a href="index.html">Rankings</a>
+        <a href="cities.html">Cities</a>
+        <a href="companies.html">Companies</a>
+        <a href="cargo.html" class="active">Cargo</a>
+      </nav>
+    </header>
+
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Search cargo...">
+    </div>
+
+    <div id="content">
+      <div class="loading">Loading cargo...</div>
+    </div>
+
+    <div id="cargo-detail" style="display: none;">
+      <a href="#" class="back-link" id="back-link">← Back to cargo</a>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadAllData, buildLookups } from './js/data.js'
+
+    let data = null
+    let lookups = null
+
+    const content = document.getElementById('content')
+    const cargoDetail = document.getElementById('cargo-detail')
+    const detailContent = document.getElementById('detail-content')
+    const searchInput = document.getElementById('search')
+    const backLink = document.getElementById('back-link')
+
+    function getCargoProviders(cargoId) {
+      const providers = []
+      for (const [companyId, cargoIds] of lookups.companyCargoMap) {
+        if (cargoIds.includes(cargoId)) {
+          const company = lookups.companiesById.get(companyId)
+          if (company) {
+            providers.push(company)
+          }
+        }
+      }
+      return providers.sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+    function getCargoTrailers(cargoId) {
+      const trailerIds = lookups.cargoTrailerMap.get(cargoId) || []
+      return trailerIds
+        .map(id => lookups.trailersById.get(id))
+        .filter(Boolean)
+        .sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+    function getCargoStats(cargoId) {
+      const providers = getCargoProviders(cargoId)
+      const trailers = getCargoTrailers(cargoId)
+
+      // Count cities where this cargo is available
+      const citySet = new Set()
+      for (const provider of providers) {
+        for (const [cityId, companies] of lookups.cityCompanyMap) {
+          if (companies.some(c => c.companyId === provider.id)) {
+            citySet.add(cityId)
+          }
+        }
+      }
+
+      return {
+        providerCount: providers.length,
+        trailerCount: trailers.length,
+        cityCount: citySet.size,
+      }
+    }
+
+    function renderCargoList(filter = '') {
+      const filterLower = filter.toLowerCase()
+      const filtered = data.cargo
+        .filter(c => c.name.toLowerCase().includes(filterLower))
+        .sort((a, b) => a.name.localeCompare(b.name))
+
+      if (filtered.length === 0) {
+        content.innerHTML = '<div class="empty-state">No cargo found.</div>'
+        return
+      }
+
+      // Group by first letter
+      const groups = new Map()
+      for (const cargo of filtered) {
+        const letter = cargo.name[0].toUpperCase()
+        if (!groups.has(letter)) {
+          groups.set(letter, [])
+        }
+        groups.get(letter).push(cargo)
+      }
+
+      const sortedGroups = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+
+      content.innerHTML = sortedGroups.map(([letter, cargoItems]) => `
+        <div class="country-section">
+          <div class="country-header">
+            <h3>${letter}</h3>
+            <span class="country-count">${cargoItems.length} cargo types</span>
+          </div>
+          <div class="country-content">
+            <div class="cards-grid">
+              ${cargoItems.map(cargo => {
+                const stats = getCargoStats(cargo.id)
+                return `
+                  <a href="#cargo-${cargo.id}" class="card-link" data-cargo-id="${cargo.id}">
+                    <div class="card">
+                      <div class="card-title">${cargo.name}</div>
+                      <div class="card-subtitle">
+                        €${cargo.value.toLocaleString()} · ${stats.providerCount} providers
+                        ${cargo.excluded ? ' · No Trailer' : ''}
+                      </div>
+                      ${cargo.high_value || cargo.fragile ? `
+                        <div class="tags">
+                          ${cargo.high_value ? '<span class="tag highlight">High Value</span>' : ''}
+                          ${cargo.fragile ? '<span class="tag">Fragile</span>' : ''}
+                        </div>
+                      ` : ''}
+                    </div>
+                  </a>
+                `
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('')
+
+      // Add click handlers
+      content.querySelectorAll('[data-cargo-id]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault()
+          showCargoDetail(parseInt(el.dataset.cargoId))
+        })
+      })
+    }
+
+    function showCargoDetail(cargoId) {
+      const cargo = lookups.cargoById.get(cargoId)
+      if (!cargo) return
+
+      const providers = getCargoProviders(cargoId)
+      const trailers = getCargoTrailers(cargoId)
+      const stats = getCargoStats(cargoId)
+
+      content.style.display = 'none'
+      cargoDetail.style.display = 'block'
+      window.location.hash = `cargo-${cargoId}`
+
+      detailContent.innerHTML = `
+        <div class="detail-header">
+          <h2>${cargo.name}</h2>
+          <div class="subtitle">
+            €${cargo.value.toLocaleString()} per job
+            ${cargo.excluded ? ' · No Trailer Choice' : ''}
+          </div>
+          ${cargo.high_value || cargo.fragile ? `
+            <div class="tags">
+              ${cargo.high_value ? '<span class="tag highlight">High Value</span>' : ''}
+              ${cargo.fragile ? '<span class="tag">Fragile</span>' : ''}
+            </div>
+          ` : ''}
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value">${stats.providerCount}</div>
+            <div class="stat-label">Providers</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${stats.cityCount}</div>
+            <div class="stat-label">Cities</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${stats.trailerCount}</div>
+            <div class="stat-label">Trailer Types</div>
+          </div>
+        </div>
+
+        ${!cargo.excluded && trailers.length > 0 ? `
+          <div class="table-section">
+            <h2>Compatible Trailers</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>Trailer</th>
+                  <th>Ownable</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${trailers.map(t => `
+                  <tr>
+                    <td>${t.name}</td>
+                    <td>${t.ownable ? '<span class="coverage">Yes</span>' : '<span class="country-name">No</span>'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        ` : cargo.excluded ? `
+          <div class="table-section">
+            <h2>Trailer Information</h2>
+            <p style="padding: 1rem; color: #888;">
+              This is a trailer delivery job. The trailer is pre-assigned and cannot be chosen.
+            </p>
+          </div>
+        ` : ''}
+
+        <div class="table-section">
+          <h2>Providers</h2>
+          ${providers.length > 0 ? `
+            <table>
+              <thead>
+                <tr>
+                  <th>Company</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${providers.map(p => `
+                  <tr>
+                    <td><a href="companies.html#company-${p.id}" class="link">${p.name}</a></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<div class="empty-state">No provider data yet.</div>'}
+        </div>
+      `
+    }
+
+    function showCargoList() {
+      cargoDetail.style.display = 'none'
+      content.style.display = 'block'
+      window.location.hash = ''
+      renderCargoList(searchInput.value)
+    }
+
+    function handleHashChange() {
+      const hash = window.location.hash
+      if (hash.startsWith('#cargo-')) {
+        const cargoId = parseInt(hash.replace('#cargo-', ''))
+        if (cargoId) showCargoDetail(cargoId)
+      } else {
+        showCargoList()
+      }
+    }
+
+    async function init() {
+      try {
+        data = await loadAllData()
+        lookups = buildLookups(data)
+
+        renderCargoList()
+
+        searchInput.addEventListener('input', () => {
+          renderCargoList(searchInput.value)
+        })
+
+        backLink.addEventListener('click', (e) => {
+          e.preventDefault()
+          showCargoList()
+        })
+
+        window.addEventListener('hashchange', handleHashChange)
+        handleHashChange()
+
+      } catch (err) {
+        console.error('Failed to initialize:', err)
+        content.innerHTML = '<div class="empty-state">Failed to load data.</div>'
+      }
+    }
+
+    init()
+  </script>
+</body>
+</html>

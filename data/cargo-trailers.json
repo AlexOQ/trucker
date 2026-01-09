@@ -1,0 +1,2634 @@
+[
+  {
+    "cargoId": 3,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 3,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 4,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 4,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 5,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 5,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 6,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 7,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 7,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 8,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 8,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 11,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 12,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 12,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 13,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 14,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 14,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 15,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 15,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 16,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 16,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 16,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 16,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 18,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 19,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 19,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 21,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 21,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 22,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 22,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 23,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 23,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 24,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 24,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 25,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 26,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 27,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 27,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 27,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 27,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 28,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 28,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 29,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 29,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 30,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 30,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 31,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 31,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 32,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 32,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 32,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 32,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 32,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 32,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 33,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 33,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 34,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 35,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 35,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 35,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 35,
+    "trailerId": 13
+  },
+  {
+    "cargoId": 35,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 35,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 35,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 36,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 36,
+    "trailerId": 10
+  },
+  {
+    "cargoId": 36,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 37,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 37,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 38,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 38,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 39,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 39,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 40,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 40,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 41,
+    "trailerId": 10
+  },
+  {
+    "cargoId": 42,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 42,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 43,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 43,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 44,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 44,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 45,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 45,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 46,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 46,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 47,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 47,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 48,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 48,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 49,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 49,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 50,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 50,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 50,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 50,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 51,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 51,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 51,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 51,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 52,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 52,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 53,
+    "trailerId": 9
+  },
+  {
+    "cargoId": 54,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 54,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 55,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 55,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 55,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 55,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 56,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 56,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 57,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 57,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 58,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 58,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 59,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 59,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 60,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 60,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 60,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 60,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 61,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 61,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 62,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 62,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 63,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 63,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 64,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 64,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 64,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 65,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 66,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 67,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 67,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 67,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 67,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 68,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 68,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 69,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 69,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 70,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 70,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 71,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 72,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 72,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 73,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 74,
+    "trailerId": 11
+  },
+  {
+    "cargoId": 75,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 75,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 76,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 76,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 77,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 77,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 78,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 78,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 79,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 79,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 80,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 80,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 81,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 81,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 82,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 82,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 84,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 84,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 85,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 85,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 86,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 86,
+    "trailerId": 10
+  },
+  {
+    "cargoId": 86,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 87,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 88,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 89,
+    "trailerId": 12
+  },
+  {
+    "cargoId": 90,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 90,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 91,
+    "trailerId": 13
+  },
+  {
+    "cargoId": 92,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 93,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 93,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 94,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 95,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 96,
+    "trailerId": 11
+  },
+  {
+    "cargoId": 97,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 97,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 98,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 98,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 99,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 99,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 100,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 100,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 101,
+    "trailerId": 12
+  },
+  {
+    "cargoId": 102,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 102,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 103,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 103,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 104,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 104,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 105,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 105,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 106,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 106,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 107,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 107,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 108,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 108,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 109,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 109,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 110,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 110,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 111,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 111,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 112,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 112,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 113,
+    "trailerId": 15
+  },
+  {
+    "cargoId": 114,
+    "trailerId": 2
+  },
+  {
+    "cargoId": 115,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 116,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 116,
+    "trailerId": 14
+  },
+  {
+    "cargoId": 117,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 117,
+    "trailerId": 13
+  },
+  {
+    "cargoId": 117,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 118,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 118,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 119,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 119,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 120,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 120,
+    "trailerId": 14
+  },
+  {
+    "cargoId": 121,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 121,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 122,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 122,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 123,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 123,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 124,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 125,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 126,
+    "trailerId": 14
+  },
+  {
+    "cargoId": 127,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 128,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 129,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 129,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 130,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 130,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 131,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 131,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 132,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 133,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 133,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 133,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 133,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 134,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 134,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 135,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 136,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 136,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 137,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 138,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 138,
+    "trailerId": 13
+  },
+  {
+    "cargoId": 138,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 139,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 139,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 139,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 139,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 140,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 140,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 140,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 141,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 141,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 142,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 142,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 143,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 143,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 144,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 144,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 145,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 145,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 146,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 146,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 147,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 147,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 148,
+    "trailerId": 11
+  },
+  {
+    "cargoId": 149,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 149,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 149,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 149,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 150,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 150,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 150,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 150,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 151,
+    "trailerId": 10
+  },
+  {
+    "cargoId": 152,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 152,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 153,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 153,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 154,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 154,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 155,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 155,
+    "trailerId": 10
+  },
+  {
+    "cargoId": 155,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 156,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 156,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 157,
+    "trailerId": 16
+  },
+  {
+    "cargoId": 158,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 159,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 159,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 160,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 160,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 160,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 160,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 161,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 161,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 161,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 161,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 162,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 162,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 163,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 163,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 164,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 164,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 165,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 165,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 165,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 165,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 166,
+    "trailerId": 11
+  },
+  {
+    "cargoId": 167,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 167,
+    "trailerId": 10
+  },
+  {
+    "cargoId": 167,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 168,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 168,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 168,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 168,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 169,
+    "trailerId": 9
+  },
+  {
+    "cargoId": 170,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 171,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 171,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 172,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 172,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 173,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 173,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 174,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 174,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 175,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 175,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 176,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 176,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 177,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 177,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 178,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 178,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 179,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 180,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 180,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 181,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 181,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 182,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 182,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 183,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 183,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 184,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 185,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 186,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 186,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 186,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 186,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 187,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 187,
+    "trailerId": 10
+  },
+  {
+    "cargoId": 187,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 188,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 188,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 189,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 189,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 190,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 190,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 191,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 191,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 191,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 191,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 192,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 192,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 193,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 193,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 194,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 194,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 195,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 195,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 196,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 196,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 197,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 197,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 198,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 198,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 199,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 199,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 200,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 200,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 201,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 201,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 201,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 201,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 202,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 202,
+    "trailerId": 13
+  },
+  {
+    "cargoId": 202,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 203,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 203,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 204,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 205,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 205,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 206,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 206,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 207,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 207,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 207,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 208,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 208,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 209,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 209,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 210,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 210,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 211,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 211,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 212,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 212,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 213,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 214,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 215,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 215,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 216,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 216,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 216,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 216,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 217,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 217,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 217,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 217,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 218,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 218,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 219,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 219,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 220,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 221,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 221,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 221,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 221,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 222,
+    "trailerId": 12
+  },
+  {
+    "cargoId": 223,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 223,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 223,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 224,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 224,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 225,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 225,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 226,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 226,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 227,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 227,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 228,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 228,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 229,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 229,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 230,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 230,
+    "trailerId": 7
+  },
+  {
+    "cargoId": 230,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 230,
+    "trailerId": 20
+  },
+  {
+    "cargoId": 231,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 231,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 232,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 233,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 233,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 234,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 234,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 235,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 235,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 236,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 237,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 238,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 238,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 239,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 239,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 240,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 241,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 242,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 242,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 243,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 243,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 244,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 244,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 245,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 246,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 246,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 247,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 248,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 248,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 249,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 249,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 250,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 250,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 251,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 251,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 252,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 253,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 253,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 254,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 255,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 256,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 257,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 257,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 258,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 259,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 259,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 260,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 260,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 261,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 261,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 262,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 263,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 263,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 264,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 264,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 265,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 266,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 267,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 268,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 269,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 269,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 270,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 271,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 271,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 272,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 273,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 274,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 275,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 276,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 276,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 277,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 277,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 278,
+    "trailerId": 2
+  },
+  {
+    "cargoId": 279,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 280,
+    "trailerId": 6
+  },
+  {
+    "cargoId": 281,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 281,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 282,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 282,
+    "trailerId": 9
+  },
+  {
+    "cargoId": 283,
+    "trailerId": 2
+  },
+  {
+    "cargoId": 284,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 284,
+    "trailerId": 6
+  },
+  {
+    "cargoId": 284,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 285,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 286,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 286,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 287,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 288,
+    "trailerId": 6
+  },
+  {
+    "cargoId": 289,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 290,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 291,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 291,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 292,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 293,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 294,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 294,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 295,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 295,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 296,
+    "trailerId": 2
+  },
+  {
+    "cargoId": 297,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 298,
+    "trailerId": 11
+  },
+  {
+    "cargoId": 299,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 299,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 300,
+    "trailerId": 17
+  },
+  {
+    "cargoId": 301,
+    "trailerId": 17
+  },
+  {
+    "cargoId": 302,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 302,
+    "trailerId": 6
+  },
+  {
+    "cargoId": 302,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 303,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 303,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 304,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 305,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 306,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 306,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 307,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 307,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 308,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 308,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 309,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 309,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 310,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 311,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 311,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 312,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 312,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 313,
+    "trailerId": 2
+  },
+  {
+    "cargoId": 314,
+    "trailerId": 6
+  },
+  {
+    "cargoId": 315,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 315,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 316,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 316,
+    "trailerId": 9
+  },
+  {
+    "cargoId": 317,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 317,
+    "trailerId": 9
+  },
+  {
+    "cargoId": 318,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 318,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 319,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 319,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 320,
+    "trailerId": 2
+  },
+  {
+    "cargoId": 321,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 321,
+    "trailerId": 9
+  },
+  {
+    "cargoId": 322,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 323,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 323,
+    "trailerId": 2
+  },
+  {
+    "cargoId": 323,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 326,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 327,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 327,
+    "trailerId": 18
+  },
+  {
+    "cargoId": 328,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 329,
+    "trailerId": 8
+  },
+  {
+    "cargoId": 329,
+    "trailerId": 9
+  },
+  {
+    "cargoId": 330,
+    "trailerId": 1
+  },
+  {
+    "cargoId": 330,
+    "trailerId": 5
+  },
+  {
+    "cargoId": 330,
+    "trailerId": 14
+  },
+  {
+    "cargoId": 330,
+    "trailerId": 19
+  },
+  {
+    "cargoId": 335,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 335,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 337,
+    "trailerId": 22
+  },
+  {
+    "cargoId": 338,
+    "trailerId": 23
+  },
+  {
+    "cargoId": 339,
+    "trailerId": 24
+  },
+  {
+    "cargoId": 340,
+    "trailerId": 25
+  },
+  {
+    "cargoId": 341,
+    "trailerId": 26
+  },
+  {
+    "cargoId": 342,
+    "trailerId": 27
+  },
+  {
+    "cargoId": 343,
+    "trailerId": 28
+  },
+  {
+    "cargoId": 344,
+    "trailerId": 29
+  },
+  {
+    "cargoId": 348,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 349,
+    "trailerId": 15
+  },
+  {
+    "cargoId": 350,
+    "trailerId": 15
+  },
+  {
+    "cargoId": 350,
+    "trailerId": 21
+  },
+  {
+    "cargoId": 351,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 352,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 353,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 354,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 355,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 356,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 357,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 358,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 359,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 360,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 362,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 363,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 364,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 365,
+    "trailerId": 21
+  },
+  {
+    "cargoId": 366,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 367,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 367,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 368,
+    "trailerId": 3
+  },
+  {
+    "cargoId": 368,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 369,
+    "trailerId": 15
+  },
+  {
+    "cargoId": 370,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 371,
+    "trailerId": 4
+  },
+  {
+    "cargoId": 372,
+    "trailerId": 21
+  },
+  {
+    "cargoId": 375,
+    "trailerId": 15
+  },
+  {
+    "cargoId": 376,
+    "trailerId": 15
+  },
+  {
+    "cargoId": 378,
+    "trailerId": 15
+  },
+  {
+    "cargoId": 379,
+    "trailerId": 30
+  },
+  {
+    "cargoId": 380,
+    "trailerId": 4
+  }
+]

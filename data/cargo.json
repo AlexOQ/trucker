@@ -1,0 +1,2882 @@
+[
+  {
+    "id": 277,
+    "name": "Acetylene",
+    "value": 0.266,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 278,
+    "name": "Acid",
+    "value": 0.33,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 21,
+    "name": "Air Conditioners",
+    "value": 9.4,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 22,
+    "name": "Aircraft Tyres",
+    "value": 4.4,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 23,
+    "name": "Airmail",
+    "value": 0.691,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 24,
+    "name": "Almond",
+    "value": 0.562,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 25,
+    "name": "Aluminium Ingots",
+    "value": 0.69,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 26,
+    "name": "Aluminium Profiles",
+    "value": 6.6,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 279,
+    "name": "Ammunition",
+    "value": 0.753,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 280,
+    "name": "Anhydrous Ammonia",
+    "value": 1.03,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 27,
+    "name": "Apples",
+    "value": 0.602,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 281,
+    "name": "Arsenic",
+    "value": 0.288,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 246,
+    "name": "Articulated Hauler Volvo A25G",
+    "value": 21.93,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 238,
+    "name": "Asphalt Miller",
+    "value": 25.11,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 28,
+    "name": "Atlantic Cod Fillet",
+    "value": 0.608,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 262,
+    "name": "Auger Wagon",
+    "value": 11.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 263,
+    "name": "Autonomous Tractor",
+    "value": 11.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 29,
+    "name": "Backflow Preventers",
+    "value": 0.764,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 30,
+    "name": "Backhoe Loader",
+    "value": 17.93,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 253,
+    "name": "Backhoe Loader JCB 4CX",
+    "value": 12.93,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 282,
+    "name": "Barley",
+    "value": 0.4,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 31,
+    "name": "Basil",
+    "value": 0.555,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 32,
+    "name": "Batteries",
+    "value": 0.574,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 33,
+    "name": "Beans",
+    "value": 0.563,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 34,
+    "name": "Beef",
+    "value": 0.573,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 35,
+    "name": "Beverages",
+    "value": 0.704,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 36,
+    "name": "Big-Bags of Seeds",
+    "value": 0.585,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 348,
+    "name": "Boiler Part",
+    "value": 36,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 37,
+    "name": "Boric Acid",
+    "value": 0.765,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 38,
+    "name": "Bottled Water",
+    "value": 0.608,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 39,
+    "name": "Brake Fluid",
+    "value": 0.51,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 40,
+    "name": "Brake Pads",
+    "value": 0.598,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 41,
+    "name": "Bricks",
+    "value": 0.523,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 349,
+    "name": "Campervans",
+    "value": 0.2115,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 42,
+    "name": "Canned Beans",
+    "value": 0.564,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 43,
+    "name": "Canned Beef",
+    "value": 0.574,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 44,
+    "name": "Canned Iced Coffee",
+    "value": 0.598,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 45,
+    "name": "Canned Pork",
+    "value": 0.584,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 46,
+    "name": "Canned Sardines",
+    "value": 0.598,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 47,
+    "name": "Canned Tuna",
+    "value": 0.58,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 48,
+    "name": "Carbon Black Powder",
+    "value": 0.564,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 49,
+    "name": "Carbonated Water",
+    "value": 0.605,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 50,
+    "name": "Carrots",
+    "value": 0.6,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 350,
+    "name": "Cars",
+    "value": 0.2215,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 51,
+    "name": "Cauliflower",
+    "value": 0.61,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 52,
+    "name": "Caviar",
+    "value": 0.62,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 53,
+    "name": "Cement",
+    "value": 0.7,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 54,
+    "name": "Cheese",
+    "value": 0.623,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 55,
+    "name": "Chemical Sorbent",
+    "value": 0.5429,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 283,
+    "name": "Chemicals",
+    "value": 0.292,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 56,
+    "name": "Chewing Gums",
+    "value": 0.563,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 57,
+    "name": "Chicken Meat",
+    "value": 0.57,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 58,
+    "name": "Chimney Systems",
+    "value": 0.623,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 284,
+    "name": "Chlorine",
+    "value": 1.1995,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 59,
+    "name": "Chocolate",
+    "value": 0.617,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 60,
+    "name": "Clothes",
+    "value": 0.5465,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 285,
+    "name": "Coal",
+    "value": 0.6,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 61,
+    "name": "Coconut Milk",
+    "value": 0.61,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 62,
+    "name": "Coconut Oil",
+    "value": 0.626,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 254,
+    "name": "Compact Generators JCB G100RS",
+    "value": 3.51,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 247,
+    "name": "Compactor Volvo SD160B",
+    "value": 20.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 63,
+    "name": "Computer Processors",
+    "value": 0.564,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 64,
+    "name": "Concrete Beams",
+    "value": 12.1125,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 65,
+    "name": "Concrete Centring",
+    "value": 2.7,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 351,
+    "name": "Concrete Staircase",
+    "value": 33,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 66,
+    "name": "Concrete Stairs",
+    "value": 5,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 67,
+    "name": "Containerized Trees",
+    "value": 0.542,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 3,
+    "name": "Contaminated Material",
+    "value": 0.31,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 68,
+    "name": "Copper Roof Gutters",
+    "value": 0.587,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 69,
+    "name": "Corks",
+    "value": 0.525,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 70,
+    "name": "Cottage Cheese",
+    "value": 0.627,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 71,
+    "name": "Cotton Harvester",
+    "value": 21.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 72,
+    "name": "Crawler Carrier",
+    "value": 12.93,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 352,
+    "name": "Crawler Excavator",
+    "value": 25,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 231,
+    "name": "Crawler Tractor",
+    "value": 21.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 73,
+    "name": "Cut Flowers",
+    "value": 0.652,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 286,
+    "name": "Cyanide",
+    "value": 0.33,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 74,
+    "name": "Diesel",
+    "value": 1.2,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 75,
+    "name": "Diesel Generators",
+    "value": 0.771,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 264,
+    "name": "Disc Harrows",
+    "value": 11.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 76,
+    "name": "Disinfectant",
+    "value": 0.598,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 239,
+    "name": "Dozer Crawler",
+    "value": 28.93,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 232,
+    "name": "Driller D-50",
+    "value": 18.975,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 77,
+    "name": "Dry Milk",
+    "value": 0.604,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 78,
+    "name": "Dryers",
+    "value": 0.655,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 287,
+    "name": "Dynamite",
+    "value": 0.769,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 255,
+    "name": "Electric Dumpster JCB HTD-5E",
+    "value": 0.61,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 256,
+    "name": "Electric Mini Excavator JCB 19C-E",
+    "value": 2.34,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 79,
+    "name": "Electrical Wiring",
+    "value": 0.579,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 80,
+    "name": "Electronics",
+    "value": 0.644,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 4,
+    "name": "Empty Barrels",
+    "value": 0.541,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 5,
+    "name": "Empty Pallets",
+    "value": 0.523,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 81,
+    "name": "Empty Spool",
+    "value": 0.25,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 82,
+    "name": "Empty Wine Barrels",
+    "value": 0.658,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 288,
+    "name": "Ethane",
+    "value": 0.72,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 289,
+    "name": "Excavated Soil",
+    "value": 0.6,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 84,
+    "name": "Excavator",
+    "value": 22.08,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 353,
+    "name": "Excavator Bucket",
+    "value": 31.5,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 257,
+    "name": "Excavator JCB 245XR",
+    "value": 30.08,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 248,
+    "name": "Excavator Volvo EC220E",
+    "value": 22.08,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 249,
+    "name": "Excavator Volvo EW240E MH",
+    "value": 22.08,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 85,
+    "name": "Exhaust Systems",
+    "value": 0.57,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 290,
+    "name": "Explosives",
+    "value": 0.762,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 337,
+    "name": "Feldbinder EUT",
+    "value": 0.2498,
+    "excluded": true,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 338,
+    "name": "Feldbinder KIP",
+    "value": 0.2498,
+    "excluded": true,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 339,
+    "name": "Feldbinder TSA ADR",
+    "value": 0.2498,
+    "excluded": true,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 340,
+    "name": "Feldbinder TSA LM",
+    "value": 0.2498,
+    "excluded": true,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 86,
+    "name": "Fertilizer",
+    "value": 0.645,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 265,
+    "name": "Fertilizer Spreader",
+    "value": 20.5,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 87,
+    "name": "Fireworks",
+    "value": 0.7,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 88,
+    "name": "Fish Fingers",
+    "value": 0.625,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 89,
+    "name": "Floor Panels",
+    "value": 0.1998,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 90,
+    "name": "Flour",
+    "value": 0.603,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 291,
+    "name": "Fluorine",
+    "value": 0.279,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 91,
+    "name": "Food Oil",
+    "value": 0.797,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 266,
+    "name": "Forage Harvester",
+    "value": 20.5,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 6,
+    "name": "Forklifts",
+    "value": 5.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 354,
+    "name": "Forwarder",
+    "value": 30,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 92,
+    "name": "Fresh Fish",
+    "value": 0.633,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 93,
+    "name": "Fresh Herbs",
+    "value": 0.577,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 94,
+    "name": "Frozen Hake",
+    "value": 0.606,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 95,
+    "name": "Frozen Octopi",
+    "value": 0.639,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 96,
+    "name": "Fuel Oil",
+    "value": 1.21,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 97,
+    "name": "Fuel Tanker",
+    "value": 0.283,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 98,
+    "name": "Fuel Tanks",
+    "value": 0.652,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 99,
+    "name": "Furniture",
+    "value": 0.649,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 100,
+    "name": "Garlic",
+    "value": 0.587,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 233,
+    "name": "Gas Pipeline Parts",
+    "value": 20.325,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 355,
+    "name": "Giant Silo",
+    "value": 34.5,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 101,
+    "name": "Glass Panels",
+    "value": 0.2168,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 102,
+    "name": "Gnocchi",
+    "value": 0.584,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 103,
+    "name": "Goat Cheese",
+    "value": 0.62,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 292,
+    "name": "Granite Cubes",
+    "value": 0.75,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 104,
+    "name": "Grapes",
+    "value": 0.604,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 105,
+    "name": "Graphite Grease",
+    "value": 0.576,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 106,
+    "name": "Grass Rolls",
+    "value": 0.56,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 293,
+    "name": "Gravel",
+    "value": 0.75,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 107,
+    "name": "Guard Rails",
+    "value": 0.584,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 108,
+    "name": "Gummy Bears",
+    "value": 0.564,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 109,
+    "name": "Harvesting Bins",
+    "value": 0.534,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 356,
+    "name": "Haul Truck Chassis",
+    "value": 39,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 357,
+    "name": "Heat Exchanger",
+    "value": 40.5,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 294,
+    "name": "Heavy Metals",
+    "value": 0.3,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 234,
+    "name": "Helicopter - 1808TX",
+    "value": 28.275,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 110,
+    "name": "High Pressure Slide Valves",
+    "value": 0.751,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 111,
+    "name": "High Voltage Cables",
+    "value": 0.677,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 358,
+    "name": "High-Tech Device",
+    "value": 36,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 112,
+    "name": "Honey",
+    "value": 0.626,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 113,
+    "name": "Horse Trailer",
+    "value": 0.2183,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 295,
+    "name": "Hospital Waste",
+    "value": 0.337,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 114,
+    "name": "Hot Chemicals",
+    "value": 0.327,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 359,
+    "name": "Huge Tyres",
+    "value": 31.5,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 296,
+    "name": "Hydrochloric Acid",
+    "value": 0.283,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 297,
+    "name": "Hydrogen",
+    "value": 0.15,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 7,
+    "name": "IBC Containers",
+    "value": 0.475,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 115,
+    "name": "Ice Cream",
+    "value": 0.611,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 18,
+    "name": "Industrial Cable Reel",
+    "value": 17.25,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 360,
+    "name": "Industrial Condenser",
+    "value": 39,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 116,
+    "name": "Iron Pipes",
+    "value": 5.2,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 117,
+    "name": "Juice Concentrate",
+    "value": 0.741,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 298,
+    "name": "Kerosene",
+    "value": 1.2,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 118,
+    "name": "Ketchup",
+    "value": 0.556,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 270,
+    "name": "Krone BiG M 450",
+    "value": 22.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 271,
+    "name": "Krone BiG Pack 1290 XC HDP",
+    "value": 14.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 272,
+    "name": "Krone BiG X 1180",
+    "value": 21.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 341,
+    "name": "Krone Box Liner",
+    "value": 0.2498,
+    "excluded": true,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 342,
+    "name": "Krone Cool Liner",
+    "value": 0.2498,
+    "excluded": true,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 273,
+    "name": "Krone EasyCut B 880 CV",
+    "value": 4.25,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 274,
+    "name": "Krone GX 520",
+    "value": 14.9,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 343,
+    "name": "Krone Profi Liner",
+    "value": 0.2498,
+    "excluded": true,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 344,
+    "name": "Krone Profi Liner Building",
+    "value": 0.2498,
+    "excluded": true,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 275,
+    "name": "Krone Swadro TC 1370",
+    "value": 6.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 276,
+    "name": "Krone VariPack V 190 XC",
+    "value": 6,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 302,
+    "name": "LPG",
+    "value": 0.525,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 119,
+    "name": "Lamb Stomachs",
+    "value": 0.625,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 8,
+    "name": "Large Containers",
+    "value": 0.475,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 120,
+    "name": "Large Tubes",
+    "value": 3.13,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 121,
+    "name": "Lavender",
+    "value": 0.526,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 299,
+    "name": "Lead",
+    "value": 0.295,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 122,
+    "name": "Lemonade",
+    "value": 0.605,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 300,
+    "name": "Live Cattle",
+    "value": 0.85,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 301,
+    "name": "Live Pigs",
+    "value": 0.32,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 123,
+    "name": "Liver Paste",
+    "value": 0.589,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 240,
+    "name": "Locomotive - Vossloh G6",
+    "value": 25.68,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 362,
+    "name": "Locomotive CZ LOKO EffiShunter 1000",
+    "value": 40.5,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 124,
+    "name": "Locomotive CZ LOKO EffiShunter 300",
+    "value": 15.68,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 125,
+    "name": "Locomotive CZ LOKO MUV 75",
+    "value": 6.16,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 363,
+    "name": "Log Harvester",
+    "value": 30,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 364,
+    "name": "Log Stacker",
+    "value": 80,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 126,
+    "name": "Logs",
+    "value": 0.57,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 127,
+    "name": "Low Bed Semi-Trailers",
+    "value": 21.69,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 128,
+    "name": "Lumber",
+    "value": 4.44,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 365,
+    "name": "Luxury SUVs",
+    "value": 0.249,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 129,
+    "name": "Luxury Yacht",
+    "value": 26.28,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 303,
+    "name": "Magnesium",
+    "value": 0.268,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 130,
+    "name": "Maple Syrup",
+    "value": 0.595,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 304,
+    "name": "Marble Blocks",
+    "value": 9.81,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 305,
+    "name": "Marble Slab",
+    "value": 6.3,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 131,
+    "name": "Mason Jars",
+    "value": 0.657,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 366,
+    "name": "Massive Tech Part",
+    "value": 39,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 132,
+    "name": "Material Handler",
+    "value": 25.53,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 133,
+    "name": "Medical Equipment",
+    "value": 0.698,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 134,
+    "name": "Medical Vaccines",
+    "value": 1.023,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 306,
+    "name": "Mercuric Chloride",
+    "value": 0.313,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 135,
+    "name": "Metal Beams",
+    "value": 0.505,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 136,
+    "name": "Metal Cans",
+    "value": 0.376,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 241,
+    "name": "Metal Centring",
+    "value": 21.66,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 137,
+    "name": "Metal Coil",
+    "value": 10.33,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 138,
+    "name": "Milk",
+    "value": 0.842,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 19,
+    "name": "Mobile Crane - UTM SD-833",
+    "value": 25.53,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 242,
+    "name": "Mobile Crusher",
+    "value": 28.93,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 243,
+    "name": "Mobile Screener",
+    "value": 28.93,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 244,
+    "name": "Mobile Stacker",
+    "value": 15.93,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 367,
+    "name": "Mobile Traction Winch",
+    "value": 15,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 139,
+    "name": "Motor Oil",
+    "value": 0.585,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 140,
+    "name": "Motorcycle Tyres",
+    "value": 0.616,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 141,
+    "name": "Motorcycles",
+    "value": 0.725,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 142,
+    "name": "Mozzarella",
+    "value": 0.609,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 368,
+    "name": "Mulcher",
+    "value": 22,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 143,
+    "name": "Natural Rubber",
+    "value": 0.684,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 307,
+    "name": "Neon",
+    "value": 0.266,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 308,
+    "name": "Nitrocellulose",
+    "value": 0.278,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 309,
+    "name": "Nitrogen",
+    "value": 0.298,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 144,
+    "name": "Non-Alcoholic Beer",
+    "value": 0.604,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 145,
+    "name": "Nuts",
+    "value": 0.582,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 146,
+    "name": "Nylon Cord",
+    "value": 0.576,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 147,
+    "name": "Office Paper",
+    "value": 0.58,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 148,
+    "name": "Oil",
+    "value": 0.9,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 149,
+    "name": "Oil Filters",
+    "value": 0.6022,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 150,
+    "name": "Olive Oil",
+    "value": 0.697,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 151,
+    "name": "Olive Trees",
+    "value": 0.642,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 152,
+    "name": "Olives",
+    "value": 0.612,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 153,
+    "name": "Onions",
+    "value": 0.605,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 154,
+    "name": "Oranges",
+    "value": 0.598,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 310,
+    "name": "Ore",
+    "value": 0.75,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 155,
+    "name": "Outdoor Floor Tiles",
+    "value": 0.63,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 156,
+    "name": "Packaged Food",
+    "value": 0.589,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 157,
+    "name": "Packed Glass",
+    "value": 0.2174,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 158,
+    "name": "Packed Lumber",
+    "value": 4.44,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 159,
+    "name": "Pasta",
+    "value": 0.586,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 160,
+    "name": "Peanut Butter",
+    "value": 0.571,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 161,
+    "name": "Pears",
+    "value": 0.616,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 162,
+    "name": "Peas",
+    "value": 0.599,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 163,
+    "name": "Performance Forks",
+    "value": 0.752,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 311,
+    "name": "Pesticides",
+    "value": 0.282,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 164,
+    "name": "Pesto",
+    "value": 0.63,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 165,
+    "name": "Pet Food",
+    "value": 0.5175,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 166,
+    "name": "Petrol",
+    "value": 1.15,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 369,
+    "name": "Pickups",
+    "value": 0.228,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 167,
+    "name": "Plant Substrate",
+    "value": 0.55,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 267,
+    "name": "Planter",
+    "value": 11.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 168,
+    "name": "Plastic Film Rolls",
+    "value": 0.4836,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 169,
+    "name": "Plastic Granules",
+    "value": 0.65,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 170,
+    "name": "Plastic Pipes",
+    "value": 1.2,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 171,
+    "name": "Plumbing Supplies",
+    "value": 0.611,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 172,
+    "name": "Plums",
+    "value": 0.602,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 173,
+    "name": "Polystyrene Boxes",
+    "value": 0.267,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 174,
+    "name": "Pork",
+    "value": 0.569,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 175,
+    "name": "Post Packages",
+    "value": 0.733,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 312,
+    "name": "Potassium",
+    "value": 0.281,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 313,
+    "name": "Potassium Hydroxide",
+    "value": 0.292,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 176,
+    "name": "Potatoes",
+    "value": 0.601,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 177,
+    "name": "Potted Flowers",
+    "value": 0.651,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 258,
+    "name": "Powerpack JCB 1.25QE",
+    "value": 0.593,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 178,
+    "name": "Precast Stairs",
+    "value": 0.609,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 179,
+    "name": "Pressure Tank",
+    "value": 0.9,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 314,
+    "name": "Propane",
+    "value": 0.65,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 180,
+    "name": "Prosciutto",
+    "value": 0.638,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 181,
+    "name": "Protective Clothing",
+    "value": 0.599,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 182,
+    "name": "Pumps",
+    "value": 0.742,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 183,
+    "name": "Radiators",
+    "value": 0.543,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 315,
+    "name": "Reflective Posts",
+    "value": 0.6,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 184,
+    "name": "Reinforcing Bars",
+    "value": 5.9,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 185,
+    "name": "Reservoir Tank",
+    "value": 7,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 186,
+    "name": "Rice",
+    "value": 0.555,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 250,
+    "name": "Rock Bucket Volvo SPN P T SEG",
+    "value": 15.05,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 235,
+    "name": "Roller - DYNA CC-2200",
+    "value": 24.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 187,
+    "name": "Roof Tiles",
+    "value": 0.601,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 188,
+    "name": "Roofing Felt",
+    "value": 0.602,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 189,
+    "name": "Rooflights",
+    "value": 0.546,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 11,
+    "name": "Rough Terrain Forklift",
+    "value": 8,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 316,
+    "name": "Rye",
+    "value": 0.4,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 372,
+    "name": "SUVs",
+    "value": 0.228,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 190,
+    "name": "Salmon Fillet",
+    "value": 0.629,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 191,
+    "name": "Salt & Spices",
+    "value": 0.521,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 317,
+    "name": "Sand",
+    "value": 0.75,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 192,
+    "name": "Sandwich Panels",
+    "value": 0.643,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 193,
+    "name": "Sausages",
+    "value": 0.622,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 194,
+    "name": "Sawdust Panels",
+    "value": 0.642,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 12,
+    "name": "Scaffolding",
+    "value": 0.555,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 195,
+    "name": "Scooters",
+    "value": 0.714,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 13,
+    "name": "Scrap Metals",
+    "value": 0.75,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 196,
+    "name": "Sealed Bearings",
+    "value": 0.677,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 370,
+    "name": "Service Boat",
+    "value": 37.5,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 197,
+    "name": "Sheep Wool",
+    "value": 0.552,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 198,
+    "name": "Shock Absorbers",
+    "value": 0.739,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 199,
+    "name": "Silica",
+    "value": 0.602,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 259,
+    "name": "Site Dumper JCB 6T-2",
+    "value": 6.93,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 371,
+    "name": "Skiddler",
+    "value": 28,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 200,
+    "name": "Smoked Eel",
+    "value": 0.628,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 201,
+    "name": "Smoked Sprats",
+    "value": 0.629,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 318,
+    "name": "Sodium",
+    "value": 0.63,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 319,
+    "name": "Sodium Hydroxide",
+    "value": 0.268,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 320,
+    "name": "Sodium Hypochlorite",
+    "value": 0.283,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 202,
+    "name": "Soy Milk",
+    "value": 0.7245,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 203,
+    "name": "Spherical Valves",
+    "value": 0.766,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 268,
+    "name": "Sprayer",
+    "value": 20.5,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 269,
+    "name": "Square Baler",
+    "value": 11.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 204,
+    "name": "Square Tubing",
+    "value": 5.8,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 205,
+    "name": "Steel Cord",
+    "value": 0.543,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 321,
+    "name": "Stone Dust",
+    "value": 0.7,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 206,
+    "name": "Stone Wool",
+    "value": 0.531,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 322,
+    "name": "Stones",
+    "value": 0.75,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 207,
+    "name": "Straw Bales",
+    "value": 1.2,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 208,
+    "name": "Sugar",
+    "value": 0.607,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 323,
+    "name": "Sulphuric Acid",
+    "value": 1.4795,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 209,
+    "name": "Tableware",
+    "value": 0.652,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 335,
+    "name": "Telescopic Handler JCB 540-180",
+    "value": 15.08,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 210,
+    "name": "Tomatoes",
+    "value": 0.615,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 211,
+    "name": "Toys",
+    "value": 0.648,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 236,
+    "name": "Tracks",
+    "value": 23.265,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 260,
+    "name": "Tractor JCB Fastrac 4220",
+    "value": 13.825,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 212,
+    "name": "Tractors",
+    "value": 10.63,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 213,
+    "name": "Train Axles",
+    "value": 4.6,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 214,
+    "name": "Train Undercarriage",
+    "value": 7.8,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 245,
+    "name": "Transformer",
+    "value": 24.995,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 215,
+    "name": "Transmissions",
+    "value": 0.735,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 216,
+    "name": "Truck Batteries",
+    "value": 0.6135,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 217,
+    "name": "Truck Rims",
+    "value": 0.5485,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 218,
+    "name": "Truck Tyres",
+    "value": 0.592,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 375,
+    "name": "Trucks Scania",
+    "value": 0.2726,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 376,
+    "name": "Trucks Volvo",
+    "value": 0.2726,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 219,
+    "name": "Tyres",
+    "value": 0.643,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 377,
+    "name": "Underground Loader",
+    "value": 38,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 14,
+    "name": "Used Car Batteries",
+    "value": 0.574,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 15,
+    "name": "Used Packaging",
+    "value": 0.5,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 16,
+    "name": "Used Plastics",
+    "value": 0.3795,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 378,
+    "name": "Vans",
+    "value": 0.2115,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 220,
+    "name": "Ventilation Shaft",
+    "value": 3,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 221,
+    "name": "Vinegar",
+    "value": 0.5485,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 222,
+    "name": "Wall Panels",
+    "value": 0.2004,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 223,
+    "name": "Water Tank",
+    "value": 10.86,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 224,
+    "name": "Watermelons",
+    "value": 0.603,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 326,
+    "name": "Wheat",
+    "value": 0.4,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 225,
+    "name": "Wheel Loader",
+    "value": 22.155,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 261,
+    "name": "Wheel Loader JCB 457",
+    "value": 22.155,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 251,
+    "name": "Wheel Loader Volvo L250H",
+    "value": 22.155,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 252,
+    "name": "Wheels with Volvo Rims",
+    "value": 3,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 327,
+    "name": "White Phosphorus",
+    "value": 0.254,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 379,
+    "name": "Wind Turbine Blade",
+    "value": 36,
+    "excluded": false,
+    "high_value": true,
+    "fragile": false
+  },
+  {
+    "id": 226,
+    "name": "Wind Turbine Nacelle",
+    "value": 24.675,
+    "excluded": false,
+    "high_value": false,
+    "fragile": true
+  },
+  {
+    "id": 227,
+    "name": "Wind Turbine Tower",
+    "value": 14.7,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 328,
+    "name": "Wood Bark",
+    "value": 0.19,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 380,
+    "name": "Wood Chipper",
+    "value": 37,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 329,
+    "name": "Wood Shavings",
+    "value": 0.19,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 330,
+    "name": "Wooden Beams",
+    "value": 5.8,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 228,
+    "name": "Work Clothes",
+    "value": 0.557,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 237,
+    "name": "Yacht",
+    "value": 27.78,
+    "excluded": false,
+    "high_value": true,
+    "fragile": true
+  },
+  {
+    "id": 229,
+    "name": "Yoghurt",
+    "value": 0.628,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  },
+  {
+    "id": 230,
+    "name": "Young Seedlings",
+    "value": 0.546,
+    "excluded": false,
+    "high_value": false,
+    "fragile": false
+  }
+]

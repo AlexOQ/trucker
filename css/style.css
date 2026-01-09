@@ -1,0 +1,441 @@
+/* ETS2 Trucker Advisor - Shared Styles */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #1a1a2e;
+  color: #eee;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Header & Navigation */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+h1 {
+  color: #f39c12;
+}
+
+h2 {
+  color: #f39c12;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+h3 {
+  color: #f39c12;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+}
+
+nav a {
+  color: #aaa;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+nav a:hover, nav a.active {
+  color: #f39c12;
+  background: #16213e;
+}
+
+/* Controls Panel */
+.controls {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.controls-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.control-label span {
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+.control-value {
+  color: #f39c12;
+  font-weight: bold;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.slider-label {
+  font-size: 0.75rem;
+  color: #666;
+  min-width: 60px;
+}
+
+.slider-label.right {
+  text-align: right;
+}
+
+input[type="range"] {
+  flex: 1;
+  height: 6px;
+  -webkit-appearance: none;
+  background: #0f3460;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #f39c12;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: #f39c12;
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+}
+
+.reset-btn, .btn {
+  background: transparent;
+  border: 1px solid #666;
+  color: #888;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.reset-btn:hover, .btn:hover {
+  border-color: #f39c12;
+  color: #f39c12;
+}
+
+/* Stats Row */
+.stats {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stat {
+  background: #16213e;
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  border-left: 3px solid #f39c12;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #f39c12;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+
+/* Tables */
+.table-section {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #0f3460;
+}
+
+th {
+  background: #0f3460;
+  color: #f39c12;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:hover td {
+  background: #1a2744;
+}
+
+tr.clickable {
+  cursor: pointer;
+}
+
+.amount {
+  font-weight: bold;
+  color: #f39c12;
+}
+
+.coverage {
+  color: #2ecc71;
+}
+
+.value {
+  color: #3498db;
+}
+
+.score {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.country-name {
+  color: #888;
+}
+
+/* Links */
+a.link {
+  color: #3498db;
+  text-decoration: none;
+}
+
+a.link:hover {
+  text-decoration: underline;
+}
+
+/* Country Sections */
+.country-section {
+  background: #16213e;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.country-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+
+.country-header h3 {
+  margin: 0;
+}
+
+.country-count {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.country-content {
+  margin-top: 1rem;
+}
+
+/* Cards Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: #0f3460;
+  border-radius: 6px;
+  padding: 1rem;
+  transition: all 0.2s;
+}
+
+.card:hover {
+  background: #1a2744;
+  transform: translateY(-2px);
+}
+
+.card-title {
+  color: #f39c12;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.card-subtitle {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.card-link {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+}
+
+/* Detail Views */
+.back-link {
+  color: #f39c12;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.detail-header {
+  margin-bottom: 1.5rem;
+}
+
+.detail-header h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.detail-header .subtitle {
+  color: #888;
+  font-size: 1rem;
+}
+
+/* Tags */
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tag {
+  background: #0f3460;
+  color: #aaa;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.tag.highlight {
+  background: #f39c12;
+  color: #1a1a2e;
+}
+
+/* Search */
+.search-box {
+  margin-bottom: 1.5rem;
+}
+
+.search-box input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  background: #16213e;
+  color: #eee;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: #f39c12;
+}
+
+.search-box input::placeholder {
+  color: #666;
+}
+
+/* States */
+.empty-state, .loading {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.loading {
+  color: #888;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .container {
+    padding: 1rem;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats {
+    gap: 1rem;
+  }
+
+  .stat {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}

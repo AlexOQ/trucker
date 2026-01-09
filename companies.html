@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Companies - ETS2 Trucker Advisor</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ETS2 Trucker Advisor</h1>
+      <nav>
+        <a href="index.html">Rankings</a>
+        <a href="cities.html">Cities</a>
+        <a href="companies.html" class="active">Companies</a>
+        <a href="cargo.html">Cargo</a>
+      </nav>
+    </header>
+
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Search companies...">
+    </div>
+
+    <div id="content">
+      <div class="loading">Loading companies...</div>
+    </div>
+
+    <div id="company-detail" style="display: none;">
+      <a href="#" class="back-link" id="back-link">← Back to companies</a>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadAllData, buildLookups } from './js/data.js'
+
+    let data = null
+    let lookups = null
+
+    const content = document.getElementById('content')
+    const companyDetail = document.getElementById('company-detail')
+    const detailContent = document.getElementById('detail-content')
+    const searchInput = document.getElementById('search')
+    const backLink = document.getElementById('back-link')
+
+    function getCompanyCities(companyId) {
+      const cities = []
+      for (const [cityId, companies] of lookups.cityCompanyMap) {
+        const match = companies.find(c => c.companyId === companyId)
+        if (match) {
+          const city = lookups.citiesById.get(cityId)
+          if (city) {
+            cities.push({ ...city, depotCount: match.count })
+          }
+        }
+      }
+      return cities.sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+    function getCompanyCargo(companyId) {
+      const cargoIds = lookups.companyCargoMap.get(companyId) || []
+      return cargoIds
+        .map(id => lookups.cargoById.get(id))
+        .filter(Boolean)
+        .sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+    function getCompanyStats(companyId) {
+      const cities = getCompanyCities(companyId)
+      const cargo = getCompanyCargo(companyId)
+      const totalDepots = cities.reduce((sum, c) => sum + c.depotCount, 0)
+
+      return {
+        cityCount: cities.length,
+        depotCount: totalDepots,
+        cargoCount: cargo.length,
+      }
+    }
+
+    function renderCompanyList(filter = '') {
+      const filterLower = filter.toLowerCase()
+      const filtered = data.companies
+        .filter(c => c.name.toLowerCase().includes(filterLower))
+        .sort((a, b) => a.name.localeCompare(b.name))
+
+      if (filtered.length === 0) {
+        content.innerHTML = '<div class="empty-state">No companies found.</div>'
+        return
+      }
+
+      // Group by first letter
+      const groups = new Map()
+      for (const company of filtered) {
+        const letter = company.name[0].toUpperCase()
+        if (!groups.has(letter)) {
+          groups.set(letter, [])
+        }
+        groups.get(letter).push(company)
+      }
+
+      const sortedGroups = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+
+      content.innerHTML = sortedGroups.map(([letter, companies]) => `
+        <div class="country-section">
+          <div class="country-header">
+            <h3>${letter}</h3>
+            <span class="country-count">${companies.length} companies</span>
+          </div>
+          <div class="country-content">
+            <div class="cards-grid">
+              ${companies.map(company => {
+                const stats = getCompanyStats(company.id)
+                return `
+                  <a href="#company-${company.id}" class="card-link" data-company-id="${company.id}">
+                    <div class="card">
+                      <div class="card-title">${company.name}</div>
+                      <div class="card-subtitle">
+                        ${stats.cityCount} cities · ${stats.cargoCount} cargo types
+                      </div>
+                    </div>
+                  </a>
+                `
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('')
+
+      // Add click handlers
+      content.querySelectorAll('[data-company-id]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault()
+          showCompanyDetail(parseInt(el.dataset.companyId))
+        })
+      })
+    }
+
+    function showCompanyDetail(companyId) {
+      const company = lookups.companiesById.get(companyId)
+      if (!company) return
+
+      const cities = getCompanyCities(companyId)
+      const cargo = getCompanyCargo(companyId)
+      const stats = getCompanyStats(companyId)
+
+      content.style.display = 'none'
+      companyDetail.style.display = 'block'
+      window.location.hash = `company-${companyId}`
+
+      // Group cities by country
+      const citiesByCountry = new Map()
+      for (const city of cities) {
+        if (!citiesByCountry.has(city.country)) {
+          citiesByCountry.set(city.country, [])
+        }
+        citiesByCountry.get(city.country).push(city)
+      }
+      const sortedCountries = [...citiesByCountry.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+
+      detailContent.innerHTML = `
+        <div class="detail-header">
+          <h2>${company.name}</h2>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value">${stats.cityCount}</div>
+            <div class="stat-label">Cities</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${stats.depotCount}</div>
+            <div class="stat-label">Total Depots</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${stats.cargoCount}</div>
+            <div class="stat-label">Cargo Types</div>
+          </div>
+        </div>
+
+        <div class="table-section">
+          <h2>Locations</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>City</th>
+                <th>Country</th>
+                <th>Depots</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${sortedCountries.map(([country, countryCities]) =>
+                countryCities.map(city => `
+                  <tr>
+                    <td><a href="cities.html#city-${city.id}" class="link">${city.name}</a></td>
+                    <td class="country-name">${country}</td>
+                    <td class="amount">${city.depotCount}</td>
+                  </tr>
+                `).join('')
+              ).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="table-section">
+          <h2>Cargo Provided</h2>
+          ${cargo.length > 0 ? `
+            <table>
+              <thead>
+                <tr>
+                  <th>Cargo</th>
+                  <th>Value</th>
+                  <th>Properties</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${cargo.map(c => `
+                  <tr>
+                    <td><a href="cargo.html#cargo-${c.id}" class="link">${c.name}</a></td>
+                    <td class="value">€${c.value.toLocaleString()}</td>
+                    <td>
+                      ${c.excluded ? '<span class="tag">No Trailer</span>' : ''}
+                      ${c.high_value ? '<span class="tag highlight">High Value</span>' : ''}
+                      ${c.fragile ? '<span class="tag">Fragile</span>' : ''}
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          ` : '<div class="empty-state">No cargo data yet.</div>'}
+        </div>
+      `
+    }
+
+    function showCompanyList() {
+      companyDetail.style.display = 'none'
+      content.style.display = 'block'
+      window.location.hash = ''
+      renderCompanyList(searchInput.value)
+    }
+
+    function handleHashChange() {
+      const hash = window.location.hash
+      if (hash.startsWith('#company-')) {
+        const companyId = parseInt(hash.replace('#company-', ''))
+        if (companyId) showCompanyDetail(companyId)
+      } else {
+        showCompanyList()
+      }
+    }
+
+    async function init() {
+      try {
+        data = await loadAllData()
+        lookups = buildLookups(data)
+
+        renderCompanyList()
+
+        searchInput.addEventListener('input', () => {
+          renderCompanyList(searchInput.value)
+        })
+
+        backLink.addEventListener('click', (e) => {
+          e.preventDefault()
+          showCompanyList()
+        })
+
+        window.addEventListener('hashchange', handleHashChange)
+        handleHashChange()
+
+      } catch (err) {
+        console.error('Failed to initialize:', err)
+        content.innerHTML = '<div class="empty-state">Failed to load data.</div>'
+      }
+    }
+
+    init()
+  </script>
+</body>
+</html>

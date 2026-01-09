@@ -32,6 +32,8 @@ export interface CargoTypeTable {
   name: string
   value: number
   excluded: boolean
+  high_value: boolean
+  fragile: boolean
 }
 
 export interface TrailerTypeTable {

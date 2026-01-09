@@ -1,0 +1,8032 @@
+[
+  {
+    "cityId": 1,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 1,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 1,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 1,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 1,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 1,
+    "companyId": 6,
+    "count": 1
+  },
+  {
+    "cityId": 1,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 8,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 8,
+    "companyId": 9,
+    "count": 1
+  },
+  {
+    "cityId": 8,
+    "companyId": 81,
+    "count": 1
+  },
+  {
+    "cityId": 8,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 8,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 8,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 8,
+    "companyId": 189,
+    "count": 1
+  },
+  {
+    "cityId": 10,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 10,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 10,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 10,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 10,
+    "companyId": 117,
+    "count": 1
+  },
+  {
+    "cityId": 10,
+    "companyId": 187,
+    "count": 1
+  },
+  {
+    "cityId": 11,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 11,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 11,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 11,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 11,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 11,
+    "companyId": 188,
+    "count": 1
+  },
+  {
+    "cityId": 12,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 12,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 12,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 12,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 13,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 13,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 13,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 13,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 13,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 15,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 15,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 15,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 15,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 16,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 16,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 16,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 16,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 17,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 17,
+    "companyId": 9,
+    "count": 1
+  },
+  {
+    "cityId": 17,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 18,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 18,
+    "companyId": 6,
+    "count": 1
+  },
+  {
+    "cityId": 18,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 18,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 18,
+    "companyId": 187,
+    "count": 1
+  },
+  {
+    "cityId": 19,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 19,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 19,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 19,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 19,
+    "companyId": 81,
+    "count": 1
+  },
+  {
+    "cityId": 19,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 20,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 20,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 20,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 20,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 20,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 20,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 20,
+    "companyId": 187,
+    "count": 1
+  },
+  {
+    "cityId": 20,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 21,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 21,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 21,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 21,
+    "companyId": 161,
+    "count": 1
+  },
+  {
+    "cityId": 21,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 22,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 22,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 22,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 22,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 22,
+    "companyId": 116,
+    "count": 1
+  },
+  {
+    "cityId": 22,
+    "companyId": 188,
+    "count": 1
+  },
+  {
+    "cityId": 23,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 23,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 23,
+    "companyId": 6,
+    "count": 1
+  },
+  {
+    "cityId": 23,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 23,
+    "companyId": 110,
+    "count": 1
+  },
+  {
+    "cityId": 23,
+    "companyId": 229,
+    "count": 1
+  },
+  {
+    "cityId": 25,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 25,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 25,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 25,
+    "companyId": 116,
+    "count": 1
+  },
+  {
+    "cityId": 26,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 26,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 26,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 26,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 27,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 27,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 27,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 28,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 28,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 28,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 29,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 29,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 29,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 29,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 30,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 30,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 30,
+    "companyId": 30,
+    "count": 1
+  },
+  {
+    "cityId": 30,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 30,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 31,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 31,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 31,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 31,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 32,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 32,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 32,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 32,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 33,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 33,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 33,
+    "companyId": 30,
+    "count": 1
+  },
+  {
+    "cityId": 33,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 34,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 34,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 34,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 35,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 35,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 35,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 36,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 36,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 36,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 36,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 37,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 37,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 37,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 37,
+    "companyId": 116,
+    "count": 1
+  },
+  {
+    "cityId": 37,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 38,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 38,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 38,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 38,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 38,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 38,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 38,
+    "companyId": 186,
+    "count": 1
+  },
+  {
+    "cityId": 38,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 39,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 39,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 39,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 39,
+    "companyId": 81,
+    "count": 1
+  },
+  {
+    "cityId": 39,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 40,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 40,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 40,
+    "companyId": 81,
+    "count": 1
+  },
+  {
+    "cityId": 40,
+    "companyId": 110,
+    "count": 1
+  },
+  {
+    "cityId": 40,
+    "companyId": 229,
+    "count": 1
+  },
+  {
+    "cityId": 43,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 43,
+    "companyId": 48,
+    "count": 1
+  },
+  {
+    "cityId": 43,
+    "companyId": 65,
+    "count": 1
+  },
+  {
+    "cityId": 43,
+    "companyId": 70,
+    "count": 1
+  },
+  {
+    "cityId": 43,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 43,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 43,
+    "companyId": 162,
+    "count": 1
+  },
+  {
+    "cityId": 43,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 43,
+    "companyId": 219,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 20,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 65,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 69,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 71,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 134,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 183,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 45,
+    "companyId": 219,
+    "count": 1
+  },
+  {
+    "cityId": 46,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 46,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 46,
+    "companyId": 65,
+    "count": 1
+  },
+  {
+    "cityId": 46,
+    "companyId": 89,
+    "count": 1
+  },
+  {
+    "cityId": 46,
+    "companyId": 112,
+    "count": 1
+  },
+  {
+    "cityId": 46,
+    "companyId": 140,
+    "count": 1
+  },
+  {
+    "cityId": 46,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 46,
+    "companyId": 203,
+    "count": 1
+  },
+  {
+    "cityId": 46,
+    "companyId": 230,
+    "count": 1
+  },
+  {
+    "cityId": 47,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 47,
+    "companyId": 20,
+    "count": 1
+  },
+  {
+    "cityId": 47,
+    "companyId": 162,
+    "count": 1
+  },
+  {
+    "cityId": 47,
+    "companyId": 183,
+    "count": 1
+  },
+  {
+    "cityId": 47,
+    "companyId": 203,
+    "count": 1
+  },
+  {
+    "cityId": 47,
+    "companyId": 213,
+    "count": 1
+  },
+  {
+    "cityId": 48,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 48,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 48,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 48,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 48,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 48,
+    "companyId": 66,
+    "count": 1
+  },
+  {
+    "cityId": 48,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 50,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 50,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 50,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 50,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 50,
+    "companyId": 123,
+    "count": 1
+  },
+  {
+    "cityId": 50,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 51,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 51,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 51,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 51,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 51,
+    "companyId": 191,
+    "count": 1
+  },
+  {
+    "cityId": 52,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 52,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 52,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 52,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 52,
+    "companyId": 45,
+    "count": 1
+  },
+  {
+    "cityId": 53,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 53,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 53,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 53,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 54,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 54,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 54,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 54,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 55,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 55,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 55,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 55,
+    "companyId": 186,
+    "count": 1
+  },
+  {
+    "cityId": 55,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 56,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 56,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 56,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 56,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 57,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 57,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 57,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 57,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 58,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 58,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 58,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 59,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 59,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 59,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 59,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 60,
+    "companyId": 5,
+    "count": 1
+  },
+  {
+    "cityId": 60,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 60,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 60,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 61,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 61,
+    "companyId": 6,
+    "count": 1
+  },
+  {
+    "cityId": 61,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 61,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 64,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 64,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 64,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 64,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 64,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 64,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 65,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 65,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 65,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 66,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 66,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 66,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 66,
+    "companyId": 81,
+    "count": 1
+  },
+  {
+    "cityId": 66,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 66,
+    "companyId": 207,
+    "count": 1
+  },
+  {
+    "cityId": 67,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 67,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 67,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 67,
+    "companyId": 81,
+    "count": 1
+  },
+  {
+    "cityId": 68,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 68,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 68,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 68,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 69,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 69,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 69,
+    "companyId": 30,
+    "count": 1
+  },
+  {
+    "cityId": 70,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 70,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 70,
+    "companyId": 30,
+    "count": 1
+  },
+  {
+    "cityId": 70,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 71,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 71,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 71,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 72,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 72,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 72,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 72,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 73,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 73,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 73,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 73,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 74,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 74,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 74,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 75,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 75,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 75,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 76,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 76,
+    "companyId": 9,
+    "count": 1
+  },
+  {
+    "cityId": 76,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 76,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 77,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 77,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 77,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 77,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 78,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 78,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 78,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 78,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 79,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 79,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 79,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 79,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 80,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 80,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 80,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 82,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 82,
+    "companyId": 30,
+    "count": 1
+  },
+  {
+    "cityId": 82,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 82,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 83,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 83,
+    "companyId": 52,
+    "count": 1
+  },
+  {
+    "cityId": 83,
+    "companyId": 70,
+    "count": 1
+  },
+  {
+    "cityId": 83,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 83,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 83,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 83,
+    "companyId": 230,
+    "count": 1
+  },
+  {
+    "cityId": 84,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 85,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 86,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 86,
+    "companyId": 9,
+    "count": 1
+  },
+  {
+    "cityId": 86,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 87,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 87,
+    "companyId": 30,
+    "count": 1
+  },
+  {
+    "cityId": 87,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 87,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 88,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 88,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 88,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 89,
+    "companyId": 9,
+    "count": 1
+  },
+  {
+    "cityId": 89,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 89,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 89,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 90,
+    "companyId": 9,
+    "count": 1
+  },
+  {
+    "cityId": 90,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 90,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 90,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 91,
+    "companyId": 9,
+    "count": 1
+  },
+  {
+    "cityId": 91,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 91,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 91,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 93,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 93,
+    "companyId": 39,
+    "count": 1
+  },
+  {
+    "cityId": 93,
+    "companyId": 121,
+    "count": 1
+  },
+  {
+    "cityId": 93,
+    "companyId": 187,
+    "count": 1
+  },
+  {
+    "cityId": 93,
+    "companyId": 197,
+    "count": 1
+  },
+  {
+    "cityId": 94,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 94,
+    "companyId": 21,
+    "count": 1
+  },
+  {
+    "cityId": 94,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 94,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 94,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 95,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 95,
+    "companyId": 30,
+    "count": 1
+  },
+  {
+    "cityId": 95,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 95,
+    "companyId": 188,
+    "count": 1
+  },
+  {
+    "cityId": 97,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 97,
+    "companyId": 33,
+    "count": 1
+  },
+  {
+    "cityId": 97,
+    "companyId": 92,
+    "count": 1
+  },
+  {
+    "cityId": 97,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 98,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 98,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 98,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 98,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 99,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 99,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 99,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 100,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 100,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 100,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 101,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 101,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 101,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 101,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 101,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 102,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 102,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 102,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 102,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 103,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 103,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 103,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 104,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 104,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 104,
+    "companyId": 33,
+    "count": 1
+  },
+  {
+    "cityId": 104,
+    "companyId": 48,
+    "count": 1
+  },
+  {
+    "cityId": 104,
+    "companyId": 161,
+    "count": 1
+  },
+  {
+    "cityId": 104,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 105,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 105,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 105,
+    "companyId": 113,
+    "count": 1
+  },
+  {
+    "cityId": 105,
+    "companyId": 138,
+    "count": 1
+  },
+  {
+    "cityId": 105,
+    "companyId": 144,
+    "count": 1
+  },
+  {
+    "cityId": 105,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 106,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 106,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 106,
+    "companyId": 80,
+    "count": 1
+  },
+  {
+    "cityId": 106,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 106,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 106,
+    "companyId": 144,
+    "count": 1
+  },
+  {
+    "cityId": 107,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 107,
+    "companyId": 47,
+    "count": 1
+  },
+  {
+    "cityId": 107,
+    "companyId": 67,
+    "count": 1
+  },
+  {
+    "cityId": 107,
+    "companyId": 113,
+    "count": 1
+  },
+  {
+    "cityId": 107,
+    "companyId": 138,
+    "count": 1
+  },
+  {
+    "cityId": 107,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 108,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 108,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 108,
+    "companyId": 41,
+    "count": 1
+  },
+  {
+    "cityId": 108,
+    "companyId": 144,
+    "count": 1
+  },
+  {
+    "cityId": 108,
+    "companyId": 235,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 45,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 47,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 67,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 80,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 108,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 109,
+    "companyId": 144,
+    "count": 1
+  },
+  {
+    "cityId": 110,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 110,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 110,
+    "companyId": 80,
+    "count": 1
+  },
+  {
+    "cityId": 110,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 110,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 110,
+    "companyId": 235,
+    "count": 1
+  },
+  {
+    "cityId": 111,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 111,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 111,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 111,
+    "companyId": 138,
+    "count": 1
+  },
+  {
+    "cityId": 111,
+    "companyId": 144,
+    "count": 1
+  },
+  {
+    "cityId": 114,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 114,
+    "companyId": 33,
+    "count": 1
+  },
+  {
+    "cityId": 114,
+    "companyId": 163,
+    "count": 1
+  },
+  {
+    "cityId": 114,
+    "companyId": 181,
+    "count": 1
+  },
+  {
+    "cityId": 115,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 115,
+    "companyId": 139,
+    "count": 1
+  },
+  {
+    "cityId": 115,
+    "companyId": 163,
+    "count": 1
+  },
+  {
+    "cityId": 115,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 115,
+    "companyId": 214,
+    "count": 1
+  },
+  {
+    "cityId": 118,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 118,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 118,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 118,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 119,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 119,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 119,
+    "companyId": 33,
+    "count": 1
+  },
+  {
+    "cityId": 119,
+    "companyId": 38,
+    "count": 1
+  },
+  {
+    "cityId": 119,
+    "companyId": 60,
+    "count": 1
+  },
+  {
+    "cityId": 119,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 119,
+    "companyId": 141,
+    "count": 1
+  },
+  {
+    "cityId": 119,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 120,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 120,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 120,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 121,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 121,
+    "companyId": 44,
+    "count": 1
+  },
+  {
+    "cityId": 121,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 121,
+    "companyId": 109,
+    "count": 1
+  },
+  {
+    "cityId": 121,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 121,
+    "companyId": 158,
+    "count": 1
+  },
+  {
+    "cityId": 121,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 122,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 122,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 122,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 123,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 123,
+    "companyId": 47,
+    "count": 1
+  },
+  {
+    "cityId": 123,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 123,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 123,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 123,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 124,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 124,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 124,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 124,
+    "companyId": 235,
+    "count": 1
+  },
+  {
+    "cityId": 125,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 125,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 125,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 126,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 126,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 126,
+    "companyId": 45,
+    "count": 1
+  },
+  {
+    "cityId": 126,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 126,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 126,
+    "companyId": 138,
+    "count": 1
+  },
+  {
+    "cityId": 126,
+    "companyId": 231,
+    "count": 1
+  },
+  {
+    "cityId": 127,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 127,
+    "companyId": 29,
+    "count": 1
+  },
+  {
+    "cityId": 127,
+    "companyId": 105,
+    "count": 1
+  },
+  {
+    "cityId": 127,
+    "companyId": 195,
+    "count": 1
+  },
+  {
+    "cityId": 128,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 128,
+    "companyId": 29,
+    "count": 1
+  },
+  {
+    "cityId": 128,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 128,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 128,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 129,
+    "companyId": 16,
+    "count": 1
+  },
+  {
+    "cityId": 129,
+    "companyId": 18,
+    "count": 1
+  },
+  {
+    "cityId": 129,
+    "companyId": 77,
+    "count": 1
+  },
+  {
+    "cityId": 129,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 129,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 129,
+    "companyId": 208,
+    "count": 1
+  },
+  {
+    "cityId": 129,
+    "companyId": 220,
+    "count": 1
+  },
+  {
+    "cityId": 130,
+    "companyId": 16,
+    "count": 1
+  },
+  {
+    "cityId": 130,
+    "companyId": 55,
+    "count": 1
+  },
+  {
+    "cityId": 130,
+    "companyId": 64,
+    "count": 1
+  },
+  {
+    "cityId": 130,
+    "companyId": 77,
+    "count": 1
+  },
+  {
+    "cityId": 130,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 130,
+    "companyId": 171,
+    "count": 1
+  },
+  {
+    "cityId": 130,
+    "companyId": 182,
+    "count": 1
+  },
+  {
+    "cityId": 131,
+    "companyId": 16,
+    "count": 1
+  },
+  {
+    "cityId": 131,
+    "companyId": 18,
+    "count": 1
+  },
+  {
+    "cityId": 131,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 131,
+    "companyId": 99,
+    "count": 1
+  },
+  {
+    "cityId": 131,
+    "companyId": 101,
+    "count": 1
+  },
+  {
+    "cityId": 131,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 131,
+    "companyId": 166,
+    "count": 1
+  },
+  {
+    "cityId": 131,
+    "companyId": 212,
+    "count": 1
+  },
+  {
+    "cityId": 131,
+    "companyId": 220,
+    "count": 1
+  },
+  {
+    "cityId": 132,
+    "companyId": 16,
+    "count": 1
+  },
+  {
+    "cityId": 132,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 132,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 132,
+    "companyId": 77,
+    "count": 1
+  },
+  {
+    "cityId": 132,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 132,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 132,
+    "companyId": 229,
+    "count": 1
+  },
+  {
+    "cityId": 133,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 133,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 133,
+    "companyId": 99,
+    "count": 1
+  },
+  {
+    "cityId": 133,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 133,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 133,
+    "companyId": 171,
+    "count": 1
+  },
+  {
+    "cityId": 133,
+    "companyId": 220,
+    "count": 1
+  },
+  {
+    "cityId": 134,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 134,
+    "companyId": 166,
+    "count": 1
+  },
+  {
+    "cityId": 134,
+    "companyId": 182,
+    "count": 1
+  },
+  {
+    "cityId": 135,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 135,
+    "companyId": 20,
+    "count": 1
+  },
+  {
+    "cityId": 135,
+    "companyId": 23,
+    "count": 1
+  },
+  {
+    "cityId": 136,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 136,
+    "companyId": 107,
+    "count": 1
+  },
+  {
+    "cityId": 136,
+    "companyId": 140,
+    "count": 1
+  },
+  {
+    "cityId": 136,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 136,
+    "companyId": 198,
+    "count": 1
+  },
+  {
+    "cityId": 136,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 136,
+    "companyId": 229,
+    "count": 1
+  },
+  {
+    "cityId": 138,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 138,
+    "companyId": 53,
+    "count": 1
+  },
+  {
+    "cityId": 138,
+    "companyId": 112,
+    "count": 1
+  },
+  {
+    "cityId": 138,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 138,
+    "companyId": 134,
+    "count": 1
+  },
+  {
+    "cityId": 138,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 138,
+    "companyId": 219,
+    "count": 1
+  },
+  {
+    "cityId": 139,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 139,
+    "companyId": 48,
+    "count": 1
+  },
+  {
+    "cityId": 139,
+    "companyId": 207,
+    "count": 1
+  },
+  {
+    "cityId": 140,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 140,
+    "companyId": 52,
+    "count": 1
+  },
+  {
+    "cityId": 140,
+    "companyId": 70,
+    "count": 1
+  },
+  {
+    "cityId": 140,
+    "companyId": 207,
+    "count": 1
+  },
+  {
+    "cityId": 140,
+    "companyId": 219,
+    "count": 1
+  },
+  {
+    "cityId": 141,
+    "companyId": 18,
+    "count": 1
+  },
+  {
+    "cityId": 141,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 141,
+    "companyId": 171,
+    "count": 1
+  },
+  {
+    "cityId": 141,
+    "companyId": 211,
+    "count": 1
+  },
+  {
+    "cityId": 141,
+    "companyId": 220,
+    "count": 1
+  },
+  {
+    "cityId": 142,
+    "companyId": 18,
+    "count": 1
+  },
+  {
+    "cityId": 142,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 142,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 142,
+    "companyId": 136,
+    "count": 1
+  },
+  {
+    "cityId": 142,
+    "companyId": 164,
+    "count": 1
+  },
+  {
+    "cityId": 142,
+    "companyId": 166,
+    "count": 1
+  },
+  {
+    "cityId": 143,
+    "companyId": 18,
+    "count": 1
+  },
+  {
+    "cityId": 143,
+    "companyId": 55,
+    "count": 1
+  },
+  {
+    "cityId": 143,
+    "companyId": 74,
+    "count": 1
+  },
+  {
+    "cityId": 143,
+    "companyId": 99,
+    "count": 1
+  },
+  {
+    "cityId": 144,
+    "companyId": 18,
+    "count": 1
+  },
+  {
+    "cityId": 144,
+    "companyId": 76,
+    "count": 1
+  },
+  {
+    "cityId": 144,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 144,
+    "companyId": 211,
+    "count": 1
+  },
+  {
+    "cityId": 144,
+    "companyId": 220,
+    "count": 1
+  },
+  {
+    "cityId": 145,
+    "companyId": 18,
+    "count": 1
+  },
+  {
+    "cityId": 145,
+    "companyId": 55,
+    "count": 1
+  },
+  {
+    "cityId": 145,
+    "companyId": 64,
+    "count": 1
+  },
+  {
+    "cityId": 145,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 145,
+    "companyId": 136,
+    "count": 1
+  },
+  {
+    "cityId": 145,
+    "companyId": 198,
+    "count": 1
+  },
+  {
+    "cityId": 145,
+    "companyId": 212,
+    "count": 1
+  },
+  {
+    "cityId": 146,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 146,
+    "companyId": 42,
+    "count": 1
+  },
+  {
+    "cityId": 146,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 146,
+    "companyId": 116,
+    "count": 1
+  },
+  {
+    "cityId": 146,
+    "companyId": 121,
+    "count": 1
+  },
+  {
+    "cityId": 146,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 146,
+    "companyId": 206,
+    "count": 1
+  },
+  {
+    "cityId": 146,
+    "companyId": 223,
+    "count": 1
+  },
+  {
+    "cityId": 147,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 147,
+    "companyId": 33,
+    "count": 1
+  },
+  {
+    "cityId": 147,
+    "companyId": 92,
+    "count": 1
+  },
+  {
+    "cityId": 147,
+    "companyId": 227,
+    "count": 1
+  },
+  {
+    "cityId": 148,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 148,
+    "companyId": 33,
+    "count": 1
+  },
+  {
+    "cityId": 148,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 148,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 148,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 148,
+    "companyId": 179,
+    "count": 1
+  },
+  {
+    "cityId": 148,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 148,
+    "companyId": 227,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 92,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 142,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 164,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 179,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 183,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 186,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 206,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 223,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 227,
+    "count": 1
+  },
+  {
+    "cityId": 149,
+    "companyId": 230,
+    "count": 1
+  },
+  {
+    "cityId": 150,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 150,
+    "companyId": 48,
+    "count": 1
+  },
+  {
+    "cityId": 150,
+    "companyId": 121,
+    "count": 1
+  },
+  {
+    "cityId": 150,
+    "companyId": 164,
+    "count": 1
+  },
+  {
+    "cityId": 150,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 150,
+    "companyId": 206,
+    "count": 1
+  },
+  {
+    "cityId": 150,
+    "companyId": 214,
+    "count": 1
+  },
+  {
+    "cityId": 152,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 152,
+    "companyId": 33,
+    "count": 1
+  },
+  {
+    "cityId": 152,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 152,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 152,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 153,
+    "companyId": 20,
+    "count": 1
+  },
+  {
+    "cityId": 153,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 154,
+    "companyId": 20,
+    "count": 1
+  },
+  {
+    "cityId": 154,
+    "companyId": 56,
+    "count": 1
+  },
+  {
+    "cityId": 154,
+    "companyId": 89,
+    "count": 1
+  },
+  {
+    "cityId": 154,
+    "companyId": 134,
+    "count": 1
+  },
+  {
+    "cityId": 154,
+    "companyId": 203,
+    "count": 1
+  },
+  {
+    "cityId": 155,
+    "companyId": 20,
+    "count": 1
+  },
+  {
+    "cityId": 155,
+    "companyId": 89,
+    "count": 1
+  },
+  {
+    "cityId": 155,
+    "companyId": 229,
+    "count": 1
+  },
+  {
+    "cityId": 157,
+    "companyId": 20,
+    "count": 1
+  },
+  {
+    "cityId": 157,
+    "companyId": 112,
+    "count": 1
+  },
+  {
+    "cityId": 157,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 157,
+    "companyId": 162,
+    "count": 1
+  },
+  {
+    "cityId": 157,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 158,
+    "companyId": 21,
+    "count": 1
+  },
+  {
+    "cityId": 158,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 158,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 158,
+    "companyId": 187,
+    "count": 1
+  },
+  {
+    "cityId": 159,
+    "companyId": 21,
+    "count": 1
+  },
+  {
+    "cityId": 159,
+    "companyId": 39,
+    "count": 1
+  },
+  {
+    "cityId": 159,
+    "companyId": 50,
+    "count": 1
+  },
+  {
+    "cityId": 159,
+    "companyId": 59,
+    "count": 1
+  },
+  {
+    "cityId": 159,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 159,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 22,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 29,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 34,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 36,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 152,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 160,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 22,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 29,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 120,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 145,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 195,
+    "count": 1
+  },
+  {
+    "cityId": 161,
+    "companyId": 222,
+    "count": 1
+  },
+  {
+    "cityId": 162,
+    "companyId": 22,
+    "count": 1
+  },
+  {
+    "cityId": 162,
+    "companyId": 34,
+    "count": 1
+  },
+  {
+    "cityId": 162,
+    "companyId": 130,
+    "count": 1
+  },
+  {
+    "cityId": 162,
+    "companyId": 152,
+    "count": 1
+  },
+  {
+    "cityId": 162,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 162,
+    "companyId": 222,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 22,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 34,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 94,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 133,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 152,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 180,
+    "count": 1
+  },
+  {
+    "cityId": 163,
+    "companyId": 222,
+    "count": 1
+  },
+  {
+    "cityId": 164,
+    "companyId": 22,
+    "count": 1
+  },
+  {
+    "cityId": 164,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 164,
+    "companyId": 35,
+    "count": 1
+  },
+  {
+    "cityId": 164,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 164,
+    "companyId": 61,
+    "count": 1
+  },
+  {
+    "cityId": 164,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 164,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 165,
+    "companyId": 22,
+    "count": 1
+  },
+  {
+    "cityId": 165,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 165,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 165,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 165,
+    "companyId": 152,
+    "count": 1
+  },
+  {
+    "cityId": 165,
+    "companyId": 159,
+    "count": 1
+  },
+  {
+    "cityId": 165,
+    "companyId": 228,
+    "count": 1
+  },
+  {
+    "cityId": 166,
+    "companyId": 23,
+    "count": 1
+  },
+  {
+    "cityId": 166,
+    "companyId": 65,
+    "count": 1
+  },
+  {
+    "cityId": 166,
+    "companyId": 89,
+    "count": 1
+  },
+  {
+    "cityId": 167,
+    "companyId": 23,
+    "count": 1
+  },
+  {
+    "cityId": 167,
+    "companyId": 89,
+    "count": 1
+  },
+  {
+    "cityId": 167,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 168,
+    "companyId": 23,
+    "count": 1
+  },
+  {
+    "cityId": 168,
+    "companyId": 69,
+    "count": 1
+  },
+  {
+    "cityId": 168,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 168,
+    "companyId": 162,
+    "count": 1
+  },
+  {
+    "cityId": 168,
+    "companyId": 198,
+    "count": 1
+  },
+  {
+    "cityId": 168,
+    "companyId": 219,
+    "count": 1
+  },
+  {
+    "cityId": 169,
+    "companyId": 24,
+    "count": 1
+  },
+  {
+    "cityId": 169,
+    "companyId": 25,
+    "count": 1
+  },
+  {
+    "cityId": 169,
+    "companyId": 35,
+    "count": 1
+  },
+  {
+    "cityId": 169,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 169,
+    "companyId": 159,
+    "count": 1
+  },
+  {
+    "cityId": 169,
+    "companyId": 222,
+    "count": 1
+  },
+  {
+    "cityId": 170,
+    "companyId": 26,
+    "count": 1
+  },
+  {
+    "cityId": 170,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 170,
+    "companyId": 105,
+    "count": 1
+  },
+  {
+    "cityId": 170,
+    "companyId": 126,
+    "count": 1
+  },
+  {
+    "cityId": 170,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 170,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 170,
+    "companyId": 229,
+    "count": 1
+  },
+  {
+    "cityId": 171,
+    "companyId": 26,
+    "count": 1
+  },
+  {
+    "cityId": 171,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 171,
+    "companyId": 40,
+    "count": 1
+  },
+  {
+    "cityId": 171,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 171,
+    "companyId": 143,
+    "count": 1
+  },
+  {
+    "cityId": 171,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 171,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 172,
+    "companyId": 26,
+    "count": 1
+  },
+  {
+    "cityId": 175,
+    "companyId": 26,
+    "count": 1
+  },
+  {
+    "cityId": 175,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 175,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 175,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 175,
+    "companyId": 154,
+    "count": 1
+  },
+  {
+    "cityId": 175,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 176,
+    "companyId": 26,
+    "count": 1
+  },
+  {
+    "cityId": 176,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 176,
+    "companyId": 157,
+    "count": 1
+  },
+  {
+    "cityId": 176,
+    "companyId": 177,
+    "count": 1
+  },
+  {
+    "cityId": 178,
+    "companyId": 27,
+    "count": 1
+  },
+  {
+    "cityId": 179,
+    "companyId": 27,
+    "count": 1
+  },
+  {
+    "cityId": 179,
+    "companyId": 39,
+    "count": 1
+  },
+  {
+    "cityId": 179,
+    "companyId": 141,
+    "count": 1
+  },
+  {
+    "cityId": 179,
+    "companyId": 197,
+    "count": 1
+  },
+  {
+    "cityId": 180,
+    "companyId": 27,
+    "count": 1
+  },
+  {
+    "cityId": 180,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 180,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 180,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 180,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 180,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 180,
+    "companyId": 197,
+    "count": 1
+  },
+  {
+    "cityId": 181,
+    "companyId": 28,
+    "count": 1
+  },
+  {
+    "cityId": 181,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 182,
+    "companyId": 29,
+    "count": 1
+  },
+  {
+    "cityId": 182,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 182,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 182,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 183,
+    "companyId": 29,
+    "count": 1
+  },
+  {
+    "cityId": 183,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 183,
+    "companyId": 123,
+    "count": 1
+  },
+  {
+    "cityId": 183,
+    "companyId": 195,
+    "count": 1
+  },
+  {
+    "cityId": 183,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 183,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 184,
+    "companyId": 31,
+    "count": 1
+  },
+  {
+    "cityId": 184,
+    "companyId": 108,
+    "count": 1
+  },
+  {
+    "cityId": 184,
+    "companyId": 158,
+    "count": 1
+  },
+  {
+    "cityId": 184,
+    "companyId": 169,
+    "count": 1
+  },
+  {
+    "cityId": 184,
+    "companyId": 231,
+    "count": 1
+  },
+  {
+    "cityId": 185,
+    "companyId": 31,
+    "count": 1
+  },
+  {
+    "cityId": 185,
+    "companyId": 41,
+    "count": 1
+  },
+  {
+    "cityId": 185,
+    "companyId": 80,
+    "count": 1
+  },
+  {
+    "cityId": 185,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 185,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 185,
+    "companyId": 169,
+    "count": 1
+  },
+  {
+    "cityId": 185,
+    "companyId": 235,
+    "count": 1
+  },
+  {
+    "cityId": 186,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 186,
+    "companyId": 85,
+    "count": 1
+  },
+  {
+    "cityId": 186,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 186,
+    "companyId": 153,
+    "count": 1
+  },
+  {
+    "cityId": 186,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 187,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 187,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 187,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 187,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 187,
+    "companyId": 238,
+    "count": 1
+  },
+  {
+    "cityId": 187,
+    "companyId": 239,
+    "count": 1
+  },
+  {
+    "cityId": 188,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 188,
+    "companyId": 145,
+    "count": 1
+  },
+  {
+    "cityId": 188,
+    "companyId": 177,
+    "count": 1
+  },
+  {
+    "cityId": 188,
+    "companyId": 195,
+    "count": 1
+  },
+  {
+    "cityId": 189,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 189,
+    "companyId": 105,
+    "count": 1
+  },
+  {
+    "cityId": 189,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 189,
+    "companyId": 177,
+    "count": 1
+  },
+  {
+    "cityId": 189,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 190,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 190,
+    "companyId": 46,
+    "count": 1
+  },
+  {
+    "cityId": 190,
+    "companyId": 80,
+    "count": 1
+  },
+  {
+    "cityId": 190,
+    "companyId": 108,
+    "count": 1
+  },
+  {
+    "cityId": 190,
+    "companyId": 113,
+    "count": 1
+  },
+  {
+    "cityId": 190,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 190,
+    "companyId": 138,
+    "count": 1
+  },
+  {
+    "cityId": 190,
+    "companyId": 144,
+    "count": 1
+  },
+  {
+    "cityId": 191,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 191,
+    "companyId": 41,
+    "count": 1
+  },
+  {
+    "cityId": 191,
+    "companyId": 46,
+    "count": 1
+  },
+  {
+    "cityId": 191,
+    "companyId": 80,
+    "count": 1
+  },
+  {
+    "cityId": 191,
+    "companyId": 138,
+    "count": 1
+  },
+  {
+    "cityId": 191,
+    "companyId": 144,
+    "count": 1
+  },
+  {
+    "cityId": 191,
+    "companyId": 235,
+    "count": 1
+  },
+  {
+    "cityId": 195,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 195,
+    "companyId": 112,
+    "count": 1
+  },
+  {
+    "cityId": 195,
+    "companyId": 140,
+    "count": 1
+  },
+  {
+    "cityId": 195,
+    "companyId": 203,
+    "count": 1
+  },
+  {
+    "cityId": 196,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 196,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 196,
+    "companyId": 125,
+    "count": 1
+  },
+  {
+    "cityId": 196,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 197,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 197,
+    "companyId": 105,
+    "count": 1
+  },
+  {
+    "cityId": 197,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 197,
+    "companyId": 154,
+    "count": 1
+  },
+  {
+    "cityId": 197,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 199,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 199,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 199,
+    "companyId": 153,
+    "count": 1
+  },
+  {
+    "cityId": 199,
+    "companyId": 157,
+    "count": 1
+  },
+  {
+    "cityId": 200,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 200,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 200,
+    "companyId": 124,
+    "count": 1
+  },
+  {
+    "cityId": 200,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 200,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 200,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 200,
+    "companyId": 157,
+    "count": 1
+  },
+  {
+    "cityId": 202,
+    "companyId": 33,
+    "count": 1
+  },
+  {
+    "cityId": 202,
+    "companyId": 83,
+    "count": 1
+  },
+  {
+    "cityId": 202,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 202,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 202,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 203,
+    "companyId": 33,
+    "count": 1
+  },
+  {
+    "cityId": 203,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 203,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 34,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 35,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 104,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 130,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 152,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 165,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 196,
+    "count": 1
+  },
+  {
+    "cityId": 204,
+    "companyId": 236,
+    "count": 1
+  },
+  {
+    "cityId": 205,
+    "companyId": 35,
+    "count": 1
+  },
+  {
+    "cityId": 205,
+    "companyId": 91,
+    "count": 1
+  },
+  {
+    "cityId": 206,
+    "companyId": 35,
+    "count": 1
+  },
+  {
+    "cityId": 206,
+    "companyId": 63,
+    "count": 1
+  },
+  {
+    "cityId": 206,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 206,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 207,
+    "companyId": 35,
+    "count": 1
+  },
+  {
+    "cityId": 207,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 207,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 207,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 207,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 207,
+    "companyId": 222,
+    "count": 1
+  },
+  {
+    "cityId": 207,
+    "companyId": 239,
+    "count": 1
+  },
+  {
+    "cityId": 208,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 208,
+    "companyId": 35,
+    "count": 1
+  },
+  {
+    "cityId": 208,
+    "companyId": 36,
+    "count": 1
+  },
+  {
+    "cityId": 208,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 209,
+    "companyId": 35,
+    "count": 1
+  },
+  {
+    "cityId": 209,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 209,
+    "companyId": 148,
+    "count": 1
+  },
+  {
+    "cityId": 209,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 209,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 210,
+    "companyId": 36,
+    "count": 1
+  },
+  {
+    "cityId": 210,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 210,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 210,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 210,
+    "companyId": 195,
+    "count": 1
+  },
+  {
+    "cityId": 211,
+    "companyId": 36,
+    "count": 1
+  },
+  {
+    "cityId": 211,
+    "companyId": 63,
+    "count": 1
+  },
+  {
+    "cityId": 211,
+    "companyId": 94,
+    "count": 1
+  },
+  {
+    "cityId": 211,
+    "companyId": 95,
+    "count": 1
+  },
+  {
+    "cityId": 211,
+    "companyId": 180,
+    "count": 1
+  },
+  {
+    "cityId": 212,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 212,
+    "companyId": 94,
+    "count": 1
+  },
+  {
+    "cityId": 212,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 212,
+    "companyId": 132,
+    "count": 1
+  },
+  {
+    "cityId": 212,
+    "companyId": 133,
+    "count": 1
+  },
+  {
+    "cityId": 212,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 212,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 213,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 213,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 213,
+    "companyId": 180,
+    "count": 1
+  },
+  {
+    "cityId": 213,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 214,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 214,
+    "companyId": 60,
+    "count": 1
+  },
+  {
+    "cityId": 214,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 214,
+    "companyId": 95,
+    "count": 1
+  },
+  {
+    "cityId": 214,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 214,
+    "companyId": 132,
+    "count": 1
+  },
+  {
+    "cityId": 214,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 215,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 215,
+    "companyId": 95,
+    "count": 1
+  },
+  {
+    "cityId": 215,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 215,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 216,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 216,
+    "companyId": 63,
+    "count": 1
+  },
+  {
+    "cityId": 216,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 216,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 216,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 216,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 216,
+    "companyId": 159,
+    "count": 1
+  },
+  {
+    "cityId": 217,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 217,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 217,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 217,
+    "companyId": 180,
+    "count": 1
+  },
+  {
+    "cityId": 218,
+    "companyId": 37,
+    "count": 1
+  },
+  {
+    "cityId": 218,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 218,
+    "companyId": 180,
+    "count": 1
+  },
+  {
+    "cityId": 218,
+    "companyId": 222,
+    "count": 1
+  },
+  {
+    "cityId": 219,
+    "companyId": 38,
+    "count": 1
+  },
+  {
+    "cityId": 219,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 219,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 219,
+    "companyId": 139,
+    "count": 1
+  },
+  {
+    "cityId": 219,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 219,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 219,
+    "companyId": 183,
+    "count": 1
+  },
+  {
+    "cityId": 219,
+    "companyId": 215,
+    "count": 1
+  },
+  {
+    "cityId": 220,
+    "companyId": 38,
+    "count": 1
+  },
+  {
+    "cityId": 220,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 220,
+    "companyId": 139,
+    "count": 1
+  },
+  {
+    "cityId": 220,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 220,
+    "companyId": 172,
+    "count": 1
+  },
+  {
+    "cityId": 220,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 220,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 221,
+    "companyId": 39,
+    "count": 1
+  },
+  {
+    "cityId": 221,
+    "companyId": 58,
+    "count": 1
+  },
+  {
+    "cityId": 221,
+    "companyId": 92,
+    "count": 1
+  },
+  {
+    "cityId": 221,
+    "companyId": 121,
+    "count": 1
+  },
+  {
+    "cityId": 221,
+    "companyId": 187,
+    "count": 1
+  },
+  {
+    "cityId": 221,
+    "companyId": 197,
+    "count": 1
+  },
+  {
+    "cityId": 222,
+    "companyId": 39,
+    "count": 1
+  },
+  {
+    "cityId": 222,
+    "companyId": 50,
+    "count": 1
+  },
+  {
+    "cityId": 222,
+    "companyId": 92,
+    "count": 1
+  },
+  {
+    "cityId": 222,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 222,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 223,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 223,
+    "companyId": 39,
+    "count": 1
+  },
+  {
+    "cityId": 223,
+    "companyId": 57,
+    "count": 1
+  },
+  {
+    "cityId": 223,
+    "companyId": 187,
+    "count": 1
+  },
+  {
+    "cityId": 223,
+    "companyId": 197,
+    "count": 1
+  },
+  {
+    "cityId": 223,
+    "companyId": 227,
+    "count": 1
+  },
+  {
+    "cityId": 224,
+    "companyId": 39,
+    "count": 1
+  },
+  {
+    "cityId": 224,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 224,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 224,
+    "companyId": 142,
+    "count": 1
+  },
+  {
+    "cityId": 224,
+    "companyId": 186,
+    "count": 1
+  },
+  {
+    "cityId": 224,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 224,
+    "companyId": 224,
+    "count": 1
+  },
+  {
+    "cityId": 224,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 224,
+    "companyId": 227,
+    "count": 1
+  },
+  {
+    "cityId": 225,
+    "companyId": 26,
+    "count": 1
+  },
+  {
+    "cityId": 225,
+    "companyId": 40,
+    "count": 1
+  },
+  {
+    "cityId": 226,
+    "companyId": 40,
+    "count": 1
+  },
+  {
+    "cityId": 226,
+    "companyId": 105,
+    "count": 1
+  },
+  {
+    "cityId": 227,
+    "companyId": 26,
+    "count": 1
+  },
+  {
+    "cityId": 227,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 227,
+    "companyId": 40,
+    "count": 1
+  },
+  {
+    "cityId": 227,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 227,
+    "companyId": 157,
+    "count": 1
+  },
+  {
+    "cityId": 227,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 227,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 227,
+    "companyId": 232,
+    "count": 1
+  },
+  {
+    "cityId": 227,
+    "companyId": 233,
+    "count": 1
+  },
+  {
+    "cityId": 228,
+    "companyId": 40,
+    "count": 1
+  },
+  {
+    "cityId": 228,
+    "companyId": 155,
+    "count": 1
+  },
+  {
+    "cityId": 229,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 229,
+    "companyId": 40,
+    "count": 1
+  },
+  {
+    "cityId": 229,
+    "companyId": 85,
+    "count": 1
+  },
+  {
+    "cityId": 229,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 229,
+    "companyId": 125,
+    "count": 1
+  },
+  {
+    "cityId": 229,
+    "companyId": 126,
+    "count": 1
+  },
+  {
+    "cityId": 229,
+    "companyId": 154,
+    "count": 1
+  },
+  {
+    "cityId": 229,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 230,
+    "companyId": 40,
+    "count": 1
+  },
+  {
+    "cityId": 231,
+    "companyId": 40,
+    "count": 1
+  },
+  {
+    "cityId": 231,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 232,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 232,
+    "companyId": 40,
+    "count": 1
+  },
+  {
+    "cityId": 232,
+    "companyId": 85,
+    "count": 1
+  },
+  {
+    "cityId": 232,
+    "companyId": 154,
+    "count": 1
+  },
+  {
+    "cityId": 232,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 232,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 233,
+    "companyId": 42,
+    "count": 1
+  },
+  {
+    "cityId": 233,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 233,
+    "companyId": 206,
+    "count": 1
+  },
+  {
+    "cityId": 233,
+    "companyId": 223,
+    "count": 1
+  },
+  {
+    "cityId": 234,
+    "companyId": 42,
+    "count": 1
+  },
+  {
+    "cityId": 234,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 234,
+    "companyId": 116,
+    "count": 1
+  },
+  {
+    "cityId": 234,
+    "companyId": 183,
+    "count": 1
+  },
+  {
+    "cityId": 234,
+    "companyId": 206,
+    "count": 1
+  },
+  {
+    "cityId": 234,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 235,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 235,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 235,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 236,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 236,
+    "companyId": 68,
+    "count": 1
+  },
+  {
+    "cityId": 236,
+    "companyId": 141,
+    "count": 1
+  },
+  {
+    "cityId": 236,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 237,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 237,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 237,
+    "companyId": 58,
+    "count": 1
+  },
+  {
+    "cityId": 237,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 237,
+    "companyId": 135,
+    "count": 1
+  },
+  {
+    "cityId": 237,
+    "companyId": 187,
+    "count": 1
+  },
+  {
+    "cityId": 237,
+    "companyId": 206,
+    "count": 1
+  },
+  {
+    "cityId": 238,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 238,
+    "companyId": 135,
+    "count": 1
+  },
+  {
+    "cityId": 238,
+    "companyId": 205,
+    "count": 1
+  },
+  {
+    "cityId": 238,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 239,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 240,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 240,
+    "companyId": 43,
+    "count": 1
+  },
+  {
+    "cityId": 240,
+    "companyId": 60,
+    "count": 1
+  },
+  {
+    "cityId": 240,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 240,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 240,
+    "companyId": 139,
+    "count": 1
+  },
+  {
+    "cityId": 240,
+    "companyId": 199,
+    "count": 1
+  },
+  {
+    "cityId": 241,
+    "companyId": 44,
+    "count": 1
+  },
+  {
+    "cityId": 241,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 241,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 241,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 242,
+    "companyId": 44,
+    "count": 1
+  },
+  {
+    "cityId": 242,
+    "companyId": 108,
+    "count": 1
+  },
+  {
+    "cityId": 242,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 242,
+    "companyId": 138,
+    "count": 1
+  },
+  {
+    "cityId": 242,
+    "companyId": 231,
+    "count": 1
+  },
+  {
+    "cityId": 243,
+    "companyId": 48,
+    "count": 1
+  },
+  {
+    "cityId": 243,
+    "companyId": 163,
+    "count": 1
+  },
+  {
+    "cityId": 243,
+    "companyId": 183,
+    "count": 1
+  },
+  {
+    "cityId": 244,
+    "companyId": 48,
+    "count": 1
+  },
+  {
+    "cityId": 244,
+    "companyId": 65,
+    "count": 1
+  },
+  {
+    "cityId": 244,
+    "companyId": 140,
+    "count": 1
+  },
+  {
+    "cityId": 244,
+    "companyId": 229,
+    "count": 1
+  },
+  {
+    "cityId": 245,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 245,
+    "companyId": 51,
+    "count": 1
+  },
+  {
+    "cityId": 246,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 246,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 246,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 246,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 246,
+    "companyId": 201,
+    "count": 1
+  },
+  {
+    "cityId": 247,
+    "companyId": 50,
+    "count": 1
+  },
+  {
+    "cityId": 247,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 247,
+    "companyId": 197,
+    "count": 1
+  },
+  {
+    "cityId": 247,
+    "companyId": 213,
+    "count": 1
+  },
+  {
+    "cityId": 247,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 248,
+    "companyId": 3,
+    "count": 1
+  },
+  {
+    "cityId": 248,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 248,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 248,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 248,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 248,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 248,
+    "companyId": 81,
+    "count": 1
+  },
+  {
+    "cityId": 248,
+    "companyId": 123,
+    "count": 1
+  },
+  {
+    "cityId": 248,
+    "companyId": 185,
+    "count": 1
+  },
+  {
+    "cityId": 249,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 249,
+    "companyId": 82,
+    "count": 1
+  },
+  {
+    "cityId": 249,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 249,
+    "companyId": 119,
+    "count": 1
+  },
+  {
+    "cityId": 249,
+    "companyId": 161,
+    "count": 1
+  },
+  {
+    "cityId": 249,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 249,
+    "companyId": 227,
+    "count": 1
+  },
+  {
+    "cityId": 250,
+    "companyId": 50,
+    "count": 1
+  },
+  {
+    "cityId": 250,
+    "companyId": 88,
+    "count": 1
+  },
+  {
+    "cityId": 250,
+    "companyId": 111,
+    "count": 1
+  },
+  {
+    "cityId": 250,
+    "companyId": 119,
+    "count": 1
+  },
+  {
+    "cityId": 250,
+    "companyId": 141,
+    "count": 1
+  },
+  {
+    "cityId": 250,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 251,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 251,
+    "companyId": 54,
+    "count": 1
+  },
+  {
+    "cityId": 251,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 251,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 251,
+    "companyId": 136,
+    "count": 1
+  },
+  {
+    "cityId": 251,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 251,
+    "companyId": 211,
+    "count": 1
+  },
+  {
+    "cityId": 252,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 252,
+    "companyId": 55,
+    "count": 1
+  },
+  {
+    "cityId": 252,
+    "companyId": 136,
+    "count": 1
+  },
+  {
+    "cityId": 252,
+    "companyId": 147,
+    "count": 1
+  },
+  {
+    "cityId": 252,
+    "companyId": 182,
+    "count": 1
+  },
+  {
+    "cityId": 252,
+    "companyId": 211,
+    "count": 1
+  },
+  {
+    "cityId": 253,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 253,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 253,
+    "companyId": 101,
+    "count": 1
+  },
+  {
+    "cityId": 253,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 253,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 253,
+    "companyId": 164,
+    "count": 1
+  },
+  {
+    "cityId": 253,
+    "companyId": 208,
+    "count": 1
+  },
+  {
+    "cityId": 253,
+    "companyId": 211,
+    "count": 1
+  },
+  {
+    "cityId": 253,
+    "companyId": 212,
+    "count": 1
+  },
+  {
+    "cityId": 254,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 254,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 254,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 254,
+    "companyId": 141,
+    "count": 1
+  },
+  {
+    "cityId": 254,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 255,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 255,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 255,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 255,
+    "companyId": 86,
+    "count": 1
+  },
+  {
+    "cityId": 255,
+    "companyId": 198,
+    "count": 1
+  },
+  {
+    "cityId": 256,
+    "companyId": 19,
+    "count": 1
+  },
+  {
+    "cityId": 256,
+    "companyId": 51,
+    "count": 1
+  },
+  {
+    "cityId": 256,
+    "companyId": 92,
+    "count": 1
+  },
+  {
+    "cityId": 256,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 256,
+    "companyId": 121,
+    "count": 1
+  },
+  {
+    "cityId": 256,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 256,
+    "companyId": 206,
+    "count": 1
+  },
+  {
+    "cityId": 256,
+    "companyId": 227,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 52,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 134,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 140,
+    "count": 1
+  },
+  {
+    "cityId": 257,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 258,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 258,
+    "companyId": 65,
+    "count": 1
+  },
+  {
+    "cityId": 258,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 258,
+    "companyId": 161,
+    "count": 1
+  },
+  {
+    "cityId": 258,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 258,
+    "companyId": 219,
+    "count": 1
+  },
+  {
+    "cityId": 259,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 259,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 259,
+    "companyId": 112,
+    "count": 1
+  },
+  {
+    "cityId": 259,
+    "companyId": 134,
+    "count": 1
+  },
+  {
+    "cityId": 260,
+    "companyId": 49,
+    "count": 1
+  },
+  {
+    "cityId": 260,
+    "companyId": 207,
+    "count": 1
+  },
+  {
+    "cityId": 260,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 261,
+    "companyId": 52,
+    "count": 1
+  },
+  {
+    "cityId": 261,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 262,
+    "companyId": 52,
+    "count": 1
+  },
+  {
+    "cityId": 262,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 263,
+    "companyId": 52,
+    "count": 1
+  },
+  {
+    "cityId": 263,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 263,
+    "companyId": 161,
+    "count": 1
+  },
+  {
+    "cityId": 263,
+    "companyId": 207,
+    "count": 1
+  },
+  {
+    "cityId": 263,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 263,
+    "companyId": 219,
+    "count": 1
+  },
+  {
+    "cityId": 264,
+    "companyId": 53,
+    "count": 1
+  },
+  {
+    "cityId": 264,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 264,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 264,
+    "companyId": 140,
+    "count": 1
+  },
+  {
+    "cityId": 264,
+    "companyId": 230,
+    "count": 1
+  },
+  {
+    "cityId": 265,
+    "companyId": 54,
+    "count": 1
+  },
+  {
+    "cityId": 265,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 265,
+    "companyId": 208,
+    "count": 1
+  },
+  {
+    "cityId": 266,
+    "companyId": 54,
+    "count": 1
+  },
+  {
+    "cityId": 266,
+    "companyId": 55,
+    "count": 1
+  },
+  {
+    "cityId": 266,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 266,
+    "companyId": 99,
+    "count": 1
+  },
+  {
+    "cityId": 266,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 266,
+    "companyId": 147,
+    "count": 1
+  },
+  {
+    "cityId": 266,
+    "companyId": 166,
+    "count": 1
+  },
+  {
+    "cityId": 267,
+    "companyId": 55,
+    "count": 1
+  },
+  {
+    "cityId": 267,
+    "companyId": 64,
+    "count": 1
+  },
+  {
+    "cityId": 267,
+    "companyId": 77,
+    "count": 1
+  },
+  {
+    "cityId": 267,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 267,
+    "companyId": 147,
+    "count": 1
+  },
+  {
+    "cityId": 268,
+    "companyId": 55,
+    "count": 1
+  },
+  {
+    "cityId": 268,
+    "companyId": 64,
+    "count": 1
+  },
+  {
+    "cityId": 268,
+    "companyId": 76,
+    "count": 1
+  },
+  {
+    "cityId": 268,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 268,
+    "companyId": 147,
+    "count": 1
+  },
+  {
+    "cityId": 268,
+    "companyId": 182,
+    "count": 1
+  },
+  {
+    "cityId": 268,
+    "companyId": 208,
+    "count": 1
+  },
+  {
+    "cityId": 269,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 269,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 269,
+    "companyId": 56,
+    "count": 1
+  },
+  {
+    "cityId": 269,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 269,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 270,
+    "companyId": 56,
+    "count": 1
+  },
+  {
+    "cityId": 270,
+    "companyId": 158,
+    "count": 1
+  },
+  {
+    "cityId": 271,
+    "companyId": 56,
+    "count": 1
+  },
+  {
+    "cityId": 272,
+    "companyId": 58,
+    "count": 1
+  },
+  {
+    "cityId": 272,
+    "companyId": 111,
+    "count": 1
+  },
+  {
+    "cityId": 272,
+    "companyId": 119,
+    "count": 1
+  },
+  {
+    "cityId": 272,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 273,
+    "companyId": 60,
+    "count": 1
+  },
+  {
+    "cityId": 273,
+    "companyId": 83,
+    "count": 1
+  },
+  {
+    "cityId": 273,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 273,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 273,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 273,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 273,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 273,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 273,
+    "companyId": 210,
+    "count": 1
+  },
+  {
+    "cityId": 274,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 274,
+    "companyId": 62,
+    "count": 1
+  },
+  {
+    "cityId": 274,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 274,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 275,
+    "companyId": 60,
+    "count": 1
+  },
+  {
+    "cityId": 275,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 275,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 275,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 275,
+    "companyId": 199,
+    "count": 1
+  },
+  {
+    "cityId": 276,
+    "companyId": 60,
+    "count": 1
+  },
+  {
+    "cityId": 276,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 276,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 276,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 276,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 276,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 277,
+    "companyId": 60,
+    "count": 1
+  },
+  {
+    "cityId": 277,
+    "companyId": 130,
+    "count": 1
+  },
+  {
+    "cityId": 277,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 277,
+    "companyId": 165,
+    "count": 1
+  },
+  {
+    "cityId": 277,
+    "companyId": 180,
+    "count": 1
+  },
+  {
+    "cityId": 277,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 277,
+    "companyId": 237,
+    "count": 1
+  },
+  {
+    "cityId": 278,
+    "companyId": 20,
+    "count": 1
+  },
+  {
+    "cityId": 278,
+    "companyId": 65,
+    "count": 1
+  },
+  {
+    "cityId": 278,
+    "companyId": 70,
+    "count": 1
+  },
+  {
+    "cityId": 278,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 278,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 278,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 279,
+    "companyId": 65,
+    "count": 1
+  },
+  {
+    "cityId": 279,
+    "companyId": 140,
+    "count": 1
+  },
+  {
+    "cityId": 279,
+    "companyId": 158,
+    "count": 1
+  },
+  {
+    "cityId": 279,
+    "companyId": 183,
+    "count": 1
+  },
+  {
+    "cityId": 279,
+    "companyId": 230,
+    "count": 1
+  },
+  {
+    "cityId": 280,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 280,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 280,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 280,
+    "companyId": 66,
+    "count": 1
+  },
+  {
+    "cityId": 280,
+    "companyId": 123,
+    "count": 1
+  },
+  {
+    "cityId": 281,
+    "companyId": 68,
+    "count": 1
+  },
+  {
+    "cityId": 281,
+    "companyId": 111,
+    "count": 1
+  },
+  {
+    "cityId": 281,
+    "companyId": 119,
+    "count": 1
+  },
+  {
+    "cityId": 281,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 282,
+    "companyId": 68,
+    "count": 1
+  },
+  {
+    "cityId": 282,
+    "companyId": 82,
+    "count": 1
+  },
+  {
+    "cityId": 282,
+    "companyId": 92,
+    "count": 1
+  },
+  {
+    "cityId": 282,
+    "companyId": 119,
+    "count": 1
+  },
+  {
+    "cityId": 282,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 283,
+    "companyId": 68,
+    "count": 1
+  },
+  {
+    "cityId": 283,
+    "companyId": 88,
+    "count": 1
+  },
+  {
+    "cityId": 283,
+    "companyId": 119,
+    "count": 1
+  },
+  {
+    "cityId": 283,
+    "companyId": 135,
+    "count": 1
+  },
+  {
+    "cityId": 283,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 283,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 284,
+    "companyId": 68,
+    "count": 1
+  },
+  {
+    "cityId": 284,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 284,
+    "companyId": 141,
+    "count": 1
+  },
+  {
+    "cityId": 285,
+    "companyId": 69,
+    "count": 1
+  },
+  {
+    "cityId": 286,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 286,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 287,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 287,
+    "companyId": 85,
+    "count": 1
+  },
+  {
+    "cityId": 287,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 287,
+    "companyId": 153,
+    "count": 1
+  },
+  {
+    "cityId": 287,
+    "companyId": 187,
+    "count": 1
+  },
+  {
+    "cityId": 287,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 288,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 288,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 288,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 288,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 288,
+    "companyId": 222,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 124,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 143,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 289,
+    "companyId": 184,
+    "count": 1
+  },
+  {
+    "cityId": 290,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 290,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 290,
+    "companyId": 139,
+    "count": 1
+  },
+  {
+    "cityId": 290,
+    "companyId": 141,
+    "count": 1
+  },
+  {
+    "cityId": 290,
+    "companyId": 163,
+    "count": 1
+  },
+  {
+    "cityId": 290,
+    "companyId": 172,
+    "count": 1
+  },
+  {
+    "cityId": 290,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 290,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 291,
+    "companyId": 72,
+    "count": 1
+  },
+  {
+    "cityId": 291,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 291,
+    "companyId": 207,
+    "count": 1
+  },
+  {
+    "cityId": 292,
+    "companyId": 73,
+    "count": 1
+  },
+  {
+    "cityId": 293,
+    "companyId": 73,
+    "count": 1
+  },
+  {
+    "cityId": 294,
+    "companyId": 73,
+    "count": 1
+  },
+  {
+    "cityId": 294,
+    "companyId": 87,
+    "count": 1
+  },
+  {
+    "cityId": 294,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 294,
+    "companyId": 140,
+    "count": 1
+  },
+  {
+    "cityId": 294,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 295,
+    "companyId": 73,
+    "count": 1
+  },
+  {
+    "cityId": 295,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 295,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 295,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 295,
+    "companyId": 230,
+    "count": 1
+  },
+  {
+    "cityId": 296,
+    "companyId": 75,
+    "count": 1
+  },
+  {
+    "cityId": 296,
+    "companyId": 99,
+    "count": 1
+  },
+  {
+    "cityId": 296,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 296,
+    "companyId": 147,
+    "count": 1
+  },
+  {
+    "cityId": 296,
+    "companyId": 208,
+    "count": 1
+  },
+  {
+    "cityId": 296,
+    "companyId": 212,
+    "count": 1
+  },
+  {
+    "cityId": 297,
+    "companyId": 78,
+    "count": 1
+  },
+  {
+    "cityId": 297,
+    "companyId": 79,
+    "count": 1
+  },
+  {
+    "cityId": 297,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 297,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 297,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 297,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 298,
+    "companyId": 80,
+    "count": 1
+  },
+  {
+    "cityId": 298,
+    "companyId": 108,
+    "count": 1
+  },
+  {
+    "cityId": 298,
+    "companyId": 109,
+    "count": 1
+  },
+  {
+    "cityId": 298,
+    "companyId": 158,
+    "count": 1
+  },
+  {
+    "cityId": 299,
+    "companyId": 80,
+    "count": 1
+  },
+  {
+    "cityId": 299,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 299,
+    "companyId": 144,
+    "count": 1
+  },
+  {
+    "cityId": 299,
+    "companyId": 235,
+    "count": 1
+  },
+  {
+    "cityId": 300,
+    "companyId": 82,
+    "count": 1
+  },
+  {
+    "cityId": 300,
+    "companyId": 111,
+    "count": 1
+  },
+  {
+    "cityId": 300,
+    "companyId": 119,
+    "count": 1
+  },
+  {
+    "cityId": 300,
+    "companyId": 205,
+    "count": 1
+  },
+  {
+    "cityId": 301,
+    "companyId": 83,
+    "count": 1
+  },
+  {
+    "cityId": 301,
+    "companyId": 199,
+    "count": 1
+  },
+  {
+    "cityId": 301,
+    "companyId": 213,
+    "count": 1
+  },
+  {
+    "cityId": 302,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 302,
+    "companyId": 32,
+    "count": 1
+  },
+  {
+    "cityId": 302,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 302,
+    "companyId": 163,
+    "count": 1
+  },
+  {
+    "cityId": 302,
+    "companyId": 172,
+    "count": 1
+  },
+  {
+    "cityId": 302,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 303,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 304,
+    "companyId": 84,
+    "count": 1
+  },
+  {
+    "cityId": 305,
+    "companyId": 85,
+    "count": 1
+  },
+  {
+    "cityId": 305,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 305,
+    "companyId": 153,
+    "count": 1
+  },
+  {
+    "cityId": 305,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 305,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 306,
+    "companyId": 85,
+    "count": 1
+  },
+  {
+    "cityId": 306,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 306,
+    "companyId": 157,
+    "count": 1
+  },
+  {
+    "cityId": 306,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 307,
+    "companyId": 85,
+    "count": 1
+  },
+  {
+    "cityId": 307,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 307,
+    "companyId": 125,
+    "count": 1
+  },
+  {
+    "cityId": 307,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 307,
+    "companyId": 157,
+    "count": 1
+  },
+  {
+    "cityId": 308,
+    "companyId": 85,
+    "count": 1
+  },
+  {
+    "cityId": 308,
+    "companyId": 106,
+    "count": 1
+  },
+  {
+    "cityId": 308,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 308,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 309,
+    "companyId": 87,
+    "count": 1
+  },
+  {
+    "cityId": 309,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 310,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 311,
+    "companyId": 90,
+    "count": 1
+  },
+  {
+    "cityId": 312,
+    "companyId": 92,
+    "count": 1
+  },
+  {
+    "cityId": 312,
+    "companyId": 100,
+    "count": 1
+  },
+  {
+    "cityId": 312,
+    "companyId": 135,
+    "count": 1
+  },
+  {
+    "cityId": 312,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 312,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 313,
+    "companyId": 96,
+    "count": 1
+  },
+  {
+    "cityId": 316,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 316,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 316,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 316,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 316,
+    "companyId": 115,
+    "count": 1
+  },
+  {
+    "cityId": 316,
+    "companyId": 123,
+    "count": 1
+  },
+  {
+    "cityId": 317,
+    "companyId": 2,
+    "count": 1
+  },
+  {
+    "cityId": 317,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 317,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 317,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 318,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 318,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 318,
+    "companyId": 153,
+    "count": 1
+  },
+  {
+    "cityId": 318,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 318,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 318,
+    "companyId": 177,
+    "count": 1
+  },
+  {
+    "cityId": 319,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 319,
+    "companyId": 105,
+    "count": 1
+  },
+  {
+    "cityId": 320,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 320,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 321,
+    "companyId": 98,
+    "count": 1
+  },
+  {
+    "cityId": 322,
+    "companyId": 102,
+    "count": 1
+  },
+  {
+    "cityId": 322,
+    "companyId": 103,
+    "count": 1
+  },
+  {
+    "cityId": 323,
+    "companyId": 104,
+    "count": 1
+  },
+  {
+    "cityId": 323,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 323,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 323,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 323,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 323,
+    "companyId": 225,
+    "count": 1
+  },
+  {
+    "cityId": 324,
+    "companyId": 105,
+    "count": 1
+  },
+  {
+    "cityId": 324,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 324,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 324,
+    "companyId": 153,
+    "count": 1
+  },
+  {
+    "cityId": 324,
+    "companyId": 157,
+    "count": 1
+  },
+  {
+    "cityId": 324,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 324,
+    "companyId": 229,
+    "count": 1
+  },
+  {
+    "cityId": 325,
+    "companyId": 105,
+    "count": 1
+  },
+  {
+    "cityId": 325,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 325,
+    "companyId": 184,
+    "count": 1
+  },
+  {
+    "cityId": 326,
+    "companyId": 105,
+    "count": 1
+  },
+  {
+    "cityId": 326,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 327,
+    "companyId": 107,
+    "count": 1
+  },
+  {
+    "cityId": 327,
+    "companyId": 138,
+    "count": 1
+  },
+  {
+    "cityId": 328,
+    "companyId": 108,
+    "count": 1
+  },
+  {
+    "cityId": 328,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 329,
+    "companyId": 111,
+    "count": 1
+  },
+  {
+    "cityId": 329,
+    "companyId": 119,
+    "count": 1
+  },
+  {
+    "cityId": 329,
+    "companyId": 141,
+    "count": 1
+  },
+  {
+    "cityId": 329,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 330,
+    "companyId": 112,
+    "count": 1
+  },
+  {
+    "cityId": 331,
+    "companyId": 112,
+    "count": 1
+  },
+  {
+    "cityId": 332,
+    "companyId": 113,
+    "count": 1
+  },
+  {
+    "cityId": 333,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 333,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 333,
+    "companyId": 195,
+    "count": 1
+  },
+  {
+    "cityId": 333,
+    "companyId": 225,
+    "count": 1
+  },
+  {
+    "cityId": 333,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 334,
+    "companyId": 6,
+    "count": 1
+  },
+  {
+    "cityId": 334,
+    "companyId": 12,
+    "count": 1
+  },
+  {
+    "cityId": 334,
+    "companyId": 13,
+    "count": 1
+  },
+  {
+    "cityId": 334,
+    "companyId": 30,
+    "count": 1
+  },
+  {
+    "cityId": 334,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 334,
+    "companyId": 123,
+    "count": 1
+  },
+  {
+    "cityId": 334,
+    "companyId": 188,
+    "count": 1
+  },
+  {
+    "cityId": 335,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 335,
+    "companyId": 143,
+    "count": 1
+  },
+  {
+    "cityId": 335,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 335,
+    "companyId": 153,
+    "count": 1
+  },
+  {
+    "cityId": 335,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 335,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 335,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 336,
+    "companyId": 114,
+    "count": 1
+  },
+  {
+    "cityId": 336,
+    "companyId": 140,
+    "count": 1
+  },
+  {
+    "cityId": 336,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 336,
+    "companyId": 162,
+    "count": 1
+  },
+  {
+    "cityId": 336,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 336,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 336,
+    "companyId": 219,
+    "count": 1
+  },
+  {
+    "cityId": 337,
+    "companyId": 118,
+    "count": 1
+  },
+  {
+    "cityId": 338,
+    "companyId": 118,
+    "count": 1
+  },
+  {
+    "cityId": 339,
+    "companyId": 119,
+    "count": 1
+  },
+  {
+    "cityId": 339,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 339,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 339,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 340,
+    "companyId": 120,
+    "count": 1
+  },
+  {
+    "cityId": 340,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 341,
+    "companyId": 120,
+    "count": 1
+  },
+  {
+    "cityId": 342,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 342,
+    "companyId": 8,
+    "count": 1
+  },
+  {
+    "cityId": 342,
+    "companyId": 11,
+    "count": 1
+  },
+  {
+    "cityId": 342,
+    "companyId": 14,
+    "count": 1
+  },
+  {
+    "cityId": 342,
+    "companyId": 15,
+    "count": 1
+  },
+  {
+    "cityId": 342,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 342,
+    "companyId": 123,
+    "count": 1
+  },
+  {
+    "cityId": 343,
+    "companyId": 123,
+    "count": 1
+  },
+  {
+    "cityId": 344,
+    "companyId": 125,
+    "count": 1
+  },
+  {
+    "cityId": 344,
+    "companyId": 156,
+    "count": 1
+  },
+  {
+    "cityId": 344,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 345,
+    "companyId": 126,
+    "count": 1
+  },
+  {
+    "cityId": 345,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 346,
+    "companyId": 127,
+    "count": 1
+  },
+  {
+    "cityId": 346,
+    "companyId": 128,
+    "count": 1
+  },
+  {
+    "cityId": 347,
+    "companyId": 131,
+    "count": 1
+  },
+  {
+    "cityId": 348,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 348,
+    "companyId": 195,
+    "count": 1
+  },
+  {
+    "cityId": 349,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 349,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 349,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 350,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 350,
+    "companyId": 145,
+    "count": 1
+  },
+  {
+    "cityId": 350,
+    "companyId": 152,
+    "count": 1
+  },
+  {
+    "cityId": 350,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 350,
+    "companyId": 195,
+    "count": 1
+  },
+  {
+    "cityId": 350,
+    "companyId": 225,
+    "count": 1
+  },
+  {
+    "cityId": 351,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 351,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 351,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 351,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 352,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 352,
+    "companyId": 195,
+    "count": 1
+  },
+  {
+    "cityId": 352,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 352,
+    "companyId": 225,
+    "count": 1
+  },
+  {
+    "cityId": 353,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 353,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 354,
+    "companyId": 137,
+    "count": 1
+  },
+  {
+    "cityId": 354,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 355,
+    "companyId": 142,
+    "count": 1
+  },
+  {
+    "cityId": 355,
+    "companyId": 194,
+    "count": 1
+  },
+  {
+    "cityId": 355,
+    "companyId": 197,
+    "count": 1
+  },
+  {
+    "cityId": 355,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 355,
+    "companyId": 226,
+    "count": 1
+  },
+  {
+    "cityId": 356,
+    "companyId": 145,
+    "count": 1
+  },
+  {
+    "cityId": 356,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 356,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 356,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 356,
+    "companyId": 204,
+    "count": 1
+  },
+  {
+    "cityId": 356,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 357,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 358,
+    "companyId": 1,
+    "count": 1
+  },
+  {
+    "cityId": 358,
+    "companyId": 4,
+    "count": 1
+  },
+  {
+    "cityId": 358,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 359,
+    "companyId": 146,
+    "count": 1
+  },
+  {
+    "cityId": 359,
+    "companyId": 160,
+    "count": 1
+  },
+  {
+    "cityId": 360,
+    "companyId": 150,
+    "count": 1
+  },
+  {
+    "cityId": 360,
+    "companyId": 161,
+    "count": 1
+  },
+  {
+    "cityId": 360,
+    "companyId": 183,
+    "count": 1
+  },
+  {
+    "cityId": 361,
+    "companyId": 151,
+    "count": 1
+  },
+  {
+    "cityId": 361,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 361,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 361,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 361,
+    "companyId": 214,
+    "count": 1
+  },
+  {
+    "cityId": 362,
+    "companyId": 158,
+    "count": 1
+  },
+  {
+    "cityId": 362,
+    "companyId": 229,
+    "count": 1
+  },
+  {
+    "cityId": 363,
+    "companyId": 160,
+    "count": 1
+  },
+  {
+    "cityId": 364,
+    "companyId": 160,
+    "count": 1
+  },
+  {
+    "cityId": 365,
+    "companyId": 160,
+    "count": 1
+  },
+  {
+    "cityId": 366,
+    "companyId": 160,
+    "count": 1
+  },
+  {
+    "cityId": 367,
+    "companyId": 160,
+    "count": 1
+  },
+  {
+    "cityId": 368,
+    "companyId": 160,
+    "count": 1
+  },
+  {
+    "cityId": 369,
+    "companyId": 161,
+    "count": 1
+  },
+  {
+    "cityId": 369,
+    "companyId": 174,
+    "count": 1
+  },
+  {
+    "cityId": 369,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 369,
+    "companyId": 210,
+    "count": 1
+  },
+  {
+    "cityId": 370,
+    "companyId": 161,
+    "count": 1
+  },
+  {
+    "cityId": 371,
+    "companyId": 17,
+    "count": 1
+  },
+  {
+    "cityId": 371,
+    "companyId": 20,
+    "count": 1
+  },
+  {
+    "cityId": 371,
+    "companyId": 161,
+    "count": 1
+  },
+  {
+    "cityId": 371,
+    "companyId": 209,
+    "count": 1
+  },
+  {
+    "cityId": 372,
+    "companyId": 163,
+    "count": 1
+  },
+  {
+    "cityId": 372,
+    "companyId": 176,
+    "count": 1
+  },
+  {
+    "cityId": 372,
+    "companyId": 213,
+    "count": 1
+  },
+  {
+    "cityId": 373,
+    "companyId": 164,
+    "count": 1
+  },
+  {
+    "cityId": 373,
+    "companyId": 198,
+    "count": 1
+  },
+  {
+    "cityId": 374,
+    "companyId": 164,
+    "count": 1
+  },
+  {
+    "cityId": 374,
+    "companyId": 198,
+    "count": 1
+  },
+  {
+    "cityId": 374,
+    "companyId": 208,
+    "count": 1
+  },
+  {
+    "cityId": 374,
+    "companyId": 212,
+    "count": 1
+  },
+  {
+    "cityId": 375,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 375,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 376,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 377,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 377,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 378,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 379,
+    "companyId": 26,
+    "count": 1
+  },
+  {
+    "cityId": 379,
+    "companyId": 167,
+    "count": 1
+  },
+  {
+    "cityId": 380,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 381,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 382,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 383,
+    "companyId": 168,
+    "count": 1
+  },
+  {
+    "cityId": 384,
+    "companyId": 7,
+    "count": 1
+  },
+  {
+    "cityId": 384,
+    "companyId": 10,
+    "count": 1
+  },
+  {
+    "cityId": 384,
+    "companyId": 93,
+    "count": 1
+  },
+  {
+    "cityId": 384,
+    "companyId": 170,
+    "count": 1
+  },
+  {
+    "cityId": 385,
+    "companyId": 172,
+    "count": 1
+  },
+  {
+    "cityId": 385,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 385,
+    "companyId": 202,
+    "count": 1
+  },
+  {
+    "cityId": 385,
+    "companyId": 224,
+    "count": 1
+  },
+  {
+    "cityId": 386,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 386,
+    "companyId": 238,
+    "count": 1
+  },
+  {
+    "cityId": 387,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 388,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 389,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 389,
+    "companyId": 184,
+    "count": 1
+  },
+  {
+    "cityId": 390,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 391,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 392,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 392,
+    "companyId": 234,
+    "count": 1
+  },
+  {
+    "cityId": 393,
+    "companyId": 175,
+    "count": 1
+  },
+  {
+    "cityId": 394,
+    "companyId": 178,
+    "count": 1
+  },
+  {
+    "cityId": 394,
+    "companyId": 201,
+    "count": 1
+  },
+  {
+    "cityId": 395,
+    "companyId": 183,
+    "count": 1
+  },
+  {
+    "cityId": 396,
+    "companyId": 184,
+    "count": 1
+  },
+  {
+    "cityId": 397,
+    "companyId": 190,
+    "count": 1
+  },
+  {
+    "cityId": 398,
+    "companyId": 193,
+    "count": 1
+  },
+  {
+    "cityId": 399,
+    "companyId": 199,
+    "count": 1
+  },
+  {
+    "cityId": 399,
+    "companyId": 210,
+    "count": 1
+  },
+  {
+    "cityId": 400,
+    "companyId": 201,
+    "count": 1
+  },
+  {
+    "cityId": 401,
+    "companyId": 211,
+    "count": 1
+  },
+  {
+    "cityId": 402,
+    "companyId": 221,
+    "count": 1
+  },
+  {
+    "cityId": 403,
+    "companyId": 221,
+    "count": 1
+  }
+]

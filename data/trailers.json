@@ -1,0 +1,152 @@
+[
+  {
+    "id": 30,
+    "name": "Blade Hauler",
+    "ownable": false
+  },
+  {
+    "id": 10,
+    "name": "Brick",
+    "ownable": true
+  },
+  {
+    "id": 21,
+    "name": "Car Transporter",
+    "ownable": false
+  },
+  {
+    "id": 2,
+    "name": "Chemical Tank",
+    "ownable": true
+  },
+  {
+    "id": 18,
+    "name": "Container Carrier",
+    "ownable": true
+  },
+  {
+    "id": 5,
+    "name": "Curtainsider",
+    "ownable": true
+  },
+  {
+    "id": 19,
+    "name": "Dry Freighter",
+    "ownable": false
+  },
+  {
+    "id": 8,
+    "name": "Dumper",
+    "ownable": true
+  },
+  {
+    "id": 22,
+    "name": "Feldbinder EUT",
+    "ownable": false
+  },
+  {
+    "id": 23,
+    "name": "Feldbinder KIP",
+    "ownable": false
+  },
+  {
+    "id": 24,
+    "name": "Feldbinder TSA ADR",
+    "ownable": false
+  },
+  {
+    "id": 25,
+    "name": "Feldbinder TSA LM",
+    "ownable": false
+  },
+  {
+    "id": 1,
+    "name": "Flatbed",
+    "ownable": true
+  },
+  {
+    "id": 13,
+    "name": "Food Tank",
+    "ownable": true
+  },
+  {
+    "id": 11,
+    "name": "Fuel Tank",
+    "ownable": true
+  },
+  {
+    "id": 6,
+    "name": "Gas Tank",
+    "ownable": true
+  },
+  {
+    "id": 16,
+    "name": "Glass Trailer",
+    "ownable": true
+  },
+  {
+    "id": 20,
+    "name": "Insulated",
+    "ownable": false
+  },
+  {
+    "id": 26,
+    "name": "Krone Box Liner",
+    "ownable": false
+  },
+  {
+    "id": 27,
+    "name": "Krone Cool Liner",
+    "ownable": false
+  },
+  {
+    "id": 28,
+    "name": "Krone Profi Liner",
+    "ownable": false
+  },
+  {
+    "id": 29,
+    "name": "Krone Profi Liner Building",
+    "ownable": false
+  },
+  {
+    "id": 17,
+    "name": "Livestock",
+    "ownable": true
+  },
+  {
+    "id": 14,
+    "name": "Logger",
+    "ownable": true
+  },
+  {
+    "id": 3,
+    "name": "Low Bed",
+    "ownable": true
+  },
+  {
+    "id": 4,
+    "name": "Low Loader",
+    "ownable": true
+  },
+  {
+    "id": 12,
+    "name": "Panel Transporter",
+    "ownable": true
+  },
+  {
+    "id": 7,
+    "name": "Refrigerated",
+    "ownable": true
+  },
+  {
+    "id": 9,
+    "name": "Silo",
+    "ownable": true
+  },
+  {
+    "id": 15,
+    "name": "Truck Transporter",
+    "ownable": false
+  }
+]

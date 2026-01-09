@@ -1,0 +1,1842 @@
+[
+  {
+    "id": 286,
+    "name": "Durrës",
+    "country": "Albania"
+  },
+  {
+    "id": 245,
+    "name": "Fier",
+    "country": "Albania"
+  },
+  {
+    "id": 221,
+    "name": "Tiranë",
+    "country": "Albania"
+  },
+  {
+    "id": 222,
+    "name": "Vlorë",
+    "country": "Albania"
+  },
+  {
+    "id": 1,
+    "name": "Graz",
+    "country": "Austria"
+  },
+  {
+    "id": 36,
+    "name": "Innsbruck",
+    "country": "Austria"
+  },
+  {
+    "id": 342,
+    "name": "Klagenfurt am Wörthersee",
+    "country": "Austria"
+  },
+  {
+    "id": 37,
+    "name": "Linz",
+    "country": "Austria"
+  },
+  {
+    "id": 38,
+    "name": "Salzburg",
+    "country": "Austria"
+  },
+  {
+    "id": 64,
+    "name": "Wien",
+    "country": "Austria"
+  },
+  {
+    "id": 103,
+    "name": "Brussel",
+    "country": "Belgium"
+  },
+  {
+    "id": 79,
+    "name": "Liège",
+    "country": "Belgium"
+  },
+  {
+    "id": 146,
+    "name": "Banja Luka",
+    "country": "Bosnia and Herzegovina"
+  },
+  {
+    "id": 233,
+    "name": "Bihać",
+    "country": "Bosnia and Herzegovina"
+  },
+  {
+    "id": 178,
+    "name": "Karakaj",
+    "country": "Bosnia and Herzegovina"
+  },
+  {
+    "id": 179,
+    "name": "Mostar",
+    "country": "Bosnia and Herzegovina"
+  },
+  {
+    "id": 147,
+    "name": "Sarajevo",
+    "country": "Bosnia and Herzegovina"
+  },
+  {
+    "id": 93,
+    "name": "Tuzla",
+    "country": "Bosnia and Herzegovina"
+  },
+  {
+    "id": 234,
+    "name": "Zenica",
+    "country": "Bosnia and Herzegovina"
+  },
+  {
+    "id": 246,
+    "name": "Burgas",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 301,
+    "name": "Karlovo",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 363,
+    "name": "Kozloduy",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 400,
+    "name": "Pernik",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 394,
+    "name": "Pirdop",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 202,
+    "name": "Pleven",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 399,
+    "name": "Plovdiv",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 104,
+    "name": "Ruse",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 273,
+    "name": "Sofia",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 369,
+    "name": "Varna",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 203,
+    "name": "Veliko Tarnovo",
+    "country": "Bulgaria"
+  },
+  {
+    "id": 355,
+    "name": "Osijek",
+    "country": "Croatia"
+  },
+  {
+    "id": 94,
+    "name": "Rijeka",
+    "country": "Croatia"
+  },
+  {
+    "id": 158,
+    "name": "Split",
+    "country": "Croatia"
+  },
+  {
+    "id": 159,
+    "name": "Zadar",
+    "country": "Croatia"
+  },
+  {
+    "id": 247,
+    "name": "Zagreb",
+    "country": "Croatia"
+  },
+  {
+    "id": 16,
+    "name": "Brno",
+    "country": "Czech Republic"
+  },
+  {
+    "id": 90,
+    "name": "Ostrava",
+    "country": "Czech Republic"
+  },
+  {
+    "id": 51,
+    "name": "Praha",
+    "country": "Czech Republic"
+  },
+  {
+    "id": 324,
+    "name": "Aalborg",
+    "country": "Denmark"
+  },
+  {
+    "id": 287,
+    "name": "Aarhus",
+    "country": "Denmark"
+  },
+  {
+    "id": 170,
+    "name": "Esbjerg",
+    "country": "Denmark"
+  },
+  {
+    "id": 380,
+    "name": "Frederikshavn",
+    "country": "Denmark"
+  },
+  {
+    "id": 345,
+    "name": "Gedser",
+    "country": "Denmark"
+  },
+  {
+    "id": 381,
+    "name": "Hirtshals",
+    "country": "Denmark"
+  },
+  {
+    "id": 318,
+    "name": "København",
+    "country": "Denmark"
+  },
+  {
+    "id": 186,
+    "name": "Odense",
+    "country": "Denmark"
+  },
+  {
+    "id": 205,
+    "name": "Kunda",
+    "country": "Estonia"
+  },
+  {
+    "id": 386,
+    "name": "Narva",
+    "country": "Estonia"
+  },
+  {
+    "id": 206,
+    "name": "Paldiski",
+    "country": "Estonia"
+  },
+  {
+    "id": 187,
+    "name": "Pärnu",
+    "country": "Estonia"
+  },
+  {
+    "id": 160,
+    "name": "Tallinn",
+    "country": "Estonia"
+  },
+  {
+    "id": 207,
+    "name": "Tartu",
+    "country": "Estonia"
+  },
+  {
+    "id": 161,
+    "name": "Helsinki",
+    "country": "Finland"
+  },
+  {
+    "id": 348,
+    "name": "Ivalo",
+    "country": "Finland"
+  },
+  {
+    "id": 127,
+    "name": "Joensuu",
+    "country": "Finland"
+  },
+  {
+    "id": 349,
+    "name": "Jyväskylä",
+    "country": "Finland"
+  },
+  {
+    "id": 188,
+    "name": "Kajaani",
+    "country": "Finland"
+  },
+  {
+    "id": 356,
+    "name": "Kokkola",
+    "country": "Finland"
+  },
+  {
+    "id": 288,
+    "name": "Kotka",
+    "country": "Finland"
+  },
+  {
+    "id": 350,
+    "name": "Kouvola",
+    "country": "Finland"
+  },
+  {
+    "id": 333,
+    "name": "Kuopio",
+    "country": "Finland"
+  },
+  {
+    "id": 351,
+    "name": "Kuusamo",
+    "country": "Finland"
+  },
+  {
+    "id": 182,
+    "name": "Lahti",
+    "country": "Finland"
+  },
+  {
+    "id": 352,
+    "name": "Lappeenranta",
+    "country": "Finland"
+  },
+  {
+    "id": 402,
+    "name": "Loviisa",
+    "country": "Finland"
+  },
+  {
+    "id": 189,
+    "name": "Mikkeli",
+    "country": "Finland"
+  },
+  {
+    "id": 340,
+    "name": "Naantali",
+    "country": "Finland"
+  },
+  {
+    "id": 403,
+    "name": "Olkiluoto",
+    "country": "Finland"
+  },
+  {
+    "id": 183,
+    "name": "Oulu",
+    "country": "Finland"
+  },
+  {
+    "id": 210,
+    "name": "Pori",
+    "country": "Finland"
+  },
+  {
+    "id": 353,
+    "name": "Rovaniemi",
+    "country": "Finland"
+  },
+  {
+    "id": 323,
+    "name": "Tampere",
+    "country": "Finland"
+  },
+  {
+    "id": 354,
+    "name": "Tornio",
+    "country": "Finland"
+  },
+  {
+    "id": 162,
+    "name": "Turku",
+    "country": "Finland"
+  },
+  {
+    "id": 128,
+    "name": "Vaasa",
+    "country": "Finland"
+  },
+  {
+    "id": 105,
+    "name": "Ajaccio",
+    "country": "France"
+  },
+  {
+    "id": 106,
+    "name": "Bastia",
+    "country": "France"
+  },
+  {
+    "id": 328,
+    "name": "Bayonne",
+    "country": "France"
+  },
+  {
+    "id": 357,
+    "name": "Bonifacio",
+    "country": "France"
+  },
+  {
+    "id": 190,
+    "name": "Bordeaux",
+    "country": "France"
+  },
+  {
+    "id": 298,
+    "name": "Bourges",
+    "country": "France"
+  },
+  {
+    "id": 123,
+    "name": "Brest",
+    "country": "France"
+  },
+  {
+    "id": 17,
+    "name": "Calais",
+    "country": "France"
+  },
+  {
+    "id": 241,
+    "name": "Calvi",
+    "country": "France"
+  },
+  {
+    "id": 364,
+    "name": "Civaux",
+    "country": "France"
+  },
+  {
+    "id": 121,
+    "name": "Clermont-Ferrand",
+    "country": "France"
+  },
+  {
+    "id": 65,
+    "name": "Dijon",
+    "country": "France"
+  },
+  {
+    "id": 365,
+    "name": "Golfech",
+    "country": "France"
+  },
+  {
+    "id": 310,
+    "name": "L'Île-Rousse",
+    "country": "France"
+  },
+  {
+    "id": 107,
+    "name": "La Rochelle",
+    "country": "France"
+  },
+  {
+    "id": 332,
+    "name": "Lacq",
+    "country": "France"
+  },
+  {
+    "id": 184,
+    "name": "Le Havre",
+    "country": "France"
+  },
+  {
+    "id": 191,
+    "name": "Le Mans",
+    "country": "France"
+  },
+  {
+    "id": 125,
+    "name": "Lille",
+    "country": "France"
+  },
+  {
+    "id": 108,
+    "name": "Limoges",
+    "country": "France"
+  },
+  {
+    "id": 52,
+    "name": "Lyon",
+    "country": "France"
+  },
+  {
+    "id": 185,
+    "name": "Marseille",
+    "country": "France"
+  },
+  {
+    "id": 80,
+    "name": "Metz",
+    "country": "France"
+  },
+  {
+    "id": 109,
+    "name": "Montpellier",
+    "country": "France"
+  },
+  {
+    "id": 110,
+    "name": "Nantes",
+    "country": "France"
+  },
+  {
+    "id": 111,
+    "name": "Nice",
+    "country": "France"
+  },
+  {
+    "id": 366,
+    "name": "Paluel",
+    "country": "France"
+  },
+  {
+    "id": 126,
+    "name": "Paris",
+    "country": "France"
+  },
+  {
+    "id": 299,
+    "name": "Porto-Vecchio",
+    "country": "France"
+  },
+  {
+    "id": 53,
+    "name": "Reims",
+    "country": "France"
+  },
+  {
+    "id": 242,
+    "name": "Rennes",
+    "country": "France"
+  },
+  {
+    "id": 327,
+    "name": "Roscoff",
+    "country": "France"
+  },
+  {
+    "id": 367,
+    "name": "Saint-Alban-du-Rhône",
+    "country": "France"
+  },
+  {
+    "id": 368,
+    "name": "Saint-Laurent",
+    "country": "France"
+  },
+  {
+    "id": 54,
+    "name": "Strasbourg",
+    "country": "France"
+  },
+  {
+    "id": 124,
+    "name": "Toulouse",
+    "country": "France"
+  },
+  {
+    "id": 8,
+    "name": "Berlin",
+    "country": "Germany"
+  },
+  {
+    "id": 66,
+    "name": "Bremen",
+    "country": "Germany"
+  },
+  {
+    "id": 18,
+    "name": "Dortmund",
+    "country": "Germany"
+  },
+  {
+    "id": 67,
+    "name": "Dresden",
+    "country": "Germany"
+  },
+  {
+    "id": 19,
+    "name": "Duisburg",
+    "country": "Germany"
+  },
+  {
+    "id": 316,
+    "name": "Düsseldorf",
+    "country": "Germany"
+  },
+  {
+    "id": 61,
+    "name": "Erfurt",
+    "country": "Germany"
+  },
+  {
+    "id": 20,
+    "name": "Frankfurt am Main",
+    "country": "Germany"
+  },
+  {
+    "id": 39,
+    "name": "Hamburg",
+    "country": "Germany"
+  },
+  {
+    "id": 10,
+    "name": "Hannover",
+    "country": "Germany"
+  },
+  {
+    "id": 101,
+    "name": "Kassel",
+    "country": "Germany"
+  },
+  {
+    "id": 21,
+    "name": "Kiel",
+    "country": "Germany"
+  },
+  {
+    "id": 22,
+    "name": "Köln",
+    "country": "Germany"
+  },
+  {
+    "id": 11,
+    "name": "Leipzig",
+    "country": "Germany"
+  },
+  {
+    "id": 23,
+    "name": "Magdeburg",
+    "country": "Germany"
+  },
+  {
+    "id": 55,
+    "name": "Mannheim",
+    "country": "Germany"
+  },
+  {
+    "id": 334,
+    "name": "München",
+    "country": "Germany"
+  },
+  {
+    "id": 248,
+    "name": "Nürnberg",
+    "country": "Germany"
+  },
+  {
+    "id": 25,
+    "name": "Osnabrück",
+    "country": "Germany"
+  },
+  {
+    "id": 40,
+    "name": "Rostock",
+    "country": "Germany"
+  },
+  {
+    "id": 95,
+    "name": "Stuttgart",
+    "country": "Germany"
+  },
+  {
+    "id": 358,
+    "name": "Travemünde",
+    "country": "Germany"
+  },
+  {
+    "id": 346,
+    "name": "Werlte",
+    "country": "Germany"
+  },
+  {
+    "id": 322,
+    "name": "Winsen",
+    "country": "Germany"
+  },
+  {
+    "id": 329,
+    "name": "Argostoli",
+    "country": "Greece"
+  },
+  {
+    "id": 249,
+    "name": "Athens",
+    "country": "Greece"
+  },
+  {
+    "id": 300,
+    "name": "Chania",
+    "country": "Greece"
+  },
+  {
+    "id": 281,
+    "name": "Chios",
+    "country": "Greece"
+  },
+  {
+    "id": 282,
+    "name": "Heraklion",
+    "country": "Greece"
+  },
+  {
+    "id": 235,
+    "name": "Ioannina",
+    "country": "Greece"
+  },
+  {
+    "id": 283,
+    "name": "Kalamata",
+    "country": "Greece"
+  },
+  {
+    "id": 339,
+    "name": "Kavala",
+    "country": "Greece"
+  },
+  {
+    "id": 236,
+    "name": "Lamia",
+    "country": "Greece"
+  },
+  {
+    "id": 312,
+    "name": "Larissa",
+    "country": "Greece"
+  },
+  {
+    "id": 250,
+    "name": "Mitilini",
+    "country": "Greece"
+  },
+  {
+    "id": 284,
+    "name": "Patras",
+    "country": "Greece"
+  },
+  {
+    "id": 272,
+    "name": "Rhodes",
+    "country": "Greece"
+  },
+  {
+    "id": 237,
+    "name": "Thessaloniki",
+    "country": "Greece"
+  },
+  {
+    "id": 238,
+    "name": "Trikala",
+    "country": "Greece"
+  },
+  {
+    "id": 91,
+    "name": "Budapest",
+    "country": "Hungary"
+  },
+  {
+    "id": 68,
+    "name": "Debrecen",
+    "country": "Hungary"
+  },
+  {
+    "id": 69,
+    "name": "Pécs",
+    "country": "Hungary"
+  },
+  {
+    "id": 26,
+    "name": "Szeged",
+    "country": "Hungary"
+  },
+  {
+    "id": 251,
+    "name": "Ancona",
+    "country": "Italy"
+  },
+  {
+    "id": 141,
+    "name": "Bari",
+    "country": "Italy"
+  },
+  {
+    "id": 142,
+    "name": "Bologna",
+    "country": "Italy"
+  },
+  {
+    "id": 129,
+    "name": "Cagliari",
+    "country": "Italy"
+  },
+  {
+    "id": 373,
+    "name": "Cassino",
+    "country": "Italy"
+  },
+  {
+    "id": 133,
+    "name": "Catania",
+    "country": "Italy"
+  },
+  {
+    "id": 143,
+    "name": "Catanzaro",
+    "country": "Italy"
+  },
+  {
+    "id": 296,
+    "name": "Firenze",
+    "country": "Italy"
+  },
+  {
+    "id": 144,
+    "name": "Genova",
+    "country": "Italy"
+  },
+  {
+    "id": 252,
+    "name": "Livorno",
+    "country": "Italy"
+  },
+  {
+    "id": 265,
+    "name": "Messina",
+    "country": "Italy"
+  },
+  {
+    "id": 145,
+    "name": "Milano",
+    "country": "Italy"
+  },
+  {
+    "id": 253,
+    "name": "Napoli",
+    "country": "Italy"
+  },
+  {
+    "id": 266,
+    "name": "Olbia",
+    "country": "Italy"
+  },
+  {
+    "id": 267,
+    "name": "Palermo",
+    "country": "Italy"
+  },
+  {
+    "id": 374,
+    "name": "Parma",
+    "country": "Italy"
+  },
+  {
+    "id": 130,
+    "name": "Pescara",
+    "country": "Italy"
+  },
+  {
+    "id": 131,
+    "name": "Roma",
+    "country": "Italy"
+  },
+  {
+    "id": 268,
+    "name": "Sassari",
+    "country": "Italy"
+  },
+  {
+    "id": 285,
+    "name": "Suzzara",
+    "country": "Italy"
+  },
+  {
+    "id": 132,
+    "name": "Taranto",
+    "country": "Italy"
+  },
+  {
+    "id": 134,
+    "name": "Terni",
+    "country": "Italy"
+  },
+  {
+    "id": 12,
+    "name": "Torino",
+    "country": "Italy"
+  },
+  {
+    "id": 401,
+    "name": "Trieste",
+    "country": "Italy"
+  },
+  {
+    "id": 27,
+    "name": "Venezia",
+    "country": "Italy"
+  },
+  {
+    "id": 70,
+    "name": "Verona",
+    "country": "Italy"
+  },
+  {
+    "id": 311,
+    "name": "Villa San Giovanni",
+    "country": "Italy"
+  },
+  {
+    "id": 223,
+    "name": "Prishtinë",
+    "country": "Kosovo"
+  },
+  {
+    "id": 212,
+    "name": "Daugavpils",
+    "country": "Latvia"
+  },
+  {
+    "id": 211,
+    "name": "Liepāja",
+    "country": "Latvia"
+  },
+  {
+    "id": 213,
+    "name": "Rēzekne",
+    "country": "Latvia"
+  },
+  {
+    "id": 163,
+    "name": "Rīga",
+    "country": "Latvia"
+  },
+  {
+    "id": 214,
+    "name": "Valmiera",
+    "country": "Latvia"
+  },
+  {
+    "id": 215,
+    "name": "Ventspils",
+    "country": "Latvia"
+  },
+  {
+    "id": 164,
+    "name": "Kaunas",
+    "country": "Lithuania"
+  },
+  {
+    "id": 216,
+    "name": "Klaipėda",
+    "country": "Lithuania"
+  },
+  {
+    "id": 341,
+    "name": "Mažeikiai",
+    "country": "Lithuania"
+  },
+  {
+    "id": 274,
+    "name": "Panevėžys",
+    "country": "Lithuania"
+  },
+  {
+    "id": 169,
+    "name": "Utena",
+    "country": "Lithuania"
+  },
+  {
+    "id": 165,
+    "name": "Vilnius",
+    "country": "Lithuania"
+  },
+  {
+    "id": 208,
+    "name": "Šiauliai",
+    "country": "Lithuania"
+  },
+  {
+    "id": 28,
+    "name": "Luxembourg",
+    "country": "Luxembourg"
+  },
+  {
+    "id": 297,
+    "name": "Bijelo Polje",
+    "country": "Montenegro"
+  },
+  {
+    "id": 181,
+    "name": "Niksic",
+    "country": "Montenegro"
+  },
+  {
+    "id": 180,
+    "name": "Podgorica",
+    "country": "Montenegro"
+  },
+  {
+    "id": 29,
+    "name": "Amsterdam",
+    "country": "Netherlands"
+  },
+  {
+    "id": 71,
+    "name": "Groningen",
+    "country": "Netherlands"
+  },
+  {
+    "id": 102,
+    "name": "Rotterdam",
+    "country": "Netherlands"
+  },
+  {
+    "id": 385,
+    "name": "Bitola",
+    "country": "North Macedonia"
+  },
+  {
+    "id": 148,
+    "name": "Skopje",
+    "country": "North Macedonia"
+  },
+  {
+    "id": 376,
+    "name": "Alta",
+    "country": "Norway"
+  },
+  {
+    "id": 387,
+    "name": "Andenes",
+    "country": "Norway"
+  },
+  {
+    "id": 305,
+    "name": "Bergen",
+    "country": "Norway"
+  },
+  {
+    "id": 319,
+    "name": "Bodø",
+    "country": "Norway"
+  },
+  {
+    "id": 388,
+    "name": "Dombås",
+    "country": "Norway"
+  },
+  {
+    "id": 377,
+    "name": "Honningsvåg",
+    "country": "Norway"
+  },
+  {
+    "id": 171,
+    "name": "Kristiansand",
+    "country": "Norway"
+  },
+  {
+    "id": 320,
+    "name": "Kristiansund",
+    "country": "Norway"
+  },
+  {
+    "id": 325,
+    "name": "Lillehammer",
+    "country": "Norway"
+  },
+  {
+    "id": 172,
+    "name": "Mo i Rana",
+    "country": "Norway"
+  },
+  {
+    "id": 343,
+    "name": "Narvik",
+    "country": "Norway"
+  },
+  {
+    "id": 289,
+    "name": "Oslo",
+    "country": "Norway"
+  },
+  {
+    "id": 335,
+    "name": "Stavanger",
+    "country": "Norway"
+  },
+  {
+    "id": 389,
+    "name": "Steinkjer",
+    "country": "Norway"
+  },
+  {
+    "id": 378,
+    "name": "Svolvær",
+    "country": "Norway"
+  },
+  {
+    "id": 321,
+    "name": "Tromsø",
+    "country": "Norway"
+  },
+  {
+    "id": 396,
+    "name": "Trondheim",
+    "country": "Norway"
+  },
+  {
+    "id": 375,
+    "name": "Ålesund",
+    "country": "Norway"
+  },
+  {
+    "id": 72,
+    "name": "Białystok",
+    "country": "Poland"
+  },
+  {
+    "id": 30,
+    "name": "Gdańsk",
+    "country": "Poland"
+  },
+  {
+    "id": 56,
+    "name": "Katowice",
+    "country": "Poland"
+  },
+  {
+    "id": 73,
+    "name": "Kraków",
+    "country": "Poland"
+  },
+  {
+    "id": 32,
+    "name": "Lublin",
+    "country": "Poland"
+  },
+  {
+    "id": 13,
+    "name": "Olsztyn",
+    "country": "Poland"
+  },
+  {
+    "id": 317,
+    "name": "Poznań",
+    "country": "Poland"
+  },
+  {
+    "id": 100,
+    "name": "Szczecin",
+    "country": "Poland"
+  },
+  {
+    "id": 98,
+    "name": "Warszawa",
+    "country": "Poland"
+  },
+  {
+    "id": 57,
+    "name": "Wrocław",
+    "country": "Poland"
+  },
+  {
+    "id": 31,
+    "name": "Łódź",
+    "country": "Poland"
+  },
+  {
+    "id": 330,
+    "name": "Beja",
+    "country": "Portugal"
+  },
+  {
+    "id": 135,
+    "name": "Coimbra",
+    "country": "Portugal"
+  },
+  {
+    "id": 292,
+    "name": "Cortiçadas de Lavre",
+    "country": "Portugal"
+  },
+  {
+    "id": 153,
+    "name": "Faro",
+    "country": "Portugal"
+  },
+  {
+    "id": 261,
+    "name": "Guarda",
+    "country": "Portugal"
+  },
+  {
+    "id": 336,
+    "name": "Lisboa",
+    "country": "Portugal"
+  },
+  {
+    "id": 309,
+    "name": "Olhão",
+    "country": "Portugal"
+  },
+  {
+    "id": 293,
+    "name": "Ponte de Sor",
+    "country": "Portugal"
+  },
+  {
+    "id": 294,
+    "name": "Porto",
+    "country": "Portugal"
+  },
+  {
+    "id": 360,
+    "name": "Setúbal",
+    "country": "Portugal"
+  },
+  {
+    "id": 295,
+    "name": "Sines",
+    "country": "Portugal"
+  },
+  {
+    "id": 313,
+    "name": "Évora",
+    "country": "Portugal"
+  },
+  {
+    "id": 239,
+    "name": "Bacău",
+    "country": "Romania"
+  },
+  {
+    "id": 361,
+    "name": "Brașov",
+    "country": "Romania"
+  },
+  {
+    "id": 240,
+    "name": "București",
+    "country": "Romania"
+  },
+  {
+    "id": 359,
+    "name": "Cernavodă",
+    "country": "Romania"
+  },
+  {
+    "id": 275,
+    "name": "Cluj-Napoca",
+    "country": "Romania"
+  },
+  {
+    "id": 254,
+    "name": "Constanța",
+    "country": "Romania"
+  },
+  {
+    "id": 114,
+    "name": "Craiova",
+    "country": "Romania"
+  },
+  {
+    "id": 243,
+    "name": "Călărași",
+    "country": "Romania"
+  },
+  {
+    "id": 290,
+    "name": "Galați",
+    "country": "Romania"
+  },
+  {
+    "id": 115,
+    "name": "Hunedoara",
+    "country": "Romania"
+  },
+  {
+    "id": 302,
+    "name": "Iași",
+    "country": "Romania"
+  },
+  {
+    "id": 370,
+    "name": "Mangalia",
+    "country": "Romania"
+  },
+  {
+    "id": 255,
+    "name": "Pitești",
+    "country": "Romania"
+  },
+  {
+    "id": 372,
+    "name": "Reșița",
+    "country": "Romania"
+  },
+  {
+    "id": 276,
+    "name": "Timișoara",
+    "country": "Romania"
+  },
+  {
+    "id": 118,
+    "name": "Târgu Mureș",
+    "country": "Romania"
+  },
+  {
+    "id": 277,
+    "name": "Kaliningrad",
+    "country": "Russia"
+  },
+  {
+    "id": 217,
+    "name": "Luga",
+    "country": "Russia"
+  },
+  {
+    "id": 209,
+    "name": "Pskov",
+    "country": "Russia"
+  },
+  {
+    "id": 204,
+    "name": "Saint Petersburg",
+    "country": "Russia"
+  },
+  {
+    "id": 398,
+    "name": "Sosnovy Bor",
+    "country": "Russia"
+  },
+  {
+    "id": 218,
+    "name": "Vyborg",
+    "country": "Russia"
+  },
+  {
+    "id": 149,
+    "name": "Belgrade",
+    "country": "Serbia"
+  },
+  {
+    "id": 150,
+    "name": "Kragujevac",
+    "country": "Serbia"
+  },
+  {
+    "id": 256,
+    "name": "Niš",
+    "country": "Serbia"
+  },
+  {
+    "id": 224,
+    "name": "Novi Sad",
+    "country": "Serbia"
+  },
+  {
+    "id": 384,
+    "name": "Banská Bystrica",
+    "country": "Slovakia"
+  },
+  {
+    "id": 82,
+    "name": "Bratislava",
+    "country": "Slovakia"
+  },
+  {
+    "id": 33,
+    "name": "Košice",
+    "country": "Slovakia"
+  },
+  {
+    "id": 291,
+    "name": "Koper",
+    "country": "Slovenia"
+  },
+  {
+    "id": 152,
+    "name": "Ljubljana",
+    "country": "Slovenia"
+  },
+  {
+    "id": 97,
+    "name": "Maribor",
+    "country": "Slovenia"
+  },
+  {
+    "id": 347,
+    "name": "Novo Mesto",
+    "country": "Slovenia"
+  },
+  {
+    "id": 257,
+    "name": "A Coruña",
+    "country": "Spain"
+  },
+  {
+    "id": 195,
+    "name": "Albacete",
+    "country": "Spain"
+  },
+  {
+    "id": 258,
+    "name": "Algeciras",
+    "country": "Spain"
+  },
+  {
+    "id": 337,
+    "name": "Almaraz",
+    "country": "Spain"
+  },
+  {
+    "id": 264,
+    "name": "Almería",
+    "country": "Spain"
+  },
+  {
+    "id": 154,
+    "name": "Badajoz",
+    "country": "Spain"
+  },
+  {
+    "id": 303,
+    "name": "Bailén",
+    "country": "Spain"
+  },
+  {
+    "id": 43,
+    "name": "Barcelona",
+    "country": "Spain"
+  },
+  {
+    "id": 136,
+    "name": "Bilbao",
+    "country": "Spain"
+  },
+  {
+    "id": 83,
+    "name": "Burgos",
+    "country": "Spain"
+  },
+  {
+    "id": 155,
+    "name": "Ciudad Real",
+    "country": "Spain"
+  },
+  {
+    "id": 269,
+    "name": "Córdoba",
+    "country": "Spain"
+  },
+  {
+    "id": 331,
+    "name": "El Ejido",
+    "country": "Spain"
+  },
+  {
+    "id": 371,
+    "name": "Gijón",
+    "country": "Spain"
+  },
+  {
+    "id": 166,
+    "name": "Granada",
+    "country": "Spain"
+  },
+  {
+    "id": 259,
+    "name": "Huelva",
+    "country": "Spain"
+  },
+  {
+    "id": 244,
+    "name": "León",
+    "country": "Spain"
+  },
+  {
+    "id": 270,
+    "name": "Lleida",
+    "country": "Spain"
+  },
+  {
+    "id": 45,
+    "name": "Madrid",
+    "country": "Spain"
+  },
+  {
+    "id": 271,
+    "name": "Mengíbar",
+    "country": "Spain"
+  },
+  {
+    "id": 138,
+    "name": "Murcia",
+    "country": "Spain"
+  },
+  {
+    "id": 278,
+    "name": "Málaga",
+    "country": "Spain"
+  },
+  {
+    "id": 395,
+    "name": "Navia",
+    "country": "Spain"
+  },
+  {
+    "id": 262,
+    "name": "O Barco",
+    "country": "Spain"
+  },
+  {
+    "id": 362,
+    "name": "Pamplona",
+    "country": "Spain"
+  },
+  {
+    "id": 139,
+    "name": "Port de Sagunt",
+    "country": "Spain"
+  },
+  {
+    "id": 167,
+    "name": "Puertollano",
+    "country": "Spain"
+  },
+  {
+    "id": 279,
+    "name": "Salamanca",
+    "country": "Spain"
+  },
+  {
+    "id": 140,
+    "name": "Santander",
+    "country": "Spain"
+  },
+  {
+    "id": 46,
+    "name": "Sevilla",
+    "country": "Spain"
+  },
+  {
+    "id": 84,
+    "name": "Soria",
+    "country": "Spain"
+  },
+  {
+    "id": 260,
+    "name": "Tarragona",
+    "country": "Spain"
+  },
+  {
+    "id": 85,
+    "name": "Teruel",
+    "country": "Spain"
+  },
+  {
+    "id": 168,
+    "name": "Valladolid",
+    "country": "Spain"
+  },
+  {
+    "id": 157,
+    "name": "València",
+    "country": "Spain"
+  },
+  {
+    "id": 338,
+    "name": "Vandellòs",
+    "country": "Spain"
+  },
+  {
+    "id": 263,
+    "name": "Vigo",
+    "country": "Spain"
+  },
+  {
+    "id": 304,
+    "name": "Vila-real",
+    "country": "Spain"
+  },
+  {
+    "id": 47,
+    "name": "Zaragoza",
+    "country": "Spain"
+  },
+  {
+    "id": 390,
+    "name": "Arvidsjaur",
+    "country": "Sweden"
+  },
+  {
+    "id": 225,
+    "name": "Borlänge",
+    "country": "Sweden"
+  },
+  {
+    "id": 226,
+    "name": "Falun",
+    "country": "Sweden"
+  },
+  {
+    "id": 227,
+    "name": "Göteborg",
+    "country": "Sweden"
+  },
+  {
+    "id": 196,
+    "name": "Helsingborg",
+    "country": "Sweden"
+  },
+  {
+    "id": 197,
+    "name": "Jönköping",
+    "country": "Sweden"
+  },
+  {
+    "id": 175,
+    "name": "Kalmar",
+    "country": "Sweden"
+  },
+  {
+    "id": 382,
+    "name": "Kapellskär",
+    "country": "Sweden"
+  },
+  {
+    "id": 391,
+    "name": "Karesuando",
+    "country": "Sweden"
+  },
+  {
+    "id": 306,
+    "name": "Karlskrona",
+    "country": "Sweden"
+  },
+  {
+    "id": 176,
+    "name": "Karlstad",
+    "country": "Sweden"
+  },
+  {
+    "id": 228,
+    "name": "Kiruna",
+    "country": "Sweden"
+  },
+  {
+    "id": 229,
+    "name": "Linköping",
+    "country": "Sweden"
+  },
+  {
+    "id": 392,
+    "name": "Luleå",
+    "country": "Sweden"
+  },
+  {
+    "id": 307,
+    "name": "Malmö",
+    "country": "Sweden"
+  },
+  {
+    "id": 383,
+    "name": "Nynäshamn",
+    "country": "Sweden"
+  },
+  {
+    "id": 393,
+    "name": "Skellefteå",
+    "country": "Sweden"
+  },
+  {
+    "id": 200,
+    "name": "Stockholm",
+    "country": "Sweden"
+  },
+  {
+    "id": 231,
+    "name": "Sundsvall",
+    "country": "Sweden"
+  },
+  {
+    "id": 397,
+    "name": "Södertälje",
+    "country": "Sweden"
+  },
+  {
+    "id": 326,
+    "name": "Trelleborg",
+    "country": "Sweden"
+  },
+  {
+    "id": 379,
+    "name": "Umeå",
+    "country": "Sweden"
+  },
+  {
+    "id": 308,
+    "name": "Uppsala",
+    "country": "Sweden"
+  },
+  {
+    "id": 344,
+    "name": "Västerås",
+    "country": "Sweden"
+  },
+  {
+    "id": 232,
+    "name": "Växjö",
+    "country": "Sweden"
+  },
+  {
+    "id": 199,
+    "name": "Örebro",
+    "country": "Sweden"
+  },
+  {
+    "id": 230,
+    "name": "Östersund",
+    "country": "Sweden"
+  },
+  {
+    "id": 48,
+    "name": "Bern",
+    "country": "Switzerland"
+  },
+  {
+    "id": 280,
+    "name": "Genève",
+    "country": "Switzerland"
+  },
+  {
+    "id": 50,
+    "name": "Zürich",
+    "country": "Switzerland"
+  },
+  {
+    "id": 119,
+    "name": "Edirne",
+    "country": "Turkey"
+  },
+  {
+    "id": 220,
+    "name": "Tekirdağ",
+    "country": "Turkey"
+  },
+  {
+    "id": 219,
+    "name": "İstanbul",
+    "country": "Turkey"
+  },
+  {
+    "id": 86,
+    "name": "Aberdeen",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 87,
+    "name": "Birmingham",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 74,
+    "name": "Cambridge",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 58,
+    "name": "Cardiff",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 75,
+    "name": "Carlisle",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 34,
+    "name": "Dover",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 120,
+    "name": "Edinburgh",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 35,
+    "name": "Felixstowe",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 59,
+    "name": "Glasgow",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 122,
+    "name": "Grimsby",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 76,
+    "name": "Liverpool",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 89,
+    "name": "London",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 15,
+    "name": "Manchester",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 99,
+    "name": "Newcastle-upon-Tyne",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 77,
+    "name": "Plymouth",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 60,
+    "name": "Sheffield",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 88,
+    "name": "Southampton",
+    "country": "United Kingdom"
+  },
+  {
+    "id": 78,
+    "name": "Swansea",
+    "country": "United Kingdom"
+  }
+]

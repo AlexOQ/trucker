@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cities - ETS2 Trucker Advisor</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ETS2 Trucker Advisor</h1>
+      <nav>
+        <a href="index.html">Rankings</a>
+        <a href="cities.html" class="active">Cities</a>
+        <a href="companies.html">Companies</a>
+        <a href="cargo.html">Cargo</a>
+      </nav>
+    </header>
+
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Search cities...">
+    </div>
+
+    <div id="content">
+      <div class="loading">Loading cities...</div>
+    </div>
+
+    <div id="city-detail" style="display: none;">
+      <a href="#" class="back-link" id="back-link">← Back to cities</a>
+      <div id="detail-content"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadAllData, buildLookups } from './js/data.js'
+
+    let data = null
+    let lookups = null
+
+    const content = document.getElementById('content')
+    const cityDetail = document.getElementById('city-detail')
+    const detailContent = document.getElementById('detail-content')
+    const searchInput = document.getElementById('search')
+    const backLink = document.getElementById('back-link')
+
+    function groupByCountry(cities) {
+      const groups = new Map()
+      for (const city of cities) {
+        if (!groups.has(city.country)) {
+          groups.set(city.country, [])
+        }
+        groups.get(city.country).push(city)
+      }
+      // Sort countries and cities within
+      const sorted = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]))
+      for (const [, cities] of sorted) {
+        cities.sort((a, b) => a.name.localeCompare(b.name))
+      }
+      return sorted
+    }
+
+    function getCityCompanies(cityId) {
+      const cityCompanies = lookups.cityCompanyMap.get(cityId) || []
+      return cityCompanies.map(({ companyId, count }) => {
+        const company = lookups.companiesById.get(companyId)
+        return { ...company, count }
+      }).sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+    function getCityStats(cityId) {
+      const companies = getCityCompanies(cityId)
+      const totalDepots = companies.reduce((sum, c) => sum + c.count, 0)
+
+      // Count cargo types
+      const cargoSet = new Set()
+      for (const company of companies) {
+        const cargoIds = lookups.companyCargoMap.get(company.id) || []
+        cargoIds.forEach(id => cargoSet.add(id))
+      }
+
+      return {
+        companyCount: companies.length,
+        depotCount: totalDepots,
+        cargoCount: cargoSet.size,
+      }
+    }
+
+    function renderCityList(filter = '') {
+      const filterLower = filter.toLowerCase()
+      const filtered = data.cities.filter(c =>
+        c.name.toLowerCase().includes(filterLower) ||
+        c.country.toLowerCase().includes(filterLower)
+      )
+
+      const grouped = groupByCountry(filtered)
+
+      if (grouped.length === 0) {
+        content.innerHTML = '<div class="empty-state">No cities found.</div>'
+        return
+      }
+
+      content.innerHTML = grouped.map(([country, cities]) => `
+        <div class="country-section">
+          <div class="country-header">
+            <h3>${country}</h3>
+            <span class="country-count">${cities.length} cities</span>
+          </div>
+          <div class="country-content">
+            <div class="cards-grid">
+              ${cities.map(city => {
+                const stats = getCityStats(city.id)
+                return `
+                  <a href="#city-${city.id}" class="card-link" data-city-id="${city.id}">
+                    <div class="card">
+                      <div class="card-title">${city.name}</div>
+                      <div class="card-subtitle">
+                        ${stats.companyCount} companies · ${stats.depotCount} depots
+                      </div>
+                    </div>
+                  </a>
+                `
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('')
+
+      // Add click handlers
+      content.querySelectorAll('[data-city-id]').forEach(el => {
+        el.addEventListener('click', (e) => {
+          e.preventDefault()
+          showCityDetail(parseInt(el.dataset.cityId))
+        })
+      })
+    }
+
+    function showCityDetail(cityId) {
+      const city = lookups.citiesById.get(cityId)
+      if (!city) return
+
+      const companies = getCityCompanies(cityId)
+      const stats = getCityStats(cityId)
+
+      content.style.display = 'none'
+      cityDetail.style.display = 'block'
+      window.location.hash = `city-${cityId}`
+
+      detailContent.innerHTML = `
+        <div class="detail-header">
+          <h2>${city.name}</h2>
+          <div class="subtitle">${city.country}</div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value">${stats.companyCount}</div>
+            <div class="stat-label">Companies</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${stats.depotCount}</div>
+            <div class="stat-label">Total Depots</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${stats.cargoCount}</div>
+            <div class="stat-label">Cargo Types</div>
+          </div>
+        </div>
+
+        <div class="table-section">
+          <h2>Companies in ${city.name}</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Company</th>
+                <th>Depots</th>
+                <th>Cargo Types</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${companies.map(company => {
+                const cargoCount = (lookups.companyCargoMap.get(company.id) || []).length
+                return `
+                  <tr class="clickable" data-company-id="${company.id}">
+                    <td><a href="companies.html#company-${company.id}" class="link">${company.name}</a></td>
+                    <td class="amount">${company.count}</td>
+                    <td>${cargoCount}</td>
+                  </tr>
+                `
+              }).join('')}
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin-top: 1rem;">
+          <a href="index.html#city-${city.id}" class="link">View trailer recommendations →</a>
+        </p>
+      `
+    }
+
+    function showCityList() {
+      cityDetail.style.display = 'none'
+      content.style.display = 'block'
+      window.location.hash = ''
+      renderCityList(searchInput.value)
+    }
+
+    function handleHashChange() {
+      const hash = window.location.hash
+      if (hash.startsWith('#city-')) {
+        const cityId = parseInt(hash.replace('#city-', ''))
+        if (cityId) showCityDetail(cityId)
+      } else {
+        showCityList()
+      }
+    }
+
+    async function init() {
+      try {
+        data = await loadAllData()
+        lookups = buildLookups(data)
+
+        renderCityList()
+
+        searchInput.addEventListener('input', () => {
+          renderCityList(searchInput.value)
+        })
+
+        backLink.addEventListener('click', (e) => {
+          e.preventDefault()
+          showCityList()
+        })
+
+        window.addEventListener('hashchange', handleHashChange)
+        handleHashChange()
+
+      } catch (err) {
+        console.error('Failed to initialize:', err)
+        content.innerHTML = '<div class="empty-state">Failed to load data.</div>'
+      }
+    }
+
+    init()
+  </script>
+</body>
+</html>

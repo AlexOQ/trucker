@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ETS2 Trucker Advisor</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #eee;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    h1 {
+      color: #f39c12;
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+    }
+
+    nav a {
+      color: #aaa;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    nav a:hover, nav a.active {
+      color: #f39c12;
+      background: #16213e;
+    }
+
+    h2 {
+      color: #f39c12;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Controls Panel */
+    .controls {
+      background: #16213e;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .controls-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .control-label span {
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    .control-value {
+      color: #f39c12;
+      font-weight: bold;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .slider-label {
+      font-size: 0.75rem;
+      color: #666;
+      min-width: 60px;
+    }
+
+    .slider-label.right {
+      text-align: right;
+    }
+
+    input[type="range"] {
+      flex: 1;
+      height: 6px;
+      -webkit-appearance: none;
+      background: #0f3460;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #f39c12;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #f39c12;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+    }
+
+    .reset-btn {
+      background: transparent;
+      border: 1px solid #666;
+      color: #888;
+      padding: 0.4rem 0.8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .reset-btn:hover {
+      border-color: #f39c12;
+      color: #f39c12;
+    }
+
+    /* Stats Row */
+    .stats {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      background: #16213e;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      border-left: 3px solid #f39c12;
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #f39c12;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: #888;
+      margin-top: 0.25rem;
+    }
+
+    /* Tables */
+    .table-section {
+      background: #16213e;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #0f3460;
+    }
+
+    th {
+      background: #0f3460;
+      color: #f39c12;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: #1a2744;
+    }
+
+    tr.clickable {
+      cursor: pointer;
+    }
+
+    .amount {
+      font-weight: bold;
+      color: #f39c12;
+    }
+
+    .coverage {
+      color: #2ecc71;
+    }
+
+    .value {
+      color: #3498db;
+    }
+
+    .score {
+      color: #e74c3c;
+      font-weight: bold;
+    }
+
+    .country {
+      color: #888;
+    }
+
+    /* City Detail View */
+    .back-link {
+      color: #f39c12;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .city-header {
+      margin-bottom: 1rem;
+    }
+
+    .city-header h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .city-header .country {
+      font-size: 1rem;
+    }
+
+    /* States */
+    .empty-state, .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+
+    .loading {
+      color: #888;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container {
+        padding: 1rem;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .stats {
+        gap: 1rem;
+      }
+
+      .stat {
+        flex: 1;
+        min-width: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>ETS2 Trucker Advisor</h1>
+      <nav>
+        <a href="index.html" class="active">Rankings</a>
+        <a href="cities.html">Cities</a>
+        <a href="companies.html">Companies</a>
+        <a href="cargo.html">Cargo</a>
+      </nav>
+    </header>
+
+    <div class="controls">
+      <div class="controls-header">
+        <h2>Algorithm Settings</h2>
+        <button class="reset-btn" id="reset-btn">Reset to Defaults</button>
+      </div>
+      <div class="controls-grid">
+        <div class="control-group">
+          <div class="control-label">
+            <span>Scoring Balance</span>
+            <span class="control-value" id="scoring-value">50</span>
+          </div>
+          <div class="slider-container">
+            <span class="slider-label">High €/km</span>
+            <input type="range" id="scoring-slider" min="0" max="100" value="50">
+            <span class="slider-label right">Variety</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Garage Size</span>
+            <span class="control-value" id="trailers-value">10</span>
+          </div>
+          <div class="slider-container">
+            <span class="slider-label">1</span>
+            <input type="range" id="trailers-slider" min="1" max="20" value="10">
+            <span class="slider-label right">20</span>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <span>Diversity Pressure</span>
+            <span class="control-value" id="diminishing-value">50</span>
+          </div>
+          <div class="slider-container">
+            <span class="slider-label">Duplicates OK</span>
+            <input type="range" id="diminishing-slider" min="0" max="100" value="50">
+            <span class="slider-label right">Force mix</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="rankings-view">
+      <div id="rankings-content">
+        <div class="loading">Loading city rankings...</div>
+      </div>
+    </div>
+
+    <div id="city-view" style="display: none;">
+      <span class="back-link" id="back-link">← Back to rankings</span>
+      <div id="city-content"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { loadAllData, buildLookups } from './js/data.js'
+    import { optimizeTrailerSet, calculateCityRankings } from './js/optimizer.js'
+    import { getSettings, updateSettings, resetToDefaults } from './js/storage.js'
+
+    let data = null
+    let lookups = null
+    let currentCityId = null
+
+    // DOM elements
+    const rankingsView = document.getElementById('rankings-view')
+    const rankingsContent = document.getElementById('rankings-content')
+    const cityView = document.getElementById('city-view')
+    const cityContent = document.getElementById('city-content')
+    const backLink = document.getElementById('back-link')
+
+    const scoringSlider = document.getElementById('scoring-slider')
+    const trailersSlider = document.getElementById('trailers-slider')
+    const diminishingSlider = document.getElementById('diminishing-slider')
+    const scoringValue = document.getElementById('scoring-value')
+    const trailersValue = document.getElementById('trailers-value')
+    const diminishingValue = document.getElementById('diminishing-value')
+    const resetBtn = document.getElementById('reset-btn')
+
+    // Get current options from sliders
+    function getOptions() {
+      return {
+        scoringBalance: parseInt(scoringSlider.value),
+        maxTrailers: parseInt(trailersSlider.value),
+        diminishingFactor: parseInt(diminishingSlider.value),
+      }
+    }
+
+    // Update slider display values
+    function updateDisplayValues() {
+      scoringValue.textContent = scoringSlider.value
+      trailersValue.textContent = trailersSlider.value
+      diminishingValue.textContent = diminishingSlider.value
+    }
+
+    // Load settings from localStorage
+    function loadSettings() {
+      const settings = getSettings()
+      scoringSlider.value = settings.scoringBalance
+      trailersSlider.value = settings.maxTrailers
+      diminishingSlider.value = settings.diminishingFactor
+      updateDisplayValues()
+    }
+
+    // Save settings to localStorage
+    function saveSettings() {
+      updateSettings(getOptions())
+    }
+
+    // Render city rankings table
+    function renderRankings() {
+      const options = getOptions()
+      const rankings = calculateCityRankings(data, lookups, options)
+
+      if (rankings.length === 0) {
+        rankingsContent.innerHTML = '<div class="empty-state">No cities with data yet.</div>'
+        return
+      }
+
+      rankingsContent.innerHTML = `
+        <div class="table-section">
+          <h2>City Rankings (${rankings.length} cities)</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>City</th>
+                <th>Country</th>
+                <th>Depots</th>
+                <th>Jobs</th>
+                <th>Value</th>
+                <th>€/Job</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rankings.map((r, i) => `
+                <tr class="clickable" data-city-id="${r.id}">
+                  <td>${i + 1}</td>
+                  <td>${r.name}</td>
+                  <td class="country">${r.country}</td>
+                  <td>${r.depotCount}</td>
+                  <td class="amount">${r.jobs}</td>
+                  <td class="value">€${r.totalValue.toLocaleString()}</td>
+                  <td>€${r.avgValuePerJob.toFixed(2)}</td>
+                  <td class="score">${r.score.toFixed(0)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `
+
+      // Add click handlers
+      rankingsContent.querySelectorAll('tr.clickable').forEach(row => {
+        row.addEventListener('click', () => {
+          showCity(parseInt(row.dataset.cityId))
+        })
+      })
+    }
+
+    // Render city detail view
+    function renderCity(cityId) {
+      const options = getOptions()
+      const result = optimizeTrailerSet(cityId, data, lookups, options)
+      const city = lookups.citiesById.get(cityId)
+
+      if (!city) {
+        cityContent.innerHTML = '<div class="empty-state">City not found.</div>'
+        return
+      }
+
+      if (result.recommendations.length === 0) {
+        cityContent.innerHTML = `
+          <div class="city-header">
+            <h2>${city.name}</h2>
+            <span class="country">${city.country}</span>
+          </div>
+          <div class="empty-state">No cargo data for this city yet.</div>
+        `
+        return
+      }
+
+      const totalTrailers = result.recommendations.reduce((sum, r) => sum + r.count, 0)
+      const trailerTypes = result.recommendations.length
+
+      cityContent.innerHTML = `
+        <div class="city-header">
+          <h2>${city.name}</h2>
+          <span class="country">${city.country}</span>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-value">${result.totalDepots}</div>
+            <div class="stat-label">Depots</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${result.totalCargoInstances}</div>
+            <div class="stat-label">Jobs Available</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">€${result.totalValue.toLocaleString()}</div>
+            <div class="stat-label">Total Value</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${totalTrailers}</div>
+            <div class="stat-label">Trailers (${trailerTypes} types)</div>
+          </div>
+        </div>
+
+        <div class="table-section">
+          <h2>Recommended Trailers</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Trailer</th>
+                <th>Copies</th>
+                <th>Coverage</th>
+                <th>€/Job/km</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${result.recommendations.map(r => `
+                <tr>
+                  <td>${r.trailerName}</td>
+                  <td class="amount">${r.count}</td>
+                  <td class="coverage">${r.coveragePct}%</td>
+                  <td class="value">€${r.avgValue.toFixed(2)}</td>
+                  <td>${r.score.toFixed(3)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+      `
+    }
+
+    // Show city detail view
+    function showCity(cityId) {
+      currentCityId = cityId
+      rankingsView.style.display = 'none'
+      cityView.style.display = 'block'
+      renderCity(cityId)
+      window.scrollTo(0, 0)
+    }
+
+    // Show rankings view
+    function showRankings() {
+      currentCityId = null
+      cityView.style.display = 'none'
+      rankingsView.style.display = 'block'
+      renderRankings()
+    }
+
+    // Handle slider changes
+    function onSliderChange() {
+      updateDisplayValues()
+      saveSettings()
+      if (currentCityId) {
+        renderCity(currentCityId)
+      } else {
+        renderRankings()
+      }
+    }
+
+    // Initialize
+    async function init() {
+      try {
+        data = await loadAllData()
+        lookups = buildLookups(data)
+
+        loadSettings()
+        renderRankings()
+
+        // Event listeners
+        scoringSlider.addEventListener('input', onSliderChange)
+        trailersSlider.addEventListener('input', onSliderChange)
+        diminishingSlider.addEventListener('input', onSliderChange)
+
+        backLink.addEventListener('click', showRankings)
+
+        resetBtn.addEventListener('click', () => {
+          const defaults = resetToDefaults()
+          scoringSlider.value = defaults.scoringBalance
+          trailersSlider.value = defaults.maxTrailers
+          diminishingSlider.value = defaults.diminishingFactor
+          onSliderChange()
+        })
+
+      } catch (err) {
+        console.error('Failed to initialize:', err)
+        rankingsContent.innerHTML = `
+          <div class="empty-state">
+            Failed to load data. Make sure you've run <code>npm run export</code>
+          </div>
+        `
+      }
+    }
+
+    init()
+  </script>
+</body>
+</html>
