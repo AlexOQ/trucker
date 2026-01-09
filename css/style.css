@@ -347,6 +347,15 @@ a.link:hover {
   border: 1px solid transparent;
 }
 
+.card.high-value {
+  border-left: 3px solid #f39c12;
+  background: linear-gradient(90deg, rgba(243, 156, 18, 0.1) 0%, transparent 30%);
+}
+
+.card.fragile {
+  border-left: 3px solid #9b59b6;
+}
+
 .card:hover {
   background: #1a2744;
   transform: translateY(-3px);

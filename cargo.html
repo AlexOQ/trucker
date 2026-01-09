@@ -123,9 +123,10 @@
             <div class="cards-grid">
               ${cargoItems.map(cargo => {
                 const stats = getCargoStats(cargo.id)
+                const cardClasses = ['card', cargo.high_value && 'high-value', cargo.fragile && 'fragile'].filter(Boolean).join(' ')
                 return `
                   <a href="#cargo-${cargo.id}" class="card-link" data-cargo-id="${cargo.id}">
-                    <div class="card">
+                    <div class="${cardClasses}">
                       <div class="card-title">${cargo.name}</div>
                       <div class="card-subtitle">
                         €${cargo.value.toLocaleString()} · ${stats.providerCount} providers
