@@ -87,10 +87,15 @@
       }
     }
 
+    // Normalize text for accent-insensitive search
+    function normalize(str) {
+      return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    }
+
     function renderCargoList(filter = '') {
-      const filterLower = filter.toLowerCase()
+      const filterNorm = normalize(filter)
       const filtered = data.cargo
-        .filter(c => c.name.toLowerCase().includes(filterLower))
+        .filter(c => normalize(c.name).includes(filterNorm))
         .sort((a, b) => a.name.localeCompare(b.name))
 
       if (filtered.length === 0) {

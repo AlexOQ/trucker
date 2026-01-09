@@ -111,11 +111,16 @@
       }
     }
 
+    // Normalize text for accent-insensitive search
+    function normalize(str) {
+      return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    }
+
     function renderCityList(filter = '') {
-      const filterLower = filter.toLowerCase()
+      const filterNorm = normalize(filter)
       const filtered = data.cities.filter(c =>
-        c.name.toLowerCase().includes(filterLower) ||
-        c.country.toLowerCase().includes(filterLower)
+        normalize(c.name).includes(filterNorm) ||
+        normalize(c.country).includes(filterNorm)
       )
 
       const grouped = groupByCountry(filtered)
