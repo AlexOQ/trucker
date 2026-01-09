@@ -63,6 +63,11 @@ nav a:hover, nav a.active {
   background: #16213e;
 }
 
+nav a:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
+}
+
 /* Controls Panel */
 .controls {
   background: #16213e;
@@ -164,6 +169,11 @@ input[type="range"]::-moz-range-thumb {
 .reset-btn:hover, .btn:hover {
   border-color: #f39c12;
   color: #f39c12;
+}
+
+.reset-btn:focus, .btn:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
 }
 
 /* Stats Row */
@@ -377,6 +387,11 @@ a.link:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(243, 156, 18, 0.3);
+}
+
+.card:focus-within {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
 }
 
 .card-title {
