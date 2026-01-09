@@ -277,6 +277,9 @@
       currentCityId = cityId
       rankingsView.style.display = 'none'
       cityView.style.display = 'block'
+      if (window.location.hash !== `#city-${cityId}`) {
+        window.location.hash = `city-${cityId}`
+      }
       renderCity(cityId)
       window.scrollTo(0, 0)
     }
@@ -286,7 +289,21 @@
       currentCityId = null
       cityView.style.display = 'none'
       rankingsView.style.display = 'block'
+      window.location.hash = ''
       renderRankings()
+    }
+
+    // Handle hash navigation (e.g., #city-19)
+    function handleHashNavigation() {
+      const hash = window.location.hash
+      if (hash.startsWith('#city-')) {
+        const cityId = parseInt(hash.replace('#city-', ''))
+        if (cityId && lookups?.citiesById.has(cityId)) {
+          showCity(cityId)
+          return true
+        }
+      }
+      return false
     }
 
     // Handle slider changes
@@ -307,7 +324,11 @@
         lookups = buildLookups(data)
 
         loadSettings()
-        renderRankings()
+
+        // Check for hash navigation, otherwise show rankings
+        if (!handleHashNavigation()) {
+          renderRankings()
+        }
 
         // Event listeners
         scoringSlider.addEventListener('input', onSliderChange)
@@ -315,6 +336,11 @@
         diminishingSlider.addEventListener('input', onSliderChange)
 
         backLink.addEventListener('click', showRankings)
+        window.addEventListener('hashchange', () => {
+          if (!handleHashNavigation()) {
+            showRankings()
+          }
+        })
 
         resetBtn.addEventListener('click', () => {
           const defaults = resetToDefaults()
