@@ -338,11 +338,14 @@ a.link:hover {
   border-radius: 6px;
   padding: 1rem;
   transition: all 0.2s;
+  border: 1px solid transparent;
 }
 
 .card:hover {
   background: #1a2744;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(243, 156, 18, 0.3);
 }
 
 .card-title {
