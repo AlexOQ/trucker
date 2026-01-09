@@ -22,7 +22,7 @@ router.get('/cities/rankings', async (_req, res) => {
 
     const rankings = await Promise.all(
       cities.map(async (city) => {
-        const result = await optimizeTrailerSet(city.id, 10)
+        const result = await optimizeTrailerSet(city.id, { maxTrailers: 10 })
 
         const jobs = result.total_cargo_instances
         const value = result.total_value
@@ -70,7 +70,9 @@ router.get('/cities/:id/trailers', async (req, res) => {
     }
 
     const maxTrailers = parseInt(req.query.max as string) || 10
-    const result = await optimizeTrailerSet(cityId, maxTrailers)
+    const scoringBalance = parseInt(req.query.scoring as string) || 50
+    const diminishingFactor = parseInt(req.query.diminishing as string) || 50
+    const result = await optimizeTrailerSet(cityId, { maxTrailers, scoringBalance, diminishingFactor })
 
     res.json({
       city,

@@ -65,6 +65,8 @@ export async function getCityCargoPool(cityId: number) {
       'cargo_types.id as cargo_id',
       'cargo_types.name as cargo_name',
       'cargo_types.value',
+      'cargo_types.fragile',
+      'cargo_types.high_value',
     ])
     .where('city_depots.city_id', '=', cityId)
     .where('cargo_types.excluded', '=', false)

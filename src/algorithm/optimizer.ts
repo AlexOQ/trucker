@@ -15,8 +15,15 @@ interface TrailerStats {
   jobOpportunities: number
   totalValue: number
   avgValue: number
-  coveragePct: number
-  valuePct: number
+  normalizedValue: number
+  coverage: number  // 0-1 range
+  coveragePct: number  // 0-100 range
+}
+
+interface OptimizationOptions {
+  scoringBalance?: number  // 0-100: 0 = pure value, 100 = pure coverage
+  maxTrailers?: number     // 1-20: garage slots
+  diminishingFactor?: number  // 0-100: 0 = no diminishing, 100 = strong
 }
 
 interface OptimizationResult {
@@ -25,14 +32,53 @@ interface OptimizationResult {
   total_cargo_instances: number
   total_value: number
   recommendations: TrailerRecommendation[]
+  options: Required<OptimizationOptions>
 }
 
-const DIMINISHING_FACTOR = 0.75
+/**
+ * Calculate score for a trailer based on scoring balance
+ * Matches frontend js/optimizer.js:74-78
+ */
+function calculateScore(trailer: TrailerStats, scoringBalance: number): number {
+  const valueWeight = (100 - scoringBalance) / 100
+  const coverageWeight = scoringBalance / 100
+  return valueWeight * trailer.normalizedValue + coverageWeight * trailer.coverage
+}
+
+/**
+ * Calculate diminishing factor for a trailer
+ * Higher coverage = slower diminishing (need more copies)
+ * Matches frontend js/optimizer.js:86-93
+ */
+function getDiminishingFactor(trailer: TrailerStats, diminishingStrength: number): number {
+  const strength = diminishingStrength / 100
+  const minFactor = 1 - (0.5 * strength)  // 1.0 at strength=0, 0.5 at strength=100
+  const coverageBonus = trailer.coverage * 0.5 * strength
+  return minFactor + coverageBonus
+}
+
+/**
+ * Apply value bonuses for fragile and high_value cargo
+ * +30% for each flag (can stack to +60%)
+ * Matches frontend js/data.js:105-106
+ */
+function applyCargoBonus(value: number, fragile: boolean, highValue: boolean): number {
+  const multiplier = 1 + (fragile ? 0.3 : 0) + (highValue ? 0.3 : 0)
+  return value * multiplier
+}
 
 export async function optimizeTrailerSet(
   cityId: number,
-  maxTrailers: number = 10
+  options: OptimizationOptions = {}
 ): Promise<OptimizationResult> {
+  const {
+    scoringBalance = 50,
+    maxTrailers = 10,
+    diminishingFactor = 50,
+  } = options
+
+  const resolvedOptions = { scoringBalance, maxTrailers, diminishingFactor }
+
   const cargoPool = await getCityCargoPool(cityId)
 
   const emptyResult: OptimizationResult = {
@@ -41,6 +87,7 @@ export async function optimizeTrailerSet(
     total_cargo_instances: 0,
     total_value: 0,
     recommendations: [],
+    options: resolvedOptions,
   }
 
   if (cargoPool.length === 0) {
@@ -66,12 +113,13 @@ export async function optimizeTrailerSet(
   }
   const totalDepotCount = [...depotCounts.values()].reduce((sum, c) => sum + c, 0)
 
-  // Count total cargo instances and total value
+  // Count total cargo instances and total value (with bonuses applied)
   let totalCargoInstances = 0
   let totalCityValue = 0
   for (const entry of cargoPool) {
+    const adjustedValue = applyCargoBonus(Number(entry.value), entry.fragile, entry.high_value)
     totalCargoInstances += entry.depot_count
-    totalCityValue += Number(entry.value) * entry.depot_count
+    totalCityValue += adjustedValue * entry.depot_count
   }
 
   // Calculate stats for each trailer
@@ -86,61 +134,54 @@ export async function optimizeTrailerSet(
 
     for (const entry of cargoPool) {
       if (cargoes.has(entry.cargo_id)) {
-        totalValue += Number(entry.value) * entry.depot_count
+        const adjustedValue = applyCargoBonus(Number(entry.value), entry.fragile, entry.high_value)
+        totalValue += adjustedValue * entry.depot_count
         jobOpportunities += entry.depot_count
       }
     }
 
     if (jobOpportunities > 0) {
+      const coverage = jobOpportunities / totalCargoInstances
       trailerStats.push({
         id: trailer.id,
         name: trailer.name,
         jobOpportunities,
         totalValue,
         avgValue: totalValue / jobOpportunities,
-        coveragePct: (jobOpportunities / totalCargoInstances) * 100,
-        valuePct: (totalValue / totalCityValue) * 100,
+        normalizedValue: 0,  // Will be set after we know max
+        coverage,
+        coveragePct: coverage * 100,
       })
     }
   }
 
-  // Find max avg value for normalization
-  const maxAvgValue = Math.max(...trailerStats.map((t) => t.avgValue))
-
-  // Algorithm G: Coverage × Value - balanced approach
-  // score = coverage% × (1 + normalized_avg_value)
-  const scores = new Map<number, number>()
+  // Normalize values
+  const maxAvgValue = Math.max(...trailerStats.map((t) => t.avgValue), 1)
   for (const t of trailerStats) {
-    const normalizedValue = t.avgValue / maxAvgValue
-    const score = (t.coveragePct / 100) * (1 + normalizedValue)
-    scores.set(t.id, score)
+    t.normalizedValue = t.avgValue / maxAvgValue
   }
 
-  // Coverage-based diminishing factor
-  // High coverage trailers get less diminishing (need more copies)
-  // factor = 0.5 + (coverage% / 100) × 0.5
-  // At 0% coverage: factor = 0.5 (strong diminishing)
-  // At 40% coverage: factor = 0.7 (moderate diminishing)
-  // At 100% coverage: factor = 1.0 (no diminishing)
-  function getFactor(trailerId: number): number {
-    const stats = trailerStats.find(t => t.id === trailerId)!
-    return 0.5 + (stats.coveragePct / 100) * 0.5
+  // Calculate base scores
+  const baseScores = new Map<number, number>()
+  for (const t of trailerStats) {
+    baseScores.set(t.id, calculateScore(t, scoringBalance))
   }
 
-  // Greedy selection with coverage-based diminishing factor
+  // Greedy selection with diminishing returns
   const selected = new Map<number, number>()
   for (let round = 0; round < maxTrailers; round++) {
     let bestId: number | null = null
-    let bestScore = 0
+    let bestScore = -1
 
-    for (const [id, baseScore] of scores) {
-      const picked = selected.get(id) ?? 0
-      const factor = getFactor(id)
-      const effective = baseScore * Math.pow(factor, picked)
+    for (const t of trailerStats) {
+      const base = baseScores.get(t.id)!
+      const count = selected.get(t.id) ?? 0
+      const factor = getDiminishingFactor(t, diminishingFactor)
+      const effective = base * Math.pow(factor, count)
 
       if (effective > bestScore) {
         bestScore = effective
-        bestId = id
+        bestId = t.id
       }
     }
 
@@ -157,7 +198,7 @@ export async function optimizeTrailerSet(
       trailer_name: stats.name,
       coverage_pct: Math.round(stats.coveragePct * 10) / 10,
       avg_value: Math.round(stats.avgValue * 100) / 100,
-      score: Math.round((scores.get(id) ?? 0) * 1000) / 1000,
+      score: Math.round((baseScores.get(id) ?? 0) * 1000) / 1000,
       count,
     })
   }
@@ -169,5 +210,6 @@ export async function optimizeTrailerSet(
     total_cargo_instances: totalCargoInstances,
     total_value: Math.round(totalCityValue * 100) / 100,
     recommendations,
+    options: resolvedOptions,
   }
 }
