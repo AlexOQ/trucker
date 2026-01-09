@@ -227,11 +227,16 @@ tr:last-child td {
 }
 
 tr:hover td {
-  background: #1a2744;
+  background: #0f3460;
 }
 
 tr.clickable {
   cursor: pointer;
+}
+
+tr.clickable:hover td:first-child {
+  border-left: 3px solid #f39c12;
+  padding-left: calc(0.75rem - 3px);
 }
 
 .amount {
@@ -422,7 +427,7 @@ a.link:hover {
 .empty-state, .loading {
   text-align: center;
   padding: 3rem;
-  color: #666;
+  color: #e74c3c;
 }
 
 .loading {

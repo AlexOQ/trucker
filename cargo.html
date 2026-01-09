@@ -58,8 +58,9 @@
     }
 
     function getCargoTrailers(cargoId) {
-      const trailerIds = lookups.cargoTrailerMap.get(cargoId) || []
-      return trailerIds
+      const trailerIds = lookups.cargoTrailerMap.get(cargoId)
+      if (!trailerIds) return []
+      return [...trailerIds]
         .map(id => lookups.trailersById.get(id))
         .filter(Boolean)
         .sort((a, b) => a.name.localeCompare(b.name))
