@@ -323,6 +323,22 @@ a.link:hover {
   margin: 0;
 }
 
+.country-header h3::before {
+  content: '▼';
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+
+.country-section.collapsed .country-header h3::before {
+  transform: rotate(-90deg);
+}
+
+.country-section.collapsed .country-content {
+  display: none;
+}
+
 .country-count {
   color: #888;
   font-size: 0.9rem;

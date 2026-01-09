@@ -44,6 +44,31 @@
     const searchInput = document.getElementById('search')
     const backLink = document.getElementById('back-link')
 
+    // Collapse state persistence
+    const COLLAPSE_KEY = 'ets2-cities-collapsed'
+
+    function getCollapsedCountries() {
+      try {
+        return JSON.parse(localStorage.getItem(COLLAPSE_KEY)) || []
+      } catch { return [] }
+    }
+
+    function saveCollapsedCountries(collapsed) {
+      localStorage.setItem(COLLAPSE_KEY, JSON.stringify(collapsed))
+    }
+
+    function toggleCountry(country) {
+      const collapsed = getCollapsedCountries()
+      const idx = collapsed.indexOf(country)
+      if (idx >= 0) {
+        collapsed.splice(idx, 1)
+      } else {
+        collapsed.push(country)
+      }
+      saveCollapsedCountries(collapsed)
+      return collapsed.includes(country)
+    }
+
     function groupByCountry(cities) {
       const groups = new Map()
       for (const city of cities) {
@@ -103,8 +128,10 @@
         return
       }
 
+      const collapsed = getCollapsedCountries()
+
       content.innerHTML = grouped.map(([country, cities]) => `
-        <div class="country-section">
+        <div class="country-section${collapsed.includes(country) ? ' collapsed' : ''}" data-country="${country}">
           <div class="country-header">
             <h3>${country}</h3>
             <span class="country-count">${cities.length} cities</span>
@@ -129,11 +156,21 @@
         </div>
       `).join('')
 
-      // Add click handlers
+      // Add click handlers for city cards
       content.querySelectorAll('[data-city-id]').forEach(el => {
         el.addEventListener('click', (e) => {
           e.preventDefault()
           showCityDetail(parseInt(el.dataset.cityId))
+        })
+      })
+
+      // Add click handlers for country collapse
+      content.querySelectorAll('.country-header').forEach(header => {
+        header.addEventListener('click', () => {
+          const section = header.closest('.country-section')
+          const country = section.dataset.country
+          toggleCountry(country)
+          section.classList.toggle('collapsed')
         })
       })
     }
