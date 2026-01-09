@@ -252,8 +252,22 @@ tr.clickable {
   font-weight: bold;
 }
 
-.country-name {
+.country-name, .country {
   color: #888;
+}
+
+/* City Detail View */
+.city-header {
+  margin-bottom: 1rem;
+}
+
+.city-header h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.city-header .country {
+  font-size: 1rem;
 }
 
 /* Links */
