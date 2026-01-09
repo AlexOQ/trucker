@@ -591,6 +591,16 @@ th.tooltip::before {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     padding-bottom: 0.5rem;
+    /* Scroll shadow indicators */
+    background:
+      linear-gradient(to right, #1a1a2e 30%, transparent),
+      linear-gradient(to left, #1a1a2e 30%, transparent),
+      linear-gradient(to right, rgba(243, 156, 18, 0.3), transparent),
+      linear-gradient(to left, rgba(243, 156, 18, 0.3), transparent);
+    background-position: left center, right center, left center, right center;
+    background-size: 20px 100%, 20px 100%, 10px 100%, 10px 100%;
+    background-repeat: no-repeat;
+    background-attachment: local, local, scroll, scroll;
   }
 
   /* Rankings table: show City, Value, Score on mobile */
