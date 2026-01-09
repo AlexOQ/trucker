@@ -552,6 +552,13 @@ th.tooltip::before {
     align-items: flex-start;
   }
 
+  nav {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
+  }
+
   .stats {
     gap: 1rem;
   }
