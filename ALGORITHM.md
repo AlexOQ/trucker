@@ -82,15 +82,16 @@ High-coverage trailers (those that can haul diverse cargo) receive a smaller pen
 
 ### City Rankings
 
-The city ranking score uses a geometric mean to balance multiple factors:
+The city ranking score uses a geometric mean to balance job availability and total value:
 ```
-score = ∛(depotCount × jobCount × avgValuePerJob) × 10
+score = √(jobCount × totalValue)
 ```
 
-This ensures cities need to perform well across all dimensions to rank highly:
-- Many depots = more job variety
+This ensures cities need to perform well across both dimensions to rank highly:
 - Many jobs = more work for AI drivers
-- High value = better earnings
+- High total value = better earnings potential
+
+The geometric mean prevents cities from ranking highly by excelling in just one dimension (e.g., many low-value jobs or few high-value jobs).
 
 ## Assumptions
 

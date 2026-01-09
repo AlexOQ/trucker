@@ -4,7 +4,7 @@ Optimize your AI driver garages in Euro Truck Simulator 2. This tool recommends 
 
 ## Live Site
 
-Visit the live tool at: **[your-username.github.io/trucker](https://your-username.github.io/trucker)**
+Visit the live tool at: **[alexoq.github.io/trucker](https://alexoq.github.io/trucker)**
 
 ## Features
 
@@ -58,7 +58,7 @@ Found incorrect data? The easiest way to help:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/trucker.git
+git clone https://github.com/AlexOQ/trucker.git
 cd trucker
 
 # Serve locally (any static file server works)

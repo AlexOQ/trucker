@@ -119,7 +119,7 @@ When new DLC or updates add content:
 ### Setup
 
 ```bash
-git clone https://github.com/your-username/trucker.git
+git clone https://github.com/AlexOQ/trucker.git
 cd trucker
 npm install
 ```
