@@ -562,6 +562,21 @@ th.tooltip::before {
     padding-bottom: 0.5rem;
   }
 
+  /* Rankings table: show City, Value, Score on mobile */
+  /* Hide: #(1), Country(3), Depots(4), Jobs(5), €/Job(7) */
+  .table-section table th:nth-child(1),
+  .table-section table td:nth-child(1),
+  .table-section table th:nth-child(3),
+  .table-section table td:nth-child(3),
+  .table-section table th:nth-child(4),
+  .table-section table td:nth-child(4),
+  .table-section table th:nth-child(5),
+  .table-section table td:nth-child(5),
+  .table-section table th:nth-child(7),
+  .table-section table td:nth-child(7) {
+    display: none;
+  }
+
   .stats {
     gap: 1rem;
   }
