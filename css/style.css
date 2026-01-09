@@ -557,7 +557,9 @@ a.link:hover {
   font-weight: normal;
   text-transform: none;
   letter-spacing: normal;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 250px;
+  text-align: center;
   border-radius: 4px;
   opacity: 0;
   visibility: hidden;
@@ -582,9 +584,16 @@ a.link:hover {
 }
 
 .tooltip:hover::after,
-.tooltip:hover::before {
+.tooltip:hover::before,
+.tooltip:focus::after,
+.tooltip:focus::before {
   opacity: 1;
   visibility: visible;
+}
+
+.tooltip:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
 }
 
 th.tooltip::after {
