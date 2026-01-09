@@ -611,18 +611,18 @@ th.tooltip::before {
     font-size: 0.9rem;
   }
 
-  /* Rankings table: show City, Value, Score on mobile */
+  /* Rankings table only: show City, Value, Score on mobile */
   /* Hide: #(1), Country(3), Depots(4), Jobs(5), €/Job(7) */
-  .table-section table th:nth-child(1),
-  .table-section table td:nth-child(1),
-  .table-section table th:nth-child(3),
-  .table-section table td:nth-child(3),
-  .table-section table th:nth-child(4),
-  .table-section table td:nth-child(4),
-  .table-section table th:nth-child(5),
-  .table-section table td:nth-child(5),
-  .table-section table th:nth-child(7),
-  .table-section table td:nth-child(7) {
+  .table-rankings th:nth-child(1),
+  .table-rankings td:nth-child(1),
+  .table-rankings th:nth-child(3),
+  .table-rankings td:nth-child(3),
+  .table-rankings th:nth-child(4),
+  .table-rankings td:nth-child(4),
+  .table-rankings th:nth-child(5),
+  .table-rankings td:nth-child(5),
+  .table-rankings th:nth-child(7),
+  .table-rankings td:nth-child(7) {
     display: none;
   }
 
