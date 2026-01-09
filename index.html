@@ -64,7 +64,14 @@
 
     <div id="rankings-view">
       <div id="rankings-content">
-        <div class="loading">Loading city rankings...</div>
+        <div class="table-section">
+          <h2>City Rankings</h2>
+          <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
+          <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
+          <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
+          <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
+          <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
+        </div>
       </div>
     </div>
 
@@ -147,11 +154,11 @@
                 <th>#</th>
                 <th>City</th>
                 <th>Country</th>
-                <th>Depots</th>
-                <th>Jobs</th>
-                <th>Value</th>
-                <th>€/Job</th>
-                <th>Score</th>
+                <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
+                <th class="tooltip" data-tooltip="Total available cargo jobs">Jobs</th>
+                <th class="tooltip" data-tooltip="Sum of all cargo values (with bonuses)">Value</th>
+                <th class="tooltip" data-tooltip="Average value per cargo job">€/Job</th>
+                <th class="tooltip" data-tooltip="√(Jobs × Value) - balances availability and profit">Score</th>
               </tr>
             </thead>
             <tbody>
@@ -236,10 +243,10 @@
             <thead>
               <tr>
                 <th>Trailer</th>
-                <th>Copies</th>
-                <th>Coverage</th>
-                <th>€/Job/km</th>
-                <th>Score</th>
+                <th class="tooltip" data-tooltip="How many of this trailer to buy">Copies</th>
+                <th class="tooltip" data-tooltip="% of cargo types this trailer can haul">Coverage</th>
+                <th class="tooltip" data-tooltip="Average value per job for this trailer">€/Job/km</th>
+                <th class="tooltip" data-tooltip="Weighted score based on settings">Score</th>
               </tr>
             </thead>
             <tbody>
