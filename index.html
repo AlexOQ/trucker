@@ -245,7 +245,10 @@
         </div>
 
         <div class="table-section">
-          <h2>Recommended Trailers</h2>
+          <div class="section-header">
+            <h2>Recommended Trailers</h2>
+            <button class="btn copy-btn" id="copy-trailers-btn">Copy to clipboard</button>
+          </div>
           <table>
             <thead>
               <tr>
@@ -270,6 +273,69 @@
           </table>
         </div>
       `
+
+      // Add copy button handler
+      const copyBtn = document.getElementById('copy-trailers-btn')
+      copyBtn.addEventListener('click', () => {
+        const trailerList = result.recommendations
+          .map(r => r.count > 1 ? `${r.trailerName} ×${r.count}` : r.trailerName)
+          .join(', ')
+        const text = `${city.name} (${totalTrailers} trailers): ${trailerList}`
+
+        copyToClipboard(text, copyBtn)
+      })
+    }
+
+    // Copy text to clipboard with fallback
+    function copyToClipboard(text, button) {
+      const originalText = button.textContent
+
+      const showSuccess = () => {
+        button.textContent = 'Copied!'
+        button.classList.add('copied')
+        setTimeout(() => {
+          button.textContent = originalText
+          button.classList.remove('copied')
+        }, 2000)
+      }
+
+      const showError = () => {
+        button.textContent = 'Failed'
+        setTimeout(() => {
+          button.textContent = originalText
+        }, 2000)
+      }
+
+      // Try modern clipboard API first
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text)
+          .then(showSuccess)
+          .catch(() => {
+            // Fallback for non-HTTPS or permission denied
+            fallbackCopy(text) ? showSuccess() : showError()
+          })
+      } else {
+        // Fallback for older browsers
+        fallbackCopy(text) ? showSuccess() : showError()
+      }
+    }
+
+    // Fallback copy using execCommand
+    function fallbackCopy(text) {
+      const textarea = document.createElement('textarea')
+      textarea.value = text
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.select()
+      try {
+        const success = document.execCommand('copy')
+        document.body.removeChild(textarea)
+        return success
+      } catch {
+        document.body.removeChild(textarea)
+        return false
+      }
     }
 
     // Show city detail view

@@ -176,6 +176,23 @@ input[type="range"]::-moz-range-thumb {
   outline-offset: 2px;
 }
 
+.copy-btn.copied {
+  border-color: #2ecc71;
+  color: #2ecc71;
+}
+
+/* Section Headers */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.section-header h2 {
+  margin-bottom: 0;
+}
+
 /* Stats Row */
 .stats {
   display: flex;
