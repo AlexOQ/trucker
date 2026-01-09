@@ -246,7 +246,13 @@ tr.clickable {
   cursor: pointer;
 }
 
-tr.clickable:hover td:first-child {
+tr.clickable:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: -2px;
+}
+
+tr.clickable:hover td:first-child,
+tr.clickable:focus td:first-child {
   border-left: 3px solid #f39c12;
   padding-left: calc(0.75rem - 3px);
 }

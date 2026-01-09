@@ -163,7 +163,7 @@
             </thead>
             <tbody>
               ${rankings.map((r, i) => `
-                <tr class="clickable" data-city-id="${r.id}">
+                <tr class="clickable" data-city-id="${r.id}" tabindex="0">
                   <td>${i + 1}</td>
                   <td>${r.name}</td>
                   <td class="country">${r.country}</td>
@@ -179,10 +179,16 @@
         </div>
       `
 
-      // Add click handlers
+      // Add click and keyboard handlers
       rankingsContent.querySelectorAll('tr.clickable').forEach(row => {
         row.addEventListener('click', () => {
           showCity(parseInt(row.dataset.cityId))
+        })
+        row.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            showCity(parseInt(row.dataset.cityId))
+          }
         })
       })
     }
