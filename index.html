@@ -82,9 +82,9 @@
   </div>
 
   <script type="module">
-    import { loadAllData, buildLookups } from './js/data.js'
-    import { optimizeTrailerSet, calculateCityRankings } from './js/optimizer.js'
-    import { getSettings, updateSettings, resetToDefaults } from './js/storage.js'
+    import { loadAllData, buildLookups } from './js/data.js?v=2'
+    import { optimizeTrailerSet, calculateCityRankings } from './js/optimizer.js?v=2'
+    import { getSettings, updateSettings, resetToDefaults } from './js/storage.js?v=2'
 
     let data = null
     let lookups = null
@@ -262,7 +262,10 @@
             <tbody>
               ${result.recommendations.map(r => `
                 <tr>
-                  <td>${r.trailerName}</td>
+                  <td>
+                    <div class="trailer-name">${r.trailerName}</div>
+                    <div class="trailer-cargoes">Hauls: ${r.topCargoes.join(', ')}</div>
+                  </td>
                   <td class="amount">${r.count}</td>
                   <td class="coverage">${r.coveragePct}%</td>
                   <td class="value">€${r.avgValue.toFixed(2)}</td>

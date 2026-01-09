@@ -317,6 +317,17 @@ tr.clickable:focus td:first-child {
   color: #9a9a9a;
 }
 
+/* Trailer Breakdown */
+.trailer-name {
+  font-weight: 600;
+}
+
+.trailer-cargoes {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+
 /* City Detail View */
 .city-header {
   margin-bottom: 1rem;

@@ -37,15 +37,34 @@ function calculateTrailerStats(cargoPool, trailers, lookups) {
 
     let trailerValue = 0
     let trailerJobs = 0
+    const cargoContributions = []
 
     for (const entry of cargoPool) {
       if (compatibleCargo.has(entry.cargoId)) {
-        trailerValue += entry.value * entry.depotCount
+        const contribution = entry.value * entry.depotCount
+        trailerValue += contribution
         trailerJobs += entry.depotCount
+        cargoContributions.push({
+          name: entry.cargoName,
+          value: contribution,
+          jobs: entry.depotCount,
+        })
       }
     }
 
     if (trailerJobs > 0) {
+      // Get top 5 unique cargoes by value contribution
+      const seen = new Set()
+      const topCargoes = cargoContributions
+        .sort((a, b) => b.value - a.value)
+        .filter(c => {
+          if (seen.has(c.name)) return false
+          seen.add(c.name)
+          return true
+        })
+        .slice(0, 5)
+        .map(c => c.name)
+
       stats.push({
         id: trailer.id,
         name: trailer.name,
@@ -53,6 +72,7 @@ function calculateTrailerStats(cargoPool, trailers, lookups) {
         totalValue: trailerValue,
         avgValue: trailerValue / trailerJobs,
         coverage: trailerJobs / totalInstances,
+        topCargoes,
       })
     }
   }
@@ -170,6 +190,7 @@ export function optimizeTrailerSet(cityId, data, lookups, options = {}) {
       coveragePct: Math.round(trailer.coverage * 1000) / 10,
       avgValue: Math.round(trailer.avgValue * 100) / 100,
       score: Math.round(baseScores.get(id) * 1000) / 1000,
+      topCargoes: trailer.topCargoes,
     })
   }
   recommendations.sort((a, b) => b.count - a.count || b.score - a.score)
