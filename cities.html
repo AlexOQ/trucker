@@ -96,7 +96,10 @@
       const grouped = groupByCountry(filtered)
 
       if (grouped.length === 0) {
-        content.innerHTML = '<div class="empty-state">No cities found.</div>'
+        const escaped = filter.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        content.innerHTML = filter
+          ? `<div class="empty-state">No cities found matching "${escaped}". Try a different search term.</div>`
+          : '<div class="empty-state">No cities found.</div>'
         return
       }
 

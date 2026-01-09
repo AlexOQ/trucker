@@ -85,7 +85,10 @@
         .sort((a, b) => a.name.localeCompare(b.name))
 
       if (filtered.length === 0) {
-        content.innerHTML = '<div class="empty-state">No companies found.</div>'
+        const escaped = filter.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        content.innerHTML = filter
+          ? `<div class="empty-state">No companies found matching "${escaped}". Try a different search term.</div>`
+          : '<div class="empty-state">No companies found.</div>'
         return
       }
 
