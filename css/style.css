@@ -204,6 +204,12 @@ input[type="range"]::-moz-range-thumb {
 }
 
 /* Tables */
+.table-hint {
+  color: #9a9a9a;
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
 .table-section {
   background: #16213e;
   border-radius: 8px;
@@ -248,17 +254,22 @@ tr:last-child td {
   border-bottom: none;
 }
 
-tr:hover td {
-  background: #0f3460;
-}
-
 tr.clickable {
   cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+tr.clickable:hover td {
+  background: rgba(243, 156, 18, 0.15);
 }
 
 tr.clickable:focus {
   outline: 2px solid #f39c12;
   outline-offset: -2px;
+}
+
+tr.clickable:focus td {
+  background: rgba(243, 156, 18, 0.15);
 }
 
 tr.clickable:hover td:first-child,
