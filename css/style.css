@@ -33,6 +33,18 @@ h1 {
   color: #f39c12;
 }
 
+.header-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.subtitle {
+  color: #888;
+  font-size: 0.95rem;
+  font-weight: normal;
+}
+
 h2 {
   color: #f39c12;
   font-size: 1.1rem;
