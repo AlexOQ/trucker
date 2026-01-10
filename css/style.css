@@ -650,6 +650,20 @@ th.tooltip::before {
   border-bottom-color: #0f3460;
 }
 
+.control-label .tooltip::after {
+  bottom: auto;
+  top: 100%;
+  margin-top: 6px;
+}
+
+.control-label .tooltip::before {
+  bottom: auto;
+  top: 100%;
+  margin-top: -6px;
+  border-top-color: transparent;
+  border-bottom-color: #0f3460;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .container {
