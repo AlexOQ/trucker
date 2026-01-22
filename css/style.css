@@ -335,7 +335,8 @@ tr.clickable:focus td:first-child {
   font-weight: bold;
 }
 
-.rank-display.top-tier .rank {
+.score .rank-display.top-tier .rank,
+.stat-value .rank-display.top-tier .rank {
   color: #2ecc71;
 }
 

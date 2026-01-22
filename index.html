@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ETS2 Trucker Advisor</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=3">
 </head>
 <body>
   <div class="container">
@@ -105,9 +105,10 @@
     // Format rank for display (optional score for tooltip)
     function formatRank(rank, total, score = null) {
       const isTopTier = rank <= Math.ceil(total * 0.1) // Top 10%
-      const className = isTopTier ? 'rank-display top-tier' : 'rank-display'
-      const tooltip = score !== null ? ` class="tooltip" tabindex="0" data-tooltip="Score: ${score.toFixed(0)}"` : ''
-      return `<span class="${className}"${tooltip}><span class="rank">#${rank}</span> of ${total}</span>`
+      const baseClass = isTopTier ? 'rank-display top-tier' : 'rank-display'
+      const className = score !== null ? `${baseClass} tooltip` : baseClass
+      const tooltipAttrs = score !== null ? ` tabindex="0" data-tooltip="Score: ${score.toFixed(0)}"` : ''
+      return `<span class="${className}"${tooltipAttrs}><span class="rank">#${rank}</span> of ${total}</span>`
     }
 
     // DOM elements
