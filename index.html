@@ -65,6 +65,11 @@
       </div>
     </div>
 
+    <div class="filter-toggle" id="filter-toggle">
+      <button class="filter-btn active" data-filter="all">All Cities</button>
+      <button class="filter-btn" data-filter="owned">My Garages <span class="badge" id="garage-count">0</span></button>
+    </div>
+
     <div id="rankings-view">
       <div id="rankings-content">
         <div class="table-section">
@@ -87,7 +92,7 @@
   <script type="module">
     import { loadAllData, buildLookups } from './js/data.js?v=2'
     import { optimizeTrailerSet, calculateCityRankings } from './js/optimizer.js?v=2'
-    import { getSettings, updateSettings, resetToDefaults } from './js/storage.js?v=2'
+    import { getSettings, updateSettings, resetToDefaults, getOwnedGarages, isOwnedGarage, toggleOwnedGarage, getFilterMode, setFilterMode } from './js/storage.js?v=2'
 
     let data = null
     let lookups = null
@@ -111,6 +116,12 @@
       return `<span class="${className}"${tooltipAttrs}><span class="rank">#${rank}</span> of ${total}</span>`
     }
 
+    // Update garage count badge
+    function updateGarageCount() {
+      const count = getOwnedGarages().length
+      document.getElementById('garage-count').textContent = count
+    }
+
     // DOM elements
     const rankingsView = document.getElementById('rankings-view')
     const rankingsContent = document.getElementById('rankings-content')
@@ -125,6 +136,19 @@
     const trailersValue = document.getElementById('trailers-value')
     const diminishingValue = document.getElementById('diminishing-value')
     const resetBtn = document.getElementById('reset-btn')
+    const filterToggle = document.getElementById('filter-toggle')
+
+    // Filter toggle click handler
+    filterToggle.addEventListener('click', (e) => {
+      const btn = e.target.closest('.filter-btn')
+      if (!btn) return
+
+      const mode = btn.dataset.filter
+      filterToggle.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'))
+      btn.classList.add('active')
+      setFilterMode(mode)
+      renderRankings()
+    })
 
     // Get current options from sliders
     function getOptions() {
@@ -421,6 +445,13 @@
         lookups = buildLookups(data)
 
         loadSettings()
+
+        // Initialize filter toggle from storage
+        const savedFilterMode = getFilterMode()
+        filterToggle.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.filter === savedFilterMode)
+        })
+        updateGarageCount()
 
         // Check for hash navigation, otherwise show rankings
         if (!handleHashNavigation()) {
