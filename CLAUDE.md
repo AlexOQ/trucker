@@ -58,6 +58,10 @@ npm run migrate
 npm run dev
 ```
 
+## Git Workflow
+
+- Always squash-merge PRs to keep history clean
+
 ## Data Entry
 
 Data is entered via conversation with Claude - no UI for data entry.
