@@ -266,6 +266,7 @@
       const options = getOptions()
       const result = optimizeTrailerSet(cityId, data, lookups, options)
       const city = lookups.citiesById.get(cityId)
+      const isOwned = isOwnedGarage(cityId)
 
       if (!city) {
         cityContent.innerHTML = '<div class="empty-state">City not found.</div>'
@@ -276,10 +277,14 @@
         cityContent.innerHTML = `
           <div class="city-header">
             <h2>${city.name}</h2>
+            <button class="garage-toggle" aria-label="Toggle garage" aria-pressed="${isOwned}">
+              <span class="star">${isOwned ? '★' : '☆'}</span>
+            </button>
             <span class="country">${city.country}</span>
           </div>
           <div class="empty-state">No cargo data for this city yet.</div>
         `
+        addGarageToggleHandler(cityId)
         return
       }
 
@@ -290,6 +295,9 @@
       cityContent.innerHTML = `
         <div class="city-header">
           <h2>${city.name}</h2>
+          <button class="garage-toggle" aria-label="Toggle garage" aria-pressed="${isOwned}">
+            <span class="star">${isOwned ? '★' : '☆'}</span>
+          </button>
           <span class="country">${city.country}</span>
         </div>
 
@@ -359,6 +367,22 @@
 
         copyToClipboard(text, copyBtn)
       })
+
+      // Add garage toggle handler
+      addGarageToggleHandler(cityId)
+    }
+
+    // Add garage toggle click handler
+    function addGarageToggleHandler(cityId) {
+      const toggleBtn = cityContent.querySelector('.garage-toggle')
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+          const newState = toggleOwnedGarage(cityId)
+          toggleBtn.setAttribute('aria-pressed', newState)
+          toggleBtn.querySelector('.star').textContent = newState ? '★' : '☆'
+          updateGarageCount()
+        })
+      }
     }
 
     // Copy text to clipboard with fallback
