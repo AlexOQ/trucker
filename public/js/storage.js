@@ -74,7 +74,9 @@ export function getSettings() {
  * Reset to defaults
  */
 export function resetToDefaults() {
-  saveState({ ...defaultState })
+  const state = loadState()
+  state.settings = { ...defaultState.settings }
+  saveState(state)
   return defaultState.settings
 }
 
