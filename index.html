@@ -102,11 +102,12 @@
       return { rank: index + 1, total: cachedRankings.length }
     }
 
-    // Format rank for display
-    function formatRank(rank, total) {
+    // Format rank for display (optional score for tooltip)
+    function formatRank(rank, total, score = null) {
       const isTopTier = rank <= Math.ceil(total * 0.1) // Top 10%
       const className = isTopTier ? 'rank-display top-tier' : 'rank-display'
-      return `<span class="${className}"><span class="rank">#${rank}</span> of ${total}</span>`
+      const tooltip = score !== null ? ` class="tooltip" tabindex="0" data-tooltip="Score: ${score.toFixed(0)}"` : ''
+      return `<span class="${className}"${tooltip}><span class="rank">#${rank}</span> of ${total}</span>`
     }
 
     // DOM elements
@@ -193,7 +194,7 @@
                   <td class="amount">${r.jobs}</td>
                   <td class="value">€${r.totalValue.toLocaleString()}</td>
                   <td>€${r.avgValuePerJob.toFixed(2)}</td>
-                  <td class="score">${formatRank(i + 1, rankings.length)}</td>
+                  <td class="score">${formatRank(i + 1, rankings.length, r.score)}</td>
                 </tr>
               `).join('')}
             </tbody>
