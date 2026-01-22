@@ -21,7 +21,7 @@ generated: auto
 
 ## Phase 2: Validation
 
-- [ ] 2.1 Verify keyboard accessibility
+- [x] 2.1 Verify keyboard accessibility
   - **Do**: Tab to Coverage header, confirm tooltip appears on focus
   - **Files**: N/A (manual test)
   - **Done when**: Tooltip visible when element focused via keyboard
