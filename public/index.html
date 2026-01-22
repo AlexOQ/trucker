@@ -141,6 +141,12 @@
     const diminishingValue = document.getElementById('diminishing-value')
     const resetBtn = document.getElementById('reset-btn')
     const filterToggle = document.getElementById('filter-toggle')
+    const citySearch = document.getElementById('city-search')
+
+    // Normalize text for accent-insensitive search
+    function normalize(str) {
+      return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    }
 
     // Filter toggle click handler
     filterToggle.addEventListener('click', (e) => {
@@ -196,14 +202,21 @@
         return
       }
 
+      // Filter by search term
+      const searchTerm = normalize(citySearch.value)
+      let filtered = rankings.filter(r =>
+        normalize(r.name).includes(searchTerm) ||
+        normalize(r.country).includes(searchTerm)
+      )
+
       // Get filter mode and owned garages
       const filterMode = getFilterMode()
       const ownedSet = new Set(getOwnedGarages())
 
-      // Filter rankings if mode is 'owned'
+      // Filter by owned garages if mode is 'owned'
       const displayRankings = filterMode === 'owned'
-        ? rankings.filter(r => ownedSet.has(r.id))
-        : rankings
+        ? filtered.filter(r => ownedSet.has(r.id))
+        : filtered
 
       // Handle empty state when filtered but no garages
       if (filterMode === 'owned' && displayRankings.length === 0) {
@@ -517,6 +530,7 @@
         scoringSlider.addEventListener('input', onSliderChange)
         trailersSlider.addEventListener('input', onSliderChange)
         diminishingSlider.addEventListener('input', onSliderChange)
+        citySearch.addEventListener('input', renderRankings)
 
         backLink.addEventListener('click', showRankings)
         window.addEventListener('hashchange', () => {
