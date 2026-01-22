@@ -372,15 +372,22 @@
       addGarageToggleHandler(cityId)
     }
 
-    // Add garage toggle click handler
+    // Add garage toggle click and keyboard handler
     function addGarageToggleHandler(cityId) {
       const toggleBtn = cityContent.querySelector('.garage-toggle')
       if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
+        const toggleGarage = () => {
           const newState = toggleOwnedGarage(cityId)
           toggleBtn.setAttribute('aria-pressed', newState)
           toggleBtn.querySelector('.star').textContent = newState ? '★' : '☆'
           updateGarageCount()
+        }
+        toggleBtn.addEventListener('click', toggleGarage)
+        toggleBtn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            toggleGarage()
+          }
         })
       }
     }
