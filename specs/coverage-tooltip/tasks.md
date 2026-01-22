@@ -10,7 +10,7 @@ generated: auto
 
 ## Phase 1: Make It Work (POC)
 
-- [ ] 1.1 Update Coverage tooltip text
+- [x] 1.1 Update Coverage tooltip text
   - **Do**: Change data-tooltip attribute on Coverage th element, add tabindex="0"
   - **Files**: /Users/alexander.olshanetsky/projects/stuff/trucker/index.html
   - **Done when**: Tooltip shows new explanatory text on hover
