@@ -232,6 +232,7 @@
 
       const totalTrailers = result.recommendations.reduce((sum, r) => sum + r.count, 0)
       const trailerTypes = result.recommendations.length
+      const cityRank = getCityRank(cityId)
 
       cityContent.innerHTML = `
         <div class="city-header">
@@ -255,6 +256,10 @@
           <div class="stat">
             <div class="stat-value">${totalTrailers}</div>
             <div class="stat-label">Trailers (${trailerTypes} types)</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${cityRank ? `#${cityRank.rank} of ${cityRank.total}` : '-'}</div>
+            <div class="stat-label">Rank</div>
           </div>
         </div>
 
