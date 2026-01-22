@@ -102,6 +102,13 @@
       return { rank: index + 1, total: cachedRankings.length }
     }
 
+    // Format rank for display
+    function formatRank(rank, total) {
+      const isTopTier = rank <= Math.ceil(total * 0.1) // Top 10%
+      const className = isTopTier ? 'rank-display top-tier' : 'rank-display'
+      return `<span class="${className}"><span class="rank">#${rank}</span> of ${total}</span>`
+    }
+
     // DOM elements
     const rankingsView = document.getElementById('rankings-view')
     const rankingsContent = document.getElementById('rankings-content')
@@ -186,7 +193,7 @@
                   <td class="amount">${r.jobs}</td>
                   <td class="value">€${r.totalValue.toLocaleString()}</td>
                   <td>€${r.avgValuePerJob.toFixed(2)}</td>
-                  <td class="score">#${i + 1} of ${rankings.length}</td>
+                  <td class="score">${formatRank(i + 1, rankings.length)}</td>
                 </tr>
               `).join('')}
             </tbody>
@@ -258,7 +265,7 @@
             <div class="stat-label">Trailers (${trailerTypes} types)</div>
           </div>
           <div class="stat">
-            <div class="stat-value">${cityRank ? `#${cityRank.rank} of ${cityRank.total}` : '-'}</div>
+            <div class="stat-value">${cityRank ? formatRank(cityRank.rank, cityRank.total) : '-'}</div>
             <div class="stat-label">Rank</div>
           </div>
         </div>
