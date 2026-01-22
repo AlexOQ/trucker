@@ -92,6 +92,15 @@
     let data = null
     let lookups = null
     let currentCityId = null
+    let cachedRankings = null
+
+    // Get city rank from cached rankings
+    function getCityRank(cityId) {
+      if (!cachedRankings) return null
+      const index = cachedRankings.findIndex(r => r.id === cityId)
+      if (index === -1) return null
+      return { rank: index + 1, total: cachedRankings.length }
+    }
 
     // DOM elements
     const rankingsView = document.getElementById('rankings-view')
@@ -142,8 +151,10 @@
     function renderRankings() {
       const options = getOptions()
       const rankings = calculateCityRankings(data, lookups, options)
+      cachedRankings = rankings // Cache for city detail lookup
 
       if (rankings.length === 0) {
+        cachedRankings = null
         rankingsContent.innerHTML = '<div class="empty-state">No cities with data yet.</div>'
         return
       }
