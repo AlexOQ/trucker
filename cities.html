@@ -37,6 +37,7 @@
 
   <script type="module">
     import { loadAllData, buildLookups } from './js/data.js'
+    import { isOwnedGarage } from './js/storage.js'
 
     let data = null
     let lookups = null
@@ -151,6 +152,7 @@
                 return `
                   <a href="#city-${city.id}" class="card-link" data-city-id="${city.id}">
                     <div class="card">
+                      ${isOwnedGarage(city.id) ? '<span class="card-garage-badge">★</span>' : ''}
                       <div class="card-title">${city.name}</div>
                       <div class="card-subtitle">
                         ${stats.companyCount} companies · ${stats.depotCount} depots
