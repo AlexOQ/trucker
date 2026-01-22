@@ -11,8 +11,10 @@ const defaultState = {
     maxTrailers: 10,
     diminishingFactor: 50,
   },
-  // Future expansion
+  // Garage management
   ownedGarages: [],
+  garageFilterMode: 'all',
+  // Future expansion
   ownedTrailers: {},
 }
 
@@ -74,4 +76,77 @@ export function getSettings() {
 export function resetToDefaults() {
   saveState({ ...defaultState })
   return defaultState.settings
+}
+
+// ============================================
+// Garage Management Functions
+// ============================================
+
+/**
+ * Get list of owned garage city IDs
+ */
+export function getOwnedGarages() {
+  return loadState().ownedGarages || []
+}
+
+/**
+ * Add a city to owned garages
+ */
+export function addOwnedGarage(cityId) {
+  const state = loadState()
+  if (!state.ownedGarages.includes(cityId)) {
+    state.ownedGarages = [...state.ownedGarages, cityId]
+    saveState(state)
+  }
+  return state.ownedGarages
+}
+
+/**
+ * Remove a city from owned garages
+ */
+export function removeOwnedGarage(cityId) {
+  const state = loadState()
+  state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId)
+  saveState(state)
+  return state.ownedGarages
+}
+
+/**
+ * Check if a city is an owned garage
+ */
+export function isOwnedGarage(cityId) {
+  return getOwnedGarages().includes(cityId)
+}
+
+/**
+ * Toggle a city's owned garage status
+ * @returns {boolean} New state (true = now owned)
+ */
+export function toggleOwnedGarage(cityId) {
+  const state = loadState()
+  const isOwned = state.ownedGarages.includes(cityId)
+  if (isOwned) {
+    state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId)
+  } else {
+    state.ownedGarages = [...state.ownedGarages, cityId]
+  }
+  saveState(state)
+  return !isOwned
+}
+
+/**
+ * Get current garage filter mode
+ */
+export function getFilterMode() {
+  return loadState().garageFilterMode || 'all'
+}
+
+/**
+ * Set garage filter mode
+ */
+export function setFilterMode(mode) {
+  const state = loadState()
+  state.garageFilterMode = mode
+  saveState(state)
+  return mode
 }
