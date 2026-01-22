@@ -679,6 +679,116 @@ th.tooltip::before {
   border-bottom-color: #0f3460;
 }
 
+/* Filter Toggle */
+.filter-toggle {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.5rem;
+}
+
+.filter-btn {
+  background: #16213e;
+  border: 1px solid #0f3460;
+  color: #aaa;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.filter-btn:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.filter-btn:last-child {
+  border-radius: 0 4px 4px 0;
+  border-left: none;
+}
+
+.filter-btn.active {
+  background: #f39c12;
+  color: #1a1a2e;
+  border-color: #f39c12;
+}
+
+.filter-btn:hover:not(.active) {
+  border-color: #f39c12;
+  color: #f39c12;
+}
+
+.filter-btn:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
+}
+
+.filter-btn .badge {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.1rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  margin-left: 0.5rem;
+}
+
+/* Garage Toggle Button */
+.garage-toggle {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.garage-toggle:hover {
+  color: #f39c12;
+}
+
+.garage-toggle[aria-pressed="true"] {
+  color: #f39c12;
+}
+
+.garage-toggle:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
+}
+
+/* Owned Garage Row Highlight */
+tr.owned-garage td:first-child {
+  border-left: 3px solid #f39c12;
+  padding-left: calc(0.75rem - 3px);
+}
+
+/* Empty Garages State */
+.empty-garages {
+  text-align: center;
+  padding: 3rem;
+  color: #888;
+}
+
+.empty-garages p {
+  margin-bottom: 0.5rem;
+}
+
+.empty-garages .hint {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* City Card Garage Badge */
+.card {
+  position: relative;
+}
+
+.card-garage-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  color: #f39c12;
+  font-size: 1rem;
+}
+
 /* Responsive */
 @media (max-width: 600px) {
   .container {
