@@ -192,9 +192,29 @@
         return
       }
 
+      // Get filter mode and owned garages
+      const filterMode = getFilterMode()
+      const ownedSet = new Set(getOwnedGarages())
+
+      // Filter rankings if mode is 'owned'
+      const displayRankings = filterMode === 'owned'
+        ? rankings.filter(r => ownedSet.has(r.id))
+        : rankings
+
+      // Handle empty state when filtered but no garages
+      if (filterMode === 'owned' && displayRankings.length === 0) {
+        rankingsContent.innerHTML = `
+          <div class="empty-garages">
+            <p>No garages marked yet.</p>
+            <p class="hint">Click any city row, then click the star to mark it as your garage.</p>
+          </div>
+        `
+        return
+      }
+
       rankingsContent.innerHTML = `
         <div class="table-section">
-          <h2>City Rankings (${rankings.length} cities)</h2>
+          <h2>City Rankings (${displayRankings.length} cities)</h2>
           <p class="table-hint">Click any city for trailer recommendations</p>
           <table class="table-rankings">
             <thead>
@@ -210,8 +230,8 @@
               </tr>
             </thead>
             <tbody>
-              ${rankings.map((r, i) => `
-                <tr class="clickable" data-city-id="${r.id}" tabindex="0">
+              ${displayRankings.map((r, i) => `
+                <tr class="clickable${ownedSet.has(r.id) ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
                   <td>${i + 1}</td>
                   <td>${r.name}</td>
                   <td class="country">${r.country}</td>
@@ -219,7 +239,7 @@
                   <td class="amount">${r.jobs}</td>
                   <td class="value">€${r.totalValue.toLocaleString()}</td>
                   <td>€${r.avgValuePerJob.toFixed(2)}</td>
-                  <td class="score">${formatRank(i + 1, rankings.length, r.score)}</td>
+                  <td class="score">${formatRank(i + 1, displayRankings.length, r.score)}</td>
                 </tr>
               `).join('')}
             </tbody>
