@@ -325,6 +325,20 @@ tr.clickable:focus td:first-child {
   font-weight: bold;
 }
 
+/* Rank Display */
+.rank-display {
+  white-space: nowrap;
+}
+
+.rank-display .rank {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.rank-display.top-tier .rank {
+  color: #2ecc71;
+}
+
 .country-name, .country {
   color: #9a9a9a;
 }
