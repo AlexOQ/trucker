@@ -131,6 +131,20 @@
       document.getElementById('country-dropdown').style.display = 'none'
     }
 
+    // Update button text based on selection
+    function updateCountryButtonText() {
+      const selected = getSelectedCountries()
+      const btn = document.getElementById('country-filter-btn')
+
+      if (selected.length === 0) {
+        btn.textContent = 'All Countries'
+      } else if (selected.length === 1) {
+        btn.textContent = '1 Country'
+      } else {
+        btn.textContent = `${selected.length} Countries`
+      }
+    }
+
     // Render country checkboxes in dropdown
     function renderCountryCheckboxes() {
       const countries = getUniqueCountries()
@@ -156,6 +170,7 @@
         if (e.target.checked) {
           setSelectedCountries([])
           renderCountryCheckboxes()
+          updateCountryButtonText()
           renderRankings()
         }
       })
@@ -176,6 +191,8 @@
 
           // Re-render checkboxes to update "All Countries" state
           renderCountryCheckboxes()
+          // Update button text to show count
+          updateCountryButtonText()
           // Re-render rankings with new filter
           renderRankings()
         })
