@@ -105,7 +105,7 @@
   <script type="module">
     import { loadAllData, buildLookups } from './js/data.js?v=2'
     import { optimizeTrailerSet, calculateCityRankings } from './js/optimizer.js?v=2'
-    import { getSettings, updateSettings, resetToDefaults, getOwnedGarages, isOwnedGarage, toggleOwnedGarage, getFilterMode, setFilterMode } from './js/storage.js?v=2'
+    import { getSettings, updateSettings, resetToDefaults, getOwnedGarages, isOwnedGarage, toggleOwnedGarage, getFilterMode, setFilterMode, getSelectedCountries, setSelectedCountries } from './js/storage.js?v=2'
 
     let data = null
     let lookups = null
@@ -117,6 +117,20 @@
       if (!data || !data.cities) return []
       const countries = [...new Set(data.cities.map(c => c.country))]
       return countries.sort()
+    }
+
+    // Render country checkboxes in dropdown
+    function renderCountryCheckboxes() {
+      const countries = getUniqueCountries()
+      const countryOptions = document.getElementById('country-options')
+      const selected = getSelectedCountries()
+
+      countryOptions.innerHTML = countries.map(country => `
+        <label class="country-option">
+          <input type="checkbox" value="${country}" ${selected.includes(country) ? 'checked' : ''}>
+          <span>${country}</span>
+        </label>
+      `).join('')
     }
 
     // Get city rank from cached rankings
@@ -529,6 +543,7 @@
         lookups = buildLookups(data)
 
         loadSettings()
+        renderCountryCheckboxes()
 
         // Initialize filter toggle from storage
         const savedFilterMode = getFilterMode()
