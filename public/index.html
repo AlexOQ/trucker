@@ -119,6 +119,18 @@
       return countries.sort()
     }
 
+    // Toggle dropdown visibility
+    function toggleDropdown() {
+      const dropdown = document.getElementById('country-dropdown')
+      const isVisible = dropdown.style.display !== 'none'
+      dropdown.style.display = isVisible ? 'none' : 'block'
+    }
+
+    // Close dropdown
+    function closeDropdown() {
+      document.getElementById('country-dropdown').style.display = 'none'
+    }
+
     // Render country checkboxes in dropdown
     function renderCountryCheckboxes() {
       const countries = getUniqueCountries()
@@ -619,6 +631,22 @@
           trailersSlider.value = defaults.maxTrailers
           diminishingSlider.value = defaults.diminishingFactor
           onSliderChange()
+        })
+
+        // Country filter dropdown toggle
+        const countryFilterBtn = document.getElementById('country-filter-btn')
+        countryFilterBtn.addEventListener('click', (e) => {
+          e.stopPropagation()
+          toggleDropdown()
+        })
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+          const dropdown = document.getElementById('country-dropdown')
+          const filterContainer = document.querySelector('.country-filter')
+          if (!filterContainer.contains(e.target) && dropdown.style.display !== 'none') {
+            closeDropdown()
+          }
         })
 
       } catch (err) {
