@@ -125,15 +125,31 @@
       const countryOptions = document.getElementById('country-options')
       const selected = getSelectedCountries()
 
-      countryOptions.innerHTML = countries.map(country => `
-        <label class="country-option">
-          <input type="checkbox" value="${country}" ${selected.includes(country) ? 'checked' : ''}>
-          <span>${country}</span>
+      countryOptions.innerHTML = `
+        <label class="country-option all-countries">
+          <input type="checkbox" id="all-countries-checkbox" ${selected.length === 0 ? 'checked' : ''}>
+          <span>All Countries</span>
         </label>
-      `).join('')
+        ${countries.map(country => `
+          <label class="country-option">
+            <input type="checkbox" value="${country}" ${selected.includes(country) ? 'checked' : ''}>
+            <span>${country}</span>
+          </label>
+        `).join('')}
+      `
 
-      // Add change handlers to checkboxes
-      countryOptions.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+      // Add handler for "All Countries" checkbox
+      const allCountriesCheckbox = document.getElementById('all-countries-checkbox')
+      allCountriesCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          setSelectedCountries([])
+          renderCountryCheckboxes()
+          renderRankings()
+        }
+      })
+
+      // Add change handlers to country checkboxes
+      countryOptions.querySelectorAll('input[type="checkbox"]:not(#all-countries-checkbox)').forEach(checkbox => {
         checkbox.addEventListener('change', (e) => {
           const country = e.target.value
           const selected = getSelectedCountries()
@@ -146,6 +162,8 @@
             setSelectedCountries(selected.filter(c => c !== country))
           }
 
+          // Re-render checkboxes to update "All Countries" state
+          renderCountryCheckboxes()
           // Re-render rankings with new filter
           renderRankings()
         })
