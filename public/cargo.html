@@ -69,6 +69,21 @@
         .sort((a, b) => a.name.localeCompare(b.name))
     }
 
+    function formatTrailerNames(trailers) {
+      if (!trailers || trailers.length === 0) return ''
+
+      const MAX_DISPLAY = 3
+      const names = trailers.map(t => t.name)
+
+      if (names.length <= MAX_DISPLAY) {
+        return `Hauls on: ${names.join(', ')}`
+      }
+
+      const displayed = names.slice(0, MAX_DISPLAY).join(', ')
+      const remaining = names.length - MAX_DISPLAY
+      return `Hauls on: ${displayed}, +${remaining} more`
+    }
+
     function getCargoStats(cargoId) {
       const providers = getCargoProviders(cargoId)
       const trailers = getCargoTrailers(cargoId)
