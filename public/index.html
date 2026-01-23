@@ -70,8 +70,21 @@
     </div>
 
     <div class="country-filter">
-      <button class="country-filter-btn" id="country-filter-btn">All Countries</button>
-      <div class="country-dropdown" id="country-dropdown" style="display: none;">
+      <button
+        class="country-filter-btn"
+        id="country-filter-btn"
+        aria-expanded="false"
+        aria-label="Filter by country"
+        aria-haspopup="listbox">
+        All Countries
+      </button>
+      <div
+        class="country-dropdown"
+        id="country-dropdown"
+        role="listbox"
+        aria-multiselectable="true"
+        aria-label="Country selection"
+        style="display: none;">
         <div class="country-options" id="country-options">
           <!-- Populated dynamically -->
         </div>
@@ -154,10 +167,13 @@
 
       if (selected.length === 0) {
         btn.textContent = 'All Countries'
+        btn.setAttribute('aria-label', 'Filter by country')
       } else if (selected.length === 1) {
         btn.textContent = '1 Country'
+        btn.setAttribute('aria-label', 'Filter by country, 1 selected')
       } else {
         btn.textContent = `${selected.length} Countries`
+        btn.setAttribute('aria-label', `Filter by country, ${selected.length} selected`)
       }
     }
 
@@ -168,13 +184,22 @@
       const selected = getSelectedCountries()
 
       countryOptions.innerHTML = `
-        <label class="country-option all-countries">
-          <input type="checkbox" id="all-countries-checkbox" ${selected.length === 0 ? 'checked' : ''}>
+        <label class="country-option all-countries" role="option">
+          <input
+            type="checkbox"
+            id="all-countries-checkbox"
+            aria-checked="${selected.length === 0 ? 'true' : 'false'}"
+            ${selected.length === 0 ? 'checked' : ''}>
           <span>All Countries</span>
         </label>
         ${countries.map(country => `
-          <label class="country-option">
-            <input type="checkbox" value="${country}" ${selected.includes(country) ? 'checked' : ''}>
+          <label class="country-option" role="option">
+            <input
+              type="checkbox"
+              value="${country}"
+              aria-checked="${selected.includes(country) ? 'true' : 'false'}"
+              aria-label="${country}"
+              ${selected.includes(country) ? 'checked' : ''}>
             <span>${country}</span>
           </label>
         `).join('')}
@@ -184,6 +209,7 @@
       const allCountriesCheckbox = document.getElementById('all-countries-checkbox')
       allCountriesCheckbox.addEventListener('change', (e) => {
         if (e.target.checked) {
+          e.target.setAttribute('aria-checked', 'true')
           setSelectedCountries([])
           renderCountryCheckboxes()
           updateCountryButtonText()
@@ -198,10 +224,12 @@
           const selected = getSelectedCountries()
 
           if (e.target.checked) {
+            e.target.setAttribute('aria-checked', 'true')
             if (!selected.includes(country)) {
               setSelectedCountries([...selected, country])
             }
           } else {
+            e.target.setAttribute('aria-checked', 'false')
             setSelectedCountries(selected.filter(c => c !== country))
           }
 

@@ -133,7 +133,7 @@ Make dropdown look good and work for all users.
   - _Requirements: NFR-2, FR-7_
   - _Design: Accessibility Requirements_
 
-- [ ] 3.3 Add ARIA attributes for screen readers
+- [x] 3.3 Add ARIA attributes for screen readers
   - **Do**: Add aria-expanded, aria-label, aria-multiselectable, role attributes per design spec
   - **Files**: `/public/index.html`
   - **Done when**: All ARIA attributes present per accessibility spec
