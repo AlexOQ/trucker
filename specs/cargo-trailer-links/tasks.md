@@ -59,7 +59,7 @@ After POC validated, clean up code.
 
 ## Phase 3: Testing
 
-- [ ] 3.1 Manual testing across browsers
+- [x] 3.1 Manual testing across browsers
   - **Do**: Test in Chrome, Firefox, Safari, mobile viewport
   - **Files**: N/A
   - **Done when**: Layout works on all viewports, no overflow issues
@@ -67,7 +67,7 @@ After POC validated, clean up code.
   - **Commit**: N/A (testing only)
   - _Requirements: NFR-3_
 
-- [ ] 3.2 Test edge cases
+- [x] 3.2 Test edge cases
   - **Do**: Test cargo with 0 trailers, 1 trailer, 3 trailers, >3 trailers, excluded cargo
   - **Files**: N/A
   - **Done when**: All edge cases handled gracefully
@@ -76,7 +76,7 @@ After POC validated, clean up code.
 
 ## Phase 4: Quality Gates
 
-- [ ] 4.1 Local quality check
+- [x] 4.1 Local quality check
   - **Do**: Check for console errors, verify no performance regression
   - **Verify**: Page loads <1s, no JS errors
   - **Done when**: All checks pass
