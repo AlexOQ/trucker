@@ -145,6 +145,9 @@
           } else {
             setSelectedCountries(selected.filter(c => c !== country))
           }
+
+          // Re-render rankings with new filter
+          renderRankings()
         })
       })
     }
@@ -254,6 +257,12 @@
         normalize(r.name).includes(searchTerm) ||
         normalize(r.country).includes(searchTerm)
       )
+
+      // Filter by selected countries
+      const selectedCountries = getSelectedCountries()
+      if (selectedCountries.length > 0) {
+        filtered = filtered.filter(r => selectedCountries.includes(r.country))
+      }
 
       // Get filter mode and owned garages
       const filterMode = getFilterMode()
