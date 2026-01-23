@@ -69,6 +69,15 @@
       <input type="text" id="city-search" placeholder="Search cities...">
     </div>
 
+    <div class="country-filter">
+      <button class="country-filter-btn" id="country-filter-btn">All Countries</button>
+      <div class="country-dropdown" id="country-dropdown" style="display: none;">
+        <div class="country-options" id="country-options">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
     <div class="filter-toggle" id="filter-toggle">
       <button class="filter-btn active" data-filter="all">All Cities</button>
       <button class="filter-btn" data-filter="owned">My Garages <span class="badge" id="garage-count">0</span></button>
