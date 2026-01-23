@@ -69,6 +69,27 @@
         .sort((a, b) => a.name.localeCompare(b.name))
     }
 
+    /**
+     * Format trailer names for display in cargo cards
+     * Shows first 3 trailers, truncates rest with "+N more" pattern
+     * @param {Array} trailers - Array of trailer objects with name property
+     * @returns {string} Formatted trailer display string or empty string
+     */
+    function formatTrailerNames(trailers) {
+      if (!trailers || trailers.length === 0) return ''
+
+      const MAX_DISPLAY = 3
+      const names = trailers.map(t => t.name)
+
+      if (names.length <= MAX_DISPLAY) {
+        return `Hauls on: ${names.join(', ')}`
+      }
+
+      const displayed = names.slice(0, MAX_DISPLAY).join(', ')
+      const remaining = names.length - MAX_DISPLAY
+      return `Hauls on: ${displayed}, +${remaining} more`
+    }
+
     function getCargoStats(cargoId) {
       const providers = getCargoProviders(cargoId)
       const trailers = getCargoTrailers(cargoId)
@@ -131,6 +152,8 @@
             <div class="cards-grid">
               ${cargoItems.map(cargo => {
                 const stats = getCargoStats(cargo.id)
+                const trailers = getCargoTrailers(cargo.id)
+                const trailerText = formatTrailerNames(trailers)
                 const cardClasses = ['card', cargo.high_value && 'high-value', cargo.fragile && 'fragile'].filter(Boolean).join(' ')
                 return `
                   <a href="#cargo-${cargo.id}" class="card-link" data-cargo-id="${cargo.id}">
@@ -140,6 +163,7 @@
                         €${cargo.value.toLocaleString()} · ${stats.providerCount} providers
                         ${cargo.excluded ? ' · No Trailer' : ''}
                       </div>
+                      ${!cargo.excluded && trailerText ? `<div class="card-subtitle">${trailerText}</div>` : ''}
                       ${cargo.high_value || cargo.fragile ? `
                         <div class="tags">
                           ${cargo.high_value ? '<span class="tag highlight">High Value</span>' : ''}
