@@ -69,6 +69,12 @@
         .sort((a, b) => a.name.localeCompare(b.name))
     }
 
+    /**
+     * Format trailer names for display in cargo cards
+     * Shows first 3 trailers, truncates rest with "+N more" pattern
+     * @param {Array} trailers - Array of trailer objects with name property
+     * @returns {string} Formatted trailer display string or empty string
+     */
     function formatTrailerNames(trailers) {
       if (!trailers || trailers.length === 0) return ''
 

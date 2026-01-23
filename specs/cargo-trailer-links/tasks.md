@@ -49,7 +49,7 @@ After POC validated, clean up code.
   - _Requirements: FR-4_
   - _Design: Error Handling_
 
-- [ ] 2.2 Extract trailer display logic
+- [x] 2.2 Extract trailer display logic
   - **Do**: If needed, extract trailer formatting to reusable function, add comments
   - **Files**: `/Users/alexander.olshanetsky/projects/stuff/trucker/public/cargo.html`
   - **Done when**: Code is readable and follows existing patterns
