@@ -103,6 +103,13 @@
     let currentCityId = null
     let cachedRankings = null
 
+    // Extract unique countries from data, sorted alphabetically
+    function getUniqueCountries() {
+      if (!data || !data.cities) return []
+      const countries = [...new Set(data.cities.map(c => c.country))]
+      return countries.sort()
+    }
+
     // Get city rank from cached rankings
     function getCityRank(cityId) {
       if (!cachedRankings) return null
