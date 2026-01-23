@@ -146,6 +146,8 @@
             <div class="cards-grid">
               ${cargoItems.map(cargo => {
                 const stats = getCargoStats(cargo.id)
+                const trailers = getCargoTrailers(cargo.id)
+                const trailerText = formatTrailerNames(trailers)
                 const cardClasses = ['card', cargo.high_value && 'high-value', cargo.fragile && 'fragile'].filter(Boolean).join(' ')
                 return `
                   <a href="#cargo-${cargo.id}" class="card-link" data-cargo-id="${cargo.id}">
@@ -155,6 +157,7 @@
                         €${cargo.value.toLocaleString()} · ${stats.providerCount} providers
                         ${cargo.excluded ? ' · No Trailer' : ''}
                       </div>
+                      ${trailerText ? `<div class="card-subtitle">${trailerText}</div>` : ''}
                       ${cargo.high_value || cargo.fragile ? `
                         <div class="tags">
                           ${cargo.high_value ? '<span class="tag highlight">High Value</span>' : ''}
