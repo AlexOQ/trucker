@@ -131,6 +131,22 @@
           <span>${country}</span>
         </label>
       `).join('')
+
+      // Add change handlers to checkboxes
+      countryOptions.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+          const country = e.target.value
+          const selected = getSelectedCountries()
+
+          if (e.target.checked) {
+            if (!selected.includes(country)) {
+              setSelectedCountries([...selected, country])
+            }
+          } else {
+            setSelectedCountries(selected.filter(c => c !== country))
+          }
+        })
+      })
     }
 
     // Get city rank from cached rankings
