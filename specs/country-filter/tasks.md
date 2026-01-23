@@ -124,7 +124,7 @@ Make dropdown look good and work for all users.
   - _Requirements: NFR-4_
   - _Design: UI Specification, Styling Tokens_
 
-- [ ] 3.2 Add keyboard navigation
+- [x] 3.2 Add keyboard navigation
   - **Do**: Implement keyboard handlers for Tab, Enter, Space, Escape, Arrow keys
   - **Files**: `/public/index.html` (inline script)
   - **Done when**: Can navigate and select countries using only keyboard

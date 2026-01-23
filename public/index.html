@@ -122,13 +122,29 @@
     // Toggle dropdown visibility
     function toggleDropdown() {
       const dropdown = document.getElementById('country-dropdown')
+      const btn = document.getElementById('country-filter-btn')
       const isVisible = dropdown.style.display !== 'none'
-      dropdown.style.display = isVisible ? 'none' : 'block'
+
+      if (isVisible) {
+        dropdown.style.display = 'none'
+        btn.setAttribute('aria-expanded', 'false')
+      } else {
+        dropdown.style.display = 'block'
+        btn.setAttribute('aria-expanded', 'true')
+        // Focus first checkbox when opening
+        const firstCheckbox = dropdown.querySelector('input[type="checkbox"]')
+        if (firstCheckbox) {
+          firstCheckbox.focus()
+        }
+      }
     }
 
     // Close dropdown
     function closeDropdown() {
-      document.getElementById('country-dropdown').style.display = 'none'
+      const dropdown = document.getElementById('country-dropdown')
+      const btn = document.getElementById('country-filter-btn')
+      dropdown.style.display = 'none'
+      btn.setAttribute('aria-expanded', 'false')
     }
 
     // Update button text based on selection
@@ -656,6 +672,43 @@
         countryFilterBtn.addEventListener('click', (e) => {
           e.stopPropagation()
           toggleDropdown()
+        })
+
+        // Keyboard handler for dropdown button
+        countryFilterBtn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            toggleDropdown()
+          }
+        })
+
+        // Keyboard navigation for dropdown
+        document.addEventListener('keydown', (e) => {
+          const dropdown = document.getElementById('country-dropdown')
+          if (dropdown.style.display === 'none') return
+
+          if (e.key === 'Escape') {
+            e.preventDefault()
+            closeDropdown()
+            countryFilterBtn.focus()
+          } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault()
+            const checkboxes = Array.from(dropdown.querySelectorAll('input[type="checkbox"]'))
+            const currentIndex = checkboxes.findIndex(cb => cb === document.activeElement || cb.parentElement === document.activeElement)
+
+            let nextIndex
+            if (e.key === 'ArrowDown') {
+              nextIndex = currentIndex < checkboxes.length - 1 ? currentIndex + 1 : 0
+            } else {
+              nextIndex = currentIndex > 0 ? currentIndex - 1 : checkboxes.length - 1
+            }
+
+            checkboxes[nextIndex].focus()
+          } else if (e.key === ' ' && document.activeElement.type === 'checkbox') {
+            // Space handled by checkbox default behavior
+            e.preventDefault()
+            document.activeElement.click()
+          }
         })
 
         // Close dropdown on outside click
