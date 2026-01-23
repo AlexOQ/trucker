@@ -729,6 +729,117 @@ th.tooltip::before {
   margin-left: 0.5rem;
 }
 
+/* Country Filter Dropdown */
+.country-filter {
+  position: relative;
+  margin-bottom: 1.5rem;
+  display: inline-block;
+  min-width: 220px;
+}
+
+.country-filter-btn {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: #16213e;
+  border: 1px solid #0f3460;
+  color: #eee;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+}
+
+.country-filter-btn:hover {
+  border-color: #f39c12;
+  color: #f39c12;
+}
+
+.country-filter-btn:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
+}
+
+.country-filter-btn .filter-icon {
+  font-size: 1.2rem;
+}
+
+.country-filter-btn .filter-text {
+  flex: 1;
+  text-align: left;
+}
+
+.country-filter-btn .dropdown-arrow {
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+
+.country-filter-btn[aria-expanded="true"] .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.country-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin-top: 0.5rem;
+  background: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.country-options {
+  padding: 0.5rem 0;
+}
+
+.country-option {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  gap: 0.75rem;
+}
+
+.country-option:hover {
+  background: rgba(243, 156, 18, 0.15);
+}
+
+.country-option:focus-within {
+  background: rgba(243, 156, 18, 0.15);
+  outline: 2px solid #f39c12;
+  outline-offset: -2px;
+}
+
+.country-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #f39c12;
+}
+
+.country-option span {
+  color: #eee;
+  font-size: 0.95rem;
+}
+
+.country-option.all-countries {
+  font-weight: 600;
+  border-bottom: 1px solid #0f3460;
+  margin-bottom: 0.25rem;
+}
+
+.country-option.all-countries span {
+  color: #f39c12;
+}
+
 /* Garage Toggle Button */
 .garage-toggle {
   background: transparent;

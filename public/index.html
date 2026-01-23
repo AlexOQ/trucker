@@ -69,6 +69,28 @@
       <input type="text" id="city-search" placeholder="Search cities...">
     </div>
 
+    <div class="country-filter">
+      <button
+        class="country-filter-btn"
+        id="country-filter-btn"
+        aria-expanded="false"
+        aria-label="Filter by country"
+        aria-haspopup="listbox">
+        All Countries
+      </button>
+      <div
+        class="country-dropdown"
+        id="country-dropdown"
+        role="listbox"
+        aria-multiselectable="true"
+        aria-label="Country selection"
+        style="display: none;">
+        <div class="country-options" id="country-options">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
     <div class="filter-toggle" id="filter-toggle">
       <button class="filter-btn active" data-filter="all">All Cities</button>
       <button class="filter-btn" data-filter="owned">My Garages <span class="badge" id="garage-count">0</span></button>
@@ -96,12 +118,130 @@
   <script type="module">
     import { loadAllData, buildLookups } from './js/data.js?v=2'
     import { optimizeTrailerSet, calculateCityRankings } from './js/optimizer.js?v=2'
-    import { getSettings, updateSettings, resetToDefaults, getOwnedGarages, isOwnedGarage, toggleOwnedGarage, getFilterMode, setFilterMode } from './js/storage.js?v=2'
+    import { getSettings, updateSettings, resetToDefaults, getOwnedGarages, isOwnedGarage, toggleOwnedGarage, getFilterMode, setFilterMode, getSelectedCountries, setSelectedCountries } from './js/storage.js?v=2'
 
     let data = null
     let lookups = null
     let currentCityId = null
     let cachedRankings = null
+
+    // Extract unique countries from data, sorted alphabetically
+    function getUniqueCountries() {
+      if (!data || !data.cities) return []
+      const countries = [...new Set(data.cities.map(c => c.country))]
+      return countries.sort()
+    }
+
+    // Toggle dropdown visibility
+    function toggleDropdown() {
+      const dropdown = document.getElementById('country-dropdown')
+      const btn = document.getElementById('country-filter-btn')
+      const isVisible = dropdown.style.display !== 'none'
+
+      if (isVisible) {
+        dropdown.style.display = 'none'
+        btn.setAttribute('aria-expanded', 'false')
+      } else {
+        dropdown.style.display = 'block'
+        btn.setAttribute('aria-expanded', 'true')
+        // Focus first checkbox when opening
+        const firstCheckbox = dropdown.querySelector('input[type="checkbox"]')
+        if (firstCheckbox) {
+          firstCheckbox.focus()
+        }
+      }
+    }
+
+    // Close dropdown
+    function closeDropdown() {
+      const dropdown = document.getElementById('country-dropdown')
+      const btn = document.getElementById('country-filter-btn')
+      dropdown.style.display = 'none'
+      btn.setAttribute('aria-expanded', 'false')
+    }
+
+    // Update button text based on selection
+    function updateCountryButtonText() {
+      const selected = getSelectedCountries()
+      const btn = document.getElementById('country-filter-btn')
+
+      if (selected.length === 0) {
+        btn.textContent = 'All Countries'
+        btn.setAttribute('aria-label', 'Filter by country')
+      } else if (selected.length === 1) {
+        btn.textContent = '1 Country'
+        btn.setAttribute('aria-label', 'Filter by country, 1 selected')
+      } else {
+        btn.textContent = `${selected.length} Countries`
+        btn.setAttribute('aria-label', `Filter by country, ${selected.length} selected`)
+      }
+    }
+
+    // Render country checkboxes in dropdown
+    function renderCountryCheckboxes() {
+      const countries = getUniqueCountries()
+      const countryOptions = document.getElementById('country-options')
+      const selected = getSelectedCountries()
+
+      countryOptions.innerHTML = `
+        <label class="country-option all-countries" role="option">
+          <input
+            type="checkbox"
+            id="all-countries-checkbox"
+            aria-checked="${selected.length === 0 ? 'true' : 'false'}"
+            ${selected.length === 0 ? 'checked' : ''}>
+          <span>All Countries</span>
+        </label>
+        ${countries.map(country => `
+          <label class="country-option" role="option">
+            <input
+              type="checkbox"
+              value="${country}"
+              aria-checked="${selected.includes(country) ? 'true' : 'false'}"
+              aria-label="${country}"
+              ${selected.includes(country) ? 'checked' : ''}>
+            <span>${country}</span>
+          </label>
+        `).join('')}
+      `
+
+      // Add handler for "All Countries" checkbox
+      const allCountriesCheckbox = document.getElementById('all-countries-checkbox')
+      allCountriesCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+          e.target.setAttribute('aria-checked', 'true')
+          setSelectedCountries([])
+          renderCountryCheckboxes()
+          updateCountryButtonText()
+          renderRankings()
+        }
+      })
+
+      // Add change handlers to country checkboxes
+      countryOptions.querySelectorAll('input[type="checkbox"]:not(#all-countries-checkbox)').forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+          const country = e.target.value
+          const selected = getSelectedCountries()
+
+          if (e.target.checked) {
+            e.target.setAttribute('aria-checked', 'true')
+            if (!selected.includes(country)) {
+              setSelectedCountries([...selected, country])
+            }
+          } else {
+            e.target.setAttribute('aria-checked', 'false')
+            setSelectedCountries(selected.filter(c => c !== country))
+          }
+
+          // Re-render checkboxes to update "All Countries" state
+          renderCountryCheckboxes()
+          // Update button text to show count
+          updateCountryButtonText()
+          // Re-render rankings with new filter
+          renderRankings()
+        })
+      })
+    }
 
     // Get city rank from cached rankings
     function getCityRank(cityId) {
@@ -208,6 +348,12 @@
         normalize(r.name).includes(searchTerm) ||
         normalize(r.country).includes(searchTerm)
       )
+
+      // Filter by selected countries
+      const selectedCountries = getSelectedCountries()
+      if (selectedCountries.length > 0) {
+        filtered = filtered.filter(r => selectedCountries.includes(r.country))
+      }
 
       // Get filter mode and owned garages
       const filterMode = getFilterMode()
@@ -513,6 +659,8 @@
         lookups = buildLookups(data)
 
         loadSettings()
+        renderCountryCheckboxes()
+        updateCountryButtonText()
 
         // Initialize filter toggle from storage
         const savedFilterMode = getFilterMode()
@@ -545,6 +693,59 @@
           trailersSlider.value = defaults.maxTrailers
           diminishingSlider.value = defaults.diminishingFactor
           onSliderChange()
+        })
+
+        // Country filter dropdown toggle
+        const countryFilterBtn = document.getElementById('country-filter-btn')
+        countryFilterBtn.addEventListener('click', (e) => {
+          e.stopPropagation()
+          toggleDropdown()
+        })
+
+        // Keyboard handler for dropdown button
+        countryFilterBtn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            toggleDropdown()
+          }
+        })
+
+        // Keyboard navigation for dropdown
+        document.addEventListener('keydown', (e) => {
+          const dropdown = document.getElementById('country-dropdown')
+          if (dropdown.style.display === 'none') return
+
+          if (e.key === 'Escape') {
+            e.preventDefault()
+            closeDropdown()
+            countryFilterBtn.focus()
+          } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+            e.preventDefault()
+            const checkboxes = Array.from(dropdown.querySelectorAll('input[type="checkbox"]'))
+            const currentIndex = checkboxes.findIndex(cb => cb === document.activeElement || cb.parentElement === document.activeElement)
+
+            let nextIndex
+            if (e.key === 'ArrowDown') {
+              nextIndex = currentIndex < checkboxes.length - 1 ? currentIndex + 1 : 0
+            } else {
+              nextIndex = currentIndex > 0 ? currentIndex - 1 : checkboxes.length - 1
+            }
+
+            checkboxes[nextIndex].focus()
+          } else if (e.key === ' ' && document.activeElement.type === 'checkbox') {
+            // Space handled by checkbox default behavior
+            e.preventDefault()
+            document.activeElement.click()
+          }
+        })
+
+        // Close dropdown on outside click
+        document.addEventListener('click', (e) => {
+          const dropdown = document.getElementById('country-dropdown')
+          const filterContainer = document.querySelector('.country-filter')
+          if (!filterContainer.contains(e.target) && dropdown.style.display !== 'none') {
+            closeDropdown()
+          }
         })
 
       } catch (err) {
