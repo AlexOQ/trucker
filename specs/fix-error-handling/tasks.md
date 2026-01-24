@@ -39,7 +39,7 @@ Focus: Apply error handling fixes to all identified locations.
   - _Requirements: FR-4, FR-5_
   - _Design: Component C_
 
-- [ ] 1.4 Fix empty catch block in cities.html
+- [x] 1.4 Fix empty catch block in cities.html
   - **Do**: Add console.warn with error to catch block in getCollapsedCountries
   - **Files**: /Users/alexander.olshanetsky/projects/stuff/trucker-fix-error-handling/public/cities.html
   - **Done when**: Catch block logs warning with error details
