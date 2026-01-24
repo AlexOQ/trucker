@@ -14,24 +14,37 @@ Euro Truck Simulator 2 trucking company analyzer - optimizes trailer sets per ci
 
 ## Tech Stack
 
+**Production (GitHub Pages)**:
+- **Static Site**: HTML/CSS/JavaScript (no backend)
+- **Data**: JSON files in `/public/data/`
+- **Client-Side**: Vanilla JS with fuzzy autocomplete
+- **Computation**: All optimization runs in browser
+
+**Development (Optional)**:
 - **Runtime**: Node.js + TypeScript
-- **Database**: PostgreSQL (Docker, port 5433, user/pass: trucker/trucker)
-- **Web**: Express + vanilla frontend (fuzzy autocomplete)
-- **ORM**: Kysely (type-safe query builder)
+- **Database**: PostgreSQL (for bulk data entry only)
+- **Tools**: Docker, Kysely ORM
 
-## Database Schema
+## Data Model
 
-```sql
-cities (id SERIAL, name TEXT, country TEXT)
-depot_types (id SERIAL, name TEXT)
-cargo_types (id SERIAL, name TEXT, value NUMERIC, excluded BOOLEAN)
-trailer_types (id SERIAL, name TEXT, ownable BOOLEAN)
+**JSON Files** (in `/public/data/`):
+- `cities.json`: City name, country
+- `companies.json`: Depot/company types
+- `cargo.json`: Cargo name, value, fragile/high_value flags, excluded
+- `trailers.json`: Trailer name, ownable flag
+- `city-companies.json`: Which companies in which cities (with depot counts)
+- `company-cargo.json`: Which cargoes at which companies
+- `cargo-trailers.json`: Which trailers compatible with which cargoes
 
--- Junction tables
-city_depots (city_id INT, depot_type_id INT, count INT)
-depot_type_cargoes (depot_type_id INT, cargo_type_id INT)
-cargo_trailers (cargo_type_id INT, trailer_type_id INT)
-```
+**Cargo Value Bonuses**:
+- Fragile cargo: +30% value bonus
+- High-value cargo: +30% value bonus
+- Bonuses stack (fragile + high_value = +60%)
+
+**Optional Database** (for bulk data entry):
+- PostgreSQL schema mirrors JSON structure
+- Export scripts generate JSON from database
+- Database not needed for production deployment
 
 ## Key Algorithms
 
@@ -47,16 +60,23 @@ cargo_trailers (cargo_type_id INT, trailer_type_id INT)
 
 ## Commands
 
+**Production Site**:
+- Deployed to GitHub Pages: https://alexoq.github.io/trucker
+- No build step required (static files)
+
+**Development (Data Entry)**:
 ```bash
-# Start postgres
+# Optional: start postgres for bulk data entry
 docker compose up -d
 
-# Run migrations
+# Optional: run migrations
 npm run migrate
 
-# Start dev server
+# Start dev server (for data entry interface)
 npm run dev
 ```
+
+**Note**: Database and dev server are only for data entry. Production site runs entirely client-side from JSON files.
 
 ## Git Workflow
 
@@ -98,15 +118,22 @@ ON CONFLICT DO NOTHING;
 ## Project Structure
 
 ```
-/src
-  /db          - database connection, migrations, queries
-  /api         - express routes
-  /algorithm   - trailer optimization logic
-  /types       - TypeScript interfaces
-/public        - frontend assets
-/migrations    - SQL migration files
-/analysis      - untracked, ephemeral agent outputs
-/docs          - tracked documentation
+/public          - production static site (GitHub Pages)
+  /css           - stylesheets
+  /data          - JSON data files (cities, cargo, trailers, etc)
+  /js            - client-side JavaScript (optimizer, data loader, UI)
+  index.html     - main page
+
+/src             - optional backend (data entry only)
+  /db            - database connection, migrations, queries
+  /api           - express routes for data entry
+  /algorithm     - trailer optimization logic (reference impl)
+  /types         - TypeScript interfaces
+
+/scripts         - data export/migration utilities
+/docs            - tracked documentation
+/specs           - ralph-specum spec artifacts
+/analysis        - untracked, ephemeral agent outputs
 ```
 
 ## Agent Workflow System
