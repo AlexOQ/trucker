@@ -7,7 +7,7 @@ Multi-agent development workflow with centralized PM coordination and phase-awar
 | Command | What It Does |
 |---------|--------------|
 | `status` | Show current phase, what's done, what's pending |
-| `run user testing` | 3 persona agents test prod, output → `analysis/user-testing.md` |
+| `run user testing` | QA personas + UX research agents test prod → `analysis/user-testing.md` |
 | `perform QA work` | Review closed issues, test local dev → `analysis/qa-review.md` |
 | `run architect review` | Major codebase improvements → `analysis/arch-review.md` |
 | `audit documentation` | Scan all doc sources → `analysis/docs-review.md` |
@@ -192,7 +192,8 @@ Task(subagent_type=ralph-specum:plan-synthesizer, model=sonnet, run_in_backgroun
 |------|-------|-----------|
 | Main Session | `opus` | Coordinator - status, spawning, high-level decisions |
 | PM Agent | `opus` | Complex synthesis, prioritization decisions |
-| User Testing | `sonnet` | Structured testing workflows |
+| User Testing (QA) | `sonnet` | Structured testing workflows |
+| User Testing (UX) | `sonnet` | Design analysis, UX patterns |
 | QA Agent | `sonnet` | Code review, test analysis |
 | Architect Agent | `sonnet` | Pattern analysis |
 | Documentation Agent | `sonnet` | Content review |
@@ -275,14 +276,23 @@ ON PR MERGE:
 
 ---
 
-### User Testing Agent (Black Box)
-
-**Invoke**: `voltagent-qa-sec:qa-expert` + Playwright
-**Model**: `sonnet`
+### User Testing Agent Stack
 
 **Target**: Production deployment (https://alexoq.github.io/trucker)
 
-**Spawns**: 3 parallel agents with randomized personas
+**Agent Stack** (run sequentially, foreground):
+
+| Agent | Type | Focus | Output |
+|-------|------|-------|--------|
+| QA Personas | `voltagent-qa-sec:qa-expert` | Functional testing, bugs, friction | Usability issues |
+| UX Research | `voltagent-biz:ux-researcher` | Design, layout, visual hierarchy, UX patterns | Design improvements |
+
+**Model**: `sonnet` (both agents)
+
+#### QA Persona Agent
+
+**Invoke**: `voltagent-qa-sec:qa-expert` + Playwright
+**Spawns**: 3 personas from pool (randomized)
 
 **Persona Pool** (randomly select 3):
 ```yaml
@@ -364,14 +374,37 @@ impatient_gamer:
   frustration_triggers: "Any friction, any loading"
 ```
 
-**Output**: `analysis/user-testing.md`
-
-**Workflow**:
+**QA Workflow**:
 1. Read `.state.json` to understand current focus
 2. Navigate prod URL via Playwright
 3. Each persona performs typical user journeys
 4. Document friction points, confusion, bugs
 5. Rate severity and provide recommendations
+
+#### UX Research Agent
+
+**Invoke**: `voltagent-biz:ux-researcher` + Playwright
+**Focus**: Design quality, visual hierarchy, UX patterns, accessibility
+
+**Analysis Dimensions**:
+- **Visual Hierarchy**: Is important info prominent? Clear call-to-actions?
+- **Layout & Spacing**: Proper use of whitespace? Consistent alignment?
+- **Color & Contrast**: Readable text? Accessible color combinations?
+- **Information Architecture**: Logical grouping? Easy to scan?
+- **Interaction Patterns**: Standard UI patterns? Predictable behavior?
+- **Responsive Design**: Works across viewport sizes? Touch-friendly?
+- **Onboarding**: Clear first-time experience? Progressive disclosure?
+- **Feedback & States**: Loading, error, empty states handled?
+
+**UX Workflow**:
+1. Capture full-page screenshots at multiple viewport sizes
+2. Analyze visual design against modern UX principles
+3. Check accessibility (contrast, focus states, semantic markup)
+4. Identify design inconsistencies and improvement opportunities
+5. Provide specific, actionable design recommendations
+6. Reference industry examples where applicable
+
+**Output**: Appends to `analysis/user-testing.md` under "## UX Research Findings"
 
 ---
 
@@ -623,7 +656,8 @@ CYCLE START
 │
 ├── ANALYSIS PHASE
 │   ├── User: "run user testing"
-│   │   └── 3 persona agents test prod → analysis/user-testing.md
+│   │   ├── QA: 3 persona agents test functionality
+│   │   └── UX: Design/layout analysis → analysis/user-testing.md
 │   ├── User: "perform QA work"
 │   │   └── Review code, run tests → analysis/qa-review.md
 │   ├── User: "run architect review"
