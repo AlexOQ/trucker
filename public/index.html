@@ -21,17 +21,68 @@
       </nav>
     </header>
 
-    <div class="controls">
+    <div class="onboarding">
+      <h2>Getting Started</h2>
+      <p class="onboarding-intro">
+        This tool helps you choose the most profitable garage locations and the best trailers to buy for each one.
+        It analyzes all cargo jobs available in each city and recommends which trailers will maximize your income.
+      </p>
+      <div class="quick-steps">
+        <div class="step">
+          <span class="step-number">1</span>
+          <div class="step-content">
+            <strong>Browse city rankings</strong>
+            <span>Cities are ranked by job availability and cargo value</span>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-number">2</span>
+          <div class="step-content">
+            <strong>Click a city for trailer recommendations</strong>
+            <span>See which trailers work best for that location</span>
+          </div>
+        </div>
+        <div class="step">
+          <span class="step-number">3</span>
+          <div class="step-content">
+            <strong>Mark your garages with ★</strong>
+            <span>Track which cities you've set up garages in</span>
+          </div>
+        </div>
+      </div>
+      <div class="terminology">
+        <h3>Key Terms</h3>
+        <dl class="term-list">
+          <dt class="tooltip" tabindex="0" data-tooltip="Company facilities (like Posped, EuroGoodies, etc.) that offer cargo jobs in a city">Depots</dt>
+          <dd>Company facilities where you pick up cargo</dd>
+
+          <dt class="tooltip" tabindex="0" data-tooltip="Total number of different cargo delivery opportunities available in a city">Jobs</dt>
+          <dd>Available cargo delivery opportunities</dd>
+
+          <dt class="tooltip" tabindex="0" data-tooltip="The percentage of different cargo types in a city that a trailer can haul">Coverage</dt>
+          <dd>How many different cargo types a trailer can haul</dd>
+
+          <dt class="tooltip" tabindex="0" data-tooltip="Combines job availability and cargo value to rank cities. Higher score = more profitable garage location">Score</dt>
+          <dd>Overall profitability rating for a city or trailer</dd>
+        </dl>
+      </div>
+    </div>
+
+    <div class="controls collapsed">
       <div class="controls-header">
-        <h2>Algorithm Settings</h2>
+        <button class="settings-toggle" id="settings-toggle" aria-expanded="false">
+          <span class="toggle-icon">▶</span>
+          <h2>Advanced Settings</h2>
+        </button>
         <button class="reset-btn" id="reset-btn">Reset to Defaults</button>
       </div>
-      <div class="controls-grid">
+      <div class="controls-grid" id="controls-grid">
         <div class="control-group">
           <div class="control-label">
             <span class="tooltip" tabindex="0" data-tooltip="Left = prioritize high-paying cargo. Right = prioritize covering more cargo types.">Scoring Balance</span>
             <span class="control-value" id="scoring-value">50</span>
           </div>
+          <p class="slider-description">Choose between high-value jobs or covering more cargo types</p>
           <div class="slider-container">
             <span class="slider-label">High €/km</span>
             <input type="range" id="scoring-slider" min="0" max="100" value="50">
@@ -44,6 +95,7 @@
             <span class="tooltip" tabindex="0" data-tooltip="Number of trailer slots in your garage (1-20)">Garage Size</span>
             <span class="control-value" id="trailers-value">10</span>
           </div>
+          <p class="slider-description">Set how many trailer parking spots you have</p>
           <div class="slider-container">
             <span class="slider-label">1</span>
             <input type="range" id="trailers-slider" min="1" max="20" value="10">
@@ -56,6 +108,7 @@
             <span class="tooltip" tabindex="0" data-tooltip="Left = allow duplicate trailers if profitable. Right = force different trailer types.">Trailer Variety</span>
             <span class="control-value" id="diminishing-value">50</span>
           </div>
+          <p class="slider-description">Balance between buying duplicate trailers vs. different types</p>
           <div class="slider-container">
             <span class="slider-label">Same types OK</span>
             <input type="range" id="diminishing-slider" min="0" max="100" value="50">
@@ -282,6 +335,8 @@
     const resetBtn = document.getElementById('reset-btn')
     const filterToggle = document.getElementById('filter-toggle')
     const citySearch = document.getElementById('city-search')
+    const settingsToggle = document.getElementById('settings-toggle')
+    const controlsGrid = document.getElementById('controls-grid')
 
     // Normalize text for accent-insensitive search
     function normalize(str) {
@@ -693,6 +748,22 @@
           trailersSlider.value = defaults.maxTrailers
           diminishingSlider.value = defaults.diminishingFactor
           onSliderChange()
+        })
+
+        // Settings toggle handler
+        settingsToggle.addEventListener('click', () => {
+          const controls = settingsToggle.closest('.controls')
+          const isCollapsed = controls.classList.contains('collapsed')
+
+          if (isCollapsed) {
+            controls.classList.remove('collapsed')
+            settingsToggle.setAttribute('aria-expanded', 'true')
+            settingsToggle.querySelector('.toggle-icon').textContent = '▼'
+          } else {
+            controls.classList.add('collapsed')
+            settingsToggle.setAttribute('aria-expanded', 'false')
+            settingsToggle.querySelector('.toggle-icon').textContent = '▶'
+          }
         })
 
         // Country filter dropdown toggle
