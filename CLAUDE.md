@@ -105,4 +105,79 @@ ON CONFLICT DO NOTHING;
   /types       - TypeScript interfaces
 /public        - frontend assets
 /migrations    - SQL migration files
+/analysis      - untracked, ephemeral agent outputs
+/docs          - tracked documentation
 ```
+
+## Agent Workflow System
+
+See `docs/AGENT-WORKFLOW.md` for full details.
+
+### State Tracking
+
+- State file: `analysis/.state.json`
+- If `analysis/` missing: run analysis agents to reconstruct state
+- Phases: `analysis` → `pm-review` → `development` → `merge` → (repeat)
+
+### Command Recognition
+
+| User Says | Agent Action |
+|-----------|--------------|
+| `status` | Read state, report phase/progress/queue/openPRs |
+| `run user testing` | Spawn 3 persona agents against prod (alexoq.github.io/trucker), output → `analysis/user-testing.md` |
+| `perform QA work` | Pull closed issues, test local dev, output → `analysis/qa-review.md` |
+| `run architect review` | Analyze codebase for major improvements → `analysis/arch-review.md` |
+| `audit documentation` | Scan all sources (issues/PRs/code/docs) → `analysis/docs-review.md` |
+| `PM review` | Read `analysis/*.md`, create/update GitHub issues, transition state |
+| `start development` | Pull from queue, run ralph-specum spec-driven flow in worktrees |
+| `merge and cleanup` | Squash-merge PRs, remove worktrees, pull main, transition to analysis |
+
+### Agent Behaviors
+
+**All agents**:
+- Check `analysis/.state.json` on startup
+- Update state on completion
+- Write structured output to `analysis/` directory
+
+**User Testing** (`voltagent-qa-sec:qa-expert` + Playwright):
+- Target: https://alexoq.github.io/trucker
+- Spawns 3 agents with randomized personas from pool
+- Tests real user journeys, documents friction
+
+**QA** (`pr-review-toolkit:code-reviewer`):
+- Target: local dev server (`npm run dev`)
+- Pulls recently closed issues via `gh issue list --state closed`
+- Reviews code changes, runs tests, checks regressions
+
+**Architect** (`ralph-specum:architect-reviewer`):
+- Scope: major improvements only (framework changes, major refactors, upcoming blockers)
+- Not for small fixes
+
+**Documentation** (`voltagent-dev-exp:documentation-engineer`):
+- Sources: GitHub issues, PRs, comments, code, docs/
+- Checks: accuracy, duplicates, staleness
+
+**PM** (`voltagent-biz:product-manager`):
+- Reads all `analysis/*.md` files
+- Creates/updates GitHub issues with labels
+- Labels: `priority:P0|P1|P2`, `type:bug|feature|ux`
+- Manages development queue in state
+- **Blocked issues**: Issues with dependencies go to `blockedIssues`, NOT `developmentQueue`
+- Moves issues from `blockedIssues` → `developmentQueue` when blockers complete
+
+**Development** (`ralph-specum` with `--quick`):
+- Each issue runs in separate git worktree: `git worktree add ../trucker-<slug> -b feat/<slug>`
+- `--quick` flag: skips interactive phases, auto-generates specs, executes non-interactively
+- Ends with PR containing "Closes #XX" in body
+- Up to 3 parallel background agents for unblocked issues (requires pre-approved permissions)
+- Blocked issues wait until blocking PRs are **merged** (not just opened)
+
+**Merge and Cleanup**:
+- Squash-merge all open PRs: `gh pr merge <num> --squash --delete-branch`
+- Force-remove worktrees: `git worktree remove --force <path>`
+- Delete local feature branches
+- Pull main with merged changes
+- Clean analysis folder: delete `*.md` files (keep `.state.json`)
+- Move unblocked issues from `blockedIssues` → `developmentQueue`
+- Reset `analysisComplete` flags, transition to analysis
+- Note: `completedThisCycle` preserved for PM, reset when PM transitions to development
