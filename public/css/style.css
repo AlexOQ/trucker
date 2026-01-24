@@ -66,6 +66,9 @@ nav a {
   color: #aaa;
   text-decoration: none;
   padding: 0.5rem 1rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   border-radius: 4px;
   transition: all 0.2s;
 }
@@ -141,26 +144,38 @@ nav a:focus {
 
 input[type="range"] {
   flex: 1;
-  height: 6px;
+  height: 44px;
   -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
   background: #0f3460;
   border-radius: 3px;
-  cursor: pointer;
 }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   background: #f39c12;
   border-radius: 50%;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  margin-top: -19px;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: #0f3460;
+  border-radius: 3px;
 }
 
 input[type="range"]::-moz-range-thumb {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   background: #f39c12;
   border-radius: 50%;
   cursor: pointer;
@@ -173,6 +188,11 @@ input[type="range"]::-moz-range-thumb {
   border: 1px solid #666;
   color: #9a9a9a;
   padding: 0.4rem 0.8rem;
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.8rem;
@@ -691,6 +711,9 @@ th.tooltip::before {
   border: 1px solid #0f3460;
   color: #aaa;
   padding: 0.5rem 1rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   font-size: 0.9rem;
   transition: all 0.2s;
@@ -848,6 +871,11 @@ th.tooltip::before {
   color: #666;
   cursor: pointer;
   padding: 0.25rem;
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   line-height: 1;
   transition: color 0.2s;
 }
