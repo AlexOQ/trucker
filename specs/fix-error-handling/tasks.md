@@ -30,7 +30,7 @@ Focus: Apply error handling fixes to all identified locations.
   - _Requirements: FR-6, FR-7_
   - _Design: Component B_
 
-- [ ] 1.3 Fix loadJson in data.js
+- [x] 1.3 Fix loadJson in data.js
   - **Do**: Add response.ok check after fetch, throw descriptive error if not ok
   - **Files**: /Users/alexander.olshanetsky/projects/stuff/trucker-fix-error-handling/public/js/data.js
   - **Done when**: Failed fetch shows "Failed to load X: HTTP 404" instead of JSON parse error
