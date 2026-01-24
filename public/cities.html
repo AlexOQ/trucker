@@ -54,7 +54,10 @@
     function getCollapsedCountries() {
       try {
         return JSON.parse(localStorage.getItem(COLLAPSE_KEY)) || []
-      } catch { return [] }
+      } catch (e) {
+        console.warn('Failed to load collapsed countries:', e);
+        return [];
+      }
     }
 
     function saveCollapsedCountries(collapsed) {

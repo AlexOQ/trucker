@@ -10,6 +10,9 @@ async function loadJson(filename) {
     return dataCache[filename]
   }
   const response = await fetch(`data/${filename}`)
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`)
+  }
   const data = await response.json()
   dataCache[filename] = data
   return data
