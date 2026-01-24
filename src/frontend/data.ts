@@ -3,18 +3,18 @@
  * Loads and caches JSON data files
  */
 
-interface City {
+export interface City {
   id: number;
   name: string;
   country: string;
 }
 
-interface Company {
+export interface Company {
   id: number;
   name: string;
 }
 
-interface Cargo {
+export interface Cargo {
   id: number;
   name: string;
   value: number;
@@ -23,29 +23,29 @@ interface Cargo {
   excluded?: boolean;
 }
 
-interface Trailer {
+export interface Trailer {
   id: number;
   name: string;
   ownable: boolean;
 }
 
-interface CityCompany {
+export interface CityCompany {
   cityId: number;
   companyId: number;
   count: number;
 }
 
-interface CompanyCargo {
+export interface CompanyCargo {
   companyId: number;
   cargoId: number;
 }
 
-interface CargoTrailer {
+export interface CargoTrailer {
   cargoId: number;
   trailerId: number;
 }
 
-interface AllData {
+export interface AllData {
   cities: City[];
   companies: Company[];
   cargo: Cargo[];
@@ -55,7 +55,7 @@ interface AllData {
   cargoTrailers: CargoTrailer[];
 }
 
-interface Lookups {
+export interface Lookups {
   citiesById: Map<number, City>;
   companiesById: Map<number, Company>;
   cargoById: Map<number, Cargo>;
@@ -66,7 +66,7 @@ interface Lookups {
   cargoTrailerMap: Map<number, Set<number>>;
 }
 
-interface CargoPoolEntry {
+export interface CargoPoolEntry {
   companyId: number;
   depotCount: number;
   cargoId: number;
