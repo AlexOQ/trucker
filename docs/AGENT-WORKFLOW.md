@@ -157,32 +157,40 @@ This occurs when background agents (`run_in_background: true`) try to use tools 
 - Session restart after adding permissions
 - Different glob pattern syntax
 
-**Current Workaround**: Develop issues sequentially in the main session instead of parallel background agents:
+**Current Workaround**: Use **foreground Task agents** with `model: sonnet` instead of background agents:
 
 ```
-# Instead of spawning 3 parallel background agents:
-# Task(subagent_type=ralph-specum, run_in_background=true, ...)
+# DON'T: Background agents (can't prompt for permissions)
+Task(subagent_type=ralph-specum, run_in_background=true, ...)
 
-# Use sequential in-session development:
-# 1. Create worktree for issue
-# 2. Run ralph-specum skill directly (foreground)
-# 3. Complete PR
-# 4. Repeat for next issue
+# DO: Foreground agents (CAN prompt for permissions)
+Task(subagent_type=ralph-specum:plan-synthesizer, model=sonnet, run_in_background=false, ...)
 ```
+
+**Why Foreground Agents Work**:
+- `run_in_background: false` (or omitted) → Agent runs synchronously
+- Synchronous agents CAN prompt for permissions interactively
+- User approves permissions once, agent continues
+
+**Model Cost Optimization**:
+- Main session (opus): Coordinator only - status, spawning, PM decisions
+- Development agents (sonnet): Foreground tasks doing file work
+- This preserves opus tokens for high-value decisions
 
 **Impact**:
-- Development phase takes longer (sequential vs parallel)
-- Main session is occupied during development
-- All permissions work correctly in foreground
+- Development is sequential (one agent at a time)
+- Permissions work correctly via interactive prompts
+- Significant token cost savings (sonnet vs opus for file operations)
 
-**TODO**: Investigate how to properly grant permissions to background Task subagents.
+**TODO**: Investigate how to properly grant permissions to background Task subagents for parallel execution.
 
 ---
 
 ## Model Configuration
 
-| Agent | Model | Rationale |
-|-------|-------|-----------|
+| Role | Model | Rationale |
+|------|-------|-----------|
+| Main Session | `opus` | Coordinator - status, spawning, high-level decisions |
 | PM Agent | `opus` | Complex synthesis, prioritization decisions |
 | User Testing | `sonnet` | Structured testing workflows |
 | QA Agent | `sonnet` | Code review, test analysis |
@@ -190,11 +198,17 @@ This occurs when background agents (`run_in_background: true`) try to use tools 
 | Documentation Agent | `sonnet` | Content review |
 | Development Agent | `sonnet` | Code generation, spec execution |
 
+**Cost Optimization Pattern**:
+- Main session stays as lightweight coordinator (opus)
+- All file operations delegated to foreground Task agents (sonnet)
+- PM decisions use opus for quality, everything else uses sonnet
+
 When invoking via Task tool, set `model` parameter:
 ```
 Task tool:
-  subagent_type: voltagent-biz:product-manager
-  model: opus
+  subagent_type: ralph-specum:plan-synthesizer
+  model: sonnet
+  run_in_background: false  # Foreground = can prompt for permissions
   prompt: ...
 ```
 
