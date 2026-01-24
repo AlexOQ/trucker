@@ -51,6 +51,8 @@ Multi-agent development workflow with centralized PM coordination and phase-awar
 
 **State File**: `analysis/.state.json`
 
+**Principle**: State file tracks ONLY current cycle progress. GitHub is source of truth for issues, priorities, and blockers.
+
 ```json
 {
   "currentPhase": "analysis|pm-review|development|merge",
@@ -65,27 +67,28 @@ Multi-agent development workflow with centralized PM coordination and phase-awar
   "developmentQueue": [
     {"issue": 123, "title": "Add feature X", "priority": "P1"}
   ],
-  "blockedIssues": [
-    {"issue": 125, "title": "Refactor Y", "priority": "P2", "blockedBy": [123], "reason": "Needs feature X first"}
-  ],
   "completedThisCycle": [120, 121],
   "openPRs": [130, 131],
-  "notes": "Optional context for PM"
+  "notes": "Optional context"
 }
 ```
 
-**Queue Rules**:
-- `developmentQueue`: Only **unblocked** issues ready for immediate work
-- `blockedIssues`: Issues waiting on other work to complete
-- `openPRs`: PRs created but not yet merged
-- PM moves issues from `blockedIssues` → `developmentQueue` when blocking PRs are **merged** (not just opened)
+**Fields**:
+- `developmentQueue`: Max 5 unblocked issues selected for this cycle
+- `completedThisCycle`: Issues with PRs created this cycle
+- `openPRs`: PRs awaiting merge
+- `notes`: Brief context for next session
 
-**Unblocked Definition**: A blocked issue becomes unblocked when ALL issues in its `blockedBy` array have their PRs merged to main.
+**What's NOT in state** (tracked in GitHub instead):
+- Blocked issues → Use "blocked by #XX" in issue body
+- All open issues → `gh issue list --state open`
+- Issue priorities → Labels on GitHub
+- Issue dependencies → References in issue bodies
 
 **State Transitions**:
 - `analysis` → `pm-review`: When all required analyses complete
-- `pm-review` → `development`: When PM creates/prioritizes issues
-- `development` → `merge`: When all issues have open PRs (developmentQueue empty, openPRs populated)
+- `pm-review` → `development`: When PM selects development batch (max 5 issues)
+- `development` → `merge`: When developmentQueue empty, openPRs populated
 - `merge` → `analysis`: After PRs merged, worktrees cleaned, state reset
 
 ---
@@ -222,57 +225,58 @@ Task tool:
 **Invoke**: `voltagent-biz:product-manager`
 **Model**: `opus`
 
-**Responsibilities**:
-- Read all `analysis/*.md` files
-- Synthesize findings into actionable items
-- Create/update GitHub issues with labels and priorities
-- Manage issue lifecycle (open, close, comment, re-prioritize)
-- Determine phase transitions
-- Track what's been done vs what's pending
+**Core Principle**: GitHub is the source of truth. State file only tracks current cycle progress.
 
-**State Awareness**:
-- Reads `analysis/.state.json` on startup
-- Updates state after decisions
-- Knows to check GitHub for recently closed issues
-- Understands priority levels and their meaning
+**Workflow** (in order):
+1. **Fetch ALL open issues**: `gh issue list --state open --json number,title,labels,body`
+2. **Review existing issues first** - check priorities, blockers, duplicates
+3. **Read analysis/*.md files** - synthesize new findings
+4. **Update existing issues** if findings relate to them (comment, re-label, close as duplicate)
+5. **Create new issues only** for genuinely new work not covered by existing issues
+6. **Select development batch** - up to 5 unblocked issues for this cycle
 
-**GitHub Integration**:
-- Labels: `priority:P0|P1|P2|P3`, `type:bug|feature|tech-debt|ux`, `source:user-testing|qa|architect|docs`
-- Comments: Links to analysis files, decision rationale
-- Milestones: Priority level groupings
+**GitHub as Source of Truth**:
+- Blocked issues: Use "blocked by #XX" in issue body, not state file
+- Priorities: Labels `priority:P0|P1|P2|P3`
+- Dependencies: Reference other issues in body
+- Status: Open/closed state
 
-**Decision Framework**:
+**Issue Selection Criteria** (for development batch):
+1. P0 issues first (blockers)
+2. P1 issues that are unblocked
+3. Quick wins (small effort, high impact)
+4. Maximum 5 issues per cycle
+5. Consider dependency chains - don't select if blocker is also in batch
+
+**Labels**:
+- Priority: `priority:P0|P1|P2|P3`
+- Type: `type:bug|feature|tech-debt|ux`
+- Source: `source:user-testing|qa|architect|docs`
+
+**Output Format**:
 ```
-IF analysisComplete.all == true:
-  → Review analysis/*.md
-  → Create/update GitHub issues
-  → Check blockedIssues for unblocked items (blockedBy all in completedThisCycle)
-  → Move unblocked issues to developmentQueue
-  → Add new blocked issues to blockedIssues (NOT developmentQueue)
-  → Set developmentQueue with only ready-to-work items
-  → Reset completedThisCycle to []
-  → Transition to "development"
+## Existing Issues Review
+| # | Title | Priority | Status | Action |
+|---|-------|----------|--------|--------|
 
-IF currentPhase == "development" AND developmentQueue.empty:
-  → Check if blockedIssues has items that are now unblocked
-  → If yes: move to developmentQueue, continue development
-  → If no: Transition to "merge" phase
+## New Issues Created
+| # | Title | Priority | Rationale |
+|---|-------|----------|-----------|
 
-ON PR CREATION:
-  → Add PR number to openPRs
-  → Issue stays in completedThisCycle (work done, awaiting merge)
+## Development Batch (this cycle)
+| # | Title | Priority | Effort |
+|---|-------|----------|--------|
+[max 5 unblocked issues]
 
-ON PR MERGE:
-  → Remove from openPRs
-  → Check blockedIssues for items blocked by this issue
-  → Move newly unblocked items to developmentQueue
+## Deferred
+[Issues not in this batch with reasoning]
 ```
 
-**Blocked Issue Rules**:
-- Issues with dependencies go to `blockedIssues`, never `developmentQueue`
-- Each blocked issue tracks: `blockedBy` (array of issue numbers), `reason` (human-readable)
-- When all `blockedBy` issues appear in `completedThisCycle`, issue becomes unblocked
-- PM reviews blockers during each PM review phase
+**State Updates**:
+- Set `developmentQueue` with selected batch (max 5)
+- Set `completedThisCycle` to []
+- Transition to "development"
+- Note: NO `blockedIssues` in state - GitHub tracks this
 
 ---
 
