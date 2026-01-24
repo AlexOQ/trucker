@@ -106,6 +106,67 @@ npm run export -- --all  # Include cargo and trailers
 
 MIT License - see [LICENSE](LICENSE) for details.
 
+## Accessibility
+
+This tool is designed to be accessible to all users, including those using assistive technologies.
+
+### WCAG Compliance
+
+**Level AA Compliance**: The application meets WCAG 2.1 Level AA standards:
+
+- ✅ Semantic HTML structure with proper heading hierarchy
+- ✅ ARIA labels and attributes for enhanced screen reader support
+- ✅ Full keyboard navigation support
+- ✅ Sufficient color contrast ratios
+- ✅ Touch targets meet minimum 44x44px size requirements
+- ✅ Focus indicators on all interactive elements
+
+### Keyboard Navigation
+
+All functionality is accessible via keyboard:
+
+| Action | Keys |
+|--------|------|
+| Navigate between elements | `Tab` / `Shift+Tab` |
+| Activate buttons and links | `Enter` / `Space` |
+| Select city from rankings | `Enter` / `Space` on focused row |
+| Toggle settings panel | `Enter` / `Space` on "Advanced Settings" |
+| Toggle garage star | `Enter` / `Space` on star button |
+| Navigate dropdown options | `↑` / `↓` arrow keys |
+| Close dropdown | `Esc` |
+| Check/uncheck country filter | `Space` when focused |
+
+### Screen Reader Support
+
+- **ARIA Labels**: All interactive elements include descriptive labels
+- **ARIA Expanded**: Collapsible sections announce their state
+- **ARIA Pressed**: Toggle buttons indicate their current state
+- **Live Regions**: Dynamic content updates are announced
+- **Role Attributes**: Custom controls use proper ARIA roles (`listbox`, `option`)
+- **Tooltips**: Help text accessible via focus with `tabindex="0"`
+
+### Visual Accessibility
+
+- **Focus Indicators**: 2px solid orange outline on all focusable elements
+- **Color Contrast**: All text meets WCAG AA contrast ratios (4.5:1 for normal text)
+- **Touch Targets**: All interactive elements are minimum 44x44px
+- **Slider Thumbs**: Enlarged to 44x44px for easier interaction
+- **Hover States**: Visual feedback on all interactive elements
+
+### Known Limitations
+
+- **Mobile Table Layout**: Some columns are hidden on mobile for readability
+- **Tooltip Positioning**: Tooltips may overflow viewport edges on small screens
+- **Dropdown Scrolling**: Country filter dropdown has max-height with scroll
+
+### Testing
+
+Accessibility features have been tested with:
+- VoiceOver (macOS)
+- Keyboard-only navigation
+- Color contrast analyzers
+- Touch target size verification
+
 ## Acknowledgments
 
 - Data sourced from Euro Truck Simulator 2 by SCS Software
