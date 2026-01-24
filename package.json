@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
+    "dev:frontend": "vite",
     "build": "tsc",
+    "build:frontend": "vite build",
+    "preview": "vite preview",
     "start": "node dist/index.js",
     "migrate": "tsx src/db/migrate.ts",
     "export": "tsx scripts/export-data.ts",
