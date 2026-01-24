@@ -269,6 +269,9 @@
     }
 
     async function init() {
+      // Show loading state
+      content.innerHTML = '<div class="loading">Loading cities...</div>'
+
       try {
         data = await loadAllData()
         lookups = buildLookups(data)
@@ -289,7 +292,12 @@
 
       } catch (err) {
         console.error('Failed to initialize:', err)
-        content.innerHTML = '<div class="empty-state">Failed to load data.</div>'
+        content.innerHTML = `
+          <div class="empty-state">
+            <p>Failed to load data</p>
+            <p style="color: #888; font-size: 0.9rem; margin-top: 0.5rem;">${err.message || 'Unknown error occurred'}</p>
+          </div>
+        `
       }
     }
 
