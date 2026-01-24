@@ -3,7 +3,7 @@
  * Persists user settings and future game state
  */
 
-const STORAGE_KEY = 'ets2-trucker-advisor'
+const STORAGE_KEY = 'ets2-trucker-advisor';
 
 const defaultState = {
   settings: {
@@ -16,16 +16,16 @@ const defaultState = {
   garageFilterMode: 'all',
   // Future expansion
   ownedTrailers: {},
-}
+};
 
 /**
  * Load state from localStorage
  */
 export function loadState() {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY)
+    const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
-      const parsed = JSON.parse(stored)
+      const parsed = JSON.parse(stored);
       // Merge with defaults to handle new fields
       return {
         ...defaultState,
@@ -34,12 +34,12 @@ export function loadState() {
           ...defaultState.settings,
           ...parsed.settings,
         },
-      }
+      };
     }
   } catch (e) {
-    console.warn('Failed to load state from localStorage:', e)
+    console.warn('Failed to load state from localStorage:', e);
   }
-  return { ...defaultState }
+  return { ...defaultState };
 }
 
 /**
@@ -47,9 +47,9 @@ export function loadState() {
  */
 export function saveState(state) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (e) {
-    console.warn('Failed to save state to localStorage:', e)
+    console.warn('Failed to save state to localStorage:', e);
   }
 }
 
@@ -57,27 +57,27 @@ export function saveState(state) {
  * Update settings and save
  */
 export function updateSettings(settings) {
-  const state = loadState()
-  state.settings = { ...state.settings, ...settings }
-  saveState(state)
-  return state.settings
+  const state = loadState();
+  state.settings = { ...state.settings, ...settings };
+  saveState(state);
+  return state.settings;
 }
 
 /**
  * Get current settings
  */
 export function getSettings() {
-  return loadState().settings
+  return loadState().settings;
 }
 
 /**
  * Reset to defaults
  */
 export function resetToDefaults() {
-  const state = loadState()
-  state.settings = { ...defaultState.settings }
-  saveState(state)
-  return defaultState.settings
+  const state = loadState();
+  state.settings = { ...defaultState.settings };
+  saveState(state);
+  return defaultState.settings;
 }
 
 // ============================================
@@ -88,36 +88,36 @@ export function resetToDefaults() {
  * Get list of owned garage city IDs
  */
 export function getOwnedGarages() {
-  return loadState().ownedGarages || []
+  return loadState().ownedGarages || [];
 }
 
 /**
  * Add a city to owned garages
  */
 export function addOwnedGarage(cityId) {
-  const state = loadState()
+  const state = loadState();
   if (!state.ownedGarages.includes(cityId)) {
-    state.ownedGarages = [...state.ownedGarages, cityId]
-    saveState(state)
+    state.ownedGarages = [...state.ownedGarages, cityId];
+    saveState(state);
   }
-  return state.ownedGarages
+  return state.ownedGarages;
 }
 
 /**
  * Remove a city from owned garages
  */
 export function removeOwnedGarage(cityId) {
-  const state = loadState()
-  state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId)
-  saveState(state)
-  return state.ownedGarages
+  const state = loadState();
+  state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId);
+  saveState(state);
+  return state.ownedGarages;
 }
 
 /**
  * Check if a city is an owned garage
  */
 export function isOwnedGarage(cityId) {
-  return getOwnedGarages().includes(cityId)
+  return getOwnedGarages().includes(cityId);
 }
 
 /**
@@ -125,32 +125,32 @@ export function isOwnedGarage(cityId) {
  * @returns {boolean} New state (true = now owned)
  */
 export function toggleOwnedGarage(cityId) {
-  const state = loadState()
-  const isOwned = state.ownedGarages.includes(cityId)
+  const state = loadState();
+  const isOwned = state.ownedGarages.includes(cityId);
   if (isOwned) {
-    state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId)
+    state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId);
   } else {
-    state.ownedGarages = [...state.ownedGarages, cityId]
+    state.ownedGarages = [...state.ownedGarages, cityId];
   }
-  saveState(state)
-  return !isOwned
+  saveState(state);
+  return !isOwned;
 }
 
 /**
  * Get current garage filter mode
  */
 export function getFilterMode() {
-  return loadState().garageFilterMode || 'all'
+  return loadState().garageFilterMode || 'all';
 }
 
 /**
  * Set garage filter mode
  */
 export function setFilterMode(mode) {
-  const state = loadState()
-  state.garageFilterMode = mode
-  saveState(state)
-  return mode
+  const state = loadState();
+  state.garageFilterMode = mode;
+  saveState(state);
+  return mode;
 }
 
 // ============================================
@@ -162,11 +162,11 @@ export function setFilterMode(mode) {
  */
 export function getSelectedCountries() {
   try {
-    const saved = localStorage.getItem('ets2-selected-countries')
-    return saved ? JSON.parse(saved) : []
+    const saved = localStorage.getItem('ets2-selected-countries');
+    return saved ? JSON.parse(saved) : [];
   } catch (e) {
-    console.warn('Failed to load selected countries:', e)
-    return []
+    console.warn('Failed to load selected countries:', e);
+    return [];
   }
 }
 
@@ -175,8 +175,8 @@ export function getSelectedCountries() {
  */
 export function setSelectedCountries(countries) {
   try {
-    localStorage.setItem('ets2-selected-countries', JSON.stringify(countries))
+    localStorage.setItem('ets2-selected-countries', JSON.stringify(countries));
   } catch (e) {
-    console.warn('Failed to save selected countries:', e)
+    console.warn('Failed to save selected countries:', e);
   }
 }
