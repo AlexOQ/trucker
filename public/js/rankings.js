@@ -5,7 +5,11 @@ let data = null
 let lookups = null
 let cachedRankings = null
 
-// Initialize data references
+/**
+ * Initialize data references for rankings module
+ * @param {Object} d - Data object from loadAllData
+ * @param {Object} l - Lookups object from buildLookups
+ */
 export function setData(d, l) {
   data = d
   lookups = l
@@ -105,7 +109,13 @@ function addGarageToggleHandler(cityId, cityContent, updateGarageCountFn) {
   }
 }
 
-// Render city rankings table
+/**
+ * Render city rankings table with filters
+ * @param {Object} options - Algorithm options (scoringBalance, maxTrailers, diminishingFactor)
+ * @param {string} searchTerm - Search filter text
+ * @param {Function} showCityFn - Callback to show city detail view
+ * @param {Function} updateGarageCountFn - Callback to update garage count badge
+ */
 export function renderRankings(options, searchTerm, showCityFn, updateGarageCountFn) {
   const rankingsContent = document.getElementById('rankings-content')
   const rankings = calculateCityRankings(data, lookups, options)
@@ -199,7 +209,12 @@ export function renderRankings(options, searchTerm, showCityFn, updateGarageCoun
   })
 }
 
-// Render city detail view
+/**
+ * Render city detail view with trailer recommendations
+ * @param {number} cityId - City ID to render
+ * @param {Object} options - Algorithm options (scoringBalance, maxTrailers, diminishingFactor)
+ * @param {Function} updateGarageCountFn - Callback to update garage count badge
+ */
 export function renderCity(cityId, options, updateGarageCountFn) {
   const cityContent = document.getElementById('city-content')
   const result = optimizeTrailerSet(cityId, data, lookups, options)
@@ -310,7 +325,11 @@ export function renderCity(cityId, options, updateGarageCountFn) {
   addGarageToggleHandler(cityId, cityContent, updateGarageCountFn)
 }
 
-// Show city detail view
+/**
+ * Show city detail view and update URL hash
+ * @param {number} cityId - City ID to display
+ * @param {Function} renderCityFn - Callback to render city content
+ */
 export function showCity(cityId, renderCityFn) {
   const rankingsView = document.getElementById('rankings-view')
   const cityView = document.getElementById('city-view')
@@ -324,7 +343,10 @@ export function showCity(cityId, renderCityFn) {
   window.scrollTo(0, 0)
 }
 
-// Show rankings view
+/**
+ * Show rankings view and clear URL hash
+ * @param {Function} renderRankingsFn - Callback to render rankings content
+ */
 export function showRankings(renderRankingsFn) {
   const rankingsView = document.getElementById('rankings-view')
   const cityView = document.getElementById('city-view')

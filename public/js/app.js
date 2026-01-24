@@ -251,7 +251,10 @@ function showError(errorMessage) {
   `
 }
 
-// Initialize
+/**
+ * Initialize application: load data, set up event handlers, render initial view
+ * @returns {Promise<void>}
+ */
 export async function init() {
   // Show loading state immediately
   showLoading()
