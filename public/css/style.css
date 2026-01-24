@@ -365,6 +365,16 @@ input[type="range"]::-moz-range-thumb {
   margin-bottom: 0;
 }
 
+.export-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.export-btn {
+  white-space: nowrap;
+}
+
 /* Stats Row */
 .stats {
   display: flex;

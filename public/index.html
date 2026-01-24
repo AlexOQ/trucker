@@ -538,7 +538,11 @@
         <div class="table-section">
           <div class="section-header">
             <h2>Recommended Trailers</h2>
-            <button class="btn copy-btn" id="copy-trailers-btn">Copy to clipboard</button>
+            <div class="export-buttons">
+              <button class="btn export-btn" id="export-csv-btn">Export CSV</button>
+              <button class="btn export-btn" id="export-json-btn">Export JSON</button>
+              <button class="btn copy-btn" id="copy-trailers-btn">Copy to clipboard</button>
+            </div>
           </div>
           <table>
             <thead>
@@ -579,6 +583,18 @@
         copyToClipboard(text, copyBtn)
       })
 
+      // Add CSV export handler
+      const exportCsvBtn = document.getElementById('export-csv-btn')
+      exportCsvBtn.addEventListener('click', () => {
+        exportToCSV(city, result)
+      })
+
+      // Add JSON export handler
+      const exportJsonBtn = document.getElementById('export-json-btn')
+      exportJsonBtn.addEventListener('click', () => {
+        exportToJSON(city, result)
+      })
+
       // Add garage toggle handler
       addGarageToggleHandler(cityId)
     }
@@ -601,6 +617,67 @@
           }
         })
       }
+    }
+
+    // Export to CSV
+    function exportToCSV(city, result) {
+      const headers = ['City', 'Trailer Type', 'Copies', 'Coverage %', 'Cargo Count', 'Avg Value €/km']
+      const rows = result.recommendations.map(r => [
+        city.name,
+        r.trailerName,
+        r.count,
+        r.coveragePct,
+        r.topCargoes.length,
+        r.avgValue.toFixed(2)
+      ])
+
+      const csvContent = [
+        headers.join(','),
+        ...rows.map(row => row.map(cell => {
+          // Escape cells containing commas or quotes
+          const cellStr = String(cell)
+          if (cellStr.includes(',') || cellStr.includes('"') || cellStr.includes('\n')) {
+            return `"${cellStr.replace(/"/g, '""')}"`
+          }
+          return cellStr
+        }).join(','))
+      ].join('\n')
+
+      downloadFile(csvContent, `${city.name.replace(/[^a-z0-9]/gi, '_')}_trailers.csv`, 'text/csv')
+    }
+
+    // Export to JSON
+    function exportToJSON(city, result) {
+      const exportData = {
+        city: city.name,
+        country: city.country,
+        totalTrailers: result.recommendations.reduce((sum, r) => sum + r.count, 0),
+        trailers: result.recommendations.map(r => ({
+          trailerType: r.trailerName,
+          copies: r.count,
+          coveragePercent: r.coveragePct,
+          cargoCount: r.topCargoes.length,
+          avgValuePerKm: parseFloat(r.avgValue.toFixed(2)),
+          topCargoes: r.topCargoes
+        }))
+      }
+
+      const jsonContent = JSON.stringify(exportData, null, 2)
+      downloadFile(jsonContent, `${city.name.replace(/[^a-z0-9]/gi, '_')}_trailers.json`, 'application/json')
+    }
+
+    // Download file helper
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      link.style.display = 'none'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
     }
 
     // Copy text to clipboard with fallback
