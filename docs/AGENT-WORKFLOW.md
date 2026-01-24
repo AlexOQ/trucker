@@ -562,29 +562,47 @@ Task tool:
 
 **Workflow** (order matters!):
 ```bash
-# 1. Squash-merge all open PRs (WITHOUT --delete-branch, worktrees block it)
+# 1. Check mergeability of all open PRs
+gh pr list --state open --json number,headRefName,mergeable,mergeStateStatus
+
+# 2. For each conflicting PR (mergeable=CONFLICTING): rebase in worktree
+#    Skip if worktree missing or conflict too complex (close PR, keep issue open)
+cd /path/to/worktree
+git fetch origin
+git rebase origin/main
+# If rebase fails with complex conflicts:
+#   - git rebase --abort
+#   - gh pr close <num> --comment "Conflicts too complex, needs reimplementation"
+#   - Continue with other PRs
+# If rebase succeeds:
+git push --force-with-lease origin <branch>
+
+# 3. Squash-merge all mergeable PRs (WITHOUT --delete-branch)
 gh pr list --state open --json number -q '.[].number' | while read pr; do
   gh pr merge $pr --squash
 done
 
-# 2. Force-remove worktrees FIRST (before branch deletion)
+# 4. Force-remove worktrees FIRST (before branch deletion)
 git worktree list | grep -v "main\|master" | awk '{print $1}' | while read path; do
   git worktree remove --force "$path"
 done
 
-# 3. Delete local feature branches (now safe - no worktrees using them)
+# 5. Delete local feature branches (now safe - no worktrees using them)
 git branch | grep "feat/" | xargs -r git branch -D
 
-# 4. Pull main with merged changes
+# 6. Pull main with merged changes
 git pull origin main
 
-# 5. Clean analysis folder (keep .state.json)
+# 7. Clean analysis folder (keep .state.json)
 rm -f analysis/*.md
 
-# 6. Update state to fresh cycle
+# 8. Update state to fresh cycle
 ```
 
 **Why this order**:
+- Check mergeability FIRST - PRs may have conflicts from other merged PRs
+- Rebase conflicting PRs before attempting merge
+- If rebase fails (complex conflicts): close PR, keep issue open for next cycle
 - `gh pr merge --delete-branch` fails if worktree uses the branch
 - Must remove worktrees before deleting branches
 - `--squash` without `--delete-branch` merges PR, leaves branch for manual cleanup
@@ -620,6 +638,9 @@ rm -f analysis/*.md
 
 | Error | Cause | Solution |
 |-------|-------|----------|
+| `Pull Request is not mergeable` | PR has conflicts with main | Rebase in worktree, push, retry |
+| `mergeable: CONFLICTING` | Other PRs merged first, causing conflicts | Rebase each conflicting PR before merge |
+| `Could not apply <commit>` | Rebase conflict too complex | Abort rebase, close PR, keep issue open |
 | `failed to delete local branch` | Worktree still using branch | Force-remove worktree first |
 | `contains modified or untracked files` | Spec files in worktree | Use `--force` flag |
 | `local changes would be overwritten` | Uncommitted local changes | `git checkout` conflicting files |
@@ -636,7 +657,7 @@ analysis/                    # Untracked, ephemeral
 ├── arch-review.md          # Latest architecture review
 └── docs-review.md          # Latest documentation audit
 
-specs/                       # Tracked, permanent
+specs/                       # Untracked, ephemeral (generated in worktrees, deleted before PR)
 ├── [feature-name]/
 │   ├── research.md
 │   ├── requirements.md
@@ -648,9 +669,10 @@ docs/                        # Tracked, permanent
 └── ...
 ```
 
-**Git Configuration** (add to `.gitignore`):
+**Git Configuration** (in `.gitignore`):
 ```
 analysis/
+specs/
 ```
 
 ---
