@@ -180,7 +180,7 @@ function renderRankingsWrapper() {
   const citySearch = document.getElementById('city-search')
   const options = getOptions()
   const searchTerm = citySearch.value
-  renderRankings(options, searchTerm, showCityWrapper, updateGarageCount)
+  renderRankings(options, searchTerm, showCityWrapper)
 }
 
 // Wrapper for renderCity

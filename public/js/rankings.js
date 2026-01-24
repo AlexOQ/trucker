@@ -90,14 +90,14 @@ function fallbackCopy(text) {
 }
 
 // Add garage toggle click and keyboard handler
-function addGarageToggleHandler(cityId, cityContent, updateGarageCountFn) {
+function addGarageToggleHandler(cityId, cityContent, updateGarageCount) {
   const toggleBtn = cityContent.querySelector('.garage-toggle')
   if (toggleBtn) {
     const toggleGarage = () => {
       const newState = toggleOwnedGarage(cityId)
       toggleBtn.setAttribute('aria-pressed', newState)
       toggleBtn.querySelector('.star').textContent = newState ? '★' : '☆'
-      updateGarageCountFn()
+      updateGarageCount()
     }
     toggleBtn.addEventListener('click', toggleGarage)
     toggleBtn.addEventListener('keydown', (e) => {
@@ -114,9 +114,8 @@ function addGarageToggleHandler(cityId, cityContent, updateGarageCountFn) {
  * @param {Object} options - Algorithm options (scoringBalance, maxTrailers, diminishingFactor)
  * @param {string} searchTerm - Search filter text
  * @param {Function} showCityFn - Callback to show city detail view
- * @param {Function} updateGarageCountFn - Callback to update garage count badge
  */
-export function renderRankings(options, searchTerm, showCityFn, updateGarageCountFn) {
+export function renderRankings(options, searchTerm, showCityFn) {
   const rankingsContent = document.getElementById('rankings-content')
   const rankings = calculateCityRankings(data, lookups, options)
   cachedRankings = rankings // Cache for city detail lookup
