@@ -11,59 +11,59 @@
  * - diminishingFactor: 0-100 slider controlling duplicate trailer penalty
  */
 
-import { getCityCargoPool, getOwnableTrailers } from './data.js'
+import { getCityCargoPool, getOwnableTrailers } from './data.js';
 
 /**
  * Calculate trailer statistics for a city
  */
 function calculateTrailerStats(cargoPool, trailers, lookups) {
   // Calculate totals
-  let totalInstances = 0
-  let totalValue = 0
+  let totalInstances = 0;
+  let totalValue = 0;
   for (const entry of cargoPool) {
-    totalInstances += entry.depotCount
-    totalValue += entry.value * entry.depotCount
+    totalInstances += entry.depotCount;
+    totalValue += entry.value * entry.depotCount;
   }
 
   if (totalInstances === 0) {
-    return { stats: [], totalInstances: 0, totalValue: 0 }
+    return { stats: [], totalInstances: 0, totalValue: 0 };
   }
 
   // Calculate per-trailer stats
-  const stats = []
+  const stats = [];
   for (const trailer of trailers) {
-    const compatibleCargo = lookups.trailerCargoMap.get(trailer.id)
-    if (!compatibleCargo) continue
+    const compatibleCargo = lookups.trailerCargoMap.get(trailer.id);
+    if (!compatibleCargo) continue;
 
-    let trailerValue = 0
-    let trailerJobs = 0
-    const cargoContributions = []
+    let trailerValue = 0;
+    let trailerJobs = 0;
+    const cargoContributions = [];
 
     for (const entry of cargoPool) {
       if (compatibleCargo.has(entry.cargoId)) {
-        const contribution = entry.value * entry.depotCount
-        trailerValue += contribution
-        trailerJobs += entry.depotCount
+        const contribution = entry.value * entry.depotCount;
+        trailerValue += contribution;
+        trailerJobs += entry.depotCount;
         cargoContributions.push({
           name: entry.cargoName,
           value: contribution,
           jobs: entry.depotCount,
-        })
+        });
       }
     }
 
     if (trailerJobs > 0) {
       // Get top 5 unique cargoes by value contribution
-      const seen = new Set()
+      const seen = new Set();
       const topCargoes = cargoContributions
         .sort((a, b) => b.value - a.value)
-        .filter(c => {
-          if (seen.has(c.name)) return false
-          seen.add(c.name)
-          return true
+        .filter((c) => {
+          if (seen.has(c.name)) return false;
+          seen.add(c.name);
+          return true;
         })
         .slice(0, 5)
-        .map(c => c.name)
+        .map((c) => c.name);
 
       stats.push({
         id: trailer.id,
@@ -73,17 +73,17 @@ function calculateTrailerStats(cargoPool, trailers, lookups) {
         avgValue: trailerValue / trailerJobs,
         coverage: trailerJobs / totalInstances,
         topCargoes,
-      })
+      });
     }
   }
 
   // Normalize values
-  const maxAvgValue = Math.max(...stats.map(s => s.avgValue), 1)
+  const maxAvgValue = Math.max(...stats.map((s) => s.avgValue), 1);
   for (const s of stats) {
-    s.normalizedValue = s.avgValue / maxAvgValue
+    s.normalizedValue = s.avgValue / maxAvgValue;
   }
 
-  return { stats, totalInstances, totalValue }
+  return { stats, totalInstances, totalValue };
 }
 
 /**
@@ -92,9 +92,9 @@ function calculateTrailerStats(cargoPool, trailers, lookups) {
  * @param {number} scoringBalance - 0-100 (0 = value, 100 = coverage)
  */
 function calculateScore(trailer, scoringBalance) {
-  const valueWeight = (100 - scoringBalance) / 100
-  const coverageWeight = scoringBalance / 100
-  return valueWeight * trailer.normalizedValue + coverageWeight * trailer.coverage
+  const valueWeight = (100 - scoringBalance) / 100;
+  const coverageWeight = scoringBalance / 100;
+  return valueWeight * trailer.normalizedValue + coverageWeight * trailer.coverage;
 }
 
 /**
@@ -106,10 +106,10 @@ function calculateScore(trailer, scoringBalance) {
 function getDiminishingFactor(trailer, diminishingStrength) {
   // Base factor range: 1.0 (no diminishing) to 0.5 (strong diminishing)
   // Adjusted by coverage: high coverage trailers diminish slower
-  const strength = diminishingStrength / 100
-  const minFactor = 1 - (0.5 * strength)  // 1.0 at strength=0, 0.5 at strength=100
-  const coverageBonus = trailer.coverage * 0.5 * strength
-  return minFactor + coverageBonus
+  const strength = diminishingStrength / 100;
+  const minFactor = 1 - 0.5 * strength; // 1.0 at strength=0, 0.5 at strength=100
+  const coverageBonus = trailer.coverage * 0.5 * strength;
+  return minFactor + coverageBonus;
 }
 
 /**
@@ -122,15 +122,15 @@ function getDiminishingFactor(trailer, diminishingStrength) {
  */
 export function optimizeTrailerSet(cityId, data, lookups, options = {}) {
   const {
-    scoringBalance = 50,   // 0-100: 0 = pure value, 100 = pure coverage
-    maxTrailers = 10,       // 1-20: garage slots
+    scoringBalance = 50, // 0-100: 0 = pure value, 100 = pure coverage
+    maxTrailers = 10, // 1-20: garage slots
     diminishingFactor = 50, // 0-100: 0 = no diminishing, 100 = strong
-  } = options
+  } = options;
 
-  const cargoPool = getCityCargoPool(cityId, data, lookups)
-  const trailers = getOwnableTrailers(data)
+  const cargoPool = getCityCargoPool(cityId, data, lookups);
+  const trailers = getOwnableTrailers(data);
 
-  const { stats, totalInstances, totalValue } = calculateTrailerStats(cargoPool, trailers, lookups)
+  const { stats, totalInstances, totalValue } = calculateTrailerStats(cargoPool, trailers, lookups);
 
   if (stats.length === 0) {
     return {
@@ -140,49 +140,49 @@ export function optimizeTrailerSet(cityId, data, lookups, options = {}) {
       totalValue: 0,
       recommendations: [],
       options: { scoringBalance, maxTrailers, diminishingFactor },
-    }
+    };
   }
 
   // Count unique depots
-  const depotCounts = new Map()
-  const cityCompanies = lookups.cityCompanyMap.get(cityId) || []
+  const depotCounts = new Map();
+  const cityCompanies = lookups.cityCompanyMap.get(cityId) || [];
   for (const { companyId, count } of cityCompanies) {
-    depotCounts.set(companyId, count)
+    depotCounts.set(companyId, count);
   }
-  const totalDepots = [...depotCounts.values()].reduce((sum, c) => sum + c, 0)
+  const totalDepots = [...depotCounts.values()].reduce((sum, c) => sum + c, 0);
 
   // Calculate base scores
-  const baseScores = new Map()
+  const baseScores = new Map();
   for (const t of stats) {
-    baseScores.set(t.id, calculateScore(t, scoringBalance))
+    baseScores.set(t.id, calculateScore(t, scoringBalance));
   }
 
   // Greedy selection with diminishing returns
-  const selected = new Map()
+  const selected = new Map();
   for (let round = 0; round < maxTrailers; round++) {
-    let bestId = null
-    let bestScore = -1
+    let bestId = null;
+    let bestScore = -1;
 
     for (const t of stats) {
-      const base = baseScores.get(t.id)
-      const count = selected.get(t.id) || 0
-      const factor = getDiminishingFactor(t, diminishingFactor)
-      const effective = base * Math.pow(factor, count)
+      const base = baseScores.get(t.id);
+      const count = selected.get(t.id) || 0;
+      const factor = getDiminishingFactor(t, diminishingFactor);
+      const effective = base * Math.pow(factor, count);
 
       if (effective > bestScore) {
-        bestScore = effective
-        bestId = t.id
+        bestScore = effective;
+        bestId = t.id;
       }
     }
 
-    if (bestId === null) break
-    selected.set(bestId, (selected.get(bestId) || 0) + 1)
+    if (bestId === null) break;
+    selected.set(bestId, (selected.get(bestId) || 0) + 1);
   }
 
   // Build recommendations
-  const recommendations = []
+  const recommendations = [];
   for (const [id, count] of selected) {
-    const trailer = stats.find(t => t.id === id)
+    const trailer = stats.find((t) => t.id === id);
     recommendations.push({
       trailerId: id,
       trailerName: trailer.name,
@@ -191,9 +191,9 @@ export function optimizeTrailerSet(cityId, data, lookups, options = {}) {
       avgValue: Math.round(trailer.avgValue * 100) / 100,
       score: Math.round(baseScores.get(id) * 1000) / 1000,
       topCargoes: trailer.topCargoes,
-    })
+    });
   }
-  recommendations.sort((a, b) => b.count - a.count || b.score - a.score)
+  recommendations.sort((a, b) => b.count - a.count || b.score - a.score);
 
   return {
     cityId,
@@ -202,7 +202,7 @@ export function optimizeTrailerSet(cityId, data, lookups, options = {}) {
     totalValue: Math.round(totalValue * 100) / 100,
     recommendations,
     options: { scoringBalance, maxTrailers, diminishingFactor },
-  }
+  };
 }
 
 /**
@@ -213,19 +213,19 @@ export function optimizeTrailerSet(cityId, data, lookups, options = {}) {
  * @returns {Array} Ranked cities
  */
 export function calculateCityRankings(data, lookups, options = {}) {
-  const rankings = []
+  const rankings = [];
 
   for (const city of data.cities) {
-    const result = optimizeTrailerSet(city.id, data, lookups, options)
+    const result = optimizeTrailerSet(city.id, data, lookups, options);
 
-    if (result.totalCargoInstances === 0) continue
+    if (result.totalCargoInstances === 0) continue;
 
-    const jobs = result.totalCargoInstances
-    const value = result.totalValue
+    const jobs = result.totalCargoInstances;
+    const value = result.totalValue;
 
     // Geometric mean: balances job availability and total value
-    const score = Math.sqrt(jobs * value)
-    const avgValuePerJob = jobs > 0 ? value / jobs : 0
+    const score = Math.sqrt(jobs * value);
+    const avgValuePerJob = jobs > 0 ? value / jobs : 0;
 
     rankings.push({
       id: city.id,
@@ -236,21 +236,21 @@ export function calculateCityRankings(data, lookups, options = {}) {
       totalValue: Math.round(value),
       avgValuePerJob: Math.round(avgValuePerJob * 100) / 100,
       score: Math.round(score * 10) / 10,
-    })
+    });
   }
 
-  rankings.sort((a, b) => b.score - a.score)
-  return rankings
+  rankings.sort((a, b) => b.score - a.score);
+  return rankings;
 }
 
 /**
  * Default options with descriptions
  */
 export const defaultOptions = {
-  scoringBalance: 50,   // 0 = prioritize high-value jobs, 100 = prioritize job variety
-  maxTrailers: 10,      // Garage capacity
+  scoringBalance: 50, // 0 = prioritize high-value jobs, 100 = prioritize job variety
+  maxTrailers: 10, // Garage capacity
   diminishingFactor: 50, // How quickly duplicate trailers lose value
-}
+};
 
 export const optionDescriptions = {
   scoringBalance: {
@@ -278,4 +278,4 @@ export const optionDescriptions = {
     maxLabel: 'Force variety',
     description: 'How quickly duplicate trailers lose priority',
   },
-}
+};
