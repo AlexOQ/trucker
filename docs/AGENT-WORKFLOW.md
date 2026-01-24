@@ -514,18 +514,19 @@ impatient_gamer:
 **Invoke**: `ralph-specum:spec-executor` with `--quick` flag
 **Model**: `sonnet`
 
-**Parallel Execution Pattern**:
+**Execution Pattern**:
 1. Create git worktree per issue: `git worktree add ../trucker-<issue-slug> -b feat/<issue-slug>`
 2. Run ralph-specum with `--quick` flag (skips interactive phases, auto-generates specs)
 3. Agent works autonomously: generates specs, executes tasks, commits
-4. Agent creates PR with "Closes #XX" in body
-5. Up to 3 agents run in parallel (background) for unblocked issues
+4. **Clean up specs before PR**: `rm -rf specs/` (specs are ephemeral, not committed)
+5. Agent creates PR with "Closes #XX" in body
 
 **The `--quick` Flag**:
 - Skips goal interview (non-interactive)
-- Auto-generates: research.md, requirements.md, design.md, tasks.md
+- Auto-generates: research.md, requirements.md, design.md, tasks.md (in worktree only)
 - Executes all tasks sequentially
 - Commits after each task
+- **Deletes specs/ before final push** (specs/ is gitignored)
 - Pushes and creates PR at end
 
 **Agent Invocation**:
