@@ -21,7 +21,7 @@ Focus: Apply error handling fixes to all identified locations.
   - _Requirements: FR-1, FR-2, FR-3_
   - _Design: Component A_
 
-- [ ] 1.2 Fix setSelectedCountries in storage.js
+- [x] 1.2 Fix setSelectedCountries in storage.js
   - **Do**: Wrap localStorage.setItem in try-catch, log warning on failure
   - **Files**: /Users/alexander.olshanetsky/projects/stuff/trucker-fix-error-handling/public/js/storage.js
   - **Done when**: Function logs warning instead of throwing when storage unavailable

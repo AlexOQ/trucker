@@ -174,5 +174,9 @@ export function getSelectedCountries() {
  * Set selected countries list
  */
 export function setSelectedCountries(countries) {
-  localStorage.setItem('ets2-selected-countries', JSON.stringify(countries))
+  try {
+    localStorage.setItem('ets2-selected-countries', JSON.stringify(countries))
+  } catch (e) {
+    console.warn('Failed to save selected countries:', e)
+  }
 }
