@@ -15,6 +15,8 @@ export default [
         fetch: 'readonly',
         console: 'readonly',
         localStorage: 'readonly',
+        navigator: 'readonly',
+        setTimeout: 'readonly',
         Map: 'readonly',
         Set: 'readonly',
         Promise: 'readonly',
