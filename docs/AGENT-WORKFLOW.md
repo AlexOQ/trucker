@@ -559,33 +559,34 @@ Task tool:
 
 **Trigger**: When `developmentQueue` is empty and `openPRs` has items
 
-**Workflow**:
+**Workflow** (order matters!):
 ```bash
-# 1. Squash-merge all open PRs
-for pr in $(cat openPRs); do
-  gh pr merge $pr --squash --delete-branch
+# 1. Squash-merge all open PRs (WITHOUT --delete-branch, worktrees block it)
+gh pr list --state open --json number -q '.[].number' | while read pr; do
+  gh pr merge $pr --squash
 done
 
-# 2. Force-remove worktrees (may have uncommitted spec files)
-git worktree list | grep -v "main\|master" | while read path rest; do
+# 2. Force-remove worktrees FIRST (before branch deletion)
+git worktree list | grep -v "main\|master" | awk '{print $1}' | while read path; do
   git worktree remove --force "$path"
 done
 
-# 3. Delete local feature branches
-git branch | grep "feat/" | xargs git branch -D
+# 3. Delete local feature branches (now safe - no worktrees using them)
+git branch | grep "feat/" | xargs -r git branch -D
 
 # 4. Pull main with merged changes
-git checkout main
 git pull origin main
 
 # 5. Clean analysis folder (keep .state.json)
-rm -f analysis/user-testing.md
-rm -f analysis/qa-review.md
-rm -f analysis/arch-review.md
-rm -f analysis/docs-review.md
+rm -f analysis/*.md
 
-# 6. Update state
+# 6. Update state to fresh cycle
 ```
+
+**Why this order**:
+- `gh pr merge --delete-branch` fails if worktree uses the branch
+- Must remove worktrees before deleting branches
+- `--squash` without `--delete-branch` merges PR, leaves branch for manual cleanup
 
 **State Updates After Merge**:
 ```json
