@@ -144,6 +144,41 @@ This occurs when background agents (`run_in_background: true`) try to use tools 
 
 ---
 
+## Known Limitations
+
+### Background Agents Don't Inherit Permissions
+
+**Issue**: Task subagents spawned with `run_in_background: true` do NOT inherit permissions from `settings.local.json`. Even with correctly configured permission patterns, background agents receive "Permission denied (prompts unavailable)" errors.
+
+**Root Cause**: Under investigation. The permissions in `settings.local.json` apply to the main session only. Background Task agents run in a restricted context that doesn't inherit these settings.
+
+**Attempted Solutions That Don't Work**:
+- Adding explicit path patterns (e.g., `Read(/path/to/trucker-*/**)`)
+- Session restart after adding permissions
+- Different glob pattern syntax
+
+**Current Workaround**: Develop issues sequentially in the main session instead of parallel background agents:
+
+```
+# Instead of spawning 3 parallel background agents:
+# Task(subagent_type=ralph-specum, run_in_background=true, ...)
+
+# Use sequential in-session development:
+# 1. Create worktree for issue
+# 2. Run ralph-specum skill directly (foreground)
+# 3. Complete PR
+# 4. Repeat for next issue
+```
+
+**Impact**:
+- Development phase takes longer (sequential vs parallel)
+- Main session is occupied during development
+- All permissions work correctly in foreground
+
+**TODO**: Investigate how to properly grant permissions to background Task subagents.
+
+---
+
 ## Model Configuration
 
 | Agent | Model | Rationale |
