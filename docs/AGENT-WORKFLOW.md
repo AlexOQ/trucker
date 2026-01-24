@@ -144,11 +144,33 @@ This occurs when background agents (`run_in_background: true`) try to use tools 
 
 ---
 
+## Model Configuration
+
+| Agent | Model | Rationale |
+|-------|-------|-----------|
+| PM Agent | `opus` | Complex synthesis, prioritization decisions |
+| User Testing | `sonnet` | Structured testing workflows |
+| QA Agent | `sonnet` | Code review, test analysis |
+| Architect Agent | `sonnet` | Pattern analysis |
+| Documentation Agent | `sonnet` | Content review |
+| Development Agent | `sonnet` | Code generation, spec execution |
+
+When invoking via Task tool, set `model` parameter:
+```
+Task tool:
+  subagent_type: voltagent-biz:product-manager
+  model: opus
+  prompt: ...
+```
+
+---
+
 ## Agent Definitions
 
 ### PM Agent (Coordinator)
 
 **Invoke**: `voltagent-biz:product-manager`
+**Model**: `opus`
 
 **Responsibilities**:
 - Read all `analysis/*.md` files
@@ -207,6 +229,7 @@ ON PR MERGE:
 ### User Testing Agent (Black Box)
 
 **Invoke**: `voltagent-qa-sec:qa-expert` + Playwright
+**Model**: `sonnet`
 
 **Target**: Production deployment (https://alexoq.github.io/trucker)
 
@@ -306,6 +329,7 @@ impatient_gamer:
 ### QA Agent (White Box)
 
 **Invoke**: `pr-review-toolkit:code-reviewer` + `pr-review-toolkit:pr-test-analyzer`
+**Model**: `sonnet`
 
 **Target**: Local dev server (localhost:3000)
 
@@ -337,6 +361,7 @@ impatient_gamer:
 ### Architect Agent
 
 **Invoke**: `ralph-specum:architect-reviewer`
+**Model**: `sonnet`
 
 **Scope**: Major codebase-level improvements
 
@@ -370,6 +395,7 @@ impatient_gamer:
 ### Documentation Agent
 
 **Invoke**: `voltagent-dev-exp:documentation-engineer`
+**Model**: `sonnet`
 
 **Sources** (multi-location):
 - GitHub issues (descriptions, comments)
@@ -400,6 +426,7 @@ impatient_gamer:
 ### Development Agent
 
 **Invoke**: `ralph-specum:spec-executor` with `--quick` flag
+**Model**: `sonnet`
 
 **Parallel Execution Pattern**:
 1. Create git worktree per issue: `git worktree add ../trucker-<issue-slug> -b feat/<issue-slug>`
@@ -419,6 +446,7 @@ impatient_gamer:
 ```
 Task tool:
   subagent_type: ralph-specum:spec-executor
+  model: sonnet
   prompt: |
     Complete issue #XX: <title>
 
