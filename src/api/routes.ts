@@ -1,6 +1,5 @@
 import { Router } from 'express'
 import { getAllCities, getCityById, getCitiesWithDepotCounts } from '../db/queries.js'
-import { optimizeTrailerSet } from '../algorithm/optimizer.js'
 
 export const router = Router()
 
@@ -16,39 +15,18 @@ router.get('/cities', async (_req, res) => {
 })
 
 // Get city rankings by profitability
+// NOTE: Rankings are now computed client-side. Use public/data/*.json files.
 router.get('/cities/rankings', async (_req, res) => {
   try {
     const cities = await getCitiesWithDepotCounts()
-
-    const rankings = await Promise.all(
-      cities.map(async (city) => {
-        const result = await optimizeTrailerSet(city.id, { maxTrailers: 10 })
-
-        const jobs = result.total_cargo_instances
-        const value = result.total_value
-
-        // Geometric mean: balances job availability and total value
-        const score = Math.sqrt(jobs * value)
-
-        // Avg value per job
-        const avgValuePerJob = jobs > 0 ? value / jobs : 0
-
-        return {
-          id: city.id,
-          name: city.name,
-          country: city.country,
-          depot_count: Number(city.depot_count) || 0,
-          jobs,
-          total_value: Math.round(value),
-          avg_value_per_job: Math.round(avgValuePerJob * 100) / 100,
-          score: Math.round(score * 10) / 10,
-        }
-      })
-    )
-
-    // Sort by score descending
-    rankings.sort((a, b) => b.score - a.score)
-
+    // Basic ranking by depot count (algorithm moved to client-side)
+    const rankings = cities.map(city => ({
+      id: city.id,
+      name: city.name,
+      country: city.country,
+      depot_count: Number(city.depot_count) || 0,
+    }))
+    rankings.sort((a, b) => b.depot_count - a.depot_count)
     res.json(rankings)
   } catch (error) {
     console.error('Error fetching city rankings:', error)
@@ -57,6 +35,7 @@ router.get('/cities/rankings', async (_req, res) => {
 })
 
 // Get trailer recommendations for a city
+// NOTE: Optimization is now computed client-side. See public/js/optimizer.js
 router.get('/cities/:id/trailers', async (req, res) => {
   try {
     const cityId = parseInt(req.params.id)
@@ -69,17 +48,12 @@ router.get('/cities/:id/trailers', async (req, res) => {
       return res.status(404).json({ error: 'City not found' })
     }
 
-    const maxTrailers = parseInt(req.query.max as string) || 10
-    const scoringBalance = parseInt(req.query.scoring as string) || 50
-    const diminishingFactor = parseInt(req.query.diminishing as string) || 50
-    const result = await optimizeTrailerSet(cityId, { maxTrailers, scoringBalance, diminishingFactor })
-
     res.json({
       city,
-      ...result,
+      message: 'Trailer optimization moved to client-side. Use the static app at public/index.html'
     })
   } catch (error) {
-    console.error('Error optimizing trailers:', error)
-    res.status(500).json({ error: 'Failed to optimize trailers' })
+    console.error('Error:', error)
+    res.status(500).json({ error: 'Failed to get city info' })
   }
 })
