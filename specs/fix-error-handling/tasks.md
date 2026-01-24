@@ -12,7 +12,7 @@ generated: auto
 
 Focus: Apply error handling fixes to all identified locations.
 
-- [ ] 1.1 Fix getSelectedCountries in storage.js
+- [x] 1.1 Fix getSelectedCountries in storage.js
   - **Do**: Wrap JSON.parse in try-catch, return [] on error, log warning
   - **Files**: /Users/alexander.olshanetsky/projects/stuff/trucker-fix-error-handling/public/js/storage.js
   - **Done when**: Function returns [] instead of throwing on corrupted data

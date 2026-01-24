@@ -161,8 +161,13 @@ export function setFilterMode(mode) {
  * Get list of selected countries
  */
 export function getSelectedCountries() {
-  const saved = localStorage.getItem('ets2-selected-countries')
-  return saved ? JSON.parse(saved) : []
+  try {
+    const saved = localStorage.getItem('ets2-selected-countries')
+    return saved ? JSON.parse(saved) : []
+  } catch (e) {
+    console.warn('Failed to load selected countries:', e)
+    return []
+  }
 }
 
 /**
