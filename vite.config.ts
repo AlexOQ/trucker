@@ -1,8 +1,20 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig({
   root: 'public',
+  publicDir: false, // Disable default publicDir, use plugin instead
+  plugins: [
+    viteStaticCopy({
+      targets: [
+        {
+          src: 'data/*',
+          dest: 'data',
+        },
+      ],
+    }),
+  ],
   build: {
     outDir: 'dist',
     emptyOutDir: true,
