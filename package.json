@@ -27,6 +27,7 @@
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.0",
     "@types/pg": "^8.10.9",
+    "@vitest/coverage-v8": "^4.0.18",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-no-unsanitized": "^4.1.4",
@@ -35,6 +36,7 @@
     "tsx": "^4.6.2",
     "typescript": "^5.3.2",
     "vite": "^7.3.1",
+    "vite-plugin-static-copy": "^3.1.6",
     "vitest": "^4.0.18"
   }
 }

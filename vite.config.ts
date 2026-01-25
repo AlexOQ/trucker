@@ -1,5 +1,6 @@
 import { defineConfig, Plugin } from 'vite'
 import { resolve } from 'path'
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 // Plugin to serve public/ files at root during dev
 function servePublicAtRoot(): Plugin {
@@ -30,9 +31,21 @@ export default defineConfig(({ command }) => {
     // Dev: root at project level so /src/frontend/main.ts works
     // Build: root at public/ so HTML outputs to public/dist/*.html (not public/dist/public/*.html)
     root: isDev ? '.' : 'public',
+    base: '/trucker/',
     // Don't use publicDir since we're building to public/dist
     publicDir: false,
-    plugins: isDev ? [servePublicAtRoot()] : [],
+    plugins: isDev
+      ? [servePublicAtRoot()]
+      : [
+          viteStaticCopy({
+            targets: [
+              {
+                src: 'data/*',
+                dest: 'data',
+              },
+            ],
+          }),
+        ],
     build: {
       outDir: 'dist',
       emptyOutDir: true,
