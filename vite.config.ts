@@ -4,6 +4,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig({
   root: 'public',
+  base: '/trucker/',
   publicDir: false, // Disable default publicDir, use plugin instead
   plugins: [
     viteStaticCopy({
