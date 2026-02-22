@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { optimizeTrailerSet, calculateCityRankings } from './optimizer.js'
+import { optimizeTrailerSet, calculateCityRankings } from '../../src/frontend/optimizer.ts'
 
 describe('optimizer', () => {
   // Mock data factory

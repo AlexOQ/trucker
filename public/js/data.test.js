@@ -5,7 +5,7 @@ const fetchMock = vi.fn();
 vi.stubGlobal('fetch', fetchMock);
 
 // Dynamic import after mocking
-const data = await import('./data.js');
+const data = await import('../../src/frontend/data.ts');
 
 // Sample test data
 const sampleCities = [
@@ -80,7 +80,7 @@ describe('data.js', () => {
       // Need fresh import to test without cache
       vi.resetModules();
       vi.stubGlobal('fetch', fetchMock);
-      const freshData = await import('./data.js');
+      const freshData = await import('../../src/frontend/data.ts');
       const result = await freshData.loadAllData();
 
       expect(result.cities).toEqual(sampleCities);
@@ -98,7 +98,7 @@ describe('data.js', () => {
 
       vi.resetModules();
       vi.stubGlobal('fetch', fetchMock);
-      const freshData = await import('./data.js');
+      const freshData = await import('../../src/frontend/data.ts');
 
       await expect(freshData.loadAllData()).rejects.toThrow('HTTP 404');
     });
@@ -108,7 +108,7 @@ describe('data.js', () => {
 
       vi.resetModules();
       vi.stubGlobal('fetch', fetchMock);
-      const freshData = await import('./data.js');
+      const freshData = await import('../../src/frontend/data.ts');
 
       await expect(freshData.loadAllData()).rejects.toThrow('Network error');
     });
@@ -122,7 +122,7 @@ describe('data.js', () => {
 
       vi.resetModules();
       vi.stubGlobal('fetch', fetchMock);
-      const freshData = await import('./data.js');
+      const freshData = await import('../../src/frontend/data.ts');
 
       await expect(freshData.loadAllData()).rejects.toThrow();
     });
@@ -139,7 +139,7 @@ describe('data.js', () => {
 
       vi.resetModules();
       vi.stubGlobal('fetch', fetchMock);
-      const freshData = await import('./data.js');
+      const freshData = await import('../../src/frontend/data.ts');
 
       // First call
       await freshData.loadAllData();

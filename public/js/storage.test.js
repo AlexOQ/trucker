@@ -21,7 +21,7 @@ const localStorageMock = (() => {
 vi.stubGlobal('localStorage', localStorageMock);
 
 // Dynamic import after mocking
-const storage = await import('./storage.js');
+const storage = await import('../../src/frontend/storage.ts');
 
 describe('storage', () => {
   beforeEach(() => {
