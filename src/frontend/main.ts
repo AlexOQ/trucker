@@ -394,7 +394,11 @@ function renderCity(cityId: number) {
     <div class="table-section">
       <div class="section-header">
         <h2>Recommended Trailers</h2>
-        <button class="btn copy-btn" id="copy-trailers-btn">Copy to clipboard</button>
+        <div class="export-buttons">
+          <button class="btn copy-btn" id="copy-trailers-btn">Copy to clipboard</button>
+          <button class="btn export-btn" id="export-csv-btn">Export CSV</button>
+          <button class="btn export-btn" id="export-json-btn">Export JSON</button>
+        </div>
       </div>
       <table>
         <thead>
@@ -437,6 +441,21 @@ function renderCity(cityId: number) {
     const text = `${city.name} (${totalTrailers} trailers): ${trailerList}`;
 
     copyToClipboard(text, copyBtn);
+  });
+
+  // Add export button handlers
+  document.getElementById('export-csv-btn')!.addEventListener('click', () => {
+    exportToCSV(city.name, result.recommendations);
+  });
+
+  document.getElementById('export-json-btn')!.addEventListener('click', () => {
+    exportToJSON(
+      city.name,
+      result.recommendations,
+      result.totalDepots,
+      result.totalCargoInstances,
+      result.totalValue
+    );
   });
 
   // Add garage toggle handler
@@ -514,6 +533,86 @@ function fallbackCopy(text: string): boolean {
     document.body.removeChild(textarea);
     return false;
   }
+}
+
+// Download file helper
+function downloadFile(content: string, filename: string, mimeType: string) {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+// Export recommendations to CSV
+function exportToCSV(
+  cityName: string,
+  recommendations: Array<{
+    trailerName: string;
+    count: number;
+    coveragePct: number;
+    avgValue: number;
+    score: number;
+    topCargoes: string[];
+  }>
+) {
+  const headers = ['Trailer', 'Copies', 'Coverage %', 'Avg Value (€/Job)', 'Score', 'Top Cargoes'];
+  const rows = recommendations.map((r) => [
+    `"${r.trailerName}"`,
+    r.count,
+    r.coveragePct,
+    r.avgValue.toFixed(2),
+    r.score.toFixed(3),
+    `"${r.topCargoes.join(', ')}"`,
+  ]);
+
+  const csv = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
+  const safeCityName = cityName.replace(/[^a-zA-Z0-9]/g, '_');
+  downloadFile(csv, `${safeCityName}_trailers.csv`, 'text/csv;charset=utf-8');
+}
+
+// Export recommendations to JSON
+function exportToJSON(
+  cityName: string,
+  recommendations: Array<{
+    trailerName: string;
+    count: number;
+    coveragePct: number;
+    avgValue: number;
+    score: number;
+    topCargoes: string[];
+  }>,
+  totalDepots: number,
+  totalCargoInstances: number,
+  totalValue: number
+) {
+  const exportData = {
+    city: cityName,
+    exportedAt: new Date().toISOString(),
+    summary: {
+      totalDepots,
+      totalCargoInstances,
+      totalValue,
+      totalTrailers: recommendations.reduce((sum, r) => sum + r.count, 0),
+      trailerTypes: recommendations.length,
+    },
+    recommendations: recommendations.map((r) => ({
+      trailer: r.trailerName,
+      copies: r.count,
+      coveragePercent: r.coveragePct,
+      avgValuePerJob: r.avgValue,
+      score: r.score,
+      topCargoes: r.topCargoes,
+    })),
+  };
+
+  const json = JSON.stringify(exportData, null, 2);
+  const safeCityName = cityName.replace(/[^a-zA-Z0-9]/g, '_');
+  downloadFile(json, `${safeCityName}_trailers.json`, 'application/json');
 }
 
 // Show city detail view
