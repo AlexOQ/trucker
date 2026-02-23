@@ -365,6 +365,24 @@ input[type="range"]::-moz-range-thumb {
   margin-bottom: 0;
 }
 
+.export-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.export-btn {
+  background: transparent;
+  border: 1px solid #3498db;
+  color: #3498db;
+}
+
+.export-btn:hover {
+  background: rgba(52, 152, 219, 0.1);
+  border-color: #5dade2;
+  color: #5dade2;
+}
+
 /* Stats Row */
 .stats {
   display: flex;
