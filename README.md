@@ -11,6 +11,7 @@ Visit the live tool at: **[alexoq.github.io/trucker](https://alexoq.github.io/tr
 - **City Rankings**: See which cities offer the best opportunities for AI drivers
 - **Trailer Optimization**: Get recommended trailer sets for any city garage
 - **Configurable Algorithm**: Adjust parameters to match your play style
+- **Export Options**: Download recommendations as CSV, JSON, or copy to clipboard
 - **Reference Pages**: Browse cities, companies, and cargo types
 
 ## How It Works
@@ -61,10 +62,22 @@ Found incorrect data? The easiest way to help:
 git clone https://github.com/AlexOQ/trucker.git
 cd trucker
 
-# Serve locally (any static file server works)
-npx serve .
+# Install dependencies
+npm install
 
-# Open http://localhost:3000
+# Start Vite dev server with hot reload
+npm run dev:frontend
+
+# Open http://localhost:5173
+```
+
+### Other Commands
+
+```bash
+npm run build:frontend   # Build for production
+npm run preview          # Preview production build
+npm run test             # Run test suite
+npm run lint             # TypeScript type checking
 ```
 
 ### With Database (for data export)
@@ -75,9 +88,6 @@ If you need to regenerate JSON data from the source database:
 # Start PostgreSQL
 docker compose up -d
 
-# Install dependencies
-npm install
-
 # Run export script
 npm run export        # Cities, companies, relationships only
 npm run export -- --all  # Include cargo and trailers
@@ -87,19 +97,23 @@ npm run export -- --all  # Include cargo and trailers
 
 ```
 /
-├── index.html          # Main rankings page
-├── cities.html         # Cities reference
-├── companies.html      # Companies reference
-├── cargo.html          # Cargo reference
-├── css/style.css       # Shared styles
-├── js/
-│   ├── data.js         # Data loading
-│   ├── optimizer.js    # Optimization algorithm
-│   └── storage.js      # localStorage wrapper
-├── data/               # JSON data files
-├── ALGORITHM.md        # Algorithm documentation
-├── DATA.md             # Data documentation
-└── CONTRIBUTING.md     # Contribution guide
+├── src/frontend/           # TypeScript source
+│   ├── main.ts             # Main application
+│   ├── data.ts             # Data loading
+│   ├── optimizer.ts        # Optimization algorithm
+│   └── storage.ts          # localStorage wrapper
+├── public/                 # Static assets
+│   ├── index.html          # Main rankings page
+│   ├── cities.html         # Cities reference
+│   ├── companies.html      # Companies reference
+│   ├── cargo.html          # Cargo reference
+│   ├── css/style.css       # Shared styles
+│   └── data/               # JSON data files
+├── dist/                   # Production build output
+├── vite.config.ts          # Vite build configuration
+├── ALGORITHM.md            # Algorithm documentation
+├── DATA.md                 # Data documentation
+└── CONTRIBUTING.md         # Contribution guide
 ```
 
 ## License

@@ -20,7 +20,7 @@ Example:
 For simple fixes, edit the JSON file and submit a PR:
 
 1. Fork the repository
-2. Edit the relevant file in `/data/`
+2. Edit the relevant file in `/public/data/`
 3. Submit a pull request with a clear description
 
 ### 3. Add New Content
@@ -127,18 +127,26 @@ npm install
 ### Testing Changes
 
 ```bash
-# Start local server
-npx serve .
+# Start Vite dev server with hot reload
+npm run dev:frontend
 
-# Open http://localhost:3000
+# Open http://localhost:5173
+
+# Run tests
+npm run test
+
+# Type check
+npm run lint
 ```
 
 ### Code Style
 
+- TypeScript source in `src/frontend/`
 - Use ES modules (`import`/`export`)
 - Keep functions small and focused
 - Add comments for complex logic
 - Follow existing code patterns
+- Run `npm run lint` before committing
 
 ### Pull Request Process
 
