@@ -57,3 +57,42 @@ jobs:
 
       - name: Run linter
         run: npm run lint
+
+      - name: Build frontend
+        run: npm run build:frontend
+
+      - name: Verify build artifacts exist
+        run: |
+          echo "Checking build artifacts..."
+
+          # Check HTML files exist
+          test -f public/dist/index.html || (echo "ERROR: index.html missing" && exit 1)
+          test -f public/dist/cities.html || (echo "ERROR: cities.html missing" && exit 1)
+          test -f public/dist/companies.html || (echo "ERROR: companies.html missing" && exit 1)
+          test -f public/dist/cargo.html || (echo "ERROR: cargo.html missing" && exit 1)
+
+          # Check data files copied
+          test -d public/dist/data || (echo "ERROR: data directory missing" && exit 1)
+          test -f public/dist/data/cities.json || (echo "ERROR: cities.json missing" && exit 1)
+
+          # Check assets directory exists
+          test -d public/dist/assets || (echo "ERROR: assets directory missing" && exit 1)
+
+          echo "All build artifacts verified!"
+
+      - name: Verify GitHub Pages base path
+        run: |
+          echo "Checking base path configuration..."
+
+          # Check that HTML files reference /trucker/ base path
+          if grep -q 'href="/trucker/' public/dist/index.html && \
+             grep -q 'src="/trucker/' public/dist/index.html; then
+            echo "Base path /trucker/ correctly set in index.html"
+          else
+            echo "ERROR: Base path /trucker/ not found in index.html"
+            echo "Asset references found:"
+            grep -E '(href|src)="/' public/dist/index.html | head -5
+            exit 1
+          fi
+
+          echo "GitHub Pages base path verified!"
