@@ -158,9 +158,38 @@ function formatRank(rank: number, total: number, score: number | null = null): s
   return `<span class="${className}"${tooltipAttrs}><span class="rank">#${rank}</span> of ${total}</span>`;
 }
 
-// Update garage count badge
+// Update garage count badge (reflects current filters)
 function updateGarageCount() {
-  const count = getOwnedGarages().length;
+  const ownedGarages = getOwnedGarages();
+
+  // If data not loaded yet, show total count
+  if (!data || !lookups) {
+    document.getElementById('garage-count')!.textContent = ownedGarages.length.toString();
+    return;
+  }
+
+  // Apply current filters to owned garages
+  const searchTerm = normalize(citySearch.value);
+  const selectedCountries = getSelectedCountries();
+
+  let count = 0;
+  for (const cityId of ownedGarages) {
+    const city = lookups.citiesById.get(cityId);
+    if (!city) continue;
+
+    // Check search filter
+    if (searchTerm && !normalize(city.name).includes(searchTerm) && !normalize(city.country).includes(searchTerm)) {
+      continue;
+    }
+
+    // Check country filter
+    if (selectedCountries.length > 0 && !selectedCountries.includes(city.country)) {
+      continue;
+    }
+
+    count++;
+  }
+
   document.getElementById('garage-count')!.textContent = count.toString();
 }
 
@@ -327,10 +356,24 @@ function renderRankings() {
       }
     });
   });
+
+  // Update garage count badge to reflect current filters
+  updateGarageCount();
+}
+
+// Ensure rankings are cached (for city rank lookup)
+function ensureRankingsCached() {
+  if (cachedRankings === null && data && lookups) {
+    const options = getOptions();
+    cachedRankings = calculateCityRankings(data, lookups, options);
+  }
 }
 
 // Render city detail view
 function renderCity(cityId: number) {
+  // Ensure rankings are cached for rank display
+  ensureRankingsCached();
+
   const options = getOptions();
   const result = optimizeTrailerSet(cityId, data!, lookups!, options);
   const city = lookups!.citiesById.get(cityId);
