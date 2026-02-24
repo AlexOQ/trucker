@@ -182,6 +182,7 @@ const filterToggle = document.getElementById('filter-toggle')!;
 const citySearch = document.getElementById('city-search') as HTMLInputElement;
 const settingsToggle = document.getElementById('settings-toggle')!;
 const controlsGrid = document.getElementById('controls-grid')!;
+const howItWorksToggle = document.getElementById('how-it-works-toggle');
 
 // Normalize text for accent-insensitive search
 function normalize(str: string): string {
@@ -745,6 +746,24 @@ async function init() {
         settingsToggle.querySelector('.toggle-icon')!.textContent = '▶';
       }
     });
+
+    // How It Works toggle handler
+    if (howItWorksToggle) {
+      howItWorksToggle.addEventListener('click', () => {
+        const section = howItWorksToggle.closest('.how-it-works')!;
+        const isCollapsed = section.classList.contains('collapsed');
+
+        if (isCollapsed) {
+          section.classList.remove('collapsed');
+          howItWorksToggle.setAttribute('aria-expanded', 'true');
+          howItWorksToggle.querySelector('.toggle-icon')!.textContent = '▼';
+        } else {
+          section.classList.add('collapsed');
+          howItWorksToggle.setAttribute('aria-expanded', 'false');
+          howItWorksToggle.querySelector('.toggle-icon')!.textContent = '▶';
+        }
+      });
+    }
 
     // Country filter dropdown toggle
     const countryFilterBtn = document.getElementById('country-filter-btn')!;
