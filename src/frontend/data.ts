@@ -196,3 +196,11 @@ export function getCityCargoPool(cityId: number, data: AllData, lookups: Lookups
 export function getOwnableTrailers(data: AllData): Trailer[] {
   return data.trailers.filter((t) => t.ownable);
 }
+
+/**
+ * Normalize text for accent-insensitive search
+ * Removes diacritics and converts to lowercase
+ */
+export function normalize(str: string): string {
+  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
