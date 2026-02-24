@@ -1,21 +1,27 @@
 import { defineConfig, Plugin } from 'vite'
 import { resolve } from 'path'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import { renameSync, rmSync, readdirSync, existsSync } from 'fs'
 
-// Plugin to serve public/ files at root during dev
+/**
+ * Development middleware: rewrites /trucker/* requests to /trucker/public/*
+ * This lets us serve HTML files from public/ at the expected URLs
+ */
 function servePublicAtRoot(): Plugin {
   return {
     name: 'serve-public-at-root',
     configureServer(server) {
       server.middlewares.use((req, res, next) => {
-        // Rewrite root HTML requests to public/
-        if (req.url && !req.url.startsWith('/src/') && !req.url.startsWith('/@') && !req.url.startsWith('/node_modules/')) {
-          const htmlPages = ['/', '/index.html', '/cities.html', '/companies.html', '/cargo.html']
-          const staticDirs = ['/css/', '/data/', '/js/']
-
-          if (htmlPages.includes(req.url) || staticDirs.some(dir => req.url!.startsWith(dir))) {
-            req.url = '/public' + (req.url === '/' ? '/index.html' : req.url)
-          }
+        if (
+          req.url &&
+          req.url.startsWith('/trucker/') &&
+          !req.url.includes('/src/') &&
+          !req.url.includes('/@') &&
+          !req.url.includes('/node_modules/')
+        ) {
+          // Rewrite /trucker/foo to /trucker/public/foo
+          const path = req.url.replace('/trucker/', '/trucker/public/')
+          req.url = path === '/trucker/public/' ? '/trucker/public/index.html' : path
         }
         next()
       })
@@ -23,53 +29,68 @@ function servePublicAtRoot(): Plugin {
   }
 }
 
-export default defineConfig(({ command }) => {
-  // Different root for dev vs build to handle TypeScript paths correctly
-  const isDev = command === 'serve'
-
+/**
+ * Build plugin: flattens HTML from dist/public/ to dist/
+ * Rollup preserves directory structure, so we move files post-build
+ */
+function flattenHtmlOutput(): Plugin {
   return {
-    // Dev: root at project level so /src/frontend/main.ts works
-    // Build: root at public/ so HTML outputs to public/dist/*.html (not public/dist/public/*.html)
-    root: isDev ? '.' : 'public',
-    base: '/trucker/',
-    // Don't use publicDir since we're building to public/dist
-    publicDir: false,
-    plugins: isDev
-      ? [servePublicAtRoot()]
-      : [
-          viteStaticCopy({
-            targets: [
-              {
-                src: 'data/*',
-                dest: 'data',
-              },
-            ],
-          }),
-        ],
-    build: {
-      outDir: 'dist',
-      emptyOutDir: true,
-      rollupOptions: {
-        input: {
-          main: resolve(__dirname, 'public/index.html'),
-          cities: resolve(__dirname, 'public/cities.html'),
-          companies: resolve(__dirname, 'public/companies.html'),
-          cargo: resolve(__dirname, 'public/cargo.html'),
-        },
-      },
-    },
-    resolve: {
-      alias: {
-        '@': resolve(__dirname, 'src/frontend'),
-      },
-    },
-    server: {
-      proxy: {
-        '/api': {
-          target: 'http://localhost:3000',
-          changeOrigin: true,
-        },
-      },
+    name: 'flatten-html-output',
+    closeBundle() {
+      const publicDir = resolve(__dirname, 'public/dist/public')
+      const distDir = resolve(__dirname, 'public/dist')
+
+      if (existsSync(publicDir)) {
+        for (const file of readdirSync(publicDir)) {
+          renameSync(resolve(publicDir, file), resolve(distDir, file))
+        }
+        rmSync(publicDir, { recursive: true })
+      }
     },
   }
+}
+
+export default defineConfig({
+  root: '.',
+  base: '/trucker/',
+  publicDir: false,
+
+  plugins: [
+    servePublicAtRoot(),
+    viteStaticCopy({
+      targets: [
+        { src: 'public/data/*', dest: 'data' },
+        { src: 'public/css/*', dest: 'css' },
+      ],
+    }),
+    flattenHtmlOutput(),
+  ],
+
+  build: {
+    outDir: 'public/dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'public/index.html'),
+        cities: resolve(__dirname, 'public/cities.html'),
+        companies: resolve(__dirname, 'public/companies.html'),
+        cargo: resolve(__dirname, 'public/cargo.html'),
+      },
+    },
+  },
+
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src/frontend'),
+    },
+  },
+
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
 })
