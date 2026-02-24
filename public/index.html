@@ -68,6 +68,86 @@
       </div>
     </div>
 
+    <div class="how-it-works collapsed">
+      <div class="how-it-works-header">
+        <button class="how-it-works-toggle" id="how-it-works-toggle" aria-expanded="false">
+          <span class="toggle-icon">▶</span>
+          <h2>How It Works</h2>
+        </button>
+      </div>
+      <div class="how-it-works-content" id="how-it-works-content">
+        <div class="explanation-section">
+          <h3>The Recommendation Algorithm</h3>
+          <p>
+            The advisor uses a <strong>greedy weighted optimization</strong> approach to recommend trailers.
+            Here's how it works in plain terms:
+          </p>
+          <ol class="algorithm-steps">
+            <li>
+              <strong>Build a cargo pool:</strong> We gather all cargo jobs available at depots in your chosen city.
+              Each cargo has a value based on how much it pays per kilometer.
+            </li>
+            <li>
+              <strong>Calculate trailer value:</strong> For each trailer type, we add up the total value
+              of all cargo it can haul. A trailer that handles high-paying cargo gets a higher score.
+            </li>
+            <li>
+              <strong>Pick the best trailer:</strong> The trailer with the highest total value gets selected first.
+            </li>
+            <li>
+              <strong>Reduce remaining value:</strong> Once a trailer is selected, the cargo it covers
+              becomes less valuable (since you already have a way to haul it). This prevents recommending
+              10 identical trailers.
+            </li>
+            <li>
+              <strong>Repeat:</strong> Steps 2-4 repeat until your garage is full (default: 10 trailers).
+            </li>
+          </ol>
+        </div>
+
+        <div class="explanation-section">
+          <h3>Understanding the Score</h3>
+          <p>
+            The <strong>Score</strong> shown for each city and trailer represents potential earning power:
+          </p>
+          <ul class="score-guide">
+            <li>
+              <span class="score-badge excellent">0.8+</span>
+              <strong>Excellent:</strong> Top-tier location or trailer. Maximum cargo value coverage.
+            </li>
+            <li>
+              <span class="score-badge good">0.5 - 0.8</span>
+              <strong>Good:</strong> Solid choice with strong cargo availability.
+            </li>
+            <li>
+              <span class="score-badge moderate">0.3 - 0.5</span>
+              <strong>Moderate:</strong> Decent option, but other choices may be better.
+            </li>
+            <li>
+              <span class="score-badge low">&lt;0.3</span>
+              <strong>Limited:</strong> Few high-value opportunities in this location.
+            </li>
+          </ul>
+        </div>
+
+        <div class="explanation-section">
+          <h3>Why Coverage % Can Be Misleading</h3>
+          <p>
+            You might notice a trailer with <strong>44% coverage</strong> ranked below one with <strong>19% coverage</strong>.
+            This happens because:
+          </p>
+          <ul class="coverage-explanation">
+            <li><strong>Value matters more than variety:</strong> A trailer that hauls one very expensive cargo
+            may score higher than one that handles many cheap cargoes.</li>
+            <li><strong>Diminishing returns:</strong> If you already have trailers covering common cargo types,
+            the algorithm values new coverage over redundant coverage.</li>
+            <li><strong>Depot multipliers:</strong> If a city has multiple depots offering the same cargo,
+            that cargo counts multiple times in the pool - making it more valuable to cover.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
     <div class="controls collapsed">
       <div class="controls-header">
         <button class="settings-toggle" id="settings-toggle" aria-expanded="false">
