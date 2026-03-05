@@ -50,7 +50,7 @@ interface OptimizationResult {
   options: Required<OptimizationOptions>;
 }
 
-interface CityRanking {
+export interface CityRanking {
   id: number;
   name: string;
   country: string;
@@ -255,6 +255,32 @@ export function optimizeTrailerSet(
 }
 
 /**
+ * Lightweight city stats for rankings (skips greedy trailer selection)
+ */
+export function calculateCityStats(
+  cityId: number,
+  data: AllData,
+  lookups: Lookups
+): { totalDepots: number; totalCargoInstances: number; totalValue: number } {
+  const cargoPool = getCityCargoPool(cityId, data, lookups);
+
+  let totalCargoInstances = 0;
+  let totalValue = 0;
+  for (const entry of cargoPool) {
+    totalCargoInstances += entry.depotCount;
+    totalValue += entry.value * entry.depotCount;
+  }
+
+  const cityCompanies = lookups.cityCompanyMap.get(cityId) || [];
+  let totalDepots = 0;
+  for (const { count } of cityCompanies) {
+    totalDepots += count;
+  }
+
+  return { totalDepots, totalCargoInstances, totalValue };
+}
+
+/**
  * Calculate city rankings based on profitability
  */
 export function calculateCityRankings(
@@ -265,7 +291,7 @@ export function calculateCityRankings(
   const rankings: CityRanking[] = [];
 
   for (const city of data.cities) {
-    const result = optimizeTrailerSet(city.id, data, lookups, options);
+    const result = calculateCityStats(city.id, data, lookups);
 
     if (result.totalCargoInstances === 0) continue;
 

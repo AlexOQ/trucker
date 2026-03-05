@@ -1,5 +1,5 @@
 import { loadAllData, buildLookups } from './data.js';
-import { optimizeTrailerSet, calculateCityRankings } from './optimizer.js';
+import { optimizeTrailerSet, calculateCityRankings, type CityRanking } from './optimizer.js';
 import {
   getSettings,
   updateSettings,
@@ -17,7 +17,16 @@ import type { AllData, Lookups } from './data.js';
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
 let currentCityId: number | null = null;
-let cachedRankings: any[] | null = null;
+let cachedRankings: CityRanking[] | null = null;
+
+// Debounce utility
+function debounce(fn: () => void, ms: number): () => void {
+  let timer: ReturnType<typeof setTimeout>;
+  return () => {
+    clearTimeout(timer);
+    timer = setTimeout(fn, ms);
+  };
+}
 
 // Extract unique countries from data, sorted alphabetically
 function getUniqueCountries(): string[] {
@@ -693,15 +702,21 @@ function handleHashNavigation(): boolean {
   return false;
 }
 
-// Handle slider changes
-function onSliderChange() {
-  updateDisplayValues();
-  saveSettings();
+// Debounced computation after slider changes
+const debouncedRender = debounce(() => {
   if (currentCityId) {
     renderCity(currentCityId);
   } else {
     renderRankings();
   }
+}, 150);
+
+// Handle slider changes (display updates immediate, computation debounced)
+function onSliderChange() {
+  updateDisplayValues();
+  saveSettings();
+  cachedRankings = null;
+  debouncedRender();
 }
 
 // Show loading state
@@ -757,7 +772,7 @@ async function init() {
     scoringSlider.addEventListener('input', onSliderChange);
     trailersSlider.addEventListener('input', onSliderChange);
     diminishingSlider.addEventListener('input', onSliderChange);
-    citySearch.addEventListener('input', renderRankings);
+    citySearch.addEventListener('input', debounce(renderRankings, 150));
 
     backLink.addEventListener('click', showRankings);
     window.addEventListener('hashchange', () => {
