@@ -15,8 +15,11 @@ interface AppState {
   settings: Settings;
   ownedGarages: number[];
   garageFilterMode: string;
+  selectedCountries: string[];
   ownedTrailers: Record<string, any>;
 }
+
+const LEGACY_COUNTRIES_KEY = 'ets2-selected-countries';
 
 const defaultState: AppState = {
   settings: {
@@ -24,10 +27,9 @@ const defaultState: AppState = {
     maxTrailers: 10,
     diminishingFactor: 50,
   },
-  // Garage management
   ownedGarages: [],
   garageFilterMode: 'all',
-  // Future expansion
+  selectedCountries: [],
   ownedTrailers: {},
 };
 
@@ -39,8 +41,7 @@ export function loadState(): AppState {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      // Merge with defaults to handle new fields
-      return {
+      const state = {
         ...defaultState,
         ...parsed,
         settings: {
@@ -48,6 +49,16 @@ export function loadState(): AppState {
           ...parsed.settings,
         },
       };
+      // Migrate legacy country filter key into unified state
+      if (!parsed.selectedCountries) {
+        const legacy = localStorage.getItem(LEGACY_COUNTRIES_KEY);
+        if (legacy) {
+          state.selectedCountries = JSON.parse(legacy);
+          localStorage.removeItem(LEGACY_COUNTRIES_KEY);
+          saveState(state);
+        }
+      }
+      return state;
     }
   } catch (e) {
     console.warn('Failed to load state from localStorage:', e);
@@ -89,6 +100,7 @@ export function getSettings(): Settings {
 export function resetToDefaults(): Settings {
   const state = loadState();
   state.settings = { ...defaultState.settings };
+  state.selectedCountries = [];
   saveState(state);
   return defaultState.settings;
 }
@@ -174,22 +186,14 @@ export function setFilterMode(mode: string): string {
  * Get list of selected countries
  */
 export function getSelectedCountries(): string[] {
-  try {
-    const saved = localStorage.getItem('ets2-selected-countries');
-    return saved ? JSON.parse(saved) : [];
-  } catch (e) {
-    console.warn('Failed to load selected countries:', e);
-    return [];
-  }
+  return loadState().selectedCountries || [];
 }
 
 /**
  * Set selected countries list
  */
 export function setSelectedCountries(countries: string[]): void {
-  try {
-    localStorage.setItem('ets2-selected-countries', JSON.stringify(countries));
-  } catch (e) {
-    console.warn('Failed to save selected countries:', e);
-  }
+  const state = loadState();
+  state.selectedCountries = countries;
+  saveState(state);
 }

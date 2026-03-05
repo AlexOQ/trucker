@@ -41,6 +41,7 @@ describe('storage', () => {
         },
         ownedGarages: [],
         garageFilterMode: 'all',
+        selectedCountries: [],
         ownedTrailers: {},
       });
     });
