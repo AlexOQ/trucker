@@ -18,6 +18,23 @@ body {
   min-height: 100vh;
 }
 
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #f39c12;
+  color: #1a1a2e;
+  padding: 0.5rem 1rem;
+  z-index: 1000;
+  font-weight: bold;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 .container {
   max-width: 1400px;
   margin: 0 auto;

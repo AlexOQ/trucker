@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <div class="container">
     <header>
       <div class="header-title">
@@ -21,6 +22,7 @@
       </nav>
     </header>
 
+    <main id="main-content">
     <div class="onboarding">
       <h2>Getting Started</h2>
       <p class="onboarding-intro">
@@ -165,7 +167,7 @@
           <p class="slider-description">Choose between high-value jobs or covering more cargo types</p>
           <div class="slider-container">
             <span class="slider-label">High €/km</span>
-            <input type="range" id="scoring-slider" min="0" max="100" value="50">
+            <input type="range" id="scoring-slider" min="0" max="100" value="50" aria-label="Value versus Coverage balance">
             <span class="slider-label right">Variety</span>
           </div>
         </div>
@@ -178,7 +180,7 @@
           <p class="slider-description">Set how many trailer parking spots you have</p>
           <div class="slider-container">
             <span class="slider-label">1</span>
-            <input type="range" id="trailers-slider" min="1" max="20" value="10">
+            <input type="range" id="trailers-slider" min="1" max="20" value="10" aria-label="Garage size">
             <span class="slider-label right">20</span>
           </div>
         </div>
@@ -191,7 +193,7 @@
           <p class="slider-description">Balance between buying duplicate trailers vs. different types</p>
           <div class="slider-container">
             <span class="slider-label">Same types OK</span>
-            <input type="range" id="diminishing-slider" min="0" max="100" value="50">
+            <input type="range" id="diminishing-slider" min="0" max="100" value="50" aria-label="Diversity pressure">
             <span class="slider-label right">Prefer different</span>
           </div>
         </div>
@@ -199,7 +201,7 @@
     </div>
 
     <div class="search-box">
-      <input type="text" id="city-search" placeholder="Search cities...">
+      <input type="text" id="city-search" placeholder="Search cities..." aria-label="Search cities">
     </div>
 
     <div class="country-filter">
@@ -236,9 +238,10 @@
     </div>
 
     <div id="city-view" style="display: none;">
-      <span class="back-link" id="back-link">← Back to rankings</span>
+      <button class="back-link" id="back-link" type="button">← Back to rankings</button>
       <div id="city-content"></div>
     </div>
+    </main>
   </div>
 
   <script type="module" src="/src/frontend/main.ts"></script>
