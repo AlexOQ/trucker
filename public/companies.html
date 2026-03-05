@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
   <div class="container">
     <header>
       <div class="header-title">
@@ -21,8 +22,9 @@
       </nav>
     </header>
 
+    <main id="main-content">
     <div class="search-box">
-      <input type="text" id="search" placeholder="Search companies...">
+      <input type="text" id="search" placeholder="Search companies..." aria-label="Search companies">
     </div>
 
     <div id="content">
@@ -33,6 +35,7 @@
       <a href="#" class="back-link" id="back-link">← Back to companies</a>
       <div id="detail-content"></div>
     </div>
+    </main>
   </div>
 
   <script type="module" src="/src/frontend/companies.ts"></script>
