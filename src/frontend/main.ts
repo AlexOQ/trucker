@@ -771,6 +771,8 @@ async function init() {
       scoringSlider.value = defaults.scoringBalance.toString();
       trailersSlider.value = defaults.maxTrailers.toString();
       diminishingSlider.value = defaults.diminishingFactor.toString();
+      renderCountryCheckboxes();
+      updateCountryButtonText();
       onSliderChange();
     });
 
