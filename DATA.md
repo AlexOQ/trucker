@@ -116,7 +116,7 @@ Values represent typical €/km rates observed in-game.
 ## File Structure
 
 ```
-/data
+/public/data
   cities.json         # City definitions
   companies.json      # Depot type definitions
   cargo.json          # Cargo type definitions (optional, reviewed separately)

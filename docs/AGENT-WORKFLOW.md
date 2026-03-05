@@ -417,7 +417,7 @@ impatient_gamer:
 **Invoke**: `pr-review-toolkit:code-reviewer` + `pr-review-toolkit:pr-test-analyzer`
 **Model**: `sonnet`
 
-**Target**: Local dev server (localhost:3000)
+**Target**: Local dev server (localhost:5173)
 
 **Context Sources**:
 - Recently closed GitHub issues (last cycle)
