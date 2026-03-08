@@ -18,8 +18,8 @@ import {
   addCityTrailer,
   removeCityTrailer,
 } from './storage.js';
-import type { AllData, Lookups } from './data.js';
 import { getMarginalOptions } from './optimizer.js';
+import type { AllData, Lookups } from './data.js';
 
 const DRIVER_COUNT = 5;
 const TRAILER_SLOTS = 5;
@@ -341,8 +341,14 @@ function renderCity(cityId: string) {
   const myTrailers = getCityTrailers(cityId);
   const myIncome = expectedIncome(stats, myTrailers, DRIVER_COUNT);
 
-  // Next best suggestions: marginal options given current trailers
-  const suggestions = getMarginalOptions(stats, myTrailers, DRIVER_COUNT).slice(0, 3);
+  // Count owned copies per body type
+  const ownedCounts = new Map<string, number>();
+  for (const bt of myTrailers) ownedCounts.set(bt, (ownedCounts.get(bt) || 0) + 1);
+
+  // Marginal value for each body type
+  const marginals = getMarginalOptions(stats, myTrailers, DRIVER_COUNT);
+  const marginalByBT = new Map<string, number>();
+  for (const m of marginals) marginalByBT.set(m.bodyType, m.marginalValue);
 
   cityContent.innerHTML = `
     <div class="city-header">
@@ -367,100 +373,39 @@ function renderCity(cityId: string) {
         <div class="stat-value">${cityRank ? formatRank(cityRank.rank, cityRank.total) : '-'}</div>
         <div class="stat-label">Rank</div>
       </div>
-    </div>
-
-    <div class="table-section">
-      <h2>My Trailers${myTrailers.length > 0 ? ` (${myTrailers.length})` : ''}</h2>
-      <div class="trailer-add-row">
-        <div class="trailer-search-wrapper">
-          <input type="text" id="trailer-search" class="trailer-search" placeholder="Add trailer..." autocomplete="off" />
-          <div id="trailer-dropdown" class="trailer-dropdown hidden"></div>
-        </div>
-      </div>
       ${myTrailers.length > 0 ? `
-        <table>
-          <thead>
-            <tr>
-              <th>Trailer</th>
-              <th>P(match)</th>
-              <th>Avg Value</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            ${myTrailers.map((bt, i) => {
-              const stat = stats.find((s) => s.bodyType === bt);
-              return `
-              <tr>
-                <td>
-                  <div>${stat?.displayName ?? bt}</div>
-                  <div class="trailer-spec">${stat?.bestTrailerName ?? ''}</div>
-                </td>
-                <td>${((stat?.probability ?? 0) * 100).toFixed(1)}%</td>
-                <td class="value">€${(stat?.avgValue ?? 0).toFixed(2)}</td>
-                <td><button class="btn-remove" data-index="${i}" title="Remove">✕</button></td>
-              </tr>
-            `;
-            }).join('')}
-          </tbody>
-        </table>
-        <div class="stats" style="margin-top: 0.5rem">
-          <div class="stat">
-            <div class="stat-value">€${myIncome.totalIncome.toFixed(2)}</div>
-            <div class="stat-label">E[income/cycle]</div>
-          </div>
-          <div class="stat">
-            <div class="stat-value">${myIncome.totalServed.toFixed(1)}/${DRIVER_COUNT}</div>
-            <div class="stat-label">E[drivers served]</div>
-          </div>
-        </div>
-      ` : '<p class="table-hint">No trailers yet. Add one to start building your garage.</p>'}
+      <div class="stat">
+        <div class="stat-value">€${myIncome.totalIncome.toFixed(2)}</div>
+        <div class="stat-label">E[income/cycle]</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">${myIncome.totalServed.toFixed(1)}/${DRIVER_COUNT}</div>
+        <div class="stat-label">E[drivers served]</div>
+      </div>
+      ` : ''}
     </div>
 
-    ${suggestions.length > 0 ? `
     <div class="table-section">
-      <h2>Next Best Trailers</h2>
+      <h2>Trailer Fleet${myTrailers.length > 0 ? ` — ${myTrailers.length} owned` : ''}</h2>
       <table>
         <thead>
           <tr>
-            <th>Trailer</th>
-            <th class="tooltip" data-tooltip="You already own this many">Have</th>
-            <th class="tooltip" data-tooltip="Marginal E[income] from adding this trailer">+E[income]</th>
+            <th>Body Type</th>
+            <th class="tooltip" data-tooltip="Observed job count for this body type">Jobs</th>
+            <th class="tooltip" data-tooltip="Probability a random job matches this type">P(match)</th>
+            <th class="tooltip" data-tooltip="Average cargo value when matched">Avg Value</th>
+            <th class="tooltip" data-tooltip="Trailers you own of this type">Have</th>
+            <th class="tooltip" data-tooltip="Marginal E[income] from adding one more copy">+Next</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          ${suggestions.map((s) => `
-            <tr>
-              <td>
-                <div>${s.displayName}</div>
-                <div class="trailer-spec">${s.bestTrailerName}</div>
-              </td>
-              <td class="amount">${s.currentCopies}</td>
-              <td class="value">+€${s.marginalValue.toFixed(2)}</td>
-              <td><button class="btn-add-suggestion" data-body-type="${s.bodyType}" title="Add">+</button></td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>
-    </div>
-    ` : ''}
-
-    <div class="table-section">
-      <h2>All Body Types in ${city.name}</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Trailer</th>
-            <th>Jobs</th>
-            <th>P(match)</th>
-            <th>Avg Value</th>
-            <th class="tooltip" data-tooltip="EV per roll = P(match) × Avg Value">EV/roll</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${stats.map((s) => `
-            <tr>
+          ${stats.map((s) => {
+            const owned = ownedCounts.get(s.bodyType) || 0;
+            const marginal = marginalByBT.get(s.bodyType);
+            const hasMore = marginal !== undefined && marginal > 0;
+            return `
+            <tr class="${owned > 0 ? 'owned-row' : ''}">
               <td>
                 <div>${s.displayName}</div>
                 <div class="trailer-spec">${s.bestTrailerName}</div>
@@ -468,91 +413,45 @@ function renderCity(cityId: string) {
               <td class="amount">${s.pool}</td>
               <td>${(s.probability * 100).toFixed(1)}%</td>
               <td class="value">€${s.avgValue.toFixed(2)}</td>
-              <td class="value">€${(s.probability * s.avgValue).toFixed(2)}</td>
+              <td class="amount">${owned || '—'}</td>
+              <td class="value">${hasMore ? `+€${marginal!.toFixed(2)}` : '—'}</td>
+              <td class="fleet-actions">
+                ${owned > 0 ? `<button class="btn-fleet btn-fleet-minus" data-body-type="${s.bodyType}" title="Remove one ${s.displayName}">−</button>` : ''}
+                ${hasMore ? `<button class="btn-fleet btn-fleet-plus" data-body-type="${s.bodyType}" title="Add one ${s.displayName}">+</button>` : ''}
+              </td>
             </tr>
-          `).join('')}
+          `;
+          }).join('')}
         </tbody>
       </table>
     </div>
   `;
 
-  // Wire up event handlers
-  setupTrailerSearch(cityId, stats);
-  setupTrailerActions(cityId);
+  // Wire up fleet +/− buttons
+  setupFleetActions(cityId);
 }
 
-function setupTrailerSearch(cityId: string, stats: ReturnType<typeof getCityBodyTypeStats>) {
-  const input = document.getElementById('trailer-search') as HTMLInputElement;
-  const dropdown = document.getElementById('trailer-dropdown') as HTMLDivElement;
-  if (!input || !dropdown) return;
-
-  // Build searchable options from all body types in this city
-  const options = stats.map((s) => ({
-    bodyType: s.bodyType,
-    label: s.displayName,
-    spec: s.bestTrailerName,
-    searchText: `${s.displayName} ${s.bestTrailerName} ${s.bodyType}`.toLowerCase(),
-  }));
-
-  function showDropdown(filter: string) {
-    const norm = filter.toLowerCase().trim();
-    const matches = norm
-      ? options.filter((o) => o.searchText.includes(norm))
-      : options;
-
-    if (matches.length === 0) {
-      dropdown.innerHTML = '<div class="dropdown-empty">No matching trailers</div>';
-    } else {
-      dropdown.innerHTML = matches.map((o) => `
-        <div class="dropdown-item" data-body-type="${o.bodyType}">
-          <div>${o.label}</div>
-          <div class="trailer-spec">${o.spec}</div>
-        </div>
-      `).join('');
-    }
-    dropdown.classList.remove('hidden');
-  }
-
-  input.addEventListener('focus', () => showDropdown(input.value));
-  input.addEventListener('input', () => showDropdown(input.value));
-
-  dropdown.addEventListener('click', (e) => {
-    const item = (e.target as HTMLElement).closest('.dropdown-item') as HTMLElement;
-    if (!item) return;
-    const bodyType = item.dataset.bodyType!;
-    addCityTrailer(cityId, bodyType);
-    input.value = '';
-    dropdown.classList.add('hidden');
-    renderCity(cityId);
-    updateGarageCount();
-  });
-
-  // Close dropdown on outside click
-  document.addEventListener('click', (e) => {
-    if (!input.contains(e.target as Node) && !dropdown.contains(e.target as Node)) {
-      dropdown.classList.add('hidden');
-    }
-  });
-}
-
-function setupTrailerActions(cityId: string) {
-  // Remove buttons
-  cityContent.querySelectorAll('.btn-remove').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      const index = parseInt((btn as HTMLElement).dataset.index!, 10);
-      removeCityTrailer(cityId, index);
-      renderCity(cityId);
-      updateGarageCount();
-    });
-  });
-
-  // Suggestion add buttons
-  cityContent.querySelectorAll('.btn-add-suggestion').forEach((btn) => {
+function setupFleetActions(cityId: string) {
+  cityContent.querySelectorAll('.btn-fleet-plus').forEach((btn) => {
     btn.addEventListener('click', () => {
       const bodyType = (btn as HTMLElement).dataset.bodyType!;
       addCityTrailer(cityId, bodyType);
       renderCity(cityId);
       updateGarageCount();
+    });
+  });
+
+  cityContent.querySelectorAll('.btn-fleet-minus').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const bodyType = (btn as HTMLElement).dataset.bodyType!;
+      // Remove last occurrence of this body type
+      const trailers = getCityTrailers(cityId);
+      const lastIdx = trailers.lastIndexOf(bodyType);
+      if (lastIdx >= 0) {
+        removeCityTrailer(cityId, lastIdx);
+        renderCity(cityId);
+        updateGarageCount();
+      }
     });
   });
 }
