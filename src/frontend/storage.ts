@@ -195,6 +195,10 @@ export function addCityTrailer(cityId: string, bodyType: string): string[] {
     state.cityTrailers[cityId] = [];
   }
   state.cityTrailers[cityId].push(bodyType);
+  // Auto-add to owned garages
+  if (!state.ownedGarages.includes(cityId)) {
+    state.ownedGarages = [...state.ownedGarages, cityId];
+  }
   saveState(state);
   return state.cityTrailers[cityId];
 }
@@ -208,6 +212,10 @@ export function removeCityTrailer(cityId: string, index: number): string[] {
   if (index >= 0 && index < trailers.length) {
     trailers.splice(index, 1);
     state.cityTrailers[cityId] = trailers;
+    // Auto-remove from owned garages if no trailers left
+    if (trailers.length === 0) {
+      state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId);
+    }
     saveState(state);
   }
   return state.cityTrailers[cityId] || [];

@@ -10,17 +10,19 @@ import {
   getSettings,
   resetToDefaults,
   getOwnedGarages,
-  isOwnedGarage,
-  toggleOwnedGarage,
   getFilterMode,
   setFilterMode,
   getSelectedCountries,
   setSelectedCountries,
+  getCityTrailers,
+  addCityTrailer,
+  removeCityTrailer,
 } from './storage.js';
 import type { AllData, Lookups } from './data.js';
+import { getMarginalOptions } from './optimizer.js';
 
 const DRIVER_COUNT = 5;
-const TRAILER_SLOTS = 10;
+const TRAILER_SLOTS = 5;
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -306,7 +308,6 @@ function renderCity(cityId: string) {
   ensureRankingsCached();
 
   const city = lookups!.citiesById.get(cityId);
-  const isOwned = isOwnedGarage(cityId);
 
   if (!city) {
     cityContent.innerHTML = '<div class="empty-state">City not found.</div>';
@@ -318,19 +319,13 @@ function renderCity(cityId: string) {
     cityContent.innerHTML = `
       <div class="city-header">
         <h2>${city.name}</h2>
-        <button class="garage-toggle" aria-label="Toggle garage" aria-pressed="${isOwned}">
-          <span class="star">${isOwned ? '★' : '☆'}</span>
-        </button>
         <span class="country">${city.country}</span>
       </div>
       <div class="empty-state">No cargo data for this city yet.</div>
     `;
-    addGarageToggleHandler(cityId);
     return;
   }
 
-  const optimal = greedyAllocation(stats, TRAILER_SLOTS, DRIVER_COUNT);
-  const income = expectedIncome(stats, optimal, DRIVER_COUNT);
   const cityRank = getCityRank(cityId);
   const observedJobs = data?.observations?.city_job_count?.[cityId] ?? 0;
   const confidence = observedJobs / (observedJobs + 20);
@@ -342,12 +337,16 @@ function renderCity(cityId: string) {
   const confidencePct = (confidence * 100).toFixed(0);
   const confidenceClass = confidence >= 0.5 ? 'high' : confidence >= 0.25 ? 'med' : 'low';
 
+  // User's actual trailers for this city
+  const myTrailers = getCityTrailers(cityId);
+  const myIncome = expectedIncome(stats, myTrailers, DRIVER_COUNT);
+
+  // Next best suggestions: marginal options given current trailers
+  const suggestions = getMarginalOptions(stats, myTrailers, DRIVER_COUNT).slice(0, 3);
+
   cityContent.innerHTML = `
     <div class="city-header">
       <h2>${city.name}</h2>
-      <button class="garage-toggle" aria-label="Toggle garage" aria-pressed="${isOwned}">
-        <span class="star">${isOwned ? '★' : '☆'}</span>
-      </button>
       <span class="country">${city.country}</span>
     </div>
 
@@ -361,14 +360,6 @@ function renderCity(cityId: string) {
         <div class="stat-label">Observed Jobs</div>
       </div>
       <div class="stat">
-        <div class="stat-value">€${income.totalIncome.toFixed(2)}</div>
-        <div class="stat-label">E[income/cycle]</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">${income.totalServed.toFixed(1)}/${DRIVER_COUNT}</div>
-        <div class="stat-label">E[drivers served]</div>
-      </div>
-      <div class="stat">
         <div class="stat-value confidence-${confidenceClass}" title="${observedJobs} jobs / (${observedJobs} + 20)">${confidencePct}%</div>
         <div class="stat-label">Confidence</div>
       </div>
@@ -379,42 +370,88 @@ function renderCity(cityId: string) {
     </div>
 
     <div class="table-section">
-      <h2>Optimal Trailer Set (${TRAILER_SLOTS} slots, ${DRIVER_COUNT} drivers)</h2>
+      <h2>My Trailers${myTrailers.length > 0 ? ` (${myTrailers.length})` : ''}</h2>
+      <div class="trailer-add-row">
+        <div class="trailer-search-wrapper">
+          <input type="text" id="trailer-search" class="trailer-search" placeholder="Add trailer..." autocomplete="off" />
+          <div id="trailer-dropdown" class="trailer-dropdown hidden"></div>
+        </div>
+      </div>
+      ${myTrailers.length > 0 ? `
+        <table>
+          <thead>
+            <tr>
+              <th>Trailer</th>
+              <th>P(match)</th>
+              <th>Avg Value</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${myTrailers.map((bt, i) => {
+              const stat = stats.find((s) => s.bodyType === bt);
+              return `
+              <tr>
+                <td>
+                  <div>${stat?.displayName ?? bt}</div>
+                  <div class="trailer-spec">${stat?.bestTrailerName ?? ''}</div>
+                </td>
+                <td>${((stat?.probability ?? 0) * 100).toFixed(1)}%</td>
+                <td class="value">€${(stat?.avgValue ?? 0).toFixed(2)}</td>
+                <td><button class="btn-remove" data-index="${i}" title="Remove">✕</button></td>
+              </tr>
+            `;
+            }).join('')}
+          </tbody>
+        </table>
+        <div class="stats" style="margin-top: 0.5rem">
+          <div class="stat">
+            <div class="stat-value">€${myIncome.totalIncome.toFixed(2)}</div>
+            <div class="stat-label">E[income/cycle]</div>
+          </div>
+          <div class="stat">
+            <div class="stat-value">${myIncome.totalServed.toFixed(1)}/${DRIVER_COUNT}</div>
+            <div class="stat-label">E[drivers served]</div>
+          </div>
+        </div>
+      ` : '<p class="table-hint">No trailers yet. Add one to start building your garage.</p>'}
+    </div>
+
+    ${suggestions.length > 0 ? `
+    <div class="table-section">
+      <h2>Next Best Trailers</h2>
       <table>
         <thead>
           <tr>
-            <th>Body Type</th>
-            <th class="tooltip" data-tooltip="How many of this type to buy">Copies</th>
-            <th class="tooltip" data-tooltip="Fraction of jobs needing this type">P(match)</th>
-            <th class="tooltip" data-tooltip="Average cargo value when matched">Avg Value</th>
-            <th class="tooltip" data-tooltip="Expected drivers served per cycle">E[served]</th>
-            <th class="tooltip" data-tooltip="Expected income contribution per cycle">E[income]</th>
+            <th>Trailer</th>
+            <th class="tooltip" data-tooltip="You already own this many">Have</th>
+            <th class="tooltip" data-tooltip="Marginal E[income] from adding this trailer">+E[income]</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
-          ${income.details.map((d) => {
-            const stat = stats.find((s) => s.bodyType === d.bodyType);
-            return `
+          ${suggestions.map((s) => `
             <tr>
-              <td>${stat?.displayName ?? d.bodyType}</td>
-              <td class="amount">${d.copies}</td>
-              <td>${((stat?.probability ?? 0) * 100).toFixed(1)}%</td>
-              <td class="value">€${(stat?.avgValue ?? 0).toFixed(2)}</td>
-              <td>${d.served.toFixed(2)}</td>
-              <td class="value">€${d.income.toFixed(2)}</td>
+              <td>
+                <div>${s.displayName}</div>
+                <div class="trailer-spec">${s.bestTrailerName}</div>
+              </td>
+              <td class="amount">${s.currentCopies}</td>
+              <td class="value">+€${s.marginalValue.toFixed(2)}</td>
+              <td><button class="btn-add-suggestion" data-body-type="${s.bodyType}" title="Add">+</button></td>
             </tr>
-          `;
-          }).join('')}
+          `).join('')}
         </tbody>
       </table>
     </div>
+    ` : ''}
 
     <div class="table-section">
       <h2>All Body Types in ${city.name}</h2>
       <table>
         <thead>
           <tr>
-            <th>Body Type</th>
+            <th>Trailer</th>
             <th>Jobs</th>
             <th>P(match)</th>
             <th>Avg Value</th>
@@ -424,7 +461,10 @@ function renderCity(cityId: string) {
         <tbody>
           ${stats.map((s) => `
             <tr>
-              <td>${s.displayName}</td>
+              <td>
+                <div>${s.displayName}</div>
+                <div class="trailer-spec">${s.bestTrailerName}</div>
+              </td>
               <td class="amount">${s.pool}</td>
               <td>${(s.probability * 100).toFixed(1)}%</td>
               <td class="value">€${s.avgValue.toFixed(2)}</td>
@@ -436,26 +476,85 @@ function renderCity(cityId: string) {
     </div>
   `;
 
-  addGarageToggleHandler(cityId);
+  // Wire up event handlers
+  setupTrailerSearch(cityId, stats);
+  setupTrailerActions(cityId);
 }
 
-function addGarageToggleHandler(cityId: string) {
-  const toggleBtn = cityContent.querySelector('.garage-toggle');
-  if (toggleBtn) {
-    const toggle = () => {
-      const newState = toggleOwnedGarage(cityId);
-      toggleBtn.setAttribute('aria-pressed', newState.toString());
-      toggleBtn.querySelector('.star')!.textContent = newState ? '★' : '☆';
-      updateGarageCount();
-    };
-    toggleBtn.addEventListener('click', toggle);
-    toggleBtn.addEventListener('keydown', (e) => {
-      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
-        e.preventDefault();
-        toggle();
-      }
-    });
+function setupTrailerSearch(cityId: string, stats: ReturnType<typeof getCityBodyTypeStats>) {
+  const input = document.getElementById('trailer-search') as HTMLInputElement;
+  const dropdown = document.getElementById('trailer-dropdown') as HTMLDivElement;
+  if (!input || !dropdown) return;
+
+  // Build searchable options from all body types in this city
+  const options = stats.map((s) => ({
+    bodyType: s.bodyType,
+    label: s.displayName,
+    spec: s.bestTrailerName,
+    searchText: `${s.displayName} ${s.bestTrailerName} ${s.bodyType}`.toLowerCase(),
+  }));
+
+  function showDropdown(filter: string) {
+    const norm = filter.toLowerCase().trim();
+    const matches = norm
+      ? options.filter((o) => o.searchText.includes(norm))
+      : options;
+
+    if (matches.length === 0) {
+      dropdown.innerHTML = '<div class="dropdown-empty">No matching trailers</div>';
+    } else {
+      dropdown.innerHTML = matches.map((o) => `
+        <div class="dropdown-item" data-body-type="${o.bodyType}">
+          <div>${o.label}</div>
+          <div class="trailer-spec">${o.spec}</div>
+        </div>
+      `).join('');
+    }
+    dropdown.classList.remove('hidden');
   }
+
+  input.addEventListener('focus', () => showDropdown(input.value));
+  input.addEventListener('input', () => showDropdown(input.value));
+
+  dropdown.addEventListener('click', (e) => {
+    const item = (e.target as HTMLElement).closest('.dropdown-item') as HTMLElement;
+    if (!item) return;
+    const bodyType = item.dataset.bodyType!;
+    addCityTrailer(cityId, bodyType);
+    input.value = '';
+    dropdown.classList.add('hidden');
+    renderCity(cityId);
+    updateGarageCount();
+  });
+
+  // Close dropdown on outside click
+  document.addEventListener('click', (e) => {
+    if (!input.contains(e.target as Node) && !dropdown.contains(e.target as Node)) {
+      dropdown.classList.add('hidden');
+    }
+  });
+}
+
+function setupTrailerActions(cityId: string) {
+  // Remove buttons
+  cityContent.querySelectorAll('.btn-remove').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const index = parseInt((btn as HTMLElement).dataset.index!, 10);
+      removeCityTrailer(cityId, index);
+      renderCity(cityId);
+      updateGarageCount();
+    });
+  });
+
+  // Suggestion add buttons
+  cityContent.querySelectorAll('.btn-add-suggestion').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const bodyType = (btn as HTMLElement).dataset.bodyType!;
+      addCityTrailer(cityId, bodyType);
+      renderCity(cityId);
+      updateGarageCount();
+    });
+  });
 }
 
 function showCity(cityId: string) {
