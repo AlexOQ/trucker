@@ -243,13 +243,16 @@ function renderRankings() {
             <th>Country</th>
             <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
             <th class="tooltip" data-tooltip="Observed jobs from save game parsing">Jobs</th>
-            <th class="tooltip" tabindex="0" data-tooltip="E[income/cycle] with optimal 10-trailer set and ${DRIVER_COUNT} drivers. Higher = more profitable garage.">Score</th>
+            <th class="tooltip" tabindex="0" data-tooltip="E[income/cycle] × confidence. Raw score adjusted for sample size.">Score</th>
+            <th class="tooltip" tabindex="0" data-tooltip="n/(n+20) — how much we trust the estimate. More saves = higher confidence.">Conf.</th>
             <th class="tooltip" data-tooltip="Optimal trailer allocation">Best Trailers</th>
           </tr>
         </thead>
         <tbody>
           ${displayRankings.map((r, i) => {
             const trailerSummary = summarizeTrailers(r.optimalTrailers);
+            const confPct = (r.confidence * 100).toFixed(0);
+            const confClass = r.confidence >= 0.5 ? 'high' : r.confidence >= 0.25 ? 'med' : 'low';
             return `
             <tr class="clickable${ownedSet.has(r.id) ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
               <td>${i + 1}</td>
@@ -257,7 +260,8 @@ function renderRankings() {
               <td class="country">${r.country}</td>
               <td>${r.depotCount}</td>
               <td class="amount">${r.observedJobs || '-'}</td>
-              <td class="score">${formatRank(i + 1, displayRankings.length, r.score, r.confidence, r.rawScore)}</td>
+              <td class="score tooltip" data-tooltip="€${r.rawScore.toFixed(2)} raw × ${confPct}% conf">€${r.score.toFixed(2)}</td>
+              <td class="confidence-${confClass}">${confPct}%</td>
               <td class="trailer-summary">${trailerSummary}</td>
             </tr>
           `;
