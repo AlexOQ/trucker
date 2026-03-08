@@ -132,7 +132,8 @@ export interface GameDefs {
 }
 
 export interface Observations {
-  meta: { saves_parsed: number; total_jobs: number };
+  meta: { saves_parsed: number; total_jobs: number; max_saves: number };
+  variant_body_type: Record<string, string>;
   cities: string[];
   companies: string[];
   cargo: string[];
@@ -144,6 +145,11 @@ export interface Observations {
   cargo_spawn_weight: Record<string, number>;
   cargo_trailer_units: Record<string, Record<string, { median: number; count: number }>>;
   company_cargo_frequency: Record<string, Record<string, number>>;
+  city_job_count: Record<string, number>;
+  city_cargo_frequency: Record<string, Record<string, number>>;
+  city_trailer_frequency: Record<string, Record<string, number>>;
+  city_body_type_frequency: Record<string, Record<string, number>>;
+  body_type_avg_value: Record<string, number>;
 }
 
 export interface AllData {
@@ -458,6 +464,38 @@ export function normalize(str: string): string {
  * Each profile represents one body type needed to cover all cargo.
  * Picks the best standard ownable trailer per body type (max volume).
  */
+/** Build a human-readable spec string from trailer properties, e.g. "Kassbohrer 3-axle 79t 16.4m" */
+function formatTrailerSpec(t: Trailer): string {
+  const idParts = t.id.split('.');
+  const brandRaw = idParts[0];
+  const brand = brandRaw.charAt(0).toUpperCase() + brandRaw.slice(1);
+
+  // Extract axle count from ID. Only the first digit(s) after "single_" are axles.
+  // Special case: "41" = 4+1 axle (lowbed/lowboy), "4_1" = 4+1 axle (lowboy)
+  let axleStr = '';
+  const singleMatch = t.id.match(/single_(\d+)/);
+  if (singleMatch) {
+    const num = singleMatch[1];
+    if (num === '41') axleStr = '4+1-axle';
+    else axleStr = `${num.charAt(0)}-axle`;
+    // Check for "+1" patterns like single_4_1 or single_3_1
+    const plusMatch = t.id.match(/single_(\d)_1\b/);
+    if (plusMatch) axleStr = `${plusMatch[1]}+1-axle`;
+  } else if (t.id.includes('ch_')) {
+    const chMatch = t.id.match(/ch_(\d+)/);
+    if (chMatch) axleStr = `${chMatch[1]}-axle`;
+  }
+
+  const isLong = t.id.includes('.long') || t.id.includes('_ln.');
+  const lengthLabel = isLong ? 'long' : '';
+
+  const gwt = `${Math.round(t.gross_weight_limit / 1000)}t`;
+  const len = `${t.length}m`;
+
+  const parts = [brand, axleStr, lengthLabel, gwt, len].filter(Boolean);
+  return parts.join(' ');
+}
+
 export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypeProfile[] {
   const ownable = getOwnableTrailers(data);
 
@@ -482,14 +520,17 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
     }
     if (cargoIds.size === 0) continue;
 
-    // Pick best standard trailer (max volume, no country restriction)
+    // Pick best standard trailer: max GWL → max volume → max length
+    // This ensures we recommend the trailer that covers ALL cargo in the body type
     const standards = trailers.filter(
       (t) => !t.id.includes('hct') && !t.id.includes('double') && !t.id.includes('bdouble')
         && (!t.country_validity || t.country_validity.length === 0)
     );
     let best = standards[0] ?? trailers[0];
     for (const t of standards) {
-      if (t.volume > best.volume) best = t;
+      if (t.gross_weight_limit > best.gross_weight_limit) best = t;
+      else if (t.gross_weight_limit === best.gross_weight_limit && t.volume > best.volume) best = t;
+      else if (t.gross_weight_limit === best.gross_weight_limit && t.volume === best.volume && t.length > best.length) best = t;
     }
 
     // Check doubles/HCT availability
@@ -511,7 +552,7 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
       cargoIds,
       cargoCount: cargoIds.size,
       bestTrailerId: best.id,
-      bestTrailerName: best.name,
+      bestTrailerName: formatTrailerSpec(best),
       hasDoubles: doublesSet.size > 0,
       hasHCT: hctSet.size > 0,
       doublesCountries: [...doublesSet].sort(),

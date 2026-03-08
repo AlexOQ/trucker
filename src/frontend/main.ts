@@ -1,8 +1,13 @@
 import { loadAllData, buildLookups } from './data.js';
-import { optimizeTrailerSet, calculateCityRankings, type CityRanking } from './optimizer.js';
+import {
+  calculateCityRankings,
+  getCityBodyTypeStats,
+  greedyAllocation,
+  expectedIncome,
+  type CityRanking,
+} from './optimizer.js';
 import {
   getSettings,
-  updateSettings,
   resetToDefaults,
   getOwnedGarages,
   isOwnedGarage,
@@ -14,12 +19,14 @@ import {
 } from './storage.js';
 import type { AllData, Lookups } from './data.js';
 
+const DRIVER_COUNT = 5;
+const TRAILER_SLOTS = 10;
+
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
 let currentCityId: string | null = null;
 let cachedRankings: CityRanking[] | null = null;
 
-// Debounce utility
 function debounce(fn: () => void, ms: number): () => void {
   let timer: ReturnType<typeof setTimeout>;
   return () => {
@@ -28,34 +35,27 @@ function debounce(fn: () => void, ms: number): () => void {
   };
 }
 
-// Extract unique countries from data, sorted alphabetically
 function getUniqueCountries(): string[] {
   if (!data || !data.cities) return [];
   const countries = Array.from(new Set(data.cities.map((c) => c.country)));
   return countries.sort();
 }
 
-// Toggle dropdown visibility
 function toggleDropdown() {
   const dropdown = document.getElementById('country-dropdown')!;
   const btn = document.getElementById('country-filter-btn')!;
   const isVisible = dropdown.style.display !== 'none';
-
   if (isVisible) {
     dropdown.style.display = 'none';
     btn.setAttribute('aria-expanded', 'false');
   } else {
     dropdown.style.display = 'block';
     btn.setAttribute('aria-expanded', 'true');
-    // Focus first checkbox when opening
     const firstCheckbox = dropdown.querySelector('input[type="checkbox"]');
-    if (firstCheckbox) {
-      (firstCheckbox as HTMLElement).focus();
-    }
+    if (firstCheckbox) (firstCheckbox as HTMLElement).focus();
   }
 }
 
-// Close dropdown
 function closeDropdown() {
   const dropdown = document.getElementById('country-dropdown')!;
   const btn = document.getElementById('country-filter-btn')!;
@@ -63,11 +63,9 @@ function closeDropdown() {
   btn.setAttribute('aria-expanded', 'false');
 }
 
-// Update button text based on selection
 function updateCountryButtonText() {
   const selected = getSelectedCountries();
   const btn = document.getElementById('country-filter-btn')!;
-
   if (selected.length === 0) {
     btn.textContent = 'All Countries';
     btn.setAttribute('aria-label', 'Filter by country');
@@ -80,7 +78,6 @@ function updateCountryButtonText() {
   }
 }
 
-// Render country checkboxes in dropdown
 function renderCountryCheckboxes() {
   const countries = getUniqueCountries();
   const countryOptions = document.getElementById('country-options')!;
@@ -88,35 +85,24 @@ function renderCountryCheckboxes() {
 
   countryOptions.innerHTML = `
     <label class="country-option all-countries" role="option">
-      <input
-        type="checkbox"
-        id="all-countries-checkbox"
+      <input type="checkbox" id="all-countries-checkbox"
         aria-checked="${selected.length === 0 ? 'true' : 'false'}"
         ${selected.length === 0 ? 'checked' : ''}>
       <span>All Countries</span>
     </label>
-    ${countries
-      .map(
-        (country) => `
+    ${countries.map((country) => `
       <label class="country-option" role="option">
-        <input
-          type="checkbox"
-          value="${country}"
+        <input type="checkbox" value="${country}"
           aria-checked="${selected.includes(country) ? 'true' : 'false'}"
           aria-label="${country}"
           ${selected.includes(country) ? 'checked' : ''}>
         <span>${country}</span>
       </label>
-    `
-      )
-      .join('')}
+    `).join('')}
   `;
 
-  // Add handler for "All Countries" checkbox
-  const allCountriesCheckbox = document.getElementById('all-countries-checkbox')!;
-  allCountriesCheckbox.addEventListener('change', (e) => {
+  document.getElementById('all-countries-checkbox')!.addEventListener('change', (e) => {
     if ((e.target as HTMLInputElement).checked) {
-      (e.target as HTMLElement).setAttribute('aria-checked', 'true');
       setSelectedCountries([]);
       renderCountryCheckboxes();
       updateCountryButtonText();
@@ -124,33 +110,22 @@ function renderCountryCheckboxes() {
     }
   });
 
-  // Add change handlers to country checkboxes
   countryOptions.querySelectorAll('input[type="checkbox"]:not(#all-countries-checkbox)').forEach((checkbox) => {
     checkbox.addEventListener('change', (e) => {
       const country = (e.target as HTMLInputElement).value;
-      const selected = getSelectedCountries();
-
+      const sel = getSelectedCountries();
       if ((e.target as HTMLInputElement).checked) {
-        (e.target as HTMLElement).setAttribute('aria-checked', 'true');
-        if (!selected.includes(country)) {
-          setSelectedCountries([...selected, country]);
-        }
+        if (!sel.includes(country)) setSelectedCountries([...sel, country]);
       } else {
-        (e.target as HTMLElement).setAttribute('aria-checked', 'false');
-        setSelectedCountries(selected.filter((c) => c !== country));
+        setSelectedCountries(sel.filter((c) => c !== country));
       }
-
-      // Re-render checkboxes to update "All Countries" state
       renderCountryCheckboxes();
-      // Update button text to show count
       updateCountryButtonText();
-      // Re-render rankings with new filter
       renderRankings();
     });
   });
 }
 
-// Get city rank from cached rankings
 function getCityRank(cityId: string) {
   if (!cachedRankings) return null;
   const index = cachedRankings.findIndex((r) => r.id === cityId);
@@ -158,47 +133,34 @@ function getCityRank(cityId: string) {
   return { rank: index + 1, total: cachedRankings.length };
 }
 
-// Format rank for display (optional score for tooltip)
 function formatRank(rank: number, total: number, score: number | null = null): string {
-  const isTopTier = rank <= Math.ceil(total * 0.1); // Top 10%
+  const isTopTier = rank <= Math.ceil(total * 0.1);
   const baseClass = isTopTier ? 'rank-display top-tier' : 'rank-display';
   const className = score !== null ? `${baseClass} tooltip` : baseClass;
-  const tooltipAttrs = score !== null ? ` tabindex="0" data-tooltip="Score: ${score.toFixed(0)}"` : '';
+  const tooltipAttrs = score !== null ? ` tabindex="0" data-tooltip="E[income/cycle]: €${score.toFixed(2)}"` : '';
   return `<span class="${className}"${tooltipAttrs}><span class="rank">#${rank}</span> of ${total}</span>`;
 }
 
-// Update garage count badge (reflects current filters)
+function normalize(str: string): string {
+  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
 function updateGarageCount() {
   const ownedGarages = getOwnedGarages();
-
-  // If data not loaded yet, show total count
   if (!data || !lookups) {
     document.getElementById('garage-count')!.textContent = ownedGarages.length.toString();
     return;
   }
-
-  // Apply current filters to owned garages
   const searchTerm = normalize(citySearch.value);
   const selectedCountries = getSelectedCountries();
-
   let count = 0;
   for (const cityIdStr of ownedGarages) {
     const city = lookups.citiesById.get(cityIdStr);
     if (!city) continue;
-
-    // Check search filter
-    if (searchTerm && !normalize(city.name).includes(searchTerm) && !normalize(city.country).includes(searchTerm)) {
-      continue;
-    }
-
-    // Check country filter
-    if (selectedCountries.length > 0 && !selectedCountries.includes(city.country)) {
-      continue;
-    }
-
+    if (searchTerm && !normalize(city.name).includes(searchTerm) && !normalize(city.country).includes(searchTerm)) continue;
+    if (selectedCountries.length > 0 && !selectedCountries.includes(city.country)) continue;
     count++;
   }
-
   document.getElementById('garage-count')!.textContent = count.toString();
 }
 
@@ -208,31 +170,15 @@ const rankingsContent = document.getElementById('rankings-content')!;
 const cityView = document.getElementById('city-view')!;
 const cityContent = document.getElementById('city-content')!;
 const backLink = document.getElementById('back-link')!;
-
-const trailersSlider = document.getElementById('trailers-slider') as HTMLInputElement;
-const diminishingSlider = document.getElementById('diminishing-slider') as HTMLInputElement;
-const trailersValue = document.getElementById('trailers-value')!;
-const diminishingValue = document.getElementById('diminishing-value')!;
-const resetBtn = document.getElementById('reset-btn')!;
 const filterToggle = document.getElementById('filter-toggle')!;
 const citySearch = document.getElementById('city-search') as HTMLInputElement;
 const settingsToggle = document.getElementById('settings-toggle')!;
-const controlsGrid = document.getElementById('controls-grid')!;
 const howItWorksToggle = document.getElementById('how-it-works-toggle');
 
-// Normalize text for accent-insensitive search
-function normalize(str: string): string {
-  return str
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-}
-
-// Filter toggle click handler
+// Filter toggle
 filterToggle.addEventListener('click', (e) => {
   const btn = (e.target as HTMLElement).closest('.filter-btn');
   if (!btn) return;
-
   const mode = btn.getAttribute('data-filter')!;
   filterToggle.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
   btn.classList.add('active');
@@ -240,38 +186,9 @@ filterToggle.addEventListener('click', (e) => {
   renderRankings();
 });
 
-// Get current options from sliders
-function getOptions() {
-  return {
-    maxTrailers: parseInt(trailersSlider.value),
-    diminishingFactor: parseInt(diminishingSlider.value),
-  };
-}
-
-// Update slider display values
-function updateDisplayValues() {
-  trailersValue.textContent = trailersSlider.value;
-  diminishingValue.textContent = diminishingSlider.value;
-}
-
-// Load settings from localStorage
-function loadSettings() {
-  const settings = getSettings();
-  trailersSlider.value = settings.maxTrailers.toString();
-  diminishingSlider.value = settings.diminishingFactor.toString();
-  updateDisplayValues();
-}
-
-// Save settings to localStorage
-function saveSettings() {
-  updateSettings(getOptions());
-}
-
-// Render city rankings table
 function renderRankings() {
-  const options = getOptions();
-  const rankings = calculateCityRankings(data!, lookups!, options);
-  cachedRankings = rankings; // Cache for city detail lookup
+  const rankings = calculateCityRankings(data!, lookups!);
+  cachedRankings = rankings;
 
   if (rankings.length === 0) {
     cachedRankings = null;
@@ -279,26 +196,20 @@ function renderRankings() {
     return;
   }
 
-  // Filter by search term
   const searchTerm = normalize(citySearch.value);
   let filtered = rankings.filter(
     (r) => normalize(r.name).includes(searchTerm) || normalize(r.country).includes(searchTerm)
   );
 
-  // Filter by selected countries
   const selectedCountries = getSelectedCountries();
   if (selectedCountries.length > 0) {
     filtered = filtered.filter((r) => selectedCountries.includes(r.country));
   }
 
-  // Get filter mode and owned garages
   const filterMode = getFilterMode();
   const ownedSet = new Set(getOwnedGarages());
-
-  // Filter by owned garages if mode is 'owned'
   const displayRankings = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
 
-  // Handle empty state when filtered but no garages
   if (filterMode === 'owned' && displayRankings.length === 0) {
     rankingsContent.innerHTML = `
       <div class="empty-garages">
@@ -309,10 +220,14 @@ function renderRankings() {
     return;
   }
 
+  const savesInfo = data?.observations?.meta
+    ? `${data.observations.meta.saves_parsed} save(s), ${data.observations.meta.total_jobs} jobs observed`
+    : 'theoretical data';
+
   rankingsContent.innerHTML = `
     <div class="table-section">
       <h2>City Rankings (${displayRankings.length} cities)</h2>
-      <p class="table-hint">Click any city for trailer recommendations</p>
+      <p class="table-hint">Based on ${savesInfo}. Click any city for details.</p>
       <table class="table-rankings">
         <thead>
           <tr>
@@ -320,39 +235,33 @@ function renderRankings() {
             <th>City</th>
             <th>Country</th>
             <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
-            <th class="tooltip" data-tooltip="Total available cargo jobs">Jobs</th>
-            <th class="tooltip" data-tooltip="Sum of all cargo values (with bonuses)">Value</th>
-            <th class="tooltip" data-tooltip="Average value per cargo job">€/Job</th>
-            <th class="tooltip" tabindex="0" data-tooltip="Ranks cities by combining job availability and cargo value. Higher score = more profitable garage location.">Score</th>
+            <th class="tooltip" data-tooltip="Observed jobs from save game parsing">Jobs</th>
+            <th class="tooltip" tabindex="0" data-tooltip="E[income/cycle] with optimal 10-trailer set and ${DRIVER_COUNT} drivers. Higher = more profitable garage.">Score</th>
+            <th class="tooltip" data-tooltip="Optimal trailer allocation">Best Trailers</th>
           </tr>
         </thead>
         <tbody>
-          ${displayRankings
-            .map(
-              (r, i) => `
+          ${displayRankings.map((r, i) => {
+            const trailerSummary = summarizeTrailers(r.optimalTrailers);
+            return `
             <tr class="clickable${ownedSet.has(r.id) ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
               <td>${i + 1}</td>
               <td>${r.name}</td>
               <td class="country">${r.country}</td>
               <td>${r.depotCount}</td>
-              <td class="amount">${Math.round(r.jobs)}</td>
-              <td class="value">€${r.totalValue.toLocaleString()}</td>
-              <td>€${r.avgValuePerJob.toFixed(2)}</td>
+              <td class="amount">${r.observedJobs || '-'}</td>
               <td class="score">${formatRank(i + 1, displayRankings.length, r.score)}</td>
+              <td class="trailer-summary">${trailerSummary}</td>
             </tr>
-          `
-            )
-            .join('')}
+          `;
+          }).join('')}
         </tbody>
       </table>
     </div>
   `;
 
-  // Add click and keyboard handlers
   rankingsContent.querySelectorAll('tr.clickable').forEach((row) => {
-    row.addEventListener('click', () => {
-      showCity((row as HTMLElement).dataset.cityId!);
-    });
+    row.addEventListener('click', () => showCity((row as HTMLElement).dataset.cityId!));
     row.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
         e.preventDefault();
@@ -361,25 +270,30 @@ function renderRankings() {
     });
   });
 
-  // Update garage count badge to reflect current filters
   updateGarageCount();
 }
 
-// Ensure rankings are cached (for city rank lookup)
+function summarizeTrailers(trailers: string[]): string {
+  const counts = new Map<string, number>();
+  for (const t of trailers) counts.set(t, (counts.get(t) || 0) + 1);
+  return [...counts.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([bt, n]) => {
+      const short = bt.replace(/_/g, ' ');
+      return n > 1 ? `${short} ×${n}` : short;
+    })
+    .join(', ');
+}
+
 function ensureRankingsCached() {
   if (cachedRankings === null && data && lookups) {
-    const options = getOptions();
-    cachedRankings = calculateCityRankings(data, lookups, options);
+    cachedRankings = calculateCityRankings(data, lookups);
   }
 }
 
-// Render city detail view
 function renderCity(cityId: string) {
-  // Ensure rankings are cached for rank display
   ensureRankingsCached();
 
-  const options = getOptions();
-  const result = optimizeTrailerSet(cityId, data!, lookups!, options);
   const city = lookups!.citiesById.get(cityId);
   const isOwned = isOwnedGarage(cityId);
 
@@ -388,7 +302,8 @@ function renderCity(cityId: string) {
     return;
   }
 
-  if (result.recommendations.length === 0) {
+  const stats = getCityBodyTypeStats(cityId, data!, lookups!);
+  if (stats.length === 0) {
     cityContent.innerHTML = `
       <div class="city-header">
         <h2>${city.name}</h2>
@@ -403,9 +318,14 @@ function renderCity(cityId: string) {
     return;
   }
 
-  const totalTrailers = result.recommendations.reduce((sum, r) => sum + r.count, 0);
-  const trailerTypes = result.recommendations.length;
+  const optimal = greedyAllocation(stats, TRAILER_SLOTS, DRIVER_COUNT);
+  const income = expectedIncome(stats, optimal, DRIVER_COUNT);
   const cityRank = getCityRank(cityId);
+  const observedJobs = data?.observations?.city_job_count?.[cityId] ?? 0;
+
+  const cityCompanies = lookups!.cityCompanyMap.get(cityId) || [];
+  let depotCount = 0;
+  for (const { count } of cityCompanies) depotCount += count;
 
   cityContent.innerHTML = `
     <div class="city-header">
@@ -418,20 +338,20 @@ function renderCity(cityId: string) {
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-value">${result.totalDepots}</div>
+        <div class="stat-value">${depotCount}</div>
         <div class="stat-label">Depots</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${Math.round(result.totalCargoInstances)}</div>
-        <div class="stat-label">Jobs Available</div>
+        <div class="stat-value">${observedJobs}</div>
+        <div class="stat-label">Observed Jobs</div>
       </div>
       <div class="stat">
-        <div class="stat-value">€${result.totalValue.toLocaleString()}</div>
-        <div class="stat-label">Total Value</div>
+        <div class="stat-value">€${income.totalIncome.toFixed(2)}</div>
+        <div class="stat-label">E[income/cycle]</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${totalTrailers}</div>
-        <div class="stat-label">Trailers (${trailerTypes} types)</div>
+        <div class="stat-value">${income.totalServed.toFixed(1)}/${DRIVER_COUNT}</div>
+        <div class="stat-label">E[drivers served]</div>
       </div>
       <div class="stat">
         <div class="stat-value">${cityRank ? formatRank(cityRank.rank, cityRank.total) : '-'}</div>
@@ -440,238 +360,85 @@ function renderCity(cityId: string) {
     </div>
 
     <div class="table-section">
-      <div class="section-header">
-        <h2>Recommended Trailers</h2>
-        <div class="export-buttons">
-          <button class="btn copy-btn" id="copy-trailers-btn">Copy to clipboard</button>
-          <button class="btn export-btn" id="export-csv-btn">Export CSV</button>
-          <button class="btn export-btn" id="export-json-btn">Export JSON</button>
-        </div>
-      </div>
+      <h2>Optimal Trailer Set (${TRAILER_SLOTS} slots, ${DRIVER_COUNT} drivers)</h2>
       <table>
         <thead>
           <tr>
-            <th>Trailer</th>
-            <th class="tooltip" data-tooltip="How many of this trailer to buy">Copies</th>
-            <th class="tooltip" tabindex="0" data-tooltip="This trailer can haul this percentage of the different cargo types available at depots in this city">Coverage</th>
-            <th class="tooltip" data-tooltip="Average value per job for this trailer">€/Job/km</th>
-            <th class="tooltip" tabindex="0" data-tooltip="Combines €/km value and job coverage based on your Scoring Balance setting. Higher = better trailer choice.">Score</th>
+            <th>Body Type</th>
+            <th class="tooltip" data-tooltip="How many of this type to buy">Copies</th>
+            <th class="tooltip" data-tooltip="Fraction of jobs needing this type">P(match)</th>
+            <th class="tooltip" data-tooltip="Average cargo value when matched">Avg Value</th>
+            <th class="tooltip" data-tooltip="Expected drivers served per cycle">E[served]</th>
+            <th class="tooltip" data-tooltip="Expected income contribution per cycle">E[income]</th>
           </tr>
         </thead>
         <tbody>
-          ${result.recommendations
-            .map(
-              (r) => `
+          ${income.details.map((d) => {
+            const stat = stats.find((s) => s.bodyType === d.bodyType);
+            return `
             <tr>
-              <td>
-                <div class="trailer-name"><a href="trailers.html#body-${r.trailerId}" class="link">${r.trailerName}</a></div>
-                <div class="trailer-best">Buy: ${r.bestTrailerName}</div>
-                <div class="trailer-cargoes">Hauls: ${r.topCargoes.join(', ')}</div>
-              </td>
-              <td class="amount">${r.count}</td>
-              <td class="coverage">${r.coveragePct}%</td>
-              <td class="value">€${r.avgValue.toFixed(2)}</td>
-              <td>${r.score.toFixed(3)}</td>
+              <td>${stat?.displayName ?? d.bodyType}</td>
+              <td class="amount">${d.copies}</td>
+              <td>${((stat?.probability ?? 0) * 100).toFixed(1)}%</td>
+              <td class="value">€${(stat?.avgValue ?? 0).toFixed(2)}</td>
+              <td>${d.served.toFixed(2)}</td>
+              <td class="value">€${d.income.toFixed(2)}</td>
             </tr>
-          `
-            )
-            .join('')}
+          `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-section">
+      <h2>All Body Types in ${city.name}</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Body Type</th>
+            <th>Jobs</th>
+            <th>P(match)</th>
+            <th>Avg Value</th>
+            <th class="tooltip" data-tooltip="EV per roll = P(match) × Avg Value">EV/roll</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${stats.map((s) => `
+            <tr>
+              <td>${s.displayName}</td>
+              <td class="amount">${s.pool}</td>
+              <td>${(s.probability * 100).toFixed(1)}%</td>
+              <td class="value">€${s.avgValue.toFixed(2)}</td>
+              <td class="value">€${(s.probability * s.avgValue).toFixed(2)}</td>
+            </tr>
+          `).join('')}
         </tbody>
       </table>
     </div>
   `;
 
-  // Add copy button handler
-  const copyBtn = document.getElementById('copy-trailers-btn')!;
-  copyBtn.addEventListener('click', () => {
-    const trailerList = result.recommendations
-      .map((r) => {
-        const qty = r.count > 1 ? ` ×${r.count}` : '';
-        return `${r.bestTrailerName}${qty}`;
-      })
-      .join(', ');
-    const text = `${city.name} (${totalTrailers} trailers): ${trailerList}`;
-
-    copyToClipboard(text, copyBtn);
-  });
-
-  // Add export button handlers
-  document.getElementById('export-csv-btn')!.addEventListener('click', () => {
-    exportToCSV(city.name, result.recommendations);
-  });
-
-  document.getElementById('export-json-btn')!.addEventListener('click', () => {
-    exportToJSON(
-      city.name,
-      result.recommendations,
-      result.totalDepots,
-      result.totalCargoInstances,
-      result.totalValue
-    );
-  });
-
-  // Add garage toggle handler
   addGarageToggleHandler(cityId);
 }
 
-// Add garage toggle click and keyboard handler
 function addGarageToggleHandler(cityId: string) {
   const toggleBtn = cityContent.querySelector('.garage-toggle');
   if (toggleBtn) {
-    const toggleGarage = () => {
+    const toggle = () => {
       const newState = toggleOwnedGarage(cityId);
       toggleBtn.setAttribute('aria-pressed', newState.toString());
       toggleBtn.querySelector('.star')!.textContent = newState ? '★' : '☆';
       updateGarageCount();
     };
-    toggleBtn.addEventListener('click', toggleGarage);
+    toggleBtn.addEventListener('click', toggle);
     toggleBtn.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
         e.preventDefault();
-        toggleGarage();
+        toggle();
       }
     });
   }
 }
 
-// Copy text to clipboard with fallback
-function copyToClipboard(text: string, button: HTMLElement) {
-  const originalText = button.textContent!;
-
-  const showSuccess = () => {
-    button.textContent = 'Copied!';
-    button.classList.add('copied');
-    setTimeout(() => {
-      button.textContent = originalText;
-      button.classList.remove('copied');
-    }, 2000);
-  };
-
-  const showError = () => {
-    button.textContent = 'Failed';
-    setTimeout(() => {
-      button.textContent = originalText;
-    }, 2000);
-  };
-
-  // Try modern clipboard API first
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard
-      .writeText(text)
-      .then(showSuccess)
-      .catch(() => {
-        // Fallback for non-HTTPS or permission denied
-        fallbackCopy(text) ? showSuccess() : showError();
-      });
-  } else {
-    // Fallback for older browsers
-    fallbackCopy(text) ? showSuccess() : showError();
-  }
-}
-
-// Fallback copy using execCommand
-function fallbackCopy(text: string): boolean {
-  const textarea = document.createElement('textarea');
-  textarea.value = text;
-  textarea.style.position = 'fixed';
-  textarea.style.opacity = '0';
-  document.body.appendChild(textarea);
-  textarea.select();
-  try {
-    const success = document.execCommand('copy');
-    document.body.removeChild(textarea);
-    return success;
-  } catch {
-    document.body.removeChild(textarea);
-    return false;
-  }
-}
-
-// Download file helper
-function downloadFile(content: string, filename: string, mimeType: string) {
-  const blob = new Blob([content], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-}
-
-// Export recommendations to CSV
-function exportToCSV(
-  cityName: string,
-  recommendations: Array<{
-    trailerName: string;
-    bestTrailerName: string;
-    count: number;
-    coveragePct: number;
-    avgValue: number;
-    score: number;
-    topCargoes: string[];
-  }>
-) {
-  const headers = ['Trailer', 'Best Trailer', 'Copies', 'Coverage %', 'Avg Value (€/Job)', 'Score', 'Top Cargoes'];
-  const rows = recommendations.map((r) => [
-    `"${r.trailerName}"`,
-    `"${r.bestTrailerName}"`,
-    r.count,
-    r.coveragePct,
-    r.avgValue.toFixed(2),
-    r.score.toFixed(3),
-    `"${r.topCargoes.join(', ')}"`,
-  ]);
-
-  const csv = [headers.join(','), ...rows.map((row) => row.join(','))].join('\n');
-  const safeCityName = cityName.replace(/[^a-zA-Z0-9]/g, '_');
-  downloadFile(csv, `${safeCityName}_trailers.csv`, 'text/csv;charset=utf-8');
-}
-
-// Export recommendations to JSON
-function exportToJSON(
-  cityName: string,
-  recommendations: Array<{
-    trailerName: string;
-    bestTrailerName: string;
-    count: number;
-    coveragePct: number;
-    avgValue: number;
-    score: number;
-    topCargoes: string[];
-  }>,
-  totalDepots: number,
-  totalCargoInstances: number,
-  totalValue: number
-) {
-  const exportData = {
-    city: cityName,
-    exportedAt: new Date().toISOString(),
-    summary: {
-      totalDepots,
-      totalCargoInstances,
-      totalValue,
-      totalTrailers: recommendations.reduce((sum, r) => sum + r.count, 0),
-      trailerTypes: recommendations.length,
-    },
-    recommendations: recommendations.map((r) => ({
-      trailer: r.trailerName,
-      bestTrailer: r.bestTrailerName,
-      copies: r.count,
-      coveragePercent: r.coveragePct,
-      avgValuePerJob: r.avgValue,
-      score: r.score,
-      topCargoes: r.topCargoes,
-    })),
-  };
-
-  const json = JSON.stringify(exportData, null, 2);
-  const safeCityName = cityName.replace(/[^a-zA-Z0-9]/g, '_');
-  downloadFile(json, `${safeCityName}_trailers.json`, 'application/json');
-}
-
-// Show city detail view
 function showCity(cityId: string) {
   currentCityId = cityId;
   rankingsView.style.display = 'none';
@@ -683,7 +450,6 @@ function showCity(cityId: string) {
   window.scrollTo(0, 0);
 }
 
-// Show rankings view
 function showRankings() {
   currentCityId = null;
   cityView.style.display = 'none';
@@ -692,7 +458,6 @@ function showRankings() {
   renderRankings();
 }
 
-// Handle hash navigation (e.g., #city-19)
 function handleHashNavigation(): boolean {
   const hash = window.location.hash;
   if (hash.startsWith('#city-')) {
@@ -705,38 +470,17 @@ function handleHashNavigation(): boolean {
   return false;
 }
 
-// Debounced computation after slider changes
-const debouncedRender = debounce(() => {
-  if (currentCityId) {
-    renderCity(currentCityId);
-  } else {
-    renderRankings();
-  }
-}, 150);
-
-// Handle slider changes (display updates immediate, computation debounced)
-function onSliderChange() {
-  updateDisplayValues();
-  saveSettings();
-  cachedRankings = null;
-  debouncedRender();
-}
-
-// Show loading state
 function showLoading() {
   rankingsContent.innerHTML = `
     <div class="table-section">
       <h2>Loading city data...</h2>
-      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
-      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
-      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
-      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
-      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div></div>
+      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
+      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
+      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
     </div>
   `;
 }
 
-// Show error state
 function showError(errorMessage: string) {
   rankingsContent.innerHTML = `
     <div class="empty-state">
@@ -746,74 +490,53 @@ function showError(errorMessage: string) {
   `;
 }
 
-// Initialize
 async function init() {
-  // Show loading state immediately
   showLoading();
 
   try {
     data = await loadAllData();
     lookups = buildLookups(data);
 
-    loadSettings();
     renderCountryCheckboxes();
     updateCountryButtonText();
 
-    // Initialize filter toggle from storage
     const savedFilterMode = getFilterMode();
     filterToggle.querySelectorAll('.filter-btn').forEach((btn) => {
       btn.classList.toggle('active', btn.getAttribute('data-filter') === savedFilterMode);
     });
     updateGarageCount();
 
-    // Check for hash navigation, otherwise show rankings
     if (!handleHashNavigation()) {
       renderRankings();
     }
 
-    // Event listeners
-    trailersSlider.addEventListener('input', onSliderChange);
-    diminishingSlider.addEventListener('input', onSliderChange);
     citySearch.addEventListener('input', debounce(renderRankings, 150));
-
     backLink.addEventListener('click', showRankings);
     window.addEventListener('hashchange', () => {
-      if (!handleHashNavigation()) {
-        showRankings();
-      }
+      if (!handleHashNavigation()) showRankings();
     });
 
-    resetBtn.addEventListener('click', () => {
-      const defaults = resetToDefaults();
-      trailersSlider.value = defaults.maxTrailers.toString();
-      diminishingSlider.value = defaults.diminishingFactor.toString();
-      renderCountryCheckboxes();
-      updateCountryButtonText();
-      onSliderChange();
-    });
+    // Settings toggle
+    if (settingsToggle) {
+      settingsToggle.addEventListener('click', () => {
+        const controls = settingsToggle.closest('.controls')!;
+        const isCollapsed = controls.classList.contains('collapsed');
+        if (isCollapsed) {
+          controls.classList.remove('collapsed');
+          settingsToggle.setAttribute('aria-expanded', 'true');
+          settingsToggle.querySelector('.toggle-icon')!.textContent = '▼';
+        } else {
+          controls.classList.add('collapsed');
+          settingsToggle.setAttribute('aria-expanded', 'false');
+          settingsToggle.querySelector('.toggle-icon')!.textContent = '▶';
+        }
+      });
+    }
 
-    // Settings toggle handler
-    settingsToggle.addEventListener('click', () => {
-      const controls = settingsToggle.closest('.controls')!;
-      const isCollapsed = controls.classList.contains('collapsed');
-
-      if (isCollapsed) {
-        controls.classList.remove('collapsed');
-        settingsToggle.setAttribute('aria-expanded', 'true');
-        settingsToggle.querySelector('.toggle-icon')!.textContent = '▼';
-      } else {
-        controls.classList.add('collapsed');
-        settingsToggle.setAttribute('aria-expanded', 'false');
-        settingsToggle.querySelector('.toggle-icon')!.textContent = '▶';
-      }
-    });
-
-    // How It Works toggle handler
     if (howItWorksToggle) {
       howItWorksToggle.addEventListener('click', () => {
         const section = howItWorksToggle.closest('.how-it-works')!;
         const isCollapsed = section.classList.contains('collapsed');
-
         if (isCollapsed) {
           section.classList.remove('collapsed');
           howItWorksToggle.setAttribute('aria-expanded', 'true');
@@ -826,14 +549,9 @@ async function init() {
       });
     }
 
-    // Country filter dropdown toggle
+    // Country filter dropdown
     const countryFilterBtn = document.getElementById('country-filter-btn')!;
-    countryFilterBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleDropdown();
-    });
-
-    // Keyboard handler for dropdown button
+    countryFilterBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(); });
     countryFilterBtn.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
         e.preventDefault();
@@ -841,11 +559,9 @@ async function init() {
       }
     });
 
-    // Keyboard navigation for dropdown
     document.addEventListener('keydown', (e) => {
       const dropdown = document.getElementById('country-dropdown')!;
       if (dropdown.style.display === 'none') return;
-
       if ((e as KeyboardEvent).key === 'Escape') {
         e.preventDefault();
         closeDropdown();
@@ -856,23 +572,13 @@ async function init() {
         const currentIndex = checkboxes.findIndex(
           (cb) => cb === document.activeElement || (cb as HTMLElement).parentElement === document.activeElement
         );
-
-        let nextIndex;
-        if ((e as KeyboardEvent).key === 'ArrowDown') {
-          nextIndex = currentIndex < checkboxes.length - 1 ? currentIndex + 1 : 0;
-        } else {
-          nextIndex = currentIndex > 0 ? currentIndex - 1 : checkboxes.length - 1;
-        }
-
+        const nextIndex = (e as KeyboardEvent).key === 'ArrowDown'
+          ? (currentIndex < checkboxes.length - 1 ? currentIndex + 1 : 0)
+          : (currentIndex > 0 ? currentIndex - 1 : checkboxes.length - 1);
         (checkboxes[nextIndex] as HTMLElement).focus();
-      } else if ((e as KeyboardEvent).key === ' ' && (document.activeElement as HTMLInputElement).type === 'checkbox') {
-        // Space handled by checkbox default behavior
-        e.preventDefault();
-        (document.activeElement as HTMLElement).click();
       }
     });
 
-    // Close dropdown on outside click
     document.addEventListener('click', (e) => {
       const dropdown = document.getElementById('country-dropdown')!;
       const filterContainer = document.querySelector('.country-filter')!;

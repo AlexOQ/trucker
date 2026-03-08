@@ -1,72 +1,205 @@
 /**
  * Trailer Set Optimizer for ETS2 Trucker Advisor
  *
- * Optimizes trailer selection by body type profile:
- * 1. Collapse 500+ trailers to ~16 non-dominated body types
- * 2. For each body type, use max units available (HCT/doubles in applicable countries)
- * 3. Score by EV = spawn_weight × projected_revenue
- * 4. Greedy selection with flat diminishing factor per repeat body type
+ * Answers: "Where should I buy a garage to maximize income with 5 AI drivers?"
  *
- * Parameters:
- * - maxTrailers: number of trailer slots in garage (1-20)
- * - diminishingFactor: 0-100 slider controlling duplicate body type penalty
+ * Model: Binomial contention
+ * - 5 drivers independently roll against the city's job market each cycle
+ * - Each driver takes ONE job, consuming a physical trailer
+ * - P(job matches body type B) = observed frequency of B in this city
+ * - Marginal value of mth copy = avgValue × P(demand ≥ m)
+ * - City score = E[income/cycle] with optimal 10-trailer allocation
+ *
+ * Data sources:
+ * - Probabilities: observation data (city_body_type_frequency from parsed saves)
+ * - Values: body_type_avg_value from observations (derived from game-defs cargo values)
+ * - Fallback: game-defs theoretical cargo pools when no observation data
  */
 
 import { getCityCargoPool, getOwnableTrailers, getBodyTypeProfiles } from './data.js';
-import type { AllData, Lookups, CargoPoolEntry, Trailer, BodyTypeProfile } from './data.js';
+import type { AllData, Lookups, Trailer, BodyTypeProfile } from './data.js';
 
-interface BodyTypeStats {
+const DRIVER_COUNT = 5;
+
+// ============================================
+// Math utilities
+// ============================================
+
+function binomialCoeff(n: number, k: number): number {
+  if (k > n || k < 0) return 0;
+  if (k === 0 || k === n) return 1;
+  let result = 1;
+  for (let i = 0; i < k; i++) result = result * (n - i) / (i + 1);
+  return result;
+}
+
+/** P(X >= m) for X ~ Binomial(n, p) */
+function pAtLeast(m: number, n: number, p: number): number {
+  let sum = 0;
+  for (let k = m; k <= n; k++) {
+    sum += binomialCoeff(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+  }
+  return sum;
+}
+
+/** E[min(X, m)] for X ~ Binomial(n, p) — expected drivers served with m copies */
+function expectedServed(m: number, n: number, p: number): number {
+  let ev = 0;
+  for (let k = 0; k <= n; k++) {
+    const prob = binomialCoeff(n, k) * Math.pow(p, k) * Math.pow(1 - p, n - k);
+    ev += Math.min(k, m) * prob;
+  }
+  return ev;
+}
+
+// ============================================
+// Body type stats for a city
+// ============================================
+
+export interface CityBodyTypeStats {
   bodyType: string;
   displayName: string;
   bestTrailerName: string;
-  cargoCount: number;
-  totalEV: number;
-  coverage: number;
-  topCargoes: string[];
+  probability: number;   // P(random job matches this body type)
+  avgValue: number;       // average cargo value when matched
+  pool: number;           // observed job count for this body type
+  totalPool: number;      // total observed jobs in city
+  cargoCount: number;     // distinct cargo types covered
   hasDoubles: boolean;
   hasHCT: boolean;
 }
 
-interface OptimizationOptions {
-  maxTrailers?: number;
-  diminishingFactor?: number;
-}
-
-interface TrailerRecommendation {
-  trailerId: string;       // body type ID (e.g., "curtainside")
-  trailerName: string;     // display name (e.g., "Curtainside")
-  bestTrailerName: string; // actual trailer to buy (e.g., "Wielton Curtainm Single 3 Curtain")
-  count: number;
-  coveragePct: number;
-  avgValue: number;
-  score: number;
-  topCargoes: string[];
-}
-
-interface OptimizationResult {
-  cityId: string;
-  totalDepots: number;
-  totalCargoInstances: number;
-  totalValue: number;
-  recommendations: TrailerRecommendation[];
-  options: Required<OptimizationOptions>;
-}
-
-export interface CityRanking {
-  id: string;
-  name: string;
-  country: string;
-  depotCount: number;
-  jobs: number;
-  totalValue: number;
-  avgValuePerJob: number;
-  score: number;
-}
-
 /**
- * Filter trailers to only those valid in a given country.
- * Trailers with no country_validity are valid everywhere.
+ * Build per-body-type stats for a city using observation data.
+ * Falls back to game-defs theoretical cargo pools when no observations exist.
  */
+export function getCityBodyTypeStats(
+  cityId: string,
+  data: AllData,
+  lookups: Lookups
+): CityBodyTypeStats[] {
+  const obs = data.observations;
+
+  // Use observation data when available
+  if (obs?.city_body_type_frequency?.[cityId] && obs?.body_type_avg_value) {
+    return getStatsFromObservations(cityId, data, lookups);
+  }
+
+  // Fallback: game-defs theoretical pools
+  return getStatsFromGameDefs(cityId, data, lookups);
+}
+
+function getStatsFromObservations(
+  cityId: string,
+  data: AllData,
+  lookups: Lookups
+): CityBodyTypeStats[] {
+  const obs = data.observations!;
+  const btFreq = obs.city_body_type_frequency[cityId];
+  const totalJobs = obs.city_job_count[cityId] || 0;
+  if (!btFreq || totalJobs === 0) return [];
+
+  const profiles = getBodyTypeProfiles(data, lookups);
+  const profileByBT = new Map<string, BodyTypeProfile>();
+  for (const p of profiles) profileByBT.set(p.bodyType, p);
+
+  // Count distinct cargoes per body type in this city using cargo_frequency + variant mapping
+  const cityCargoFreq = obs.city_cargo_frequency[cityId] || {};
+
+  const stats: CityBodyTypeStats[] = [];
+
+  for (const [bt, count] of Object.entries(btFreq)) {
+    const avgValue = obs.body_type_avg_value[bt] ?? 1.0;
+    const profile = profileByBT.get(bt);
+    const displayName = bt.charAt(0).toUpperCase() + bt.slice(1).replace(/_/g, ' ');
+
+    stats.push({
+      bodyType: bt,
+      displayName: profile?.displayName ?? displayName,
+      bestTrailerName: profile?.bestTrailerName ?? displayName,
+      probability: count / totalJobs,
+      avgValue,
+      pool: count,
+      totalPool: totalJobs,
+      cargoCount: Object.keys(cityCargoFreq).length,
+      hasDoubles: profile?.hasDoubles ?? false,
+      hasHCT: profile?.hasHCT ?? false,
+    });
+  }
+
+  stats.sort((a, b) => (b.probability * b.avgValue) - (a.probability * a.avgValue));
+  return stats;
+}
+
+/** Fallback: build stats from game-defs theoretical cargo pools */
+function getStatsFromGameDefs(
+  cityId: string,
+  data: AllData,
+  lookups: Lookups
+): CityBodyTypeStats[] {
+  const cargoPool = getCityCargoPool(cityId, data, lookups);
+  const city = lookups.citiesById.get(cityId);
+  const country = city?.country ?? '';
+  const trailers = getTrailersForCountry(getOwnableTrailers(data), country);
+  const profiles = getBodyTypeProfiles(data, lookups);
+
+  const bodyCargoSets = new Map<string, Set<string>>();
+  for (const trailer of trailers) {
+    const cargoes = lookups.trailerCargoMap.get(trailer.id);
+    if (!cargoes) continue;
+    const bt = trailer.body_type;
+    if (!bodyCargoSets.has(bt)) bodyCargoSets.set(bt, new Set());
+    const set = bodyCargoSets.get(bt)!;
+    for (const c of cargoes) set.add(c);
+  }
+
+  const profileByBT = new Map<string, BodyTypeProfile>();
+  for (const p of profiles) profileByBT.set(p.bodyType, p);
+
+  let totalPool = 0;
+  for (const entry of cargoPool) {
+    totalPool += entry.depotCount * entry.spawnWeight;
+  }
+  if (totalPool === 0) return [];
+
+  const stats: CityBodyTypeStats[] = [];
+
+  for (const [bt, cargoSet] of bodyCargoSets) {
+    let btPool = 0;
+    let btEV = 0;
+    let cargoCount = 0;
+
+    for (const entry of cargoPool) {
+      if (!cargoSet.has(entry.cargoId)) continue;
+      const w = entry.spawnWeight;
+      btPool += entry.depotCount * w;
+      btEV += entry.value * entry.depotCount * w;
+      cargoCount++;
+    }
+
+    if (btPool <= 0) continue;
+
+    const profile = profileByBT.get(bt);
+    const displayName = bt.charAt(0).toUpperCase() + bt.slice(1).replace(/_/g, ' ');
+
+    stats.push({
+      bodyType: bt,
+      displayName: profile?.displayName ?? displayName,
+      bestTrailerName: profile?.bestTrailerName ?? displayName,
+      probability: btPool / totalPool,
+      avgValue: btEV / btPool,
+      pool: btPool,
+      totalPool,
+      cargoCount,
+      hasDoubles: profile?.hasDoubles ?? false,
+      hasHCT: profile?.hasHCT ?? false,
+    });
+  }
+
+  stats.sort((a, b) => (b.probability * b.avgValue) - (a.probability * a.avgValue));
+  return stats;
+}
+
 function getTrailersForCountry(trailers: Trailer[], country: string): Trailer[] {
   if (!country) return trailers;
   return trailers.filter(
@@ -74,379 +207,177 @@ function getTrailersForCountry(trailers: Trailer[], country: string): Trailer[] 
   );
 }
 
-/**
- * Build cargo set per body type and find dominated (subset) body types.
- * A body type is dominated if another body type can haul all the same cargoes plus more.
- */
-function findNonDominatedBodyTypes(
-  trailers: Trailer[],
-  lookups: Lookups
-): Set<string> {
-  // Build cargo set per body type
-  const bodyCargoSets = new Map<string, Set<string>>();
-  for (const trailer of trailers) {
-    const cargoes = lookups.trailerCargoMap.get(trailer.id);
-    if (!cargoes) continue;
-    if (!bodyCargoSets.has(trailer.body_type)) {
-      bodyCargoSets.set(trailer.body_type, new Set());
-    }
-    const bodySet = bodyCargoSets.get(trailer.body_type)!;
-    for (const c of cargoes) bodySet.add(c);
-  }
+// ============================================
+// Marginal value calculations
+// ============================================
 
-  // Find dominated body types
-  const bodyTypes = [...bodyCargoSets.keys()];
-  const dominated = new Set<string>();
-  for (const a of bodyTypes) {
-    if (dominated.has(a)) continue;
-    const setA = bodyCargoSets.get(a)!;
-    for (const b of bodyTypes) {
-      if (a === b || dominated.has(b)) continue;
-      const setB = bodyCargoSets.get(b)!;
-      // a is dominated by b if a ⊂ b (strict subset)
-      if (setA.size < setB.size) {
-        let isSubset = true;
-        for (const c of setA) {
-          if (!setB.has(c)) { isSubset = false; break; }
-        }
-        if (isSubset) dominated.add(a);
-      }
-    }
-  }
-
-  const nonDominated = new Set<string>();
-  for (const bt of bodyTypes) {
-    if (!dominated.has(bt)) nonDominated.add(bt);
-  }
-  return nonDominated;
-}
-
-/** Trailer size tier multipliers for revenue estimation */
-const TIER_MULTIPLIERS = { standard: 1.0, double: 1.5, hct: 2.0 } as const;
-type TrailerTier = keyof typeof TIER_MULTIPLIERS;
-
-/**
- * Classify a trailer into standard/double/hct tier based on its ID.
- */
-function getTrailerTier(trailerId: string): TrailerTier {
-  if (trailerId.includes('hct')) return 'hct';
-  if (trailerId.includes('double') || trailerId.includes('bdouble')) return 'double';
-  return 'standard';
+export interface MarginalOption {
+  bodyType: string;
+  displayName: string;
+  bestTrailerName: string;
+  currentCopies: number;
+  marginalValue: number;
+  probability: number;
+  avgValue: number;
+  pAtLeast: number;
 }
 
 /**
- * Check if any trailers of a body type exist for a given tier.
+ * Calculate marginal value of adding one more copy of each body type.
+ * marginal = avgValue × P(demand >= m+1 | nDrivers, p)
  */
-function bodyTypeHasTier(
-  bodyType: string,
-  tier: TrailerTier,
-  trailers: Trailer[],
-  lookups: Lookups
-): boolean {
-  return trailers.some(
-    (t) => t.body_type === bodyType && getTrailerTier(t.id) === tier && lookups.trailerCargoMap.has(t.id)
-  );
-}
-
-/**
- * Calculate body type statistics for a city.
- * Splits each body type into standard/double/HCT tiers (where available).
- * Each tier is a separate optimizer entry with its own multiplier.
- */
-function calculateBodyTypeStats(
-  cargoPool: CargoPoolEntry[],
-  trailers: Trailer[],
-  lookups: Lookups,
-  nonDominated: Set<string>,
-  profiles: BodyTypeProfile[]
-): { stats: BodyTypeStats[]; totalSpawnWeight: number; totalValue: number } {
-  // Build profile lookup for best trailer names
-  const profileByBodyType = new Map<string, BodyTypeProfile>();
-  for (const p of profiles) profileByBodyType.set(p.bodyType, p);
-  let totalSpawnWeight = 0;
-  let totalValue = 0;
-  for (const entry of cargoPool) {
-    const w = entry.spawnWeight;
-    totalSpawnWeight += entry.depotCount * w;
-    totalValue += entry.value * entry.depotCount * w;
+export function getMarginalOptions(
+  stats: CityBodyTypeStats[],
+  currentTrailers: string[],
+  driverCount: number
+): MarginalOption[] {
+  const copies = new Map<string, number>();
+  for (const bt of currentTrailers) {
+    copies.set(bt, (copies.get(bt) || 0) + 1);
   }
 
-  if (totalSpawnWeight === 0) {
-    return { stats: [], totalSpawnWeight: 0, totalValue: 0 };
-  }
+  const options: MarginalOption[] = [];
 
-  // Find which (bodyType, tier) combos exist
-  const tierCombos: Array<{ bodyType: string; tier: TrailerTier }> = [];
-  for (const bt of nonDominated) {
-    for (const tier of ['standard', 'double', 'hct'] as TrailerTier[]) {
-      if (bodyTypeHasTier(bt, tier, trailers, lookups)) {
-        tierCombos.push({ bodyType: bt, tier });
-      }
-    }
-  }
+  for (const s of stats) {
+    const current = copies.get(s.bodyType) || 0;
+    const nextCopy = current + 1;
+    if (nextCopy > driverCount) continue;
 
-  // Build cargo set and max standard units per (bodyType, cargoId)
-  const bodyCargoes = new Map<string, Set<string>>();
-  const bodyCargoUnits = new Map<string, Map<string, number>>(); // bodyType -> cargoId -> max units
-  for (const trailer of trailers) {
-    if (!nonDominated.has(trailer.body_type)) continue;
-    const cargoes = lookups.trailerCargoMap.get(trailer.id);
-    if (!cargoes) continue;
+    const pGe = pAtLeast(nextCopy, driverCount, s.probability);
+    const marginal = s.avgValue * pGe;
 
-    const bt = trailer.body_type;
-    if (!bodyCargoes.has(bt)) bodyCargoes.set(bt, new Set());
-    if (!bodyCargoUnits.has(bt)) bodyCargoUnits.set(bt, new Map());
-    const cargoSet = bodyCargoes.get(bt)!;
-    const unitsMap = bodyCargoUnits.get(bt)!;
-
-    // Only use standard trailers for base unit count (tier multiplier scales on top)
-    if (getTrailerTier(trailer.id) === 'standard') {
-      for (const cargoId of cargoes) {
-        cargoSet.add(cargoId);
-        const units = lookups.cargoTrailerUnits.get(`${cargoId}:${trailer.id}`) ?? 1;
-        const cur = unitsMap.get(cargoId) ?? 0;
-        if (units > cur) unitsMap.set(cargoId, units);
-      }
-    } else {
-      // Non-standard trailers still contribute to cargo compatibility
-      for (const cargoId of cargoes) cargoSet.add(cargoId);
-    }
-  }
-
-  // Calculate EV per (bodyType, tier)
-  const stats: BodyTypeStats[] = [];
-  for (const { bodyType, tier } of tierCombos) {
-    const cargoSet = bodyCargoes.get(bodyType);
-    if (!cargoSet) continue;
-    const unitsMap = bodyCargoUnits.get(bodyType) ?? new Map<string, number>();
-
-    const mult = TIER_MULTIPLIERS[tier];
-    let totalEV = 0;
-    let cargoCount = 0;
-    const cargoContributions: Array<{ name: string; ev: number }> = [];
-
-    for (const entry of cargoPool) {
-      if (!cargoSet.has(entry.cargoId)) continue;
-
-      const w = entry.spawnWeight;
-      const units = unitsMap.get(entry.cargoId) ?? 1;
-      const baseContribution = entry.value * units * entry.depotCount * w;
-      const contribution = baseContribution * mult;
-
-      totalEV += contribution;
-      cargoCount++;
-      cargoContributions.push({ name: entry.cargoName, ev: contribution });
-    }
-
-    if (cargoCount > 0) {
-      const seen = new Set<string>();
-      const topCargoes = cargoContributions
-        .sort((a, b) => b.ev - a.ev)
-        .filter((c) => {
-          if (seen.has(c.name)) return false;
-          seen.add(c.name);
-          return true;
-        })
-        .slice(0, 5)
-        .map((c) => c.name);
-
-      const profileId = tier === 'standard' ? bodyType : `${bodyType}_${tier}`;
-      const profile = profileByBodyType.get(bodyType);
-      stats.push({
-        bodyType: profileId,
-        displayName: formatBodyType(bodyType, tier),
-        bestTrailerName: profile?.bestTrailerName ?? formatBodyType(bodyType, tier),
-        cargoCount,
-        totalEV,
-        coverage: cargoCount / cargoPool.length,
-        topCargoes,
-        hasDoubles: tier === 'double',
-        hasHCT: tier === 'hct',
-      });
-    }
-  }
-
-  stats.sort((a, b) => b.totalEV - a.totalEV);
-  return { stats, totalSpawnWeight, totalValue };
-}
-
-function formatBodyType(bt: string, tier: TrailerTier): string {
-  const name = bt.charAt(0).toUpperCase() + bt.slice(1).replace(/_/g, ' ');
-  if (tier === 'hct') return `${name} (HCT)`;
-  if (tier === 'double') return `${name} (Double)`;
-  return name;
-}
-
-export function optimizeTrailerSet(
-  cityId: string,
-  data: AllData,
-  lookups: Lookups,
-  options: OptimizationOptions = {}
-): OptimizationResult {
-  const {
-    maxTrailers = 10,
-    diminishingFactor = 75,
-  } = options;
-
-  const cargoPool = getCityCargoPool(cityId, data, lookups);
-  const city = lookups.citiesById.get(cityId);
-  const country = city?.country ?? '';
-  const trailers = getTrailersForCountry(getOwnableTrailers(data), country);
-
-  const nonDominated = findNonDominatedBodyTypes(trailers, lookups);
-  const profiles = getBodyTypeProfiles(data, lookups);
-  const { stats, totalSpawnWeight, totalValue } = calculateBodyTypeStats(
-    cargoPool, trailers, lookups, nonDominated, profiles
-  );
-
-  if (stats.length === 0) {
-    return {
-      cityId,
-      totalDepots: 0,
-      totalCargoInstances: 0,
-      totalValue: 0,
-      recommendations: [],
-      options: { maxTrailers, diminishingFactor },
-    };
-  }
-
-  const cityCompanies = lookups.cityCompanyMap.get(cityId) || [];
-  let totalDepots = 0;
-  for (const { count } of cityCompanies) {
-    totalDepots += count;
-  }
-
-  // Flat diminishing factor per repeat body type
-  const dimFactor = diminishingFactor / 100;
-  const selected = new Map<string, number>();
-  for (let round = 0; round < maxTrailers; round++) {
-    let bestBt: string | null = null;
-    let bestScore = -1;
-
-    for (const bt of stats) {
-      const count = selected.get(bt.bodyType) || 0;
-      const effective = bt.totalEV * Math.pow(dimFactor, count);
-
-      if (effective > bestScore) {
-        bestScore = effective;
-        bestBt = bt.bodyType;
-      }
-    }
-
-    if (bestBt === null) break;
-    selected.set(bestBt, (selected.get(bestBt) || 0) + 1);
-  }
-
-  const recommendations: TrailerRecommendation[] = [];
-  for (const [bt, count] of Array.from(selected.entries())) {
-    const bodyStats = stats.find((s) => s.bodyType === bt)!;
-    const maxEV = stats[0].totalEV;
-    recommendations.push({
-      trailerId: bt,
-      trailerName: bodyStats.displayName,
-      bestTrailerName: bodyStats.bestTrailerName,
-      count,
-      coveragePct: Math.round(bodyStats.coverage * 1000) / 10,
-      avgValue: Math.round((bodyStats.totalEV / bodyStats.cargoCount) * 100) / 100,
-      score: Math.round((bodyStats.totalEV / maxEV) * 1000) / 1000,
-      topCargoes: bodyStats.topCargoes,
+    options.push({
+      bodyType: s.bodyType,
+      displayName: s.displayName,
+      bestTrailerName: s.bestTrailerName,
+      currentCopies: current,
+      marginalValue: marginal,
+      probability: s.probability,
+      avgValue: s.avgValue,
+      pAtLeast: pGe,
     });
   }
-  recommendations.sort((a, b) => b.count - a.count || b.score - a.score);
+
+  options.sort((a, b) => b.marginalValue - a.marginalValue);
+  return options;
+}
+
+// ============================================
+// Expected income calculation
+// ============================================
+
+/**
+ * E[income/cycle] = Σ over body types: E[min(demand, copies)] × avgValue
+ */
+export function expectedIncome(
+  stats: CityBodyTypeStats[],
+  trailers: string[],
+  driverCount: number
+): { totalIncome: number; totalServed: number; details: Array<{ bodyType: string; copies: number; served: number; income: number }> } {
+  const copies = new Map<string, number>();
+  for (const bt of trailers) {
+    copies.set(bt, (copies.get(bt) || 0) + 1);
+  }
+
+  let totalIncome = 0;
+  let totalServed = 0;
+  const details: Array<{ bodyType: string; copies: number; served: number; income: number }> = [];
+
+  for (const s of stats) {
+    const m = copies.get(s.bodyType) || 0;
+    if (m === 0) continue;
+
+    const served = expectedServed(m, driverCount, s.probability);
+    const income = served * s.avgValue;
+    totalServed += served;
+    totalIncome += income;
+
+    details.push({
+      bodyType: s.bodyType,
+      copies: m,
+      served: Math.round(served * 1000) / 1000,
+      income: Math.round(income * 100) / 100,
+    });
+  }
 
   return {
-    cityId,
-    totalDepots,
-    totalCargoInstances: totalSpawnWeight,
-    totalValue: Math.round(totalValue * 100) / 100,
-    recommendations,
-    options: { maxTrailers, diminishingFactor },
+    totalIncome: Math.round(totalIncome * 100) / 100,
+    totalServed: Math.round(totalServed * 1000) / 1000,
+    details,
   };
 }
 
+// ============================================
+// Greedy auto-fill
+// ============================================
+
 /**
- * Lightweight city stats for rankings (skips greedy trailer selection)
+ * Greedy allocation: fill N trailer slots by picking highest marginal value each round.
  */
-export function calculateCityStats(
-  cityId: string,
-  data: AllData,
-  lookups: Lookups
-): { totalDepots: number; totalCargoInstances: number; totalValue: number } {
-  const cargoPool = getCityCargoPool(cityId, data, lookups);
+export function greedyAllocation(
+  stats: CityBodyTypeStats[],
+  maxSlots: number,
+  driverCount: number,
+  existingTrailers: string[] = []
+): string[] {
+  const result = [...existingTrailers];
 
-  let totalCargoInstances = 0;
-  let totalValue = 0;
-  for (const entry of cargoPool) {
-    const w = entry.spawnWeight;
-    totalCargoInstances += entry.depotCount * w;
-    totalValue += entry.value * entry.depotCount * w;
+  for (let slot = result.length; slot < maxSlots; slot++) {
+    const options = getMarginalOptions(stats, result, driverCount);
+    if (options.length === 0 || options[0].marginalValue <= 0) break;
+    result.push(options[0].bodyType);
   }
 
-  const cityCompanies = lookups.cityCompanyMap.get(cityId) || [];
-  let totalDepots = 0;
-  for (const { count } of cityCompanies) {
-    totalDepots += count;
-  }
+  return result;
+}
 
-  return { totalDepots, totalCargoInstances, totalValue };
+// ============================================
+// City rankings
+// ============================================
+
+export interface CityRanking {
+  id: string;
+  name: string;
+  country: string;
+  depotCount: number;
+  observedJobs: number;
+  score: number;           // E[income/cycle] with optimal allocation
+  optimalTrailers: string[];
 }
 
 /**
- * Calculate city rankings based on profitability
+ * Rank all cities by E[income/cycle] with optimal 10-trailer allocation and 5 drivers.
  */
 export function calculateCityRankings(
   data: AllData,
-  lookups: Lookups,
-  _options: OptimizationOptions = {}
+  lookups: Lookups
 ): CityRanking[] {
   const rankings: CityRanking[] = [];
 
   for (const city of data.cities) {
-    const result = calculateCityStats(city.id, data, lookups);
+    const stats = getCityBodyTypeStats(city.id, data, lookups);
+    if (stats.length === 0) continue;
 
-    if (result.totalCargoInstances === 0) continue;
+    const optimal = greedyAllocation(stats, 10, DRIVER_COUNT);
+    const income = expectedIncome(stats, optimal, DRIVER_COUNT);
 
-    const jobs = result.totalCargoInstances;
-    const value = result.totalValue;
-    const score = Math.sqrt(jobs * value);
-    const avgValuePerJob = jobs > 0 ? value / jobs : 0;
+    const cityCompanies = lookups.cityCompanyMap.get(city.id) || [];
+    let depotCount = 0;
+    for (const { count } of cityCompanies) depotCount += count;
+
+    const observedJobs = data.observations?.city_job_count?.[city.id] ?? 0;
 
     rankings.push({
       id: city.id,
       name: city.name,
       country: city.country,
-      depotCount: result.totalDepots,
-      jobs,
-      totalValue: Math.round(value),
-      avgValuePerJob: Math.round(avgValuePerJob * 100) / 100,
-      score: Math.round(score * 10) / 10,
+      depotCount,
+      observedJobs,
+      score: income.totalIncome,
+      optimalTrailers: optimal,
     });
   }
 
   rankings.sort((a, b) => b.score - a.score);
   return rankings;
 }
-
-export const defaultOptions = {
-  maxTrailers: 10,
-  diminishingFactor: 75,
-};
-
-export const optionDescriptions = {
-  maxTrailers: {
-    label: 'Garage Size',
-    min: 1,
-    max: 20,
-    step: 1,
-    description: 'Number of trailer slots in garage',
-  },
-  diminishingFactor: {
-    label: 'Diversity Pressure',
-    min: 0,
-    max: 100,
-    step: 1,
-    minLabel: 'Allow duplicates',
-    maxLabel: 'Force variety',
-    description: 'Multiplier applied per duplicate body type (75 = each copy scores 0.75× the previous)',
-  },
-};
