@@ -6,14 +6,13 @@
 const STORAGE_KEY = 'ets2-trucker-advisor';
 
 interface Settings {
-  scoringBalance: number;
   maxTrailers: number;
   diminishingFactor: number;
 }
 
 interface AppState {
   settings: Settings;
-  ownedGarages: number[];
+  ownedGarages: string[];
   garageFilterMode: string;
   selectedCountries: string[];
   ownedTrailers: Record<string, any>;
@@ -23,9 +22,8 @@ const LEGACY_COUNTRIES_KEY = 'ets2-selected-countries';
 
 const defaultState: AppState = {
   settings: {
-    scoringBalance: 50,
     maxTrailers: 10,
-    diminishingFactor: 50,
+    diminishingFactor: 75,
   },
   ownedGarages: [],
   garageFilterMode: 'all',
@@ -112,14 +110,14 @@ export function resetToDefaults(): Settings {
 /**
  * Get list of owned garage city IDs
  */
-export function getOwnedGarages(): number[] {
+export function getOwnedGarages(): string[] {
   return loadState().ownedGarages || [];
 }
 
 /**
  * Add a city to owned garages
  */
-export function addOwnedGarage(cityId: number): number[] {
+export function addOwnedGarage(cityId: string): string[] {
   const state = loadState();
   if (!state.ownedGarages.includes(cityId)) {
     state.ownedGarages = [...state.ownedGarages, cityId];
@@ -131,7 +129,7 @@ export function addOwnedGarage(cityId: number): number[] {
 /**
  * Remove a city from owned garages
  */
-export function removeOwnedGarage(cityId: number): number[] {
+export function removeOwnedGarage(cityId: string): string[] {
   const state = loadState();
   state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId);
   saveState(state);
@@ -141,7 +139,7 @@ export function removeOwnedGarage(cityId: number): number[] {
 /**
  * Check if a city is an owned garage
  */
-export function isOwnedGarage(cityId: number): boolean {
+export function isOwnedGarage(cityId: string): boolean {
   return getOwnedGarages().includes(cityId);
 }
 
@@ -149,7 +147,7 @@ export function isOwnedGarage(cityId: number): boolean {
  * Toggle a city's owned garage status
  * @returns {boolean} New state (true = now owned)
  */
-export function toggleOwnedGarage(cityId: number): boolean {
+export function toggleOwnedGarage(cityId: string): boolean {
   const state = loadState();
   const isOwned = state.ownedGarages.includes(cityId);
   if (isOwned) {

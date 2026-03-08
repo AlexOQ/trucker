@@ -19,6 +19,7 @@
         <a href="cities.html">Cities</a>
         <a href="companies.html">Companies</a>
         <a href="cargo.html">Cargo</a>
+        <a href="trailers.html">Trailers</a>
       </nav>
     </header>
 
@@ -161,19 +162,6 @@
       <div class="controls-grid" id="controls-grid">
         <div class="control-group">
           <div class="control-label">
-            <span class="tooltip" tabindex="0" data-tooltip="Left = prioritize high-paying cargo. Right = prioritize covering more cargo types.">Scoring Balance</span>
-            <span class="control-value" id="scoring-value">50</span>
-          </div>
-          <p class="slider-description">Choose between high-value jobs or covering more cargo types</p>
-          <div class="slider-container">
-            <span class="slider-label">High €/km</span>
-            <input type="range" id="scoring-slider" min="0" max="100" value="50" aria-label="Value versus Coverage balance">
-            <span class="slider-label right">Variety</span>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <div class="control-label">
             <span class="tooltip" tabindex="0" data-tooltip="Number of trailer slots in your garage (1-20)">Garage Size</span>
             <span class="control-value" id="trailers-value">10</span>
           </div>
@@ -187,14 +175,14 @@
 
         <div class="control-group">
           <div class="control-label">
-            <span class="tooltip" tabindex="0" data-tooltip="Left = allow duplicate trailers if profitable. Right = force different trailer types.">Trailer Variety</span>
-            <span class="control-value" id="diminishing-value">50</span>
+            <span class="tooltip" tabindex="0" data-tooltip="Left = allow duplicate body types if profitable. Right = force different body types. Each copy scores at this % of the previous.">Diversity Pressure</span>
+            <span class="control-value" id="diminishing-value">75</span>
           </div>
-          <p class="slider-description">Balance between buying duplicate trailers vs. different types</p>
+          <p class="slider-description">Each duplicate body type scores at this % of the previous copy</p>
           <div class="slider-container">
-            <span class="slider-label">Same types OK</span>
-            <input type="range" id="diminishing-slider" min="0" max="100" value="50" aria-label="Diversity pressure">
-            <span class="slider-label right">Prefer different</span>
+            <span class="slider-label">Stack same</span>
+            <input type="range" id="diminishing-slider" min="0" max="100" value="75" aria-label="Diversity pressure">
+            <span class="slider-label right">Force variety</span>
           </div>
         </div>
       </div>

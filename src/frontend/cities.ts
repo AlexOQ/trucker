@@ -43,7 +43,7 @@ function toggleCountry(country: string): boolean {
 }
 
 interface CityWithCountry {
-  id: number;
+  id: string;
   name: string;
   country: string;
 }
@@ -51,10 +51,11 @@ interface CityWithCountry {
 function groupByCountry(cities: CityWithCountry[]): [string, CityWithCountry[]][] {
   const groups = new Map<string, CityWithCountry[]>();
   for (const city of cities) {
-    if (!groups.has(city.country)) {
-      groups.set(city.country, []);
+    const country = city.country || 'Unknown';
+    if (!groups.has(country)) {
+      groups.set(country, []);
     }
-    groups.get(city.country)!.push(city);
+    groups.get(country)!.push(city);
   }
   // Sort countries and cities within
   const sorted = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]));
@@ -68,7 +69,7 @@ interface CompanyWithCount extends Company {
   count: number;
 }
 
-function getCityCompanies(cityId: number): CompanyWithCount[] {
+function getCityCompanies(cityId: string): CompanyWithCount[] {
   if (!lookups) return [];
   const cityCompanies = lookups.cityCompanyMap.get(cityId) || [];
   return cityCompanies
@@ -86,14 +87,14 @@ interface CityStats {
   cargoCount: number;
 }
 
-function getCityStats(cityId: number): CityStats {
+function getCityStats(cityId: string): CityStats {
   if (!lookups) return { companyCount: 0, depotCount: 0, cargoCount: 0 };
 
   const companies = getCityCompanies(cityId);
   const totalDepots = companies.reduce((sum, c) => sum + c.count, 0);
 
   // Count cargo types
-  const cargoSet = new Set<number>();
+  const cargoSet = new Set<string>();
   for (const company of companies) {
     const cargoIds = lookups.companyCargoMap.get(company.id) || [];
     cargoIds.forEach((id) => cargoSet.add(id));
@@ -163,7 +164,7 @@ function renderCityList(filter = ''): void {
   content.querySelectorAll('[data-city-id]').forEach((el) => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
-      showCityDetail(parseInt((el as HTMLElement).dataset.cityId!, 10));
+      showCityDetail((el as HTMLElement).dataset.cityId!);
     });
   });
 
@@ -178,7 +179,7 @@ function renderCityList(filter = ''): void {
   });
 }
 
-function showCityDetail(cityId: number): void {
+function showCityDetail(cityId: string): void {
   if (!lookups) return;
 
   const city = lookups.citiesById.get(cityId);
@@ -194,7 +195,7 @@ function showCityDetail(cityId: number): void {
   detailContent.innerHTML = `
     <div class="detail-header">
       <h2>${city.name}</h2>
-      <div class="subtitle">${city.country}</div>
+      <div class="subtitle">${city.country || ''}</div>
     </div>
 
     <div class="stats">
@@ -255,7 +256,7 @@ function showCityList(): void {
 function handleHashChange(): void {
   const hash = window.location.hash;
   if (hash.startsWith('#city-')) {
-    const cityId = parseInt(hash.replace('#city-', ''), 10);
+    const cityId = hash.replace('#city-', '');
     if (cityId) showCityDetail(cityId);
   } else {
     showCityList();

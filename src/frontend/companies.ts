@@ -18,7 +18,7 @@ interface CityWithDepotCount extends City {
   depotCount: number;
 }
 
-function getCompanyCities(companyId: number): CityWithDepotCount[] {
+function getCompanyCities(companyId: string): CityWithDepotCount[] {
   if (!lookups) return [];
 
   const cities: CityWithDepotCount[] = [];
@@ -34,23 +34,36 @@ function getCompanyCities(companyId: number): CityWithDepotCount[] {
   return cities.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function getCompanyCargo(companyId: number): Cargo[] {
+interface CargoWithSpawn extends Cargo {
+  spawnWeight: number;
+  expectedValue: number;
+}
+
+function getCompanyCargo(companyId: string): CargoWithSpawn[] {
   if (!lookups) return [];
 
   const cargoIds = lookups.companyCargoMap.get(companyId) || [];
   return cargoIds
-    .map((id) => lookups!.cargoById.get(id))
-    .filter((c): c is Cargo => c !== undefined)
-    .sort((a, b) => a.name.localeCompare(b.name));
+    .map((id) => {
+      const cargo = lookups!.cargoById.get(id);
+      if (!cargo) return null;
+      const spawnWeight = cargo.prob_coef ?? 1.0;
+      const multiplier = 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
+      const expectedValue = cargo.value * multiplier * spawnWeight;
+      return { ...cargo, spawnWeight, expectedValue };
+    })
+    .filter((c): c is CargoWithSpawn => c !== null)
+    .sort((a, b) => b.expectedValue - a.expectedValue);
 }
 
 interface CompanyStats {
   cityCount: number;
   depotCount: number;
   cargoCount: number;
+  totalExpectedValue: number;
 }
 
-function getCompanyStats(companyId: number): CompanyStats {
+function getCompanyStats(companyId: string): CompanyStats {
   const cities = getCompanyCities(companyId);
   const cargo = getCompanyCargo(companyId);
   const totalDepots = cities.reduce((sum, c) => sum + c.depotCount, 0);
@@ -59,6 +72,7 @@ function getCompanyStats(companyId: number): CompanyStats {
     cityCount: cities.length,
     depotCount: totalDepots,
     cargoCount: cargo.length,
+    totalExpectedValue: cargo.reduce((sum, c) => sum + c.expectedValue, 0),
   };
 }
 
@@ -126,12 +140,12 @@ function renderCompanyList(filter = ''): void {
   content.querySelectorAll('[data-company-id]').forEach((el) => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
-      showCompanyDetail(parseInt((el as HTMLElement).dataset.companyId!, 10));
+      showCompanyDetail((el as HTMLElement).dataset.companyId!);
     });
   });
 }
 
-function showCompanyDetail(companyId: number): void {
+function showCompanyDetail(companyId: string): void {
   if (!lookups) return;
 
   const company = lookups.companiesById.get(companyId);
@@ -148,10 +162,11 @@ function showCompanyDetail(companyId: number): void {
   // Group cities by country
   const citiesByCountry = new Map<string, CityWithDepotCount[]>();
   for (const city of cities) {
-    if (!citiesByCountry.has(city.country)) {
-      citiesByCountry.set(city.country, []);
+    const country = city.country || 'Unknown';
+    if (!citiesByCountry.has(country)) {
+      citiesByCountry.set(country, []);
     }
-    citiesByCountry.get(city.country)!.push(city);
+    citiesByCountry.get(country)!.push(city);
   }
   const sortedCountries = [...citiesByCountry.entries()].sort((a, b) => a[0].localeCompare(b[0]));
 
@@ -173,6 +188,10 @@ function showCompanyDetail(companyId: number): void {
         <div class="stat-value">${stats.cargoCount}</div>
         <div class="stat-label">Cargo Types</div>
       </div>
+      <div class="stat">
+        <div class="stat-value">${stats.totalExpectedValue.toFixed(2)}</div>
+        <div class="stat-label">Expected Value</div>
+      </div>
     </div>
 
     <div class="table-section">
@@ -193,7 +212,7 @@ function showCompanyDetail(companyId: number): void {
                   (city) => `
                     <tr>
                       <td><a href="cities.html#city-${city.id}" class="link">${city.name}</a></td>
-                      <td class="country-name">${city.country}</td>
+                      <td class="country-name">${city.country || ''}</td>
                       <td class="amount">${city.depotCount}</td>
                     </tr>
                   `
@@ -215,6 +234,8 @@ function showCompanyDetail(companyId: number): void {
                 <tr>
                   <th>Cargo</th>
                   <th>Value</th>
+                  <th class="tooltip" data-tooltip="Observed spawn probability at this company">Spawn %</th>
+                  <th class="tooltip" data-tooltip="Value × Spawn Weight (higher = more profitable)">Expected</th>
                   <th>Properties</th>
                 </tr>
               </thead>
@@ -225,6 +246,8 @@ function showCompanyDetail(companyId: number): void {
                       <tr>
                         <td><a href="cargo.html#cargo-${c.id}" class="link">${c.name}</a></td>
                         <td class="value">€${c.value.toLocaleString()}</td>
+                        <td class="amount">${(c.spawnWeight * 100).toFixed(1)}%</td>
+                        <td class="value">${c.expectedValue.toFixed(2)}</td>
                         <td>
                           ${c.excluded ? '<span class="tag">No Trailer</span>' : ''}
                           ${c.high_value ? '<span class="tag highlight">High Value</span>' : ''}
@@ -253,7 +276,7 @@ function showCompanyList(): void {
 function handleHashChange(): void {
   const hash = window.location.hash;
   if (hash.startsWith('#company-')) {
-    const companyId = parseInt(hash.replace('#company-', ''), 10);
+    const companyId = hash.replace('#company-', '');
     if (companyId) showCompanyDetail(companyId);
   } else {
     showCompanyList();

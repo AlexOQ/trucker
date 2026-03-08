@@ -35,9 +35,8 @@ describe('storage', () => {
 
       expect(state).toEqual({
         settings: {
-          scoringBalance: 50,
           maxTrailers: 10,
-          diminishingFactor: 50,
+          diminishingFactor: 75,
         },
         ownedGarages: [],
         garageFilterMode: 'all',
@@ -47,21 +46,19 @@ describe('storage', () => {
     });
 
     it('merges stored state with defaults for new fields', () => {
-      // Store partial state (missing some default fields)
       localStorageMock.setItem(
         'ets2-trucker-advisor',
         JSON.stringify({
-          settings: { scoringBalance: 75 },
-          ownedGarages: [1, 2, 3],
+          settings: { maxTrailers: 15 },
+          ownedGarages: ['berlin', 'paris', 'hamburg'],
         }),
       );
 
       const state = storage.loadState();
 
-      expect(state.settings.scoringBalance).toBe(75);
-      expect(state.settings.maxTrailers).toBe(10); // Default
-      expect(state.settings.diminishingFactor).toBe(50); // Default
-      expect(state.ownedGarages).toEqual([1, 2, 3]);
+      expect(state.settings.maxTrailers).toBe(15);
+      expect(state.settings.diminishingFactor).toBe(75); // Default
+      expect(state.ownedGarages).toEqual(['berlin', 'paris', 'hamburg']);
       expect(state.garageFilterMode).toBe('all'); // Default
     });
 
@@ -70,7 +67,7 @@ describe('storage', () => {
 
       const state = storage.loadState();
 
-      expect(state.settings.scoringBalance).toBe(50);
+      expect(state.settings.maxTrailers).toBe(10);
     });
   });
 
@@ -78,13 +75,12 @@ describe('storage', () => {
     it('persists and retrieves state correctly', () => {
       const testState = {
         settings: {
-          scoringBalance: 80,
           maxTrailers: 15,
           diminishingFactor: 30,
         },
-        ownedGarages: [5, 10, 15],
+        ownedGarages: ['berlin', 'paris', 'london'],
         garageFilterMode: 'owned',
-        ownedTrailers: { 1: 2, 3: 4 },
+        ownedTrailers: { scs_dry: 2, scs_gosck20: 4 },
       };
 
       storage.saveState(testState);
@@ -99,9 +95,8 @@ describe('storage', () => {
     it('handles empty arrays and objects', () => {
       const testState = {
         settings: {
-          scoringBalance: 50,
           maxTrailers: 10,
-          diminishingFactor: 50,
+          diminishingFactor: 75,
         },
         ownedGarages: [],
         garageFilterMode: 'all',
@@ -118,40 +113,33 @@ describe('storage', () => {
 
   describe('resetToDefaults', () => {
     it('preserves owned garages when resetting settings', () => {
-      // Set up state with custom settings and garages
       const customState = {
         settings: {
-          scoringBalance: 90,
           maxTrailers: 20,
           diminishingFactor: 80,
         },
-        ownedGarages: [1, 2, 3, 4, 5],
+        ownedGarages: ['berlin', 'paris', 'hamburg', 'london', 'rome'],
         garageFilterMode: 'owned',
         ownedTrailers: {},
       };
       storage.saveState(customState);
 
-      // Reset to defaults
       const resetSettings = storage.resetToDefaults();
 
-      // Settings should be reset
       expect(resetSettings).toEqual({
-        scoringBalance: 50,
         maxTrailers: 10,
-        diminishingFactor: 50,
+        diminishingFactor: 75,
       });
 
-      // But garages should be preserved
       const state = storage.loadState();
-      expect(state.ownedGarages).toEqual([1, 2, 3, 4, 5]);
+      expect(state.ownedGarages).toEqual(['berlin', 'paris', 'hamburg', 'london', 'rome']);
     });
 
     it('returns default settings values', () => {
       const settings = storage.resetToDefaults();
 
-      expect(settings.scoringBalance).toBe(50);
       expect(settings.maxTrailers).toBe(10);
-      expect(settings.diminishingFactor).toBe(50);
+      expect(settings.diminishingFactor).toBe(75);
     });
   });
 
@@ -159,20 +147,18 @@ describe('storage', () => {
     it('updates specific settings while preserving others', () => {
       storage.saveState({
         settings: {
-          scoringBalance: 50,
           maxTrailers: 10,
-          diminishingFactor: 50,
+          diminishingFactor: 75,
         },
         ownedGarages: [],
         garageFilterMode: 'all',
         ownedTrailers: {},
       });
 
-      const updated = storage.updateSettings({ scoringBalance: 75 });
+      const updated = storage.updateSettings({ maxTrailers: 15 });
 
-      expect(updated.scoringBalance).toBe(75);
-      expect(updated.maxTrailers).toBe(10);
-      expect(updated.diminishingFactor).toBe(50);
+      expect(updated.maxTrailers).toBe(15);
+      expect(updated.diminishingFactor).toBe(75);
     });
   });
 
@@ -180,32 +166,32 @@ describe('storage', () => {
     it('adds and removes garages correctly', () => {
       expect(storage.getOwnedGarages()).toEqual([]);
 
-      storage.addOwnedGarage(1);
-      storage.addOwnedGarage(2);
-      expect(storage.getOwnedGarages()).toEqual([1, 2]);
+      storage.addOwnedGarage('berlin');
+      storage.addOwnedGarage('paris');
+      expect(storage.getOwnedGarages()).toEqual(['berlin', 'paris']);
 
-      storage.removeOwnedGarage(1);
-      expect(storage.getOwnedGarages()).toEqual([2]);
+      storage.removeOwnedGarage('berlin');
+      expect(storage.getOwnedGarages()).toEqual(['paris']);
     });
 
     it('toggles garage ownership correctly', () => {
-      expect(storage.isOwnedGarage(1)).toBe(false);
+      expect(storage.isOwnedGarage('berlin')).toBe(false);
 
-      const added = storage.toggleOwnedGarage(1);
+      const added = storage.toggleOwnedGarage('berlin');
       expect(added).toBe(true);
-      expect(storage.isOwnedGarage(1)).toBe(true);
+      expect(storage.isOwnedGarage('berlin')).toBe(true);
 
-      const removed = storage.toggleOwnedGarage(1);
+      const removed = storage.toggleOwnedGarage('berlin');
       expect(removed).toBe(false);
-      expect(storage.isOwnedGarage(1)).toBe(false);
+      expect(storage.isOwnedGarage('berlin')).toBe(false);
     });
 
     it('does not add duplicate garages', () => {
-      storage.addOwnedGarage(1);
-      storage.addOwnedGarage(1);
-      storage.addOwnedGarage(1);
+      storage.addOwnedGarage('berlin');
+      storage.addOwnedGarage('berlin');
+      storage.addOwnedGarage('berlin');
 
-      expect(storage.getOwnedGarages()).toEqual([1]);
+      expect(storage.getOwnedGarages()).toEqual(['berlin']);
     });
   });
 

@@ -7,253 +7,299 @@ vi.stubGlobal('fetch', fetchMock);
 // Dynamic import after mocking
 const data = await import('../data.ts');
 
-// Sample test data
-const sampleCities = [
-  { id: 1, name: 'Berlin', country: 'Germany' },
-  { id: 2, name: 'Paris', country: 'France' },
-];
+// Sample observations (mirrors observations.json structure)
+const sampleObservations = {
+  meta: { saves_parsed: 1, total_jobs: 100 },
+  cities: ['berlin', 'paris'],
+  companies: ['eurogoodies', 'posped'],
+  cargo: ['electronics', 'glass', 'excluded_cargo', 'premium_glass'],
+  trailers: ['curtainsider', 'refrigerated', 'special_trailer'],
+  city_companies: {
+    berlin: { eurogoodies: 2, posped: 1 },
+    paris: { eurogoodies: 1 },
+  },
+  company_cargo: {
+    eurogoodies: ['electronics', 'glass'],
+    posped: ['excluded_cargo', 'premium_glass'],
+  },
+  cargo_trailers: {
+    electronics: ['curtainsider', 'refrigerated'],
+    glass: ['curtainsider'],
+    premium_glass: ['refrigerated'],
+  },
+  cargo_frequency: {
+    electronics: 10,
+    glass: 10,
+    excluded_cargo: 10,
+    premium_glass: 10,
+  },
+  cargo_spawn_weight: {},
+  cargo_trailer_units: {},
+  company_cargo_frequency: {},
+};
 
-const sampleCompanies = [
-  { id: 1, name: 'EuroGoodies' },
-  { id: 2, name: 'Posped' },
-];
+// Build AllData from observations only (no game defs)
+function buildAllData(obs = sampleObservations) {
+  const titleCase = (id: string) =>
+    id
+      .split('_')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
 
-const sampleCargo = [
-  { id: 1, name: 'Electronics', value: 100, fragile: false, high_value: true, excluded: false },
-  { id: 2, name: 'Glass', value: 80, fragile: true, high_value: false, excluded: false },
-  { id: 3, name: 'Excluded Cargo', value: 50, fragile: false, high_value: false, excluded: true },
-  { id: 4, name: 'Premium Glass', value: 120, fragile: true, high_value: true, excluded: false },
-];
+  return {
+    gameDefs: null,
+    observations: obs,
+    cities: obs.cities.map((id) => ({
+      id,
+      name: titleCase(id),
+      country: '',
+    })),
+    companies: obs.companies.map((id) => ({
+      id,
+      name: titleCase(id),
+    })),
+    cargo: obs.cargo.map((id) => ({
+      id,
+      name: titleCase(id),
+      value: 1.0,
+      volume: 1,
+      mass: 0,
+      fragility: 0,
+      fragile: false,
+      high_value: false,
+      adr_class: 0,
+      prob_coef: 1,
+      body_types: [] as string[],
+      groups: [] as string[],
+      excluded: false,
+    })),
+    trailers: obs.trailers.map((id) => ({
+      id,
+      name: titleCase(id),
+      body_type: 'unknown',
+      volume: 0,
+      chassis_mass: 0,
+      body_mass: 0,
+      gross_weight_limit: 0,
+      length: 0,
+      chain_type: 'single',
+      ownable: true,
+    })),
+  };
+}
 
-const sampleTrailers = [
-  { id: 1, name: 'Curtainsider', ownable: true },
-  { id: 2, name: 'Refrigerated', ownable: true },
-  { id: 3, name: 'Special Trailer', ownable: false },
-];
-
-const sampleCityCompanies = [
-  { cityId: 1, companyId: 1, count: 2 },
-  { cityId: 1, companyId: 2, count: 1 },
-  { cityId: 2, companyId: 1, count: 1 },
-];
-
-const sampleCompanyCargo = [
-  { companyId: 1, cargoId: 1 },
-  { companyId: 1, cargoId: 2 },
-  { companyId: 2, cargoId: 3 },
-  { companyId: 2, cargoId: 4 },
-];
-
-const sampleCargoTrailers = [
-  { cargoId: 1, trailerId: 1 },
-  { cargoId: 1, trailerId: 2 },
-  { cargoId: 2, trailerId: 1 },
-  { cargoId: 4, trailerId: 2 },
-];
-
-function createFetchResponse(data, ok = true, status = 200) {
+function createFetchResponse(responseData: any, ok = true, status = 200) {
   return Promise.resolve({
     ok,
     status,
-    json: () => Promise.resolve(data),
+    json: () => Promise.resolve(responseData),
   });
 }
 
-describe('data.js', () => {
+describe('data.ts', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    // Reset the module cache by clearing dataCache (if accessible)
-    // Since dataCache is internal, we reload the module for fresh state
   });
 
   describe('loadAllData', () => {
-    it('loads all data files and returns combined object', async () => {
+    it('loads observations-only and returns combined object', async () => {
+      // First fetch: game-defs.json returns 404
+      // Second fetch: observations.json returns data
       fetchMock
-        .mockResolvedValueOnce(createFetchResponse(sampleCities))
-        .mockResolvedValueOnce(createFetchResponse(sampleCompanies))
-        .mockResolvedValueOnce(createFetchResponse(sampleCargo))
-        .mockResolvedValueOnce(createFetchResponse(sampleTrailers))
-        .mockResolvedValueOnce(createFetchResponse(sampleCityCompanies))
-        .mockResolvedValueOnce(createFetchResponse(sampleCompanyCargo))
-        .mockResolvedValueOnce(createFetchResponse(sampleCargoTrailers));
+        .mockResolvedValueOnce(createFetchResponse(null, false, 404))
+        .mockResolvedValueOnce(createFetchResponse(sampleObservations));
 
-      // Need fresh import to test without cache
       vi.resetModules();
       vi.stubGlobal('fetch', fetchMock);
       const freshData = await import('../data.ts');
       const result = await freshData.loadAllData();
 
-      expect(result.cities).toEqual(sampleCities);
-      expect(result.companies).toEqual(sampleCompanies);
-      expect(result.cargo).toEqual(sampleCargo);
-      expect(result.trailers).toEqual(sampleTrailers);
-      expect(result.cityCompanies).toEqual(sampleCityCompanies);
-      expect(result.companyCargo).toEqual(sampleCompanyCargo);
-      expect(result.cargoTrailers).toEqual(sampleCargoTrailers);
-      expect(fetchMock).toHaveBeenCalledTimes(7);
+      expect(result.observations).toEqual(sampleObservations);
+      expect(result.gameDefs).toBeNull();
+      expect(result.cities).toHaveLength(2);
+      expect(result.cities[0]).toEqual({ id: 'berlin', name: 'Berlin', country: '' });
+      expect(result.companies).toHaveLength(2);
+      expect(result.cargo).toHaveLength(4);
+      expect(result.trailers).toHaveLength(3);
     });
 
-    it('throws error on HTTP failure', async () => {
-      fetchMock.mockResolvedValueOnce(createFetchResponse(null, false, 404));
+    it('throws error when both sources fail', async () => {
+      fetchMock
+        .mockResolvedValueOnce(createFetchResponse(null, false, 404))
+        .mockResolvedValueOnce(createFetchResponse(null, false, 404));
 
       vi.resetModules();
       vi.stubGlobal('fetch', fetchMock);
       const freshData = await import('../data.ts');
 
-      await expect(freshData.loadAllData()).rejects.toThrow('HTTP 404');
-    });
-
-    it('throws error on network failure', async () => {
-      fetchMock.mockRejectedValueOnce(new Error('Network error'));
-
-      vi.resetModules();
-      vi.stubGlobal('fetch', fetchMock);
-      const freshData = await import('../data.ts');
-
-      await expect(freshData.loadAllData()).rejects.toThrow('Network error');
-    });
-
-    it('throws error on malformed JSON', async () => {
-      fetchMock.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: () => Promise.reject(new SyntaxError('Unexpected token')),
-      });
-
-      vi.resetModules();
-      vi.stubGlobal('fetch', fetchMock);
-      const freshData = await import('../data.ts');
-
-      await expect(freshData.loadAllData()).rejects.toThrow();
+      await expect(freshData.loadAllData()).rejects.toThrow('No data sources available');
     });
 
     it('caches loaded data and does not refetch', async () => {
       fetchMock
-        .mockResolvedValueOnce(createFetchResponse(sampleCities))
-        .mockResolvedValueOnce(createFetchResponse(sampleCompanies))
-        .mockResolvedValueOnce(createFetchResponse(sampleCargo))
-        .mockResolvedValueOnce(createFetchResponse(sampleTrailers))
-        .mockResolvedValueOnce(createFetchResponse(sampleCityCompanies))
-        .mockResolvedValueOnce(createFetchResponse(sampleCompanyCargo))
-        .mockResolvedValueOnce(createFetchResponse(sampleCargoTrailers));
+        .mockResolvedValueOnce(createFetchResponse(null, false, 404))
+        .mockResolvedValueOnce(createFetchResponse(sampleObservations));
 
       vi.resetModules();
       vi.stubGlobal('fetch', fetchMock);
       const freshData = await import('../data.ts');
 
-      // First call
       await freshData.loadAllData();
-      expect(fetchMock).toHaveBeenCalledTimes(7);
+      expect(fetchMock).toHaveBeenCalledTimes(2); // game-defs + observations
 
       // Second call should use cache
       await freshData.loadAllData();
-      expect(fetchMock).toHaveBeenCalledTimes(7); // No additional calls
+      expect(fetchMock).toHaveBeenCalledTimes(2); // No additional calls
+    });
+
+    it('all cargo gets default value 1.0 and no flags (observations only)', async () => {
+      fetchMock
+        .mockResolvedValueOnce(createFetchResponse(null, false, 404))
+        .mockResolvedValueOnce(createFetchResponse(sampleObservations));
+
+      vi.resetModules();
+      vi.stubGlobal('fetch', fetchMock);
+      const freshData = await import('../data.ts');
+      const result = await freshData.loadAllData();
+
+      for (const cargo of result.cargo) {
+        expect(cargo.value).toBe(1.0);
+        expect(cargo.fragile).toBe(false);
+        expect(cargo.high_value).toBe(false);
+        expect(cargo.excluded).toBe(false);
+      }
+    });
+
+    it('all trailers are ownable by default (observations only)', async () => {
+      fetchMock
+        .mockResolvedValueOnce(createFetchResponse(null, false, 404))
+        .mockResolvedValueOnce(createFetchResponse(sampleObservations));
+
+      vi.resetModules();
+      vi.stubGlobal('fetch', fetchMock);
+      const freshData = await import('../data.ts');
+      const result = await freshData.loadAllData();
+
+      for (const trailer of result.trailers) {
+        expect(trailer.ownable).toBe(true);
+      }
+    });
+
+    it('uses titleCase for all names (observations only)', async () => {
+      fetchMock
+        .mockResolvedValueOnce(createFetchResponse(null, false, 404))
+        .mockResolvedValueOnce(createFetchResponse(sampleObservations));
+
+      vi.resetModules();
+      vi.stubGlobal('fetch', fetchMock);
+      const freshData = await import('../data.ts');
+      const result = await freshData.loadAllData();
+
+      expect(result.cities[0].name).toBe('Berlin');
+      expect(result.companies[0].name).toBe('Eurogoodies');
+      expect(result.cargo[2].name).toBe('Excluded Cargo');
+      expect(result.trailers[2].name).toBe('Special Trailer');
     });
   });
 
   describe('buildLookups', () => {
-    const testData = {
-      cities: sampleCities,
-      companies: sampleCompanies,
-      cargo: sampleCargo,
-      trailers: sampleTrailers,
-      cityCompanies: sampleCityCompanies,
-      companyCargo: sampleCompanyCargo,
-      cargoTrailers: sampleCargoTrailers,
-    };
+    const testData = buildAllData();
 
     it('creates citiesById map correctly', () => {
       const lookups = data.buildLookups(testData);
 
-      expect(lookups.citiesById.get(1)).toEqual({ id: 1, name: 'Berlin', country: 'Germany' });
-      expect(lookups.citiesById.get(2)).toEqual({ id: 2, name: 'Paris', country: 'France' });
-      expect(lookups.citiesById.get(999)).toBeUndefined();
+      expect(lookups.citiesById.get('berlin')).toEqual({ id: 'berlin', name: 'Berlin', country: '' });
+      expect(lookups.citiesById.get('paris')).toEqual({ id: 'paris', name: 'Paris', country: '' });
+      expect(lookups.citiesById.get('unknown')).toBeUndefined();
     });
 
     it('creates companiesById map correctly', () => {
       const lookups = data.buildLookups(testData);
 
-      expect(lookups.companiesById.get(1)).toEqual({ id: 1, name: 'EuroGoodies' });
-      expect(lookups.companiesById.get(2)).toEqual({ id: 2, name: 'Posped' });
+      expect(lookups.companiesById.get('eurogoodies')).toEqual({ id: 'eurogoodies', name: 'Eurogoodies' });
+      expect(lookups.companiesById.get('posped')).toEqual({ id: 'posped', name: 'Posped' });
     });
 
     it('creates cargoById map correctly', () => {
       const lookups = data.buildLookups(testData);
 
-      expect(lookups.cargoById.get(1).name).toBe('Electronics');
-      expect(lookups.cargoById.get(2).name).toBe('Glass');
+      expect(lookups.cargoById.get('electronics')!.name).toBe('Electronics');
+      expect(lookups.cargoById.get('glass')!.name).toBe('Glass');
       expect(lookups.cargoById.size).toBe(4);
     });
 
     it('creates trailersById map correctly', () => {
       const lookups = data.buildLookups(testData);
 
-      expect(lookups.trailersById.get(1).name).toBe('Curtainsider');
-      expect(lookups.trailersById.get(3).ownable).toBe(false);
+      expect(lookups.trailersById.get('curtainsider')!.name).toBe('Curtainsider');
+      expect(lookups.trailersById.get('special_trailer')!.ownable).toBe(true);
     });
 
     it('creates cityCompanyMap with company counts', () => {
       const lookups = data.buildLookups(testData);
 
-      const berlinCompanies = lookups.cityCompanyMap.get(1);
+      const berlinCompanies = lookups.cityCompanyMap.get('berlin');
       expect(berlinCompanies).toHaveLength(2);
-      expect(berlinCompanies).toContainEqual({ companyId: 1, count: 2 });
-      expect(berlinCompanies).toContainEqual({ companyId: 2, count: 1 });
+      expect(berlinCompanies).toContainEqual({ companyId: 'eurogoodies', count: 2 });
+      expect(berlinCompanies).toContainEqual({ companyId: 'posped', count: 1 });
 
-      const parisCompanies = lookups.cityCompanyMap.get(2);
+      const parisCompanies = lookups.cityCompanyMap.get('paris');
       expect(parisCompanies).toHaveLength(1);
-      expect(parisCompanies[0]).toEqual({ companyId: 1, count: 1 });
+      expect(parisCompanies![0]).toEqual({ companyId: 'eurogoodies', count: 1 });
     });
 
     it('creates companyCargoMap correctly', () => {
       const lookups = data.buildLookups(testData);
 
-      const euroGoodiesCargo = lookups.companyCargoMap.get(1);
-      expect(euroGoodiesCargo).toContain(1);
-      expect(euroGoodiesCargo).toContain(2);
+      const euroGoodiesCargo = lookups.companyCargoMap.get('eurogoodies');
+      expect(euroGoodiesCargo).toContain('electronics');
+      expect(euroGoodiesCargo).toContain('glass');
 
-      const pospedCargo = lookups.companyCargoMap.get(2);
-      expect(pospedCargo).toContain(3);
-      expect(pospedCargo).toContain(4);
+      const pospedCargo = lookups.companyCargoMap.get('posped');
+      expect(pospedCargo).toContain('excluded_cargo');
+      expect(pospedCargo).toContain('premium_glass');
     });
 
     it('creates trailerCargoMap as Set', () => {
       const lookups = data.buildLookups(testData);
 
-      const curtainsiderCargo = lookups.trailerCargoMap.get(1);
+      const curtainsiderCargo = lookups.trailerCargoMap.get('curtainsider');
       expect(curtainsiderCargo).toBeInstanceOf(Set);
-      expect(curtainsiderCargo.has(1)).toBe(true);
-      expect(curtainsiderCargo.has(2)).toBe(true);
+      expect(curtainsiderCargo!.has('electronics')).toBe(true);
+      expect(curtainsiderCargo!.has('glass')).toBe(true);
 
-      const refrigeratedCargo = lookups.trailerCargoMap.get(2);
-      expect(refrigeratedCargo.has(1)).toBe(true);
-      expect(refrigeratedCargo.has(4)).toBe(true);
+      const refrigeratedCargo = lookups.trailerCargoMap.get('refrigerated');
+      expect(refrigeratedCargo!.has('electronics')).toBe(true);
+      expect(refrigeratedCargo!.has('premium_glass')).toBe(true);
     });
 
     it('creates cargoTrailerMap as Set', () => {
       const lookups = data.buildLookups(testData);
 
-      const electronicsTrailers = lookups.cargoTrailerMap.get(1);
+      const electronicsTrailers = lookups.cargoTrailerMap.get('electronics');
       expect(electronicsTrailers).toBeInstanceOf(Set);
-      expect(electronicsTrailers.has(1)).toBe(true);
-      expect(electronicsTrailers.has(2)).toBe(true);
+      expect(electronicsTrailers!.has('curtainsider')).toBe(true);
+      expect(electronicsTrailers!.has('refrigerated')).toBe(true);
 
-      const glassTrailers = lookups.cargoTrailerMap.get(2);
-      expect(glassTrailers.has(1)).toBe(true);
-      expect(glassTrailers.size).toBe(1);
+      const glassTrailers = lookups.cargoTrailerMap.get('glass');
+      expect(glassTrailers!.has('curtainsider')).toBe(true);
+      expect(glassTrailers!.size).toBe(1);
     });
 
-    it('handles empty data arrays', () => {
-      const emptyData = {
+    it('handles empty observations', () => {
+      const emptyObs = {
+        ...sampleObservations,
         cities: [],
         companies: [],
         cargo: [],
         trailers: [],
-        cityCompanies: [],
-        companyCargo: [],
-        cargoTrailers: [],
+        city_companies: {},
+        company_cargo: {},
+        cargo_trailers: {},
+        cargo_frequency: {},
+        company_cargo_frequency: {},
       };
-
+      const emptyData = buildAllData(emptyObs);
       const lookups = data.buildLookups(emptyData);
 
       expect(lookups.citiesById.size).toBe(0);
@@ -268,140 +314,84 @@ describe('data.js', () => {
   });
 
   describe('getCityCargoPool', () => {
-    const testData = {
-      cities: sampleCities,
-      companies: sampleCompanies,
-      cargo: sampleCargo,
-      trailers: sampleTrailers,
-      cityCompanies: sampleCityCompanies,
-      companyCargo: sampleCompanyCargo,
-      cargoTrailers: sampleCargoTrailers,
-    };
-
-    it('returns cargo pool for a city', () => {
+    it('returns cargo pool for a city with uniform values', () => {
+      const testData = buildAllData();
       const lookups = data.buildLookups(testData);
-      const pool = data.getCityCargoPool(1, testData, lookups);
+      const pool = data.getCityCargoPool('berlin', testData, lookups);
 
       // Berlin has EuroGoodies (count 2) with Electronics and Glass
       // and Posped (count 1) with Excluded Cargo and Premium Glass
-      // Excluded cargo should not appear
-      expect(pool.length).toBe(3); // Electronics, Glass, Premium Glass
+      expect(pool.length).toBe(4);
 
       const cargoNames = pool.map((p) => p.cargoName);
       expect(cargoNames).toContain('Electronics');
       expect(cargoNames).toContain('Glass');
+      expect(cargoNames).toContain('Excluded Cargo');
       expect(cargoNames).toContain('Premium Glass');
-      expect(cargoNames).not.toContain('Excluded Cargo');
     });
 
-    it('excludes cargo marked as excluded', () => {
+    it('all pool entries have value 1.0 (no fragile/high_value bonuses)', () => {
+      const testData = buildAllData();
       const lookups = data.buildLookups(testData);
-      const pool = data.getCityCargoPool(1, testData, lookups);
+      const pool = data.getCityCargoPool('berlin', testData, lookups);
 
-      const excludedCargo = pool.find((p) => p.cargoName === 'Excluded Cargo');
-      expect(excludedCargo).toBeUndefined();
-    });
-
-    it('applies 30% bonus for high_value cargo', () => {
-      const lookups = data.buildLookups(testData);
-      const pool = data.getCityCargoPool(1, testData, lookups);
-
-      const electronics = pool.find((p) => p.cargoName === 'Electronics');
-      // Electronics: value 100, high_value=true -> 100 * 1.3 = 130
-      expect(electronics.value).toBe(130);
-    });
-
-    it('applies 30% bonus for fragile cargo', () => {
-      const lookups = data.buildLookups(testData);
-      const pool = data.getCityCargoPool(1, testData, lookups);
-
-      const glass = pool.find((p) => p.cargoName === 'Glass');
-      // Glass: value 80, fragile=true -> 80 * 1.3 = 104
-      expect(glass.value).toBe(104);
-    });
-
-    it('stacks bonuses for fragile AND high_value cargo (60%)', () => {
-      const lookups = data.buildLookups(testData);
-      const pool = data.getCityCargoPool(1, testData, lookups);
-
-      const premiumGlass = pool.find((p) => p.cargoName === 'Premium Glass');
-      // Premium Glass: value 120, fragile=true, high_value=true -> 120 * 1.6 = 192
-      expect(premiumGlass.value).toBe(192);
+      for (const entry of pool) {
+        expect(entry.value).toBe(1.0);
+      }
     });
 
     it('includes depot count in pool entries', () => {
+      const testData = buildAllData();
       const lookups = data.buildLookups(testData);
-      const pool = data.getCityCargoPool(1, testData, lookups);
+      const pool = data.getCityCargoPool('berlin', testData, lookups);
 
-      // EuroGoodies has count 2 in Berlin
       const electronics = pool.find((p) => p.cargoName === 'Electronics');
-      expect(electronics.depotCount).toBe(2);
+      expect(electronics!.depotCount).toBe(2);
 
-      // Posped has count 1 in Berlin
       const premiumGlass = pool.find((p) => p.cargoName === 'Premium Glass');
-      expect(premiumGlass.depotCount).toBe(1);
+      expect(premiumGlass!.depotCount).toBe(1);
     });
 
     it('returns empty array for city with no companies', () => {
+      const testData = buildAllData();
       const lookups = data.buildLookups(testData);
-      const pool = data.getCityCargoPool(999, testData, lookups);
+      const pool = data.getCityCargoPool('unknown_city', testData, lookups);
 
       expect(pool).toEqual([]);
     });
 
     it('returns empty array for city with companies but no cargo', () => {
-      const dataWithEmptyCargo = {
-        ...testData,
-        companyCargo: [],
+      const obsNoCargo = {
+        ...sampleObservations,
+        company_cargo: {},
       };
-      const lookups = data.buildLookups(dataWithEmptyCargo);
-      const pool = data.getCityCargoPool(1, dataWithEmptyCargo, lookups);
+      const noCargo = buildAllData(obsNoCargo);
+      const lookups = data.buildLookups(noCargo);
+      const pool = data.getCityCargoPool('berlin', noCargo, lookups);
 
       expect(pool).toEqual([]);
+    });
+
+    it('uses prob_coef as spawnWeight', () => {
+      const testData = buildAllData();
+      const lookups = data.buildLookups(testData);
+      const pool = data.getCityCargoPool('berlin', testData, lookups);
+
+      const electronics = pool.find((p) => p.cargoName === 'Electronics');
+      const glass = pool.find((p) => p.cargoName === 'Glass');
+      // spawnWeight = prob_coef (default 1.0 for all mock cargo)
+      expect(electronics!.spawnWeight).toBe(1);
+      expect(glass!.spawnWeight).toBe(1);
     });
   });
 
   describe('getOwnableTrailers', () => {
-    const testData = {
-      trailers: sampleTrailers,
-    };
-
-    it('returns only ownable trailers', () => {
+    it('returns all trailers (all ownable by default)', () => {
+      const testData = buildAllData();
       const ownable = data.getOwnableTrailers(testData);
 
-      expect(ownable).toHaveLength(2);
+      expect(ownable).toHaveLength(3);
       expect(ownable.every((t) => t.ownable)).toBe(true);
-    });
-
-    it('excludes non-ownable trailers', () => {
-      const ownable = data.getOwnableTrailers(testData);
-
-      const specialTrailer = ownable.find((t) => t.name === 'Special Trailer');
-      expect(specialTrailer).toBeUndefined();
-    });
-
-    it('returns empty array when no trailers are ownable', () => {
-      const dataWithNoOwnable = {
-        trailers: [
-          { id: 1, name: 'Trailer A', ownable: false },
-          { id: 2, name: 'Trailer B', ownable: false },
-        ],
-      };
-
-      const ownable = data.getOwnableTrailers(dataWithNoOwnable);
-      expect(ownable).toEqual([]);
-    });
-
-    it('returns all trailers when all are ownable', () => {
-      const dataWithAllOwnable = {
-        trailers: [
-          { id: 1, name: 'Trailer A', ownable: true },
-          { id: 2, name: 'Trailer B', ownable: true },
-        ],
-      };
-
-      const ownable = data.getOwnableTrailers(dataWithAllOwnable);
-      expect(ownable).toHaveLength(2);
     });
   });
 });

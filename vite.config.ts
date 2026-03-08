@@ -75,6 +75,7 @@ export default defineConfig({
         cities: resolve(__dirname, 'public/cities.html'),
         companies: resolve(__dirname, 'public/companies.html'),
         cargo: resolve(__dirname, 'public/cargo.html'),
+        trailers: resolve(__dirname, 'public/trailers.html'),
       },
     },
   },

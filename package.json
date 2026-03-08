@@ -13,6 +13,7 @@
     "migrate": "tsx src/db/migrate.ts",
     "export": "tsx scripts/export-data.ts",
     "test": "vitest run",
+    "parse-saves": "node scripts/parse-saves.cjs",
     "lint": "tsc --noEmit",
     "lint:fix": "tsc --noEmit",
     "format": "prettier --write src/frontend/"
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.0",
+    "@trucky/sii-decrypt-ts": "^1.0.0",
     "@types/express": "^4.17.21",
     "@types/node": "^20.10.0",
     "@types/pg": "^8.10.9",

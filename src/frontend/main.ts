@@ -16,7 +16,7 @@ import type { AllData, Lookups } from './data.js';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
-let currentCityId: number | null = null;
+let currentCityId: string | null = null;
 let cachedRankings: CityRanking[] | null = null;
 
 // Debounce utility
@@ -151,7 +151,7 @@ function renderCountryCheckboxes() {
 }
 
 // Get city rank from cached rankings
-function getCityRank(cityId: number) {
+function getCityRank(cityId: string) {
   if (!cachedRankings) return null;
   const index = cachedRankings.findIndex((r) => r.id === cityId);
   if (index === -1) return null;
@@ -182,8 +182,8 @@ function updateGarageCount() {
   const selectedCountries = getSelectedCountries();
 
   let count = 0;
-  for (const cityId of ownedGarages) {
-    const city = lookups.citiesById.get(cityId);
+  for (const cityIdStr of ownedGarages) {
+    const city = lookups.citiesById.get(cityIdStr);
     if (!city) continue;
 
     // Check search filter
@@ -209,10 +209,8 @@ const cityView = document.getElementById('city-view')!;
 const cityContent = document.getElementById('city-content')!;
 const backLink = document.getElementById('back-link')!;
 
-const scoringSlider = document.getElementById('scoring-slider') as HTMLInputElement;
 const trailersSlider = document.getElementById('trailers-slider') as HTMLInputElement;
 const diminishingSlider = document.getElementById('diminishing-slider') as HTMLInputElement;
-const scoringValue = document.getElementById('scoring-value')!;
 const trailersValue = document.getElementById('trailers-value')!;
 const diminishingValue = document.getElementById('diminishing-value')!;
 const resetBtn = document.getElementById('reset-btn')!;
@@ -245,7 +243,6 @@ filterToggle.addEventListener('click', (e) => {
 // Get current options from sliders
 function getOptions() {
   return {
-    scoringBalance: parseInt(scoringSlider.value),
     maxTrailers: parseInt(trailersSlider.value),
     diminishingFactor: parseInt(diminishingSlider.value),
   };
@@ -253,7 +250,6 @@ function getOptions() {
 
 // Update slider display values
 function updateDisplayValues() {
-  scoringValue.textContent = scoringSlider.value;
   trailersValue.textContent = trailersSlider.value;
   diminishingValue.textContent = diminishingSlider.value;
 }
@@ -261,7 +257,6 @@ function updateDisplayValues() {
 // Load settings from localStorage
 function loadSettings() {
   const settings = getSettings();
-  scoringSlider.value = settings.scoringBalance.toString();
   trailersSlider.value = settings.maxTrailers.toString();
   diminishingSlider.value = settings.diminishingFactor.toString();
   updateDisplayValues();
@@ -340,7 +335,7 @@ function renderRankings() {
               <td>${r.name}</td>
               <td class="country">${r.country}</td>
               <td>${r.depotCount}</td>
-              <td class="amount">${r.jobs}</td>
+              <td class="amount">${Math.round(r.jobs)}</td>
               <td class="value">€${r.totalValue.toLocaleString()}</td>
               <td>€${r.avgValuePerJob.toFixed(2)}</td>
               <td class="score">${formatRank(i + 1, displayRankings.length, r.score)}</td>
@@ -356,12 +351,12 @@ function renderRankings() {
   // Add click and keyboard handlers
   rankingsContent.querySelectorAll('tr.clickable').forEach((row) => {
     row.addEventListener('click', () => {
-      showCity(parseInt((row as HTMLElement).dataset.cityId!));
+      showCity((row as HTMLElement).dataset.cityId!);
     });
     row.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
         e.preventDefault();
-        showCity(parseInt((row as HTMLElement).dataset.cityId!));
+        showCity((row as HTMLElement).dataset.cityId!);
       }
     });
   });
@@ -379,7 +374,7 @@ function ensureRankingsCached() {
 }
 
 // Render city detail view
-function renderCity(cityId: number) {
+function renderCity(cityId: string) {
   // Ensure rankings are cached for rank display
   ensureRankingsCached();
 
@@ -427,7 +422,7 @@ function renderCity(cityId: number) {
         <div class="stat-label">Depots</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${result.totalCargoInstances}</div>
+        <div class="stat-value">${Math.round(result.totalCargoInstances)}</div>
         <div class="stat-label">Jobs Available</div>
       </div>
       <div class="stat">
@@ -469,7 +464,8 @@ function renderCity(cityId: number) {
               (r) => `
             <tr>
               <td>
-                <div class="trailer-name">${r.trailerName}</div>
+                <div class="trailer-name"><a href="trailers.html#body-${r.trailerId}" class="link">${r.trailerName}</a></div>
+                <div class="trailer-best">Buy: ${r.bestTrailerName}</div>
                 <div class="trailer-cargoes">Hauls: ${r.topCargoes.join(', ')}</div>
               </td>
               <td class="amount">${r.count}</td>
@@ -489,7 +485,10 @@ function renderCity(cityId: number) {
   const copyBtn = document.getElementById('copy-trailers-btn')!;
   copyBtn.addEventListener('click', () => {
     const trailerList = result.recommendations
-      .map((r) => (r.count > 1 ? `${r.trailerName} ×${r.count}` : r.trailerName))
+      .map((r) => {
+        const qty = r.count > 1 ? ` ×${r.count}` : '';
+        return `${r.bestTrailerName}${qty}`;
+      })
       .join(', ');
     const text = `${city.name} (${totalTrailers} trailers): ${trailerList}`;
 
@@ -516,7 +515,7 @@ function renderCity(cityId: number) {
 }
 
 // Add garage toggle click and keyboard handler
-function addGarageToggleHandler(cityId: number) {
+function addGarageToggleHandler(cityId: string) {
   const toggleBtn = cityContent.querySelector('.garage-toggle');
   if (toggleBtn) {
     const toggleGarage = () => {
@@ -606,6 +605,7 @@ function exportToCSV(
   cityName: string,
   recommendations: Array<{
     trailerName: string;
+    bestTrailerName: string;
     count: number;
     coveragePct: number;
     avgValue: number;
@@ -613,9 +613,10 @@ function exportToCSV(
     topCargoes: string[];
   }>
 ) {
-  const headers = ['Trailer', 'Copies', 'Coverage %', 'Avg Value (€/Job)', 'Score', 'Top Cargoes'];
+  const headers = ['Trailer', 'Best Trailer', 'Copies', 'Coverage %', 'Avg Value (€/Job)', 'Score', 'Top Cargoes'];
   const rows = recommendations.map((r) => [
     `"${r.trailerName}"`,
+    `"${r.bestTrailerName}"`,
     r.count,
     r.coveragePct,
     r.avgValue.toFixed(2),
@@ -633,6 +634,7 @@ function exportToJSON(
   cityName: string,
   recommendations: Array<{
     trailerName: string;
+    bestTrailerName: string;
     count: number;
     coveragePct: number;
     avgValue: number;
@@ -655,6 +657,7 @@ function exportToJSON(
     },
     recommendations: recommendations.map((r) => ({
       trailer: r.trailerName,
+      bestTrailer: r.bestTrailerName,
       copies: r.count,
       coveragePercent: r.coveragePct,
       avgValuePerJob: r.avgValue,
@@ -669,7 +672,7 @@ function exportToJSON(
 }
 
 // Show city detail view
-function showCity(cityId: number) {
+function showCity(cityId: string) {
   currentCityId = cityId;
   rankingsView.style.display = 'none';
   cityView.style.display = 'block';
@@ -693,7 +696,7 @@ function showRankings() {
 function handleHashNavigation(): boolean {
   const hash = window.location.hash;
   if (hash.startsWith('#city-')) {
-    const cityId = parseInt(hash.replace('#city-', ''));
+    const cityId = hash.replace('#city-', '');
     if (cityId && lookups?.citiesById.has(cityId)) {
       showCity(cityId);
       return true;
@@ -769,7 +772,6 @@ async function init() {
     }
 
     // Event listeners
-    scoringSlider.addEventListener('input', onSliderChange);
     trailersSlider.addEventListener('input', onSliderChange);
     diminishingSlider.addEventListener('input', onSliderChange);
     citySearch.addEventListener('input', debounce(renderRankings, 150));
@@ -783,7 +785,6 @@ async function init() {
 
     resetBtn.addEventListener('click', () => {
       const defaults = resetToDefaults();
-      scoringSlider.value = defaults.scoringBalance.toString();
       trailersSlider.value = defaults.maxTrailers.toString();
       diminishingSlider.value = defaults.diminishingFactor.toString();
       renderCountryCheckboxes();

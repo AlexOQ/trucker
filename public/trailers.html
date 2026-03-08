@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cities - ETS2 Trucker Advisor</title>
+  <title>Trailers - ETS2 Trucker Advisor</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,29 +16,29 @@
       </div>
       <nav>
         <a href="index.html">Rankings</a>
-        <a href="cities.html" class="active">Cities</a>
+        <a href="cities.html">Cities</a>
         <a href="companies.html">Companies</a>
         <a href="cargo.html">Cargo</a>
-        <a href="trailers.html">Trailers</a>
+        <a href="trailers.html" class="active">Trailers</a>
       </nav>
     </header>
 
     <main id="main-content">
     <div class="search-box">
-      <input type="text" id="search" placeholder="Search cities..." aria-label="Search cities">
+      <input type="text" id="search" placeholder="Search trailers..." aria-label="Search trailers">
     </div>
 
     <div id="content">
-      <div class="loading">Loading cities...</div>
+      <div class="loading">Loading trailers...</div>
     </div>
 
-    <div id="city-detail" style="display: none;">
-      <a href="#" class="back-link" id="back-link">← Back to cities</a>
+    <div id="trailer-detail" style="display: none;">
+      <a href="#" class="back-link" id="back-link">&larr; Back to trailers</a>
       <div id="detail-content"></div>
     </div>
     </main>
   </div>
 
-  <script type="module" src="/src/frontend/cities.ts"></script>
+  <script type="module" src="/src/frontend/trailers.ts"></script>
 </body>
 </html>

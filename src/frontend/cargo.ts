@@ -14,7 +14,7 @@ const detailContent = document.getElementById('detail-content') as HTMLElement;
 const searchInput = document.getElementById('search') as HTMLInputElement;
 const backLink = document.getElementById('back-link') as HTMLElement;
 
-function getCargoProviders(cargoId: number): Company[] {
+function getCargoProviders(cargoId: string): Company[] {
   if (!lookups) return [];
 
   const providers: Company[] = [];
@@ -29,7 +29,7 @@ function getCargoProviders(cargoId: number): Company[] {
   return providers.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function getCargoTrailers(cargoId: number): Trailer[] {
+function getCargoTrailers(cargoId: string): Trailer[] {
   if (!lookups) return [];
 
   const trailerIds = lookups.cargoTrailerMap.get(cargoId);
@@ -65,14 +65,14 @@ interface CargoStats {
   cityCount: number;
 }
 
-function getCargoStats(cargoId: number): CargoStats {
+function getCargoStats(cargoId: string): CargoStats {
   if (!lookups) return { providerCount: 0, trailerCount: 0, cityCount: 0 };
 
   const providers = getCargoProviders(cargoId);
   const trailers = getCargoTrailers(cargoId);
 
   // Count cities where this cargo is available
-  const citySet = new Set<number>();
+  const citySet = new Set<string>();
   for (const provider of providers) {
     for (const [cityId, companies] of lookups.cityCompanyMap) {
       if (companies.some((c) => c.companyId === provider.id)) {
@@ -169,12 +169,12 @@ function renderCargoList(filter = ''): void {
   content.querySelectorAll('[data-cargo-id]').forEach((el) => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
-      showCargoDetail(parseInt((el as HTMLElement).dataset.cargoId!, 10));
+      showCargoDetail((el as HTMLElement).dataset.cargoId!);
     });
   });
 }
 
-function showCargoDetail(cargoId: number): void {
+function showCargoDetail(cargoId: string): void {
   if (!lookups) return;
 
   const cargo = lookups.cargoById.get(cargoId);
@@ -301,7 +301,7 @@ function showCargoList(): void {
 function handleHashChange(): void {
   const hash = window.location.hash;
   if (hash.startsWith('#cargo-')) {
-    const cargoId = parseInt(hash.replace('#cargo-', ''), 10);
+    const cargoId = hash.replace('#cargo-', '');
     if (cargoId) showCargoDetail(cargoId);
   } else {
     showCargoList();
