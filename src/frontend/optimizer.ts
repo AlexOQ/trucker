@@ -16,7 +16,7 @@
  * - Fallback: game-defs theoretical cargo pools when no observation data
  */
 
-import { getCityCargoPool, getOwnableTrailers, getBodyTypeProfiles } from './data.js';
+import { getCityCargoPool, getOwnableTrailers, getBodyTypeProfiles, formatTrailerSpec } from './data.js';
 import type { AllData, Lookups, Trailer, BodyTypeProfile } from './data.js';
 
 const DRIVER_COUNT = 5;
@@ -64,12 +64,13 @@ function expectedServed(m: number, n: number, p: number): number {
 // ============================================
 
 export interface CityBodyTypeStats {
-  bodyType: string;
+  bodyType: string;       // composite key: 'curtainside' (standard) or 'curtainside:doubles'
+  zone: string;           // 'standard', 'doubles', 'hct', 'long_chassis'
   displayName: string;
   bestTrailerName: string;
-  probability: number;   // P(random job matches this body type)
+  probability: number;   // P(random job matches this body type in this zone)
   avgValue: number;       // average cargo value when matched
-  pool: number;           // observed job count for this body type
+  pool: number;           // observed job count for this body type + zone
   totalPool: number;      // total observed jobs in city
   cargoCount: number;     // distinct cargo types covered
   hasDoubles: boolean;
@@ -87,13 +88,78 @@ export function getCityBodyTypeStats(
 ): CityBodyTypeStats[] {
   const obs = data.observations;
 
+  let stats: CityBodyTypeStats[];
   // Use observation data when available
   if (obs?.city_body_type_frequency?.[cityId] && obs?.body_type_avg_value) {
-    return getStatsFromObservations(cityId, data, lookups);
+    stats = getStatsFromObservations(cityId, data, lookups);
+  } else {
+    // Fallback: game-defs theoretical pools
+    stats = getStatsFromGameDefs(cityId, data, lookups);
   }
 
-  // Fallback: game-defs theoretical pools
-  return getStatsFromGameDefs(cityId, data, lookups);
+  // Pad with zero-pool entries for body types available in city's country but not observed.
+  // Only pad when the city has some real data (otherwise it's truly empty).
+  if (stats.some((s) => s.pool > 0)) {
+    const city = lookups.citiesById.get(cityId);
+    const country = city?.country ?? '';
+    const profiles = getBodyTypeProfiles(data, lookups);
+    const seen = new Set(stats.map((s) => s.bodyType));
+    const totalPool = stats[0]?.totalPool ?? 0;
+
+    for (const profile of profiles) {
+      if (seen.has(profile.bodyType)) continue;
+      // Check if this body type has trailers valid in this country
+      const hasTrailer = data.trailers.some(
+        (t) => t.ownable && t.body_type === profile.bodyType
+          && (!t.country_validity || t.country_validity.length === 0 || t.country_validity.includes(country))
+      );
+      if (!hasTrailer) continue;
+
+      stats.push({
+        bodyType: profile.bodyType,
+        zone: 'standard',
+        displayName: profile.displayName,
+        bestTrailerName: profile.bestTrailerName,
+        probability: 0,
+        avgValue: obs?.body_type_avg_value?.[profile.bodyType] ?? 0,
+        pool: 0,
+        totalPool,
+        cargoCount: profile.cargoCount,
+        hasDoubles: profile.hasDoubles,
+        hasHCT: profile.hasHCT,
+      });
+    }
+  }
+
+  return stats;
+}
+
+function getZoneBestTrailerName(
+  bodyType: string,
+  zone: string,
+  data: AllData,
+): string | null {
+  const zonePattern = zone === 'doubles' ? /double|bdouble/
+    : zone === 'hct' ? /hct/
+    : zone === 'long_chassis' ? /long/
+    : null;
+  if (!zonePattern) return null;
+
+  const candidates = data.trailers.filter(
+    (t) => t.ownable && t.body_type === bodyType && zonePattern.test(t.id)
+  );
+  if (candidates.length === 0) return null;
+
+  // Prefer SCS (base game) over DLC brands
+  const scs = candidates.filter((t) => t.id.startsWith('scs.'));
+  const pool = scs.length > 0 ? scs : candidates;
+
+  pool.sort((a, b) =>
+    b.gross_weight_limit - a.gross_weight_limit
+    || b.volume - a.volume
+    || b.length - a.length
+  );
+  return formatTrailerSpec(pool[0]);
 }
 
 function getStatsFromObservations(
@@ -102,36 +168,54 @@ function getStatsFromObservations(
   lookups: Lookups
 ): CityBodyTypeStats[] {
   const obs = data.observations!;
-  const btFreq = obs.city_body_type_frequency[cityId];
   const totalJobs = obs.city_job_count[cityId] || 0;
-  if (!btFreq || totalJobs === 0) return [];
+  if (totalJobs === 0) return [];
+
+  // Prefer zone-level frequency; fall back to flat frequency wrapped in 'standard'
+  const zoneFreq = obs.city_zone_body_type_frequency?.[cityId];
+  const zones: Record<string, Record<string, number>> =
+    zoneFreq && Object.keys(zoneFreq).length > 0
+      ? zoneFreq
+      : { standard: obs.city_body_type_frequency[cityId] || {} };
 
   const profiles = getBodyTypeProfiles(data, lookups);
   const profileByBT = new Map<string, BodyTypeProfile>();
   for (const p of profiles) profileByBT.set(p.bodyType, p);
 
-  // Count distinct cargoes per body type in this city using cargo_frequency + variant mapping
-  const cityCargoFreq = obs.city_cargo_frequency[cityId] || {};
-
   const stats: CityBodyTypeStats[] = [];
 
-  for (const [bt, count] of Object.entries(btFreq)) {
-    const avgValue = obs.body_type_avg_value[bt] ?? 1.0;
-    const profile = profileByBT.get(bt);
-    const displayName = bt.charAt(0).toUpperCase() + bt.slice(1).replace(/_/g, ' ');
+  for (const [zone, btFreq] of Object.entries(zones)) {
+    const zoneAvgValues = obs.zone_body_type_avg_value?.[zone] || {};
+    const isStandard = zone === 'standard';
 
-    stats.push({
-      bodyType: bt,
-      displayName: profile?.displayName ?? displayName,
-      bestTrailerName: profile?.bestTrailerName ?? displayName,
-      probability: count / totalJobs,
-      avgValue,
-      pool: count,
-      totalPool: totalJobs,
-      cargoCount: Object.keys(cityCargoFreq).length,
-      hasDoubles: profile?.hasDoubles ?? false,
-      hasHCT: profile?.hasHCT ?? false,
-    });
+    for (const [bt, count] of Object.entries(btFreq)) {
+      const avgValue = zoneAvgValues[bt] ?? obs.body_type_avg_value?.[bt] ?? 1.0;
+      const profile = profileByBT.get(bt);
+      const baseName = bt.charAt(0).toUpperCase() + bt.slice(1).replace(/_/g, ' ');
+
+      const compositeKey = isStandard ? bt : `${bt}:${zone}`;
+      const zoneSuffix = isStandard ? '' : ` (${zone.charAt(0).toUpperCase() + zone.slice(1)})`;
+      const displayName = (profile?.displayName ?? baseName) + zoneSuffix;
+
+      let bestTrailerName = profile?.bestTrailerName ?? baseName;
+      if (!isStandard) {
+        bestTrailerName = getZoneBestTrailerName(bt, zone, data) ?? bestTrailerName;
+      }
+
+      stats.push({
+        bodyType: compositeKey,
+        zone,
+        displayName,
+        bestTrailerName,
+        probability: count / totalJobs,
+        avgValue,
+        pool: count,
+        totalPool: totalJobs,
+        cargoCount: profile?.cargoCount ?? 0,
+        hasDoubles: profile?.hasDoubles ?? false,
+        hasHCT: profile?.hasHCT ?? false,
+      });
+    }
   }
 
   stats.sort((a, b) => (b.probability * b.avgValue) - (a.probability * a.avgValue));
@@ -191,6 +275,7 @@ function getStatsFromGameDefs(
 
     stats.push({
       bodyType: bt,
+      zone: 'standard',
       displayName: profile?.displayName ?? displayName,
       bestTrailerName: profile?.bestTrailerName ?? displayName,
       probability: btPool / totalPool,
@@ -365,7 +450,7 @@ export function calculateCityRankings(
 
   for (const city of data.cities) {
     const stats = getCityBodyTypeStats(city.id, data, lookups);
-    if (stats.length === 0) continue;
+    if (stats.length === 0 || !stats.some((s) => s.pool > 0)) continue;
 
     const optimal = greedyAllocation(stats, 10, DRIVER_COUNT);
     const income = expectedIncome(stats, optimal, DRIVER_COUNT);

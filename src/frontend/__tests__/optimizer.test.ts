@@ -134,6 +134,46 @@ describe('optimizer', () => {
       const dryvan = stats.find(s => s.bodyType === 'dryvan')!;
       expect(dryvan.probability).toBeCloseTo(10 / 23, 2);
       expect(dryvan.avgValue).toBe(2.0);
+      expect(dryvan.zone).toBe('standard');
+    });
+
+    it('produces zone-qualified entries from zone frequency data', () => {
+      const data = createMockData();
+      data.observations!.city_zone_body_type_frequency = {
+        berlin: {
+          standard: { dryvan: 10, flatbed: 5 },
+          doubles: { dryvan: 3 },
+        },
+      };
+      data.observations!.zone_body_type_avg_value = {
+        standard: { dryvan: 2.0, flatbed: 3.5 },
+        doubles: { dryvan: 1.8 },
+      };
+      data.observations!.city_body_type_frequency = {
+        berlin: { dryvan: 13, flatbed: 5 },
+      };
+      data.observations!.body_type_avg_value = { dryvan: 2.0, flatbed: 3.5 };
+      data.observations!.city_job_count = { berlin: 18 };
+
+      const lookups = buildLookups(data);
+      const stats = getCityBodyTypeStats('berlin', data, lookups);
+
+      // Should have at least 3 observed entries: dryvan (standard), flatbed (standard), dryvan:doubles
+      // Plus zero-pool entries for other body types (tanker etc.)
+      expect(stats.length).toBeGreaterThanOrEqual(3);
+
+      const stdDryvan = stats.find(s => s.bodyType === 'dryvan')!;
+      expect(stdDryvan.zone).toBe('standard');
+      expect(stdDryvan.pool).toBe(10);
+      expect(stdDryvan.probability).toBeCloseTo(10 / 18, 2);
+      expect(stdDryvan.avgValue).toBe(2.0);
+
+      const dblDryvan = stats.find(s => s.bodyType === 'dryvan:doubles')!;
+      expect(dblDryvan.zone).toBe('doubles');
+      expect(dblDryvan.pool).toBe(3);
+      expect(dblDryvan.probability).toBeCloseTo(3 / 18, 2);
+      expect(dblDryvan.avgValue).toBe(1.8);
+      expect(dblDryvan.displayName).toContain('Doubles');
     });
   });
 
@@ -188,9 +228,10 @@ describe('optimizer', () => {
       const lookups = buildLookups(data);
       const stats = getCityBodyTypeStats('berlin', data, lookups);
 
-      // Already have 5 dryvan (= driver count), no more should be offered
+      // Already have 5 dryvan (= driver count), no more dryvan should be offered
       const opts = getMarginalOptions(stats, ['dryvan', 'dryvan', 'dryvan', 'dryvan', 'dryvan'], 5);
-      expect(opts.length).toBe(0);
+      const dryvanOpt = opts.find(o => o.bodyType === 'dryvan');
+      expect(dryvanOpt).toBeUndefined();
     });
   });
 

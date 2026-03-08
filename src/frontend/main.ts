@@ -286,13 +286,21 @@ function renderRankings() {
   updateGarageCount();
 }
 
+function formatBodyTypeKey(key: string): string {
+  const colon = key.indexOf(':');
+  if (colon === -1) return key.replace(/_/g, ' ');
+  const bt = key.slice(0, colon).replace(/_/g, ' ');
+  const zone = key.slice(colon + 1);
+  return `${bt} (${zone})`;
+}
+
 function summarizeTrailers(trailers: string[]): string {
   const counts = new Map<string, number>();
   for (const t of trailers) counts.set(t, (counts.get(t) || 0) + 1);
   return [...counts.entries()]
     .sort((a, b) => b[1] - a[1])
     .map(([bt, n]) => {
-      const short = bt.replace(/_/g, ' ');
+      const short = formatBodyTypeKey(bt);
       return n > 1 ? `${short} ×${n}` : short;
     })
     .join(', ');
@@ -400,7 +408,14 @@ function renderCity(cityId: string) {
           </tr>
         </thead>
         <tbody>
-          ${stats.map((s) => {
+          ${[...stats]
+            .sort((a, b) => {
+              // Sort by marginal value descending so best next option is always on top
+              const ma = marginalByBT.get(a.bodyType) ?? 0;
+              const mb = marginalByBT.get(b.bodyType) ?? 0;
+              return mb - ma;
+            })
+            .map((s) => {
             const owned = ownedCounts.get(s.bodyType) || 0;
             const marginal = marginalByBT.get(s.bodyType);
             const hasMore = marginal !== undefined && marginal > 0;
@@ -417,7 +432,7 @@ function renderCity(cityId: string) {
               <td class="value">${hasMore ? `+€${marginal!.toFixed(2)}` : '—'}</td>
               <td class="fleet-actions">
                 ${owned > 0 ? `<button class="btn-fleet btn-fleet-minus" data-body-type="${s.bodyType}" title="Remove one ${s.displayName}">−</button>` : ''}
-                ${hasMore ? `<button class="btn-fleet btn-fleet-plus" data-body-type="${s.bodyType}" title="Add one ${s.displayName}">+</button>` : ''}
+                <button class="btn-fleet btn-fleet-plus" data-body-type="${s.bodyType}" title="Add one ${s.displayName}">+</button>
               </td>
             </tr>
           `;

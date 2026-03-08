@@ -467,7 +467,7 @@ export function normalize(str: string): string {
  * Picks the best standard ownable trailer per body type (max volume).
  */
 /** Build a human-readable spec string from trailer properties, e.g. "Kassbohrer 3-axle 79t 16.4m" */
-function formatTrailerSpec(t: Trailer): string {
+export function formatTrailerSpec(t: Trailer): string {
   const idParts = t.id.split('.');
   const brandRaw = idParts[0];
   const brand = brandRaw.charAt(0).toUpperCase() + brandRaw.slice(1);
@@ -498,6 +498,49 @@ function formatTrailerSpec(t: Trailer): string {
   return parts.join(' ');
 }
 
+/**
+ * Pick the best trailer from candidates, preferring SCS (base game) over DLC brands.
+ * Only picks DLC if it covers cargo that no SCS trailer of the same body type does.
+ * Tie-break: max GWL → max volume → max length.
+ */
+function pickBestTrailer(candidates: Trailer[], fallback: Trailer, lookups: Lookups): Trailer {
+  if (candidates.length === 0) return fallback;
+
+  const isScs = (t: Trailer) => t.id.startsWith('scs.');
+  const scs = candidates.filter(isScs);
+  const dlc = candidates.filter((t) => !isScs(t));
+
+  // Check if any DLC trailer has unique cargo not covered by SCS
+  const scsCargo = new Set<string>();
+  for (const t of scs) {
+    const cargoes = lookups.trailerCargoMap.get(t.id);
+    if (cargoes) for (const c of cargoes) scsCargo.add(c);
+  }
+
+  let hasDlcUnique = false;
+  if (dlc.length > 0 && scs.length > 0) {
+    for (const t of dlc) {
+      const cargoes = lookups.trailerCargoMap.get(t.id);
+      if (cargoes) {
+        for (const c of cargoes) {
+          if (!scsCargo.has(c)) { hasDlcUnique = true; break; }
+        }
+      }
+      if (hasDlcUnique) break;
+    }
+  }
+
+  // Use SCS pool unless DLC has unique cargo (or no SCS exists)
+  const pool = (scs.length > 0 && !hasDlcUnique) ? scs : candidates;
+
+  return pool.reduce((best, t) => {
+    if (t.gross_weight_limit > best.gross_weight_limit) return t;
+    if (t.gross_weight_limit === best.gross_weight_limit && t.volume > best.volume) return t;
+    if (t.gross_weight_limit === best.gross_weight_limit && t.volume === best.volume && t.length > best.length) return t;
+    return best;
+  }, pool[0]);
+}
+
 export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypeProfile[] {
   const ownable = getOwnableTrailers(data);
 
@@ -522,18 +565,13 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
     }
     if (cargoIds.size === 0) continue;
 
-    // Pick best standard trailer: max GWL → max volume → max length
-    // This ensures we recommend the trailer that covers ALL cargo in the body type
+    // Pick best standard trailer: prefer SCS (base game) over DLC brands at same tier
+    // Only pick DLC if it covers cargo that no SCS trailer of this body type does
     const standards = trailers.filter(
       (t) => !t.id.includes('hct') && !t.id.includes('double') && !t.id.includes('bdouble')
         && (!t.country_validity || t.country_validity.length === 0)
     );
-    let best = standards[0] ?? trailers[0];
-    for (const t of standards) {
-      if (t.gross_weight_limit > best.gross_weight_limit) best = t;
-      else if (t.gross_weight_limit === best.gross_weight_limit && t.volume > best.volume) best = t;
-      else if (t.gross_weight_limit === best.gross_weight_limit && t.volume === best.volume && t.length > best.length) best = t;
-    }
+    const best = pickBestTrailer(standards, trailers[0], lookups);
 
     // Check doubles/HCT availability
     const doublesSet = new Set<string>();
