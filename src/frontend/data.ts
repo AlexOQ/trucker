@@ -150,6 +150,8 @@ export interface Observations {
   city_trailer_frequency: Record<string, Record<string, number>>;
   city_body_type_frequency: Record<string, Record<string, number>>;
   body_type_avg_value: Record<string, number>;
+  city_zone_body_type_frequency: Record<string, Record<string, Record<string, number>>>;
+  zone_body_type_avg_value: Record<string, Record<string, number>>;
 }
 
 export interface AllData {

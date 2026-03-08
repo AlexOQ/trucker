@@ -115,22 +115,63 @@ function showProfileDetail(bodyType: string): void {
   const cargoList = getProfileCargo(profile);
   const totalEffective = cargoList.reduce((sum, c) => sum + c.effectiveValue, 0);
 
-  // Get all ownable trailer variants for this body type
-  const variants = data.trailers
-    .filter((t) => t.ownable && t.body_type === bodyType)
-    .map((t) => {
-      const tier = t.id.includes('hct') ? 'HCT'
-        : (t.id.includes('double') || t.id.includes('bdouble')) ? 'Double'
-        : 'Standard';
-      const countries = t.country_validity && t.country_validity.length > 0
-        ? t.country_validity.join(', ')
-        : 'All';
-      return { ...t, tier, countries };
-    })
-    .sort((a, b) => {
-      const tierOrder = { HCT: 0, Double: 1, Standard: 2 };
-      const tierDiff = tierOrder[a.tier as keyof typeof tierOrder] - tierOrder[b.tier as keyof typeof tierOrder];
-      return tierDiff || b.volume - a.volume;
+  // Collapse ownable trailer variants into tiers (Standard/Double/HCT)
+  // All variants within a tier haul the same cargo — only specs and countries differ
+  interface TierSummary {
+    tier: string;
+    count: number;
+    bestName: string;      // smallest entry-point trailer name
+    bestId: string;
+    volumeRange: [number, number];
+    lengthRange: [number, number];
+    gwlRange: [number, number];
+    countries: string;
+  }
+
+  const tierMap = new Map<string, typeof data.trailers>();
+  for (const t of data.trailers) {
+    if (!t.ownable || t.body_type !== bodyType) continue;
+    const tier = t.id.includes('hct') ? 'HCT'
+      : (t.id.includes('double') || t.id.includes('bdouble')) ? 'Double'
+      : 'Standard';
+    if (!tierMap.has(tier)) tierMap.set(tier, []);
+    tierMap.get(tier)!.push(t);
+  }
+
+  const tierOrder = ['Standard', 'Double', 'HCT'];
+  const tiers: TierSummary[] = tierOrder
+    .filter((tier) => tierMap.has(tier))
+    .map((tier) => {
+      const variants = tierMap.get(tier)!;
+      // Best = entry-point trailer: smallest GWL, then smallest volume, then shortest
+      const best = [...variants].sort((a, b) =>
+        a.gross_weight_limit - b.gross_weight_limit
+        || a.volume - b.volume
+        || a.length - b.length
+      )[0];
+      const volumes = variants.map((v) => v.volume);
+      const lengths = variants.map((v) => v.length);
+      const gwls = variants.map((v) => v.gross_weight_limit);
+      // Merge country restrictions across all variants in tier
+      const countrySet = new Set<string>();
+      let allCountries = false;
+      for (const v of variants) {
+        if (!v.country_validity || v.country_validity.length === 0) {
+          allCountries = true;
+        } else {
+          for (const c of v.country_validity) countrySet.add(c);
+        }
+      }
+      return {
+        tier,
+        count: variants.length,
+        bestName: best.name,
+        bestId: best.id,
+        volumeRange: [Math.min(...volumes), Math.max(...volumes)] as [number, number],
+        lengthRange: [Math.min(...lengths), Math.max(...lengths)] as [number, number],
+        gwlRange: [Math.min(...gwls), Math.max(...gwls)] as [number, number],
+        countries: allCountries ? 'All' : [...countrySet].sort().join(', '),
+      };
     });
 
   content.style.display = 'none';
@@ -153,8 +194,8 @@ function showProfileDetail(bodyType: string): void {
         <div class="stat-label">Cargo Types</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${variants.length}</div>
-        <div class="stat-label">Trailer Variants</div>
+        <div class="stat-value">${tiers.length}</div>
+        <div class="stat-label">Tiers</div>
       </div>
       <div class="stat">
         <div class="stat-value">${Math.round(totalEffective)}</div>
@@ -162,29 +203,42 @@ function showProfileDetail(bodyType: string): void {
       </div>
     </div>
 
-    ${variants.length > 0 ? `
+    ${tiers.length > 0 ? `
     <div class="table-section">
-      <h2>Trailer Variants (${variants.length})</h2>
+      <h2>Available Tiers</h2>
+      <p class="table-hint">All variants within a tier haul the same cargo. Entry-point model shown.</p>
       <table>
         <thead>
           <tr>
-            <th>Trailer</th>
             <th>Tier</th>
-            <th class="tooltip" data-tooltip="Cargo volume capacity in m³">Volume</th>
-            <th class="tooltip" data-tooltip="Trailer length in meters">Length</th>
+            <th>Entry Model</th>
+            <th class="tooltip" data-tooltip="Number of ownable variants in this tier">Variants</th>
+            <th class="tooltip" data-tooltip="Volume range across variants (m³)">Volume</th>
+            <th class="tooltip" data-tooltip="Length range across variants (m)">Length</th>
+            <th class="tooltip" data-tooltip="Gross weight limit range (tonnes)">GWL</th>
             <th>Countries</th>
           </tr>
         </thead>
         <tbody>
-          ${variants.map((v) => `
-            <tr${v.id === profile.bestTrailerId ? ' class="highlighted"' : ''}>
-              <td>${v.name}${v.id === profile.bestTrailerId ? ' <span class="tag highlight">Best</span>' : ''}</td>
-              <td>${v.tier}</td>
-              <td class="amount">${v.volume}</td>
-              <td class="amount">${v.length}</td>
-              <td>${v.countries}</td>
+          ${tiers.map((t) => {
+            const fmtRange = (r: [number, number]) => r[0] === r[1] ? `${r[0]}` : `${r[0]}–${r[1]}`;
+            const fmtGwl = (r: [number, number]) => {
+              const lo = Math.round(r[0] / 1000);
+              const hi = Math.round(r[1] / 1000);
+              return lo === hi ? `${lo}t` : `${lo}–${hi}t`;
+            };
+            return `
+            <tr>
+              <td><strong>${t.tier}</strong></td>
+              <td>${t.bestName}</td>
+              <td class="amount">${t.count}</td>
+              <td class="amount">${fmtRange(t.volumeRange)}</td>
+              <td class="amount">${fmtRange(t.lengthRange)}</td>
+              <td class="amount">${fmtGwl(t.gwlRange)}</td>
+              <td>${t.countries}</td>
             </tr>
-          `).join('')}
+          `;
+          }).join('')}
         </tbody>
       </table>
     </div>
@@ -206,7 +260,7 @@ function showProfileDetail(bodyType: string): void {
           <tbody>
             ${cargoList.map((c) => `
               <tr>
-                <td><a href="cargo.html#cargo-${c.id}" class="link">${c.name}</a></td>
+                <td><a href="cargo.html#cargo-${c.id}" class="link">${c.name || c.id}</a></td>
                 <td class="value">${c.value.toFixed(2)}</td>
                 <td class="amount">${c.units}</td>
                 <td class="value">${c.effectiveValue.toFixed(2)}</td>

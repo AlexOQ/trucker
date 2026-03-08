@@ -48,6 +48,8 @@ describe('optimizer', () => {
       city_trailer_frequency: {},
       city_body_type_frequency: {},
       body_type_avg_value: {},
+      city_zone_body_type_frequency: {},
+      zone_body_type_avg_value: {},
     };
 
     return {

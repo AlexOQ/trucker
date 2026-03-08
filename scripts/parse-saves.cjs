@@ -28,44 +28,76 @@ const MAX_SAVES = 20;
 // Variants are the short IDs from save files (trailer_variant field).
 // Body types are what the player actually buys.
 // Suffixes like _a, _s, _m are brand/size subvariants of the same body type.
+// Suffixes _2 = double, _b2 = b-double, _hct = HCT (high-capacity transport).
 const VARIANT_BODY_TYPE = {
-  scs_curt:     'curtainside',
-  scs_curt_a:   'curtainside',
-  scs_curt_s:   'curtainside',
-  scs_dry:      'dryvan',
-  scs_dry_a:    'dryvan',
-  scs_dry_m:    'dryvan',
-  scs_dry_ms:   'dryvan',
-  scs_dry_s:    'dryvan',
-  scs_ref:      'refrigerated',
-  scs_ref_a:    'refrigerated',
-  scs_ref_s:    'refrigerated',
-  scs_ins:      'insulated',
-  scs_ins_a:    'insulated',
-  scs_ins_s:    'insulated',
-  scs_flat_b:   'flatbed',
-  scs_lowbed_3: 'lowbed',
-  scs_lowbed_4: 'lowbed',
-  scs_lowbed41: 'lowbed',
-  scs_lowlow2e: 'lowboy',
-  scs_lowlow4e: 'lowboy',
-  scs_lowlowd2: 'lowboy',
-  scs_lowlowd4: 'lowboy',
-  scs_gosck20:  'container',
-  scs_gosck220: 'container',
-  scs_gosck40:  'container',
-  scs_dumper:   'dumper',
-  scs_silo:     'silo',
-  scs_log:      'log',
-  scs_gastank:  'gastank',
-  scs_chemt:    'chemtank',
-  scs_fodt:     'foodtank',
-  scs_brick_r:  'brick',
-  scs_livestk:  'livestock',
-  car_trans:    'car_transporter',
-  truck_trans:  'truck_transporter',
-  van_trans:    'van_transporter',
-  gls_trailer:  'glass',
+  // Curtainside
+  scs_curt:      'curtainside',
+  scs_curt_a:    'curtainside',
+  scs_curt_s:    'curtainside',
+  scs_curt_2:    'curtainside',   // double
+  scs_curt_b2:   'curtainside',   // b-double
+  // Dryvan
+  scs_dry:       'dryvan',
+  scs_dry_a:     'dryvan',
+  scs_dry_m:     'dryvan',
+  scs_dry_ms:    'dryvan',
+  scs_dry_s:     'dryvan',
+  scs_dry_2:     'dryvan',        // double
+  scs_dry_b2:    'dryvan',        // b-double
+  // Refrigerated
+  scs_ref:       'refrigerated',
+  scs_ref_a:     'refrigerated',
+  scs_ref_s:     'refrigerated',
+  scs_ref_2:     'refrigerated',  // double
+  scs_ref_b2:    'refrigerated',  // b-double
+  // Insulated
+  scs_ins:       'insulated',
+  scs_ins_a:     'insulated',
+  scs_ins_s:     'insulated',
+  scs_ins_2:     'insulated',     // double
+  scs_ins_b2:    'insulated',     // b-double
+  // Other body types (standard only — no double/HCT variants exist)
+  scs_flat_b:    'flatbed',
+  scs_lowbed_3:  'lowbed',
+  scs_lowbed_4:  'lowbed',
+  scs_lowbed41:  'lowbed',
+  scs_lowlow2e:  'lowboy',
+  scs_lowlow4e:  'lowboy',
+  scs_lowlowd2:  'lowboy',
+  scs_lowlowd4:  'lowboy',
+  scs_gosck20:   'container',
+  scs_gosck220:  'container',
+  scs_gosck40:   'container',
+  scs_dumper:    'dumper',
+  scs_silo:      'silo',
+  scs_log:       'log',
+  scs_gastank:   'gastank',
+  scs_chemt:     'chemtank',
+  scs_fodt:      'foodtank',
+  scs_brick_r:   'brick',
+  scs_livestk:   'livestock',
+  car_trans:     'car_transporter',
+  truck_trans:   'truck_transporter',
+  van_trans:     'van_transporter',
+  panel_trans:   'panel_transporter',
+  gls_trailer:   'glass',
+};
+
+// Trailer variant → zone tier mapping.
+// Zone determines which countries the job can route between.
+// Standard (no suffix) = global, _2 = doubles zone, _b2 = b-doubles zone (same countries),
+// _hct = HCT zone (Finland + Sweden only), _ch = long chassis (Finland + Germany + Russia).
+const VARIANT_ZONE = {
+  scs_curt_2:   'doubles',
+  scs_curt_b2:  'doubles',
+  scs_dry_2:    'doubles',
+  scs_dry_b2:   'doubles',
+  scs_ref_2:    'doubles',
+  scs_ref_b2:   'doubles',
+  scs_ins_2:    'doubles',
+  scs_ins_b2:   'doubles',
+  // HCT variants will be added when observed in saves
+  // Long chassis variants will be added when observed in saves
 };
 
 function decryptSave(filePath) {
@@ -88,7 +120,7 @@ function parseJobs(text) {
     }
   }
 
-  const jobRe = /job_offer_data : (_nameless\.\S+) \{\n target: "(\w+)\.(\w+)"\n expiration_time: (\d+)\n urgency: (\d+)\n shortest_distance_km: (\d+)\n ferry_time: (\d+)\n ferry_price: (\d+)\n cargo: cargo\.(\w+)\n company_truck: (\w*)\n trailer_variant: trailer\.(\w+)\n trailer_definition: (\S+)\n units_count: (\d+)\n fill_ratio: (\d+)\n trailer_place: (\d+)\n\}/g;
+  const jobRe = /job_offer_data : (_nameless\.\S+) \{\n target: "(\w+)\.(\w+)"\n expiration_time: (\d+)\n urgency: (\d+)\n shortest_distance_km: (\d+)\n ferry_time: (\d+)\n ferry_price: (\d+)\n cargo: cargo\.(\w+)\n company_truck: "?([^"\n]*)"?\n trailer_variant: trailer\.(\w+)\n trailer_definition: (\S+)\n units_count: (\d+)\n fill_ratio: (\d+)\n trailer_place: (\d+)\n\}/g;
 
   const jobs = [];
   while ((m = jobRe.exec(text)) !== null) {
@@ -205,6 +237,8 @@ function main() {
   const cityTrailerFreq = {};      // city -> trailer_variant -> count
   const cityBodyTypeFreq = {};     // city -> bodyType -> count
   const bodyTypeValueAcc = {};     // bodyType -> { totalValue, count }
+  const cityZoneBodyTypeFreq = {}; // city -> zone -> bodyType -> count
+  const zoneBodyTypeValueAcc = {}; // zone -> bodyType -> { totalValue, count }
   const unknownVariants = new Set();
   let totalJobs = 0;
 
@@ -274,6 +308,17 @@ function main() {
           if (!bodyTypeValueAcc[bodyType]) bodyTypeValueAcc[bodyType] = { totalValue: 0, count: 0 };
           bodyTypeValueAcc[bodyType].totalValue += value;
           bodyTypeValueAcc[bodyType].count += 1;
+
+          // Zone-aware tracking: "standard" for global variants, zone name for restricted
+          const zone = VARIANT_ZONE[variant] || 'standard';
+          if (!cityZoneBodyTypeFreq[city]) cityZoneBodyTypeFreq[city] = {};
+          if (!cityZoneBodyTypeFreq[city][zone]) cityZoneBodyTypeFreq[city][zone] = {};
+          cityZoneBodyTypeFreq[city][zone][bodyType] = (cityZoneBodyTypeFreq[city][zone][bodyType] || 0) + 1;
+
+          if (!zoneBodyTypeValueAcc[zone]) zoneBodyTypeValueAcc[zone] = {};
+          if (!zoneBodyTypeValueAcc[zone][bodyType]) zoneBodyTypeValueAcc[zone][bodyType] = { totalValue: 0, count: 0 };
+          zoneBodyTypeValueAcc[zone][bodyType].totalValue += value;
+          zoneBodyTypeValueAcc[zone][bodyType].count += 1;
         }
       }
 
@@ -337,6 +382,15 @@ function main() {
     bodyTypeAvgValue[bt] = Math.round(acc.totalValue / acc.count * 100) / 100;
   }
 
+  // Zone-aware body type average values
+  const zoneBodyTypeAvgValue = {};
+  for (const [zone, bodyTypes] of Object.entries(zoneBodyTypeValueAcc)) {
+    zoneBodyTypeAvgValue[zone] = {};
+    for (const [bt, acc] of Object.entries(bodyTypes)) {
+      zoneBodyTypeAvgValue[zone][bt] = Math.round(acc.totalValue / acc.count * 100) / 100;
+    }
+  }
+
   // Entity lists
   const allCities = Object.keys(cityCompaniesAgg).sort();
   const allCompanies = [...new Set(Object.values(cityCompaniesAgg).flatMap(c => Object.keys(c)))].sort();
@@ -362,6 +416,8 @@ function main() {
     city_trailer_frequency: cityTrailerFreq,
     city_body_type_frequency: cityBodyTypeFreq,
     body_type_avg_value: bodyTypeAvgValue,
+    city_zone_body_type_frequency: cityZoneBodyTypeFreq,
+    zone_body_type_avg_value: zoneBodyTypeAvgValue,
   };
 
   fs.writeFileSync(OBS_PATH, JSON.stringify(output, null, 2) + '\n');
