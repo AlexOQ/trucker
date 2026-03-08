@@ -587,6 +587,9 @@ input[type="range"]::-moz-range-thumb {
   font-weight: bold;
   color: #f39c12;
 }
+.stat-value.confidence-high { color: #27ae60; }
+.stat-value.confidence-med { color: #f39c12; }
+.stat-value.confidence-low { color: #e74c3c; }
 
 .stat-label {
   font-size: 0.8rem;

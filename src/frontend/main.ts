@@ -133,11 +133,18 @@ function getCityRank(cityId: string) {
   return { rank: index + 1, total: cachedRankings.length };
 }
 
-function formatRank(rank: number, total: number, score: number | null = null): string {
+function formatRank(rank: number, total: number, score: number | null = null, confidence: number | null = null, rawScore: number | null = null): string {
   const isTopTier = rank <= Math.ceil(total * 0.1);
   const baseClass = isTopTier ? 'rank-display top-tier' : 'rank-display';
+  let tooltipText = '';
+  if (score !== null) {
+    tooltipText = `Score: €${score.toFixed(2)}`;
+    if (rawScore !== null && confidence !== null) {
+      tooltipText += ` (€${rawScore.toFixed(2)} × ${(confidence * 100).toFixed(0)}% confidence)`;
+    }
+  }
   const className = score !== null ? `${baseClass} tooltip` : baseClass;
-  const tooltipAttrs = score !== null ? ` tabindex="0" data-tooltip="E[income/cycle]: €${score.toFixed(2)}"` : '';
+  const tooltipAttrs = tooltipText ? ` tabindex="0" data-tooltip="${tooltipText}"` : '';
   return `<span class="${className}"${tooltipAttrs}><span class="rank">#${rank}</span> of ${total}</span>`;
 }
 
@@ -250,7 +257,7 @@ function renderRankings() {
               <td class="country">${r.country}</td>
               <td>${r.depotCount}</td>
               <td class="amount">${r.observedJobs || '-'}</td>
-              <td class="score">${formatRank(i + 1, displayRankings.length, r.score)}</td>
+              <td class="score">${formatRank(i + 1, displayRankings.length, r.score, r.confidence, r.rawScore)}</td>
               <td class="trailer-summary">${trailerSummary}</td>
             </tr>
           `;
@@ -322,10 +329,14 @@ function renderCity(cityId: string) {
   const income = expectedIncome(stats, optimal, DRIVER_COUNT);
   const cityRank = getCityRank(cityId);
   const observedJobs = data?.observations?.city_job_count?.[cityId] ?? 0;
+  const confidence = observedJobs / (observedJobs + 20);
 
   const cityCompanies = lookups!.cityCompanyMap.get(cityId) || [];
   let depotCount = 0;
   for (const { count } of cityCompanies) depotCount += count;
+
+  const confidencePct = (confidence * 100).toFixed(0);
+  const confidenceClass = confidence >= 0.5 ? 'high' : confidence >= 0.25 ? 'med' : 'low';
 
   cityContent.innerHTML = `
     <div class="city-header">
@@ -352,6 +363,10 @@ function renderCity(cityId: string) {
       <div class="stat">
         <div class="stat-value">${income.totalServed.toFixed(1)}/${DRIVER_COUNT}</div>
         <div class="stat-label">E[drivers served]</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value confidence-${confidenceClass}" title="${observedJobs} jobs / (${observedJobs} + 20)">${confidencePct}%</div>
+        <div class="stat-label">Confidence</div>
       </div>
       <div class="stat">
         <div class="stat-value">${cityRank ? formatRank(cityRank.rank, cityRank.total) : '-'}</div>

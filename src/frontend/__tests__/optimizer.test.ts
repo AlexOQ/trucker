@@ -293,9 +293,14 @@ describe('optimizer', () => {
         expect(rank).toHaveProperty('country');
         expect(rank).toHaveProperty('depotCount');
         expect(rank).toHaveProperty('score');
+        expect(rank).toHaveProperty('rawScore');
+        expect(rank).toHaveProperty('confidence');
         expect(rank).toHaveProperty('optimalTrailers');
         expect(rank.depotCount).toBeGreaterThan(0);
-        expect(rank.score).toBeGreaterThan(0);
+        expect(rank.rawScore).toBeGreaterThan(0);
+        expect(rank.score).toBeGreaterThanOrEqual(0);
+        expect(rank.confidence).toBeGreaterThan(0);
+        expect(rank.confidence).toBeLessThanOrEqual(1);
         expect(rank.optimalTrailers.length).toBeGreaterThan(0);
       }
     });

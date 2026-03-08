@@ -21,6 +21,13 @@ import type { AllData, Lookups, Trailer, BodyTypeProfile } from './data.js';
 
 const DRIVER_COUNT = 5;
 
+/**
+ * Bayesian confidence: n / (n + k).
+ * Cities with few observed jobs get scores shrunk toward zero.
+ * k=20 means a city needs ~20 observed jobs to reach 50% confidence.
+ */
+const CONFIDENCE_K = 20;
+
 // ============================================
 // Math utilities
 // ============================================
@@ -341,7 +348,9 @@ export interface CityRanking {
   country: string;
   depotCount: number;
   observedJobs: number;
-  score: number;           // E[income/cycle] with optimal allocation
+  confidence: number;      // n / (n + k), Bayesian shrinkage factor
+  rawScore: number;        // E[income/cycle] before confidence adjustment
+  score: number;           // rawScore × confidence — ranking metric
   optimalTrailers: string[];
 }
 
@@ -366,6 +375,7 @@ export function calculateCityRankings(
     for (const { count } of cityCompanies) depotCount += count;
 
     const observedJobs = data.observations?.city_job_count?.[city.id] ?? 0;
+    const confidence = observedJobs / (observedJobs + CONFIDENCE_K);
 
     rankings.push({
       id: city.id,
@@ -373,7 +383,9 @@ export function calculateCityRankings(
       country: city.country,
       depotCount,
       observedJobs,
-      score: income.totalIncome,
+      confidence,
+      rawScore: income.totalIncome,
+      score: income.totalIncome * confidence,
       optimalTrailers: optimal,
     });
   }
