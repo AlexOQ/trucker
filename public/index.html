@@ -59,14 +59,14 @@
           <dt class="tooltip" tabindex="0" data-tooltip="Company facilities (like Posped, EuroGoodies, etc.) that offer cargo jobs in a city">Depots</dt>
           <dd>Company facilities where you pick up cargo</dd>
 
-          <dt class="tooltip" tabindex="0" data-tooltip="Total number of different cargo delivery opportunities available in a city">Jobs</dt>
-          <dd>Available cargo delivery opportunities</dd>
+          <dt class="tooltip" tabindex="0" data-tooltip="Earning value weighted by cargo value, spawn rate, and depot count">EV (Expected Value)</dt>
+          <dd>A trailer's earning potential in a specific city</dd>
 
-          <dt class="tooltip" tabindex="0" data-tooltip="The percentage of different cargo types in a city that a trailer can haul">Coverage</dt>
-          <dd>How many different cargo types a trailer can haul</dd>
+          <dt class="tooltip" tabindex="0" data-tooltip="What fraction of the city's total earning potential this trailer covers">Share</dt>
+          <dd>Percentage of city value covered by a trailer type</dd>
 
-          <dt class="tooltip" tabindex="0" data-tooltip="Combines job availability and cargo value to rank cities. Higher score = more profitable garage location">Score</dt>
-          <dd>Overall profitability rating for a city or trailer</dd>
+          <dt class="tooltip" tabindex="0" data-tooltip="Total weighted cargo value — higher score means more profitable garage location">Score</dt>
+          <dd>Overall earning potential of a city's job market</dd>
         </dl>
       </div>
     </div>
@@ -82,111 +82,50 @@
         <div class="explanation-section">
           <h3>The Recommendation Algorithm</h3>
           <p>
-            The advisor uses a <strong>greedy weighted optimization</strong> approach to recommend trailers.
-            Here's how it works in plain terms:
+            The advisor uses a <strong>profile-based proportional allocation</strong> to recommend trailers.
           </p>
           <ol class="algorithm-steps">
             <li>
-              <strong>Build a cargo pool:</strong> We gather all cargo jobs available at depots in your chosen city.
-              Each cargo has a value based on how much it pays per kilometer.
+              <strong>Build city cargo profile:</strong> Sum all cargo from the city's depots,
+              weighted by spawn rate (prob_coef) and depot count.
             </li>
             <li>
-              <strong>Calculate trailer value:</strong> For each trailer type, we add up the total value
-              of all cargo it can haul. A trailer that handles high-paying cargo gets a higher score.
+              <strong>Score trailer types:</strong> 43 unique trailer types (after deduplication and domination
+              elimination) are scored against the city. Each trailer's EV = sum of
+              (haul value × spawn weight × depot count) for its compatible cargo.
             </li>
             <li>
-              <strong>Pick the best trailer:</strong> The trailer with the highest total value gets selected first.
+              <strong>Zone filtering:</strong> Doubles and HCT trailers only score in countries where
+              they're valid. HCT carries ~2× cargo, Doubles ~1.5×.
             </li>
             <li>
-              <strong>Reduce remaining value:</strong> Once a trailer is selected, the cargo it covers
-              becomes less valuable (since you already have a way to haul it). This prevents recommending
-              10 identical trailers.
-            </li>
-            <li>
-              <strong>Repeat:</strong> Steps 2-4 repeat until your garage is full (default: 10 trailers).
+              <strong>Proportional allocation:</strong> Garage slots are allocated proportional to
+              each trailer type's share of total earning potential. A city dominated by heavy machinery
+              cargo gets mostly lowbed/lowboy trailers.
             </li>
           </ol>
         </div>
 
         <div class="explanation-section">
-          <h3>Understanding the Score</h3>
+          <h3>Understanding the Scores</h3>
           <p>
-            The <strong>Score</strong> shown for each city and trailer represents potential earning power:
+            <strong>City Score</strong> = total weighted cargo value across all depots.
+            Higher score means more earning potential from diverse, valuable cargo.
           </p>
-          <ul class="score-guide">
-            <li>
-              <span class="score-badge excellent">0.8+</span>
-              <strong>Excellent:</strong> Top-tier location or trailer. Maximum cargo value coverage.
-            </li>
-            <li>
-              <span class="score-badge good">0.5 - 0.8</span>
-              <strong>Good:</strong> Solid choice with strong cargo availability.
-            </li>
-            <li>
-              <span class="score-badge moderate">0.3 - 0.5</span>
-              <strong>Moderate:</strong> Decent option, but other choices may be better.
-            </li>
-            <li>
-              <span class="score-badge low">&lt;0.3</span>
-              <strong>Limited:</strong> Few high-value opportunities in this location.
-            </li>
-          </ul>
-        </div>
-
-        <div class="explanation-section">
-          <h3>Why Coverage % Can Be Misleading</h3>
           <p>
-            You might notice a trailer with <strong>44% coverage</strong> ranked below one with <strong>19% coverage</strong>.
-            This happens because:
+            <strong>Trailer EV</strong> = expected earning value for that trailer type in a specific city.
+            Based on cargo value × units per haul × spawn probability × depot availability.
           </p>
-          <ul class="coverage-explanation">
-            <li><strong>Value matters more than variety:</strong> A trailer that hauls one very expensive cargo
-            may score higher than one that handles many cheap cargoes.</li>
-            <li><strong>Diminishing returns:</strong> If you already have trailers covering common cargo types,
-            the algorithm values new coverage over redundant coverage.</li>
-            <li><strong>Depot multipliers:</strong> If a city has multiple depots offering the same cargo,
-            that cargo counts multiple times in the pool - making it more valuable to cover.</li>
-          </ul>
+          <p>
+            <strong>Share %</strong> = what fraction of the city's earning potential this trailer captures.
+            Trailers are not "reserved" per driver — they're a shared pool where the most probable
+            highest-earning trailer matters most.
+          </p>
         </div>
       </div>
     </div>
 
-    <div class="controls collapsed">
-      <div class="controls-header">
-        <button class="settings-toggle" id="settings-toggle" aria-expanded="false">
-          <span class="toggle-icon">▶</span>
-          <h2>Advanced Settings</h2>
-        </button>
-        <button class="reset-btn" id="reset-btn">Reset to Defaults</button>
-      </div>
-      <div class="controls-grid" id="controls-grid">
-        <div class="control-group">
-          <div class="control-label">
-            <span class="tooltip" tabindex="0" data-tooltip="Number of trailer slots in your garage (1-20)">Garage Size</span>
-            <span class="control-value" id="trailers-value">10</span>
-          </div>
-          <p class="slider-description">Set how many trailer parking spots you have</p>
-          <div class="slider-container">
-            <span class="slider-label">1</span>
-            <input type="range" id="trailers-slider" min="1" max="20" value="10" aria-label="Garage size">
-            <span class="slider-label right">20</span>
-          </div>
-        </div>
-
-        <div class="control-group">
-          <div class="control-label">
-            <span class="tooltip" tabindex="0" data-tooltip="Left = allow duplicate body types if profitable. Right = force different body types. Each copy scores at this % of the previous.">Diversity Pressure</span>
-            <span class="control-value" id="diminishing-value">75</span>
-          </div>
-          <p class="slider-description">Each duplicate body type scores at this % of the previous copy</p>
-          <div class="slider-container">
-            <span class="slider-label">Stack same</span>
-            <input type="range" id="diminishing-slider" min="0" max="100" value="75" aria-label="Diversity pressure">
-            <span class="slider-label right">Force variety</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Settings section removed — fleet is user-driven via + buttons -->
 
     <div class="search-box">
       <input type="text" id="city-search" placeholder="Search cities..." aria-label="Search cities">

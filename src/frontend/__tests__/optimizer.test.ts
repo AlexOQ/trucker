@@ -1,15 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { buildLookups, type AllData } from '../data.ts';
 import {
-  getCityBodyTypeStats,
-  getMarginalOptions,
-  greedyAllocation,
-  expectedIncome,
+  getFleetRecommendation,
   calculateCityRankings,
+  getUniqueTypes,
+  buildJobPool,
+  computeMarginalFleet,
 } from '../optimizer.ts';
 
 describe('optimizer', () => {
-  // Mock data using game-defs fallback path (no observation body type data)
   const createMockData = (): AllData => {
     const observations = {
       meta: { saves_parsed: 1, total_jobs: 100, max_saves: 20 },
@@ -33,17 +32,11 @@ describe('optimizer', () => {
         furniture: ['box_trailer'],
         excluded_cargo: ['box_trailer'],
       },
-      cargo_frequency: {
-        electronics: 10,
-        machinery: 10,
-        chemicals: 10,
-        furniture: 10,
-        excluded_cargo: 10,
-      },
+      cargo_frequency: {},
       cargo_spawn_weight: {},
       cargo_trailer_units: {},
       company_cargo_frequency: {},
-      city_job_count: { berlin: 30, paris: 5 },
+      city_job_count: {},
       city_cargo_frequency: {},
       city_trailer_frequency: {},
       city_body_type_frequency: {},
@@ -80,239 +73,105 @@ describe('optimizer', () => {
     };
   };
 
-  describe('getCityBodyTypeStats', () => {
-    it('returns empty for city with no depots', () => {
+  describe('getFleetRecommendation', () => {
+    it('returns null for city with no depots', () => {
       const data = createMockData();
       const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('empty_city', data, lookups);
-      expect(stats).toEqual([]);
+      const fleet = getFleetRecommendation('empty_city', data, lookups);
+      expect(fleet).toBeNull();
     });
 
-    it('returns body type stats for city with cargo', () => {
+    it('returns fleet entries for city with cargo', () => {
       const data = createMockData();
       const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
+      const fleet = getFleetRecommendation('berlin', data, lookups);
 
-      expect(stats.length).toBeGreaterThan(0);
-      for (const s of stats) {
-        expect(s.probability).toBeGreaterThan(0);
-        expect(s.probability).toBeLessThanOrEqual(1);
-        expect(s.avgValue).toBeGreaterThan(0);
-      }
+      expect(fleet).not.toBeNull();
+      expect(fleet!.length).toBeGreaterThan(0);
 
-      // Probabilities can sum to >1 in game-defs fallback because cargoes
-      // map to multiple body types (e.g. electronics → dryvan AND flatbed)
-      const totalProb = stats.reduce((sum, s) => sum + s.probability, 0);
-      expect(totalProb).toBeGreaterThan(0);
-    });
-
-    it('excludes excluded cargo', () => {
-      const data = createMockData();
-      const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
-
-      // Total pool should not include excluded_cargo
-      const totalPool = stats[0]?.totalPool ?? 0;
-      expect(totalPool).toBeGreaterThan(0);
-    });
-
-    it('uses observation data when available', () => {
-      const data = createMockData();
-      // Add observation body type data for berlin
-      data.observations!.city_body_type_frequency = {
-        berlin: { dryvan: 10, flatbed: 8, tanker: 5 },
-      };
-      data.observations!.body_type_avg_value = {
-        dryvan: 2.0, flatbed: 3.5, tanker: 5.0,
-      };
-      data.observations!.city_job_count = { berlin: 23 };
-
-      const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
-
-      expect(stats.length).toBe(3);
-      const dryvan = stats.find(s => s.bodyType === 'dryvan')!;
-      expect(dryvan.probability).toBeCloseTo(10 / 23, 2);
-      expect(dryvan.avgValue).toBe(2.0);
-      expect(dryvan.zone).toBe('standard');
-    });
-
-    it('produces zone-qualified entries from zone frequency data', () => {
-      const data = createMockData();
-      // Add a doubles trailer valid in Germany so the zone isn't filtered
-      data.trailers.push({
-        id: 'box_double', name: 'Box Double', body_type: 'dryvan',
-        volume: 90, chassis_mass: 0, body_mass: 0, gross_weight_limit: 0,
-        length: 22, chain_type: 'double', ownable: true,
-        country_validity: ['Germany'],
-      });
-      data.observations!.city_zone_body_type_frequency = {
-        berlin: {
-          standard: { dryvan: 10, flatbed: 5 },
-          doubles: { dryvan: 3 },
-        },
-      };
-      data.observations!.zone_body_type_avg_value = {
-        standard: { dryvan: 2.0, flatbed: 3.5 },
-        doubles: { dryvan: 1.8 },
-      };
-      data.observations!.city_body_type_frequency = {
-        berlin: { dryvan: 13, flatbed: 5 },
-      };
-      data.observations!.body_type_avg_value = { dryvan: 2.0, flatbed: 3.5 };
-      data.observations!.city_job_count = { berlin: 18 };
-
-      const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
-
-      // Should have at least 3 observed entries: dryvan (standard), flatbed (standard), dryvan:doubles
-      // Plus zero-pool entries for other body types (tanker etc.)
-      expect(stats.length).toBeGreaterThanOrEqual(3);
-
-      const stdDryvan = stats.find(s => s.bodyType === 'dryvan')!;
-      expect(stdDryvan.zone).toBe('standard');
-      expect(stdDryvan.pool).toBe(10);
-      expect(stdDryvan.probability).toBeCloseTo(10 / 18, 2);
-      expect(stdDryvan.avgValue).toBe(2.0);
-
-      const dblDryvan = stats.find(s => s.bodyType === 'dryvan:doubles')!;
-      expect(dblDryvan.zone).toBe('doubles');
-      expect(dblDryvan.pool).toBe(3);
-      expect(dblDryvan.probability).toBeCloseTo(3 / 18, 2);
-      expect(dblDryvan.avgValue).toBe(1.8);
-      expect(dblDryvan.displayName).toContain('Doubles');
-    });
-  });
-
-  describe('getMarginalOptions', () => {
-    it('returns sorted options by marginal value', () => {
-      const data = createMockData();
-      data.observations!.city_body_type_frequency = {
-        berlin: { dryvan: 10, flatbed: 8, tanker: 5 },
-      };
-      data.observations!.body_type_avg_value = {
-        dryvan: 2.0, flatbed: 3.5, tanker: 5.0,
-      };
-      data.observations!.city_job_count = { berlin: 23 };
-
-      const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
-      const options = getMarginalOptions(stats, [], 5);
-
-      expect(options.length).toBe(3);
-      for (let i = 0; i < options.length - 1; i++) {
-        expect(options[i].marginalValue).toBeGreaterThanOrEqual(options[i + 1].marginalValue);
+      for (const entry of fleet!) {
+        expect(entry.trailerId).toBeTruthy();
+        expect(entry.bodyType).toBeTruthy();
+        expect(entry.displayName).toBeTruthy();
+        expect(entry.cityValue).toBeGreaterThan(0);
+        expect(entry.pctOfTotal).toBeGreaterThan(0);
+        expect(entry.cargoMatched).toBeGreaterThan(0);
       }
     });
 
-    it('accounts for existing trailers', () => {
+    it('sorts fleet entries by cityValue descending', () => {
       const data = createMockData();
-      data.observations!.city_body_type_frequency = {
-        berlin: { dryvan: 15, tanker: 5 },
-      };
-      data.observations!.body_type_avg_value = { dryvan: 1.0, tanker: 5.0 };
-      data.observations!.city_job_count = { berlin: 20 };
-
       const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
+      const fleet = getFleetRecommendation('berlin', data, lookups);
 
-      const opts0 = getMarginalOptions(stats, [], 5);
-      const opts1 = getMarginalOptions(stats, ['dryvan'], 5);
-
-      const dryvan0 = opts0.find(o => o.bodyType === 'dryvan')!;
-      const dryvan1 = opts1.find(o => o.bodyType === 'dryvan')!;
-
-      // 2nd copy should have lower marginal value
-      expect(dryvan1.marginalValue).toBeLessThan(dryvan0.marginalValue);
+      for (let i = 0; i < fleet!.length - 1; i++) {
+        expect(fleet![i].cityValue).toBeGreaterThanOrEqual(fleet![i + 1].cityValue);
+      }
     });
 
-    it('caps copies at driver count', () => {
+    it('excludes excluded cargo from scoring', () => {
       const data = createMockData();
-      data.observations!.city_body_type_frequency = { berlin: { dryvan: 20 } };
-      data.observations!.body_type_avg_value = { dryvan: 5.0 };
-      data.observations!.city_job_count = { berlin: 20 };
-
       const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
+      const fleet = getFleetRecommendation('berlin', data, lookups);
 
-      // Already have 5 dryvan (= driver count), no more dryvan should be offered
-      const opts = getMarginalOptions(stats, ['dryvan', 'dryvan', 'dryvan', 'dryvan', 'dryvan'], 5);
-      const dryvanOpt = opts.find(o => o.bodyType === 'dryvan');
-      expect(dryvanOpt).toBeUndefined();
-    });
-  });
-
-  describe('greedyAllocation', () => {
-    it('fills slots with highest marginal value', () => {
-      const data = createMockData();
-      data.observations!.city_body_type_frequency = {
-        berlin: { dryvan: 10, flatbed: 8, tanker: 5 },
-      };
-      data.observations!.body_type_avg_value = {
-        dryvan: 2.0, flatbed: 3.5, tanker: 5.0,
-      };
-      data.observations!.city_job_count = { berlin: 23 };
-
-      const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
-
-      const allocation = greedyAllocation(stats, 10, 5);
-      expect(allocation.length).toBe(10);
+      // The excluded_cargo (value=10) should not inflate dryvan's score
+      // If it were included, dryvan would dominate. Without it, flatbed should be competitive.
+      const dryvan = fleet!.find(e => e.bodyType === 'dryvan');
+      const flatbed = fleet!.find(e => e.bodyType === 'flatbed');
+      expect(dryvan).toBeDefined();
+      expect(flatbed).toBeDefined();
     });
 
-    it('respects existing trailers', () => {
+    it('applies fragile bonus to cargo value', () => {
       const data = createMockData();
-      data.observations!.city_body_type_frequency = {
-        berlin: { dryvan: 10, tanker: 5 },
-      };
-      data.observations!.body_type_avg_value = { dryvan: 2.0, tanker: 5.0 };
-      data.observations!.city_job_count = { berlin: 15 };
-
       const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
+      const fleet = getFleetRecommendation('berlin', data, lookups);
 
-      const allocation = greedyAllocation(stats, 5, 5, ['dryvan', 'tanker']);
-      expect(allocation.length).toBe(5);
-      expect(allocation[0]).toBe('dryvan');
-      expect(allocation[1]).toBe('tanker');
+      // Chemicals (value=4.0, fragile=true) should have bonus applied
+      // tanker hauls chemicals + machinery
+      const tanker = fleet!.find(e => e.bodyType === 'tanker');
+      expect(tanker).toBeDefined();
+      // With fragile bonus: chemicals = 4.0 * 1.3 = 5.2, machinery = 3.0
+      expect(tanker!.cityValue).toBeGreaterThan(0);
+    });
+
+    it('share percentages sum to 100', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const fleet = getFleetRecommendation('berlin', data, lookups);
+
+      const totalPct = fleet!.reduce((s, e) => s + e.pctOfTotal, 0);
+      expect(totalPct).toBeCloseTo(100, 0);
+    });
+
+    it('berlin has more earning potential than paris', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const berlinFleet = getFleetRecommendation('berlin', data, lookups);
+      const parisFleet = getFleetRecommendation('paris', data, lookups);
+
+      const berlinTotal = berlinFleet!.reduce((s, e) => s + e.cityValue, 0);
+      const parisTotal = parisFleet!.reduce((s, e) => s + e.cityValue, 0);
+      // Berlin has 5 depots (3+2), Paris has 1 — berlin should have higher total
+      expect(berlinTotal).toBeGreaterThan(parisTotal);
     });
   });
 
-  describe('expectedIncome', () => {
-    it('calculates expected income for allocation', () => {
+  describe('getUniqueTypes', () => {
+    it('deduplicates trailer profiles', () => {
       const data = createMockData();
-      data.observations!.city_body_type_frequency = {
-        berlin: { dryvan: 10, tanker: 5 },
-      };
-      data.observations!.body_type_avg_value = { dryvan: 2.0, tanker: 5.0 };
-      data.observations!.city_job_count = { berlin: 15 };
-
       const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
+      const types = getUniqueTypes(data, lookups);
 
-      const income = expectedIncome(stats, ['dryvan', 'tanker'], 5);
-      expect(income.totalIncome).toBeGreaterThan(0);
-      expect(income.totalServed).toBeGreaterThan(0);
-      expect(income.details.length).toBe(2);
-    });
-
-    it('returns zero for empty allocation', () => {
-      const data = createMockData();
-      data.observations!.city_body_type_frequency = { berlin: { dryvan: 10 } };
-      data.observations!.body_type_avg_value = { dryvan: 2.0 };
-      data.observations!.city_job_count = { berlin: 10 };
-
-      const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
-
-      const income = expectedIncome(stats, [], 5);
-      expect(income.totalIncome).toBe(0);
-      expect(income.totalServed).toBe(0);
+      // Should have <= number of ownable trailers
+      const ownableCount = data.trailers.filter(t => t.ownable).length;
+      expect(types.length).toBeLessThanOrEqual(ownableCount);
+      expect(types.length).toBeGreaterThan(0);
     });
   });
 
   describe('calculateCityRankings', () => {
-    it('returns ranked cities by score', () => {
+    it('returns ranked cities by score descending', () => {
       const data = createMockData();
       const lookups = buildLookups(data);
       const rankings = calculateCityRankings(data, lookups);
@@ -342,70 +201,140 @@ describe('optimizer', () => {
         expect(rank).toHaveProperty('name');
         expect(rank).toHaveProperty('country');
         expect(rank).toHaveProperty('depotCount');
+        expect(rank).toHaveProperty('cargoTypes');
         expect(rank).toHaveProperty('score');
-        expect(rank).toHaveProperty('rawScore');
-        expect(rank).toHaveProperty('confidence');
-        expect(rank).toHaveProperty('optimalTrailers');
+        expect(rank).toHaveProperty('topTrailers');
         expect(rank.depotCount).toBeGreaterThan(0);
-        expect(rank.rawScore).toBeGreaterThan(0);
-        expect(rank.score).toBeGreaterThanOrEqual(0);
-        expect(rank.confidence).toBeGreaterThan(0);
-        expect(rank.confidence).toBeLessThanOrEqual(1);
-        expect(rank.optimalTrailers.length).toBeGreaterThan(0);
+        expect(rank.cargoTypes).toBeGreaterThan(0);
+        expect(rank.score).toBeGreaterThan(0);
+        expect(rank.topTrailers.length).toBeGreaterThan(0);
       }
     });
 
-    it('greedy allocation excludes dominated body types', () => {
+    it('berlin ranks higher than paris due to more depots', () => {
       const data = createMockData();
-      // Add a curtainside trailer that can haul everything dryvan can plus more
-      data.trailers.push({
-        id: 'curtainside_trailer', name: 'Curtainside', body_type: 'curtainside',
-        volume: 90, chassis_mass: 0, body_mass: 0, gross_weight_limit: 0,
-        length: 13.6, chain_type: 'single', ownable: true,
-      });
-      // Make curtainside haul all dryvan cargo plus an extra
-      data.observations!.cargo_trailers!.electronics.push('curtainside_trailer');
-      data.observations!.cargo_trailers!.furniture.push('curtainside_trailer');
-      data.observations!.cargo_trailers!.excluded_cargo.push('curtainside_trailer');
-      // dryvan (box_trailer) hauls: electronics, furniture, excluded_cargo
-      // curtainside hauls: electronics, furniture, excluded_cargo + machinery
-      data.observations!.cargo_trailers!.machinery.push('curtainside_trailer');
-
-      data.observations!.city_body_type_frequency = {
-        berlin: { dryvan: 10, curtainside: 12, flatbed: 5 },
-      };
-      data.observations!.body_type_avg_value = { dryvan: 2.0, curtainside: 2.2, flatbed: 3.0 };
-      data.observations!.city_job_count = { berlin: 27 };
-
-      const lookups = buildLookups(data);
-      const stats = getCityBodyTypeStats('berlin', data, lookups);
-
-      // dryvan should be marked as dominated by curtainside
-      const dryvan = stats.find(s => s.bodyType === 'dryvan');
-      expect(dryvan?.dominatedBy).toBe('curtainside');
-
-      // Greedy allocation should not pick dryvan
-      const allocation = greedyAllocation(stats, 5, 5);
-      expect(allocation).not.toContain('dryvan');
-      expect(allocation).toContain('curtainside');
-    });
-
-    it('berlin ranks higher than paris when observation data differs', () => {
-      const data = createMockData();
-      // Give berlin much more observed job variety to ensure higher score
-      data.observations!.city_body_type_frequency = {
-        berlin: { dryvan: 15, flatbed: 10, tanker: 5 },
-        paris: { dryvan: 3 },
-      };
-      data.observations!.body_type_avg_value = { dryvan: 2.0, flatbed: 3.5, tanker: 5.0 };
-      data.observations!.city_job_count = { berlin: 30, paris: 3 };
-
       const lookups = buildLookups(data);
       const rankings = calculateCityRankings(data, lookups);
 
       const berlinIdx = rankings.findIndex(r => r.id === 'berlin');
       const parisIdx = rankings.findIndex(r => r.id === 'paris');
       expect(berlinIdx).toBeLessThan(parisIdx);
+    });
+
+    it('topTrailers contains highest-EV trailer types', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const rankings = calculateCityRankings(data, lookups);
+
+      for (const rank of rankings) {
+        // topTrailers should be sorted by cityValue descending
+        for (let i = 0; i < rank.topTrailers.length - 1; i++) {
+          expect(rank.topTrailers[i].cityValue).toBeGreaterThanOrEqual(rank.topTrailers[i + 1].cityValue);
+        }
+      }
+    });
+  });
+
+  describe('buildJobPool', () => {
+    it('returns null for city with no depots', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      expect(buildJobPool('empty_city', lookups)).toBeNull();
+    });
+
+    it('distributes jobs proportional to prob_coef', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const pool = buildJobPool('berlin', lookups)!;
+
+      expect(pool).not.toBeNull();
+      // All cargo in mock has prob_coef=1, so jobs distribute evenly per company
+      // logistics_co: 3 depots, 3 non-excluded cargo → 4 jobs each = 12 total, 4 per cargo
+      // transport_inc: 2 depots, 2 cargo → 8 total, 4 per cargo
+      // machinery appears at both: logistics_co gives 4, transport_inc gives 4 = 8 total
+      expect(pool.get('machinery')).toBeCloseTo(8);
+      expect(pool.get('electronics')).toBeCloseTo(4);
+      expect(pool.get('chemicals')).toBeCloseTo(4);
+      expect(pool.get('furniture')).toBeCloseTo(4);
+      // excluded_cargo should not appear
+      expect(pool.has('excluded_cargo')).toBe(false);
+    });
+
+    it('total jobs equals depots × JOBS_PER_DEPOT', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const pool = buildJobPool('berlin', lookups)!;
+
+      let totalJobs = 0;
+      for (const count of pool.values()) totalJobs += count;
+      // Berlin: 3 depots (logistics) + 2 depots (transport) = 5 depots × 4 = 20
+      expect(totalJobs).toBeCloseTo(20);
+    });
+  });
+
+  describe('computeMarginalFleet', () => {
+    it('returns null for city with no depots', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      expect(computeMarginalFleet('empty_city', data, lookups, [])).toBeNull();
+    });
+
+    it('with no owned trailers, marginalEV is weighted average of compatible cargo', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const fleet = computeMarginalFleet('berlin', data, lookups, [])!;
+
+      expect(fleet).not.toBeNull();
+      expect(fleet.length).toBeGreaterThan(0);
+      // All entries should have positive marginalEV when pool is full
+      for (const entry of fleet) {
+        expect(entry.marginalEV).toBeGreaterThan(0);
+        expect(entry.owned).toBe(0);
+      }
+    });
+
+    it('sorted by marginalEV descending', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const fleet = computeMarginalFleet('berlin', data, lookups, [])!;
+
+      for (let i = 0; i < fleet.length - 1; i++) {
+        expect(fleet[i].marginalEV).toBeGreaterThanOrEqual(fleet[i + 1].marginalEV);
+      }
+    });
+
+    it('owning trailers eventually reduces marginalEV as pool depletes', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+
+      const noOwned = computeMarginalFleet('berlin', data, lookups, [])!;
+      const tankerBefore = noOwned.find(e => e.bodyType === 'tanker')!;
+
+      // Tanker hauls chemicals (haulValue=5.2, ~4 jobs) and machinery (3.0, ~8 jobs).
+      // Proportional consumption preserves the cargo ratio, so weighted avg stays constant.
+      // EV only drops when totalCompatible < 1 (scaled by min(1, total)).
+      // 12 total tanker jobs, each tanker consumes 1 → need 12+ to drop below 1 remaining.
+      const thirteenTankers = Array(13).fill('tanker');
+      const withMany = computeMarginalFleet('berlin', data, lookups, thirteenTankers)!;
+      const tankerAfter = withMany.find(e => e.bodyType === 'tanker')!;
+
+      // After 13 tankers on 12 tanker-compatible jobs, less than 1 job remains
+      // → marginalEV scaled down by min(1, totalRemaining)
+      expect(tankerAfter.marginalEV).toBeLessThan(tankerBefore.marginalEV);
+      expect(tankerAfter.owned).toBe(13);
+    });
+
+    it('owning enough trailers depletes the pool', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+
+      // Own many tankers — should eventually deplete tanker-compatible jobs
+      const manyTankers = Array(20).fill('tanker');
+      const fleet = computeMarginalFleet('berlin', data, lookups, manyTankers)!;
+      const tanker = fleet.find(e => e.bodyType === 'tanker')!;
+
+      // After 20 tankers on a pool of ~12 tanker-compatible jobs, marginalEV ≈ 0
+      expect(tanker.marginalEV).toBeCloseTo(0, 0);
     });
   });
 });

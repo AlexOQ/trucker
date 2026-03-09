@@ -187,10 +187,78 @@ export interface BodyTypeProfile {
   bestTrailerId: string;     // standard ownable trailer with max volume
   bestTrailerName: string;
   hasDoubles: boolean;
+  hasBDoubles: boolean;
   hasHCT: boolean;
   doublesCountries: string[];
+  bdoublesCountries: string[];
   hctCountries: string[];
   dominatedBy: string | null; // if non-null, this body type's cargo ⊂ the named body type
+}
+
+/** Result of deduplicating trailer profiles: unique earning types + dominated elimination */
+export interface UniqueTrailerType {
+  representative: TrailerProfile;   // the chosen representative trailer
+  variants: string[];               // all trailer IDs that are cosmetically identical
+  dominatedBy: string | null;       // if non-null, this type is dominated by another
+}
+
+/** A single cargo entry in a trailer's earning profile */
+export interface TrailerCargoEntry {
+  cargoId: string;
+  units: number;         // max units on this specific trailer variant
+  haulValue: number;     // value × bonus × units = max haul value/km
+  spawnWeight: number;   // prob_coef (0.3–2.0)
+}
+
+/** Earning profile for one ownable trailer variant */
+export interface TrailerProfile {
+  trailerId: string;
+  bodyType: string;
+  volume: number;
+  grossWeightLimit: number;
+  length: number;
+  chainType: string;            // single, double, b_double, hct
+  countryValidity: string[];    // empty = all countries
+  cargo: TrailerCargoEntry[];   // sorted by haulValue desc
+  totalHaulValue: number;       // sum of all cargo haulValues
+  totalWeightedValue: number;   // sum of haulValue × spawnWeight
+}
+
+/** A single cargo's contribution to a profile's spawn-weighted value */
+export interface CargoWeight {
+  cargoId: string;
+  value: number;         // value × bonus (per unit per km)
+  spawnWeight: number;   // prob_coef
+  depotCount: number;    // how many depots spawn this cargo (city-level only)
+  weightedValue: number; // value × spawnWeight × depotCount
+}
+
+/** Cargo profile for a depot type (company). Same company = same profile everywhere. */
+export interface DepotProfile {
+  companyId: string;
+  companyName: string;
+  cargo: CargoWeight[];
+  totalWeightedValue: number;
+}
+
+/** Cargo profile for a city = sum of its depot profiles, weighted by depot counts. */
+export interface CityCargoProfile {
+  cityId: string;
+  cityName: string;
+  country: string;
+  depotCount: number;                   // total depot slots
+  companyCount: number;
+  cargo: Map<string, CargoWeight>;      // cargoId → aggregated weight
+  totalWeightedValue: number;
+}
+
+/** A trailer type scored against a specific city */
+export interface TrailerCityScore {
+  trailerId: string;
+  bodyType: string;
+  chainType: string;
+  cityValue: number;    // sum of haulValue × spawnWeight × depotCount for matching cargo
+  cargoMatched: number; // how many of the city's cargo types this trailer covers
 }
 
 export interface CargoPoolEntry {
@@ -426,6 +494,313 @@ export function buildLookups(data: AllData): Lookups {
   };
 }
 
+/**
+ * Build earning profiles for all ownable trailer variants.
+ * Each profile contains the cargo this specific variant can haul,
+ * with units, haul value, and spawn weight per cargo.
+ */
+export function buildTrailerProfiles(data: AllData, lookups: Lookups): TrailerProfile[] {
+  const profiles: TrailerProfile[] = [];
+
+  for (const trailer of data.trailers) {
+    if (!trailer.ownable) continue;
+
+    const cargoIds = lookups.trailerCargoMap.get(trailer.id);
+    if (!cargoIds || cargoIds.size === 0) continue;
+
+    const cargo: TrailerCargoEntry[] = [];
+    let totalHaulValue = 0;
+    let totalWeightedValue = 0;
+
+    for (const cargoId of cargoIds) {
+      const c = lookups.cargoById.get(cargoId);
+      if (!c || c.excluded) continue;
+
+      const units = lookups.cargoTrailerUnits.get(`${cargoId}:${trailer.id}`) ?? 1;
+      const bonus = 1 + (c.fragile ? 0.3 : 0) + (c.high_value ? 0.3 : 0);
+      const haulValue = c.value * bonus * units;
+      const spawnWeight = c.prob_coef ?? 1.0;
+
+      cargo.push({ cargoId, units, haulValue, spawnWeight });
+      totalHaulValue += haulValue;
+      totalWeightedValue += haulValue * spawnWeight;
+    }
+
+    cargo.sort((a, b) => b.haulValue - a.haulValue);
+
+    profiles.push({
+      trailerId: trailer.id,
+      bodyType: trailer.body_type,
+      volume: trailer.volume,
+      grossWeightLimit: trailer.gross_weight_limit,
+      length: trailer.length,
+      chainType: trailer.chain_type,
+      countryValidity: trailer.country_validity ?? [],
+      cargo,
+      totalHaulValue,
+      totalWeightedValue,
+    });
+  }
+
+  profiles.sort((a, b) => b.totalWeightedValue - a.totalWeightedValue);
+  return profiles;
+}
+
+/**
+ * Build cargo profiles for all depot types (companies).
+ * Same company = same cargo profile regardless of city.
+ */
+export function buildDepotProfiles(data: AllData, lookups: Lookups): Map<string, DepotProfile> {
+  const profiles = new Map<string, DepotProfile>();
+
+  for (const company of data.companies) {
+    const cargoIds = lookups.companyCargoMap.get(company.id) || [];
+    const cargo: CargoWeight[] = [];
+    let totalWeightedValue = 0;
+
+    for (const cargoId of cargoIds) {
+      const c = lookups.cargoById.get(cargoId);
+      if (!c || c.excluded) continue;
+      const bonus = 1 + (c.fragile ? 0.3 : 0) + (c.high_value ? 0.3 : 0);
+      const value = c.value * bonus;
+      const spawnWeight = c.prob_coef ?? 1.0;
+      const weightedValue = value * spawnWeight;
+      cargo.push({ cargoId, value, spawnWeight, depotCount: 1, weightedValue });
+      totalWeightedValue += weightedValue;
+    }
+
+    cargo.sort((a, b) => b.weightedValue - a.weightedValue);
+    profiles.set(company.id, {
+      companyId: company.id,
+      companyName: company.name,
+      cargo,
+      totalWeightedValue,
+    });
+  }
+
+  return profiles;
+}
+
+/**
+ * Build cargo profile for a city = sum of its depot profiles.
+ * Each cargo's depotCount accumulates across all companies that export it.
+ */
+export function buildCityCargoProfile(
+  cityId: string, data: AllData, lookups: Lookups,
+): CityCargoProfile | null {
+  const city = lookups.citiesById.get(cityId);
+  if (!city) return null;
+
+  const cityCompanies = lookups.cityCompanyMap.get(cityId) || [];
+  if (cityCompanies.length === 0) return null;
+
+  const cargo = new Map<string, CargoWeight>();
+  let totalDepots = 0;
+  let companyCount = 0;
+
+  for (const { companyId, count } of cityCompanies) {
+    companyCount++;
+    totalDepots += count;
+    const cargoIds = lookups.companyCargoMap.get(companyId) || [];
+
+    for (const cargoId of cargoIds) {
+      const c = lookups.cargoById.get(cargoId);
+      if (!c || c.excluded) continue;
+
+      const existing = cargo.get(cargoId);
+      if (existing) {
+        existing.depotCount += count;
+        existing.weightedValue = existing.value * existing.spawnWeight * existing.depotCount;
+      } else {
+        const bonus = 1 + (c.fragile ? 0.3 : 0) + (c.high_value ? 0.3 : 0);
+        const value = c.value * bonus;
+        const spawnWeight = c.prob_coef ?? 1.0;
+        cargo.set(cargoId, {
+          cargoId, value, spawnWeight, depotCount: count,
+          weightedValue: value * spawnWeight * count,
+        });
+      }
+    }
+  }
+
+  let totalWeightedValue = 0;
+  for (const entry of cargo.values()) totalWeightedValue += entry.weightedValue;
+
+  return {
+    cityId, cityName: city.name, country: city.country,
+    depotCount: totalDepots, companyCount,
+    cargo, totalWeightedValue,
+  };
+}
+
+/**
+ * Score a trailer profile against a city's cargo profile.
+ * Only scores if the trailer is valid in the city's country.
+ * Returns null if trailer can't operate in this country.
+ */
+export function scoreTrailerInCity(
+  trailer: TrailerProfile, cityProfile: CityCargoProfile,
+): TrailerCityScore | null {
+  // Zone check: trailer must be valid in this country
+  if (trailer.countryValidity.length > 0
+    && !trailer.countryValidity.includes(cityProfile.country)) {
+    return null;
+  }
+
+  let cityValue = 0;
+  let cargoMatched = 0;
+
+  for (const entry of trailer.cargo) {
+    const cityEntry = cityProfile.cargo.get(entry.cargoId);
+    if (!cityEntry) continue;
+    // Trailer's haulValue (value×bonus×units) × city's spawn contribution (spawnWeight×depotCount)
+    cityValue += entry.haulValue * cityEntry.spawnWeight * cityEntry.depotCount;
+    cargoMatched++;
+  }
+
+  return {
+    trailerId: trailer.trailerId,
+    bodyType: trailer.bodyType,
+    chainType: trailer.chainType,
+    cityValue,
+    cargoMatched,
+  };
+}
+
+/**
+ * Rank all trailer profiles for a city, sorted by cityValue descending.
+ * Filters by country validity automatically.
+ */
+export function rankTrailersForCity(
+  trailerProfiles: TrailerProfile[], cityProfile: CityCargoProfile,
+): TrailerCityScore[] {
+  const scores: TrailerCityScore[] = [];
+  for (const tp of trailerProfiles) {
+    const score = scoreTrailerInCity(tp, cityProfile);
+    if (score && score.cityValue > 0) scores.push(score);
+  }
+  scores.sort((a, b) => b.cityValue - a.cityValue);
+  return scores;
+}
+
+/**
+ * Compute earning fingerprint for a trailer profile.
+ * Two trailers with the same fingerprint earn identically on all cargo.
+ * Fingerprint includes: bodyType, chainType, country validity, and cargo→units mapping.
+ */
+function earningFingerprint(p: TrailerProfile): string {
+  const cargoKey = p.cargo
+    .map((e) => `${e.cargoId}:${e.units}`)
+    .sort()
+    .join('|');
+  return `${p.bodyType}/${p.chainType}/${p.countryValidity.slice().sort().join(',')}/${cargoKey}`;
+}
+
+/**
+ * Deduplicate trailer profiles into unique earning types.
+ * Step 1: Cosmetic dedup — group trailers with identical earning fingerprints.
+ *         Pick representative: shortest length, then highest GWL, then shortest ID.
+ * Step 2: Domination — type A dominates B if:
+ *         - A can operate everywhere B can (A's countries ⊇ B's, or A is unrestricted)
+ *         - A can haul all of B's cargo with ≥ haulValue per cargo
+ *         - A is strictly better somewhere (more cargo, higher value, or shorter length)
+ *
+ * Typical reduction: 514 ownable → ~134 earning-unique → ~43 non-dominated types.
+ */
+export function deduplicateTrailerProfiles(profiles: TrailerProfile[]): UniqueTrailerType[] {
+  // Step 1: Cosmetic dedup — group by earning fingerprint
+  const groups = new Map<string, TrailerProfile[]>();
+  for (const p of profiles) {
+    const fp = earningFingerprint(p);
+    const group = groups.get(fp);
+    if (group) group.push(p);
+    else groups.set(fp, [p]);
+  }
+
+  const deduped: UniqueTrailerType[] = [];
+  for (const members of groups.values()) {
+    // Pick representative: shortest length → highest GWL → shortest ID
+    members.sort((a, b) =>
+      a.length - b.length
+      || b.grossWeightLimit - a.grossWeightLimit
+      || a.trailerId.length - b.trailerId.length
+      || a.trailerId.localeCompare(b.trailerId)
+    );
+    deduped.push({
+      representative: members[0],
+      variants: members.map((m) => m.trailerId),
+      dominatedBy: null,
+    });
+  }
+
+  // Step 2: Domination check
+  // Build cargo lookup per type for fast comparison
+  const cargoMaps = new Map<UniqueTrailerType, Map<string, number>>();
+  for (const t of deduped) {
+    const m = new Map<string, number>();
+    for (const e of t.representative.cargo) m.set(e.cargoId, e.haulValue);
+    cargoMaps.set(t, m);
+  }
+
+  function countriesSuperset(a: string[], b: string[]): boolean {
+    // A covers B's countries if A is unrestricted (empty) or A ⊇ B
+    if (a.length === 0) return true;
+    if (b.length === 0) return false;
+    const setA = new Set(a);
+    return b.every((c) => setA.has(c));
+  }
+
+  function dominates(a: UniqueTrailerType, b: UniqueTrailerType): boolean {
+    const aRep = a.representative;
+    const bRep = b.representative;
+
+    // A must be valid everywhere B is valid
+    if (!countriesSuperset(aRep.countryValidity, bRep.countryValidity)) return false;
+
+    // A must cover all of B's cargo with ≥ haulValue
+    const aMap = cargoMaps.get(a)!;
+    const bMap = cargoMaps.get(b)!;
+    for (const [cargoId, bVal] of bMap) {
+      const aVal = aMap.get(cargoId);
+      if (aVal === undefined || aVal < bVal - 0.001) return false;
+    }
+
+    // A must be strictly better somewhere
+    if (aMap.size > bMap.size) return true;
+    for (const [cargoId, bVal] of bMap) {
+      if (aMap.get(cargoId)! > bVal + 0.001) return true;
+    }
+    if (aRep.length < bRep.length) return true;
+
+    return false;
+  }
+
+  const dominated = new Set<number>();
+  for (let i = 0; i < deduped.length; i++) {
+    if (dominated.has(i)) continue;
+    for (let j = 0; j < deduped.length; j++) {
+      if (i === j || dominated.has(j)) continue;
+      if (dominates(deduped[i], deduped[j])) {
+        dominated.add(j);
+        deduped[j].dominatedBy = deduped[i].representative.trailerId;
+      }
+    }
+  }
+
+  // Return non-dominated types, sorted by totalWeightedValue descending
+  return deduped
+    .filter((_, i) => !dominated.has(i))
+    .sort((a, b) => b.representative.totalWeightedValue - a.representative.totalWeightedValue);
+}
+
+/**
+ * Convenience: build profiles, dedup, and return unique types in one call.
+ */
+export function getUniqueTrailerTypes(data: AllData, lookups: Lookups): UniqueTrailerType[] {
+  const profiles = buildTrailerProfiles(data, lookups);
+  return deduplicateTrailerProfiles(profiles);
+}
+
 // Get cargo pool for a city (with depot count multiplicity)
 export function getCityCargoPool(cityId: string, data: AllData, lookups: Lookups): CargoPoolEntry[] {
   const pool: CargoPoolEntry[] = [];
@@ -504,46 +879,126 @@ export function formatTrailerSpec(t: Trailer): string {
 }
 
 /**
- * Pick the best trailer from candidates, preferring SCS (base game) over DLC brands.
- * Only picks DLC if it covers cargo that no SCS trailer of the same body type does.
- * Tie-break: max GWL → max volume → max length.
+ * Pick the best trailer by total haul value across all compatible cargo.
+ * Uses cargo_trailer_units which accounts for both volume and weight limits,
+ * so this correctly handles weight-limited body types (tanks, silos) where
+ * higher GWL beats higher volume. Tie-break: shorter length (more maneuverable).
  */
-function pickBestTrailer(candidates: Trailer[], fallback: Trailer, lookups: Lookups): Trailer {
+export function pickBestTrailer(candidates: Trailer[], fallback: Trailer, lookups: Lookups): Trailer {
   if (candidates.length === 0) return fallback;
 
-  const isScs = (t: Trailer) => t.id.startsWith('scs.');
-  const scs = candidates.filter(isScs);
-  const dlc = candidates.filter((t) => !isScs(t));
-
-  // Check if any DLC trailer has unique cargo not covered by SCS
-  const scsCargo = new Set<string>();
-  for (const t of scs) {
+  function totalHaulValue(t: Trailer): number {
     const cargoes = lookups.trailerCargoMap.get(t.id);
-    if (cargoes) for (const c of cargoes) scsCargo.add(c);
+    if (!cargoes) return 0;
+    let total = 0;
+    for (const cargoId of cargoes) {
+      const cargo = lookups.cargoById.get(cargoId);
+      if (!cargo || cargo.excluded) continue;
+      const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
+      const bonus = 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
+      total += cargo.value * bonus * units;
+    }
+    return total;
   }
 
-  let hasDlcUnique = false;
-  if (dlc.length > 0 && scs.length > 0) {
-    for (const t of dlc) {
-      const cargoes = lookups.trailerCargoMap.get(t.id);
-      if (cargoes) {
-        for (const c of cargoes) {
-          if (!scsCargo.has(c)) { hasDlcUnique = true; break; }
-        }
+  let bestTrailer = candidates[0];
+  let bestValue = totalHaulValue(bestTrailer);
+  for (let i = 1; i < candidates.length; i++) {
+    const v = totalHaulValue(candidates[i]);
+    if (v > bestValue || (v === bestValue && candidates[i].length < bestTrailer.length)) {
+      bestTrailer = candidates[i];
+      bestValue = v;
+    }
+  }
+  return bestTrailer;
+}
+
+/**
+ * Compute chassis-based body type merge map from trailer data.
+ * Body types sharing a physical chassis (same trailer ID prefix) merge together.
+ * NO transitive merges — only body types on the exact same chassis model merge.
+ * When a body type appears on multiple chassis families, it joins the largest group.
+ * Returns a map of absorbed_body_type → survivor_body_type.
+ */
+export function getChassisMergeMap(data: AllData, lookups?: Lookups): Map<string, string> {
+  const ownable = getOwnableTrailers(data);
+
+  // Group body types by chassis model (trailer ID minus last segment)
+  // e.g. scs.flatbed.single_3 → {flatbed, container, flatbed_brck}
+  const chassisBodyTypes = new Map<string, Set<string>>();
+  for (const t of ownable) {
+    const parts = t.id.split('.');
+    if (parts.length < 2) continue;
+    const chassis = parts.slice(0, -1).join('.');
+    if (!chassisBodyTypes.has(chassis)) chassisBodyTypes.set(chassis, new Set());
+    chassisBodyTypes.get(chassis)!.add(t.body_type);
+  }
+
+  // Group chassis models by their brand.model prefix (e.g. scs.flatbed, kassbohrer.sll)
+  // Each brand.model family defines a set of interchangeable body types
+  const familyBodyTypes = new Map<string, Set<string>>();
+  for (const [chassis, bodyTypes] of chassisBodyTypes) {
+    if (bodyTypes.size <= 1) continue;
+    const parts = chassis.split('.');
+    const family = parts.slice(0, 2).join('.');
+    if (!familyBodyTypes.has(family)) familyBodyTypes.set(family, new Set());
+    for (const bt of bodyTypes) familyBodyTypes.get(family)!.add(bt);
+  }
+
+  // Count distinct cargo per body type for survivor selection
+  const cargoCounts = new Map<string, number>();
+  for (const t of ownable) {
+    if (cargoCounts.has(t.body_type)) continue;
+    const cargoSet = new Set<string>();
+    if (lookups) {
+      for (const t2 of ownable) {
+        if (t2.body_type !== t.body_type) continue;
+        const cargo = lookups.trailerCargoMap.get(t2.id);
+        if (cargo) for (const c of cargo) cargoSet.add(c);
       }
-      if (hasDlcUnique) break;
+    }
+    cargoCounts.set(t.body_type, cargoSet.size);
+  }
+
+  // When a body type appears in multiple families, assign it to the largest family
+  // (most body types). This prevents bridging unrelated families.
+  const btBestFamily = new Map<string, string>();
+  for (const [family, bodyTypes] of familyBodyTypes) {
+    for (const bt of bodyTypes) {
+      const current = btBestFamily.get(bt);
+      if (!current || bodyTypes.size > (familyBodyTypes.get(current)?.size ?? 0)) {
+        btBestFamily.set(bt, family);
+      }
     }
   }
 
-  // Use SCS pool unless DLC has unique cargo (or no SCS exists)
-  const pool = (scs.length > 0 && !hasDlcUnique) ? scs : candidates;
+  // Rebuild family groups with exclusive assignment
+  const exclusiveFamilies = new Map<string, Set<string>>();
+  for (const [bt, family] of btBestFamily) {
+    if (!exclusiveFamilies.has(family)) exclusiveFamilies.set(family, new Set());
+    exclusiveFamilies.get(family)!.add(bt);
+  }
 
-  return pool.reduce((best, t) => {
-    if (t.gross_weight_limit > best.gross_weight_limit) return t;
-    if (t.gross_weight_limit === best.gross_weight_limit && t.volume > best.volume) return t;
-    if (t.gross_weight_limit === best.gross_weight_limit && t.volume === best.volume && t.length > best.length) return t;
-    return best;
-  }, pool[0]);
+  // For each family, pick survivor and merge others into it.
+  // Prefer the body type matching the chassis family name (e.g. scs.flatbed → flatbed),
+  // then fall back to most cargo.
+  const mergeMap = new Map<string, string>();
+  for (const [family, bodyTypes] of exclusiveFamilies) {
+    if (bodyTypes.size <= 1) continue;
+    const familyBaseName = family.split('.')[1] || '';
+    const members = [...bodyTypes].sort((a, b) => {
+      // Body type matching chassis family name wins
+      if (a === familyBaseName && b !== familyBaseName) return -1;
+      if (b === familyBaseName && a !== familyBaseName) return 1;
+      return (cargoCounts.get(b) || 0) - (cargoCounts.get(a) || 0);
+    });
+    const survivor = members[0];
+    for (let i = 1; i < members.length; i++) {
+      mergeMap.set(members[i], survivor);
+    }
+  }
+
+  return mergeMap;
 }
 
 export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypeProfile[] {
@@ -578,14 +1033,18 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
     );
     const best = pickBestTrailer(standards, trailers[0], lookups);
 
-    // Check doubles/HCT availability
+    // Check doubles/b-doubles/HCT availability from country_validity
     const doublesSet = new Set<string>();
+    const bdoublesSet = new Set<string>();
     const hctSet = new Set<string>();
     for (const t of trailers) {
-      if (t.id.includes('hct') && t.country_validity) {
+      if (!t.country_validity) continue;
+      if (t.id.includes('hct')) {
         for (const c of t.country_validity) hctSet.add(c);
-      } else if ((t.id.includes('double') || t.id.includes('bdouble')) && t.country_validity) {
-        for (const c of t.country_validity) doublesSet.add(c);
+      } else if (t.id.includes('bdouble')) {
+        for (const c of t.country_validity) { bdoublesSet.add(c); doublesSet.add(c); }
+      } else if (t.id.includes('double')) {
+        for (const c of t.country_validity) { doublesSet.add(c); }
       }
     }
 
@@ -599,38 +1058,69 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
       bestTrailerId: best.id,
       bestTrailerName: formatTrailerSpec(best),
       hasDoubles: doublesSet.size > 0,
+      hasBDoubles: bdoublesSet.size > 0,
       hasHCT: hctSet.size > 0,
       doublesCountries: [...doublesSet].sort(),
+      bdoublesCountries: [...bdoublesSet].sort(),
       hctCountries: [...hctSet].sort(),
       dominatedBy: null,
     });
   }
 
-  // Merge container into flatbed: a flatbed with container pins can haul both pools.
-  // The game models flatbed+pins as body_type=container, but physically it's one trailer.
-  const flatbedIdx = profiles.findIndex((p) => p.bodyType === 'flatbed');
-  const containerIdx = profiles.findIndex((p) => p.bodyType === 'container');
-  if (flatbedIdx >= 0 && containerIdx >= 0) {
-    const fb = profiles[flatbedIdx];
-    const ct = profiles[containerIdx];
-    for (const c of ct.cargoIds) fb.cargoIds.add(c);
-    fb.cargoCount = fb.cargoIds.size;
-    fb.displayName = 'Flatbed w/ container pins';
-    if (ct.hasDoubles) {
-      fb.hasDoubles = true;
-      for (const c of ct.doublesCountries) {
-        if (!fb.doublesCountries.includes(c)) fb.doublesCountries.push(c);
+  // Merge body types that share a physical chassis family.
+  // Uses getChassisMergeMap for consistent merge logic across the codebase.
+  const chassisMerges = getChassisMergeMap(data, lookups);
+
+  // Group by survivor
+  const mergeGroups = new Map<string, string[]>();
+  for (const [absorbed, survivor] of chassisMerges) {
+    if (!mergeGroups.has(survivor)) mergeGroups.set(survivor, []);
+    mergeGroups.get(survivor)!.push(absorbed);
+  }
+
+  for (const [survivorBT, absorbedBTs] of mergeGroups) {
+    const survivorIdx = profiles.findIndex((p) => p.bodyType === survivorBT);
+    if (survivorIdx < 0) continue;
+    const survivor = profiles[survivorIdx];
+
+    const toRemoveIndices: number[] = [];
+    for (const absorbedBT of absorbedBTs) {
+      const absIdx = profiles.findIndex((p) => p.bodyType === absorbedBT);
+      if (absIdx < 0) continue;
+      const src = profiles[absIdx];
+
+      for (const c of src.cargoIds) survivor.cargoIds.add(c);
+      if (src.hasDoubles) {
+        survivor.hasDoubles = true;
+        for (const c of src.doublesCountries) {
+          if (!survivor.doublesCountries.includes(c)) survivor.doublesCountries.push(c);
+        }
       }
-      fb.doublesCountries.sort();
-    }
-    if (ct.hasHCT) {
-      fb.hasHCT = true;
-      for (const c of ct.hctCountries) {
-        if (!fb.hctCountries.includes(c)) fb.hctCountries.push(c);
+      if (src.hasBDoubles) {
+        survivor.hasBDoubles = true;
+        for (const c of src.bdoublesCountries) {
+          if (!survivor.bdoublesCountries.includes(c)) survivor.bdoublesCountries.push(c);
+        }
       }
-      fb.hctCountries.sort();
+      if (src.hasHCT) {
+        survivor.hasHCT = true;
+        for (const c of src.hctCountries) {
+          if (!survivor.hctCountries.includes(c)) survivor.hctCountries.push(c);
+        }
+      }
+      toRemoveIndices.push(absIdx);
     }
-    profiles.splice(containerIdx, 1);
+
+    survivor.cargoCount = survivor.cargoIds.size;
+    survivor.doublesCountries.sort();
+    survivor.bdoublesCountries.sort();
+    survivor.hctCountries.sort();
+    survivor.displayName = survivor.displayName
+      + ' (+' + absorbedBTs.map((bt) => bt.replace(/_/g, ' ')).join(', ') + ')';
+
+    // Remove absorbed profiles (reverse order to preserve indices)
+    toRemoveIndices.sort((a, b) => b - a);
+    for (const idx of toRemoveIndices) profiles.splice(idx, 1);
   }
 
   // Detect dominated body types: A is dominated if A's cargo ⊂ B's cargo (strict subset).

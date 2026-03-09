@@ -629,13 +629,14 @@ function computeCargoTrailerMatches(
         if (units < 1) units = 1;
       }
 
-      // Check weight limit
+      // Check weight limit — if cargo doesn't fit, skip entirely
       let weightLimited = false;
       if (t.gross_weight_limit > 0 && c.mass > 0) {
         const maxCargoWeight = t.gross_weight_limit - t.chassis_mass - t.body_mass;
         const weightUnits = Math.floor(maxCargoWeight / c.mass);
+        if (weightUnits <= 0) continue; // cargo too heavy for this trailer
         if (weightUnits < units) {
-          units = Math.max(1, weightUnits);
+          units = weightUnits;
           weightLimited = true;
         }
       }
