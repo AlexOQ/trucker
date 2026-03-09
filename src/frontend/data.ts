@@ -152,6 +152,10 @@ export interface Observations {
   body_type_avg_value: Record<string, number>;
   city_zone_body_type_frequency: Record<string, Record<string, Record<string, number>>>;
   zone_body_type_avg_value: Record<string, Record<string, number>>;
+  company_body_type_frequency?: Record<string, Record<string, number>>;
+  company_zone_body_type_frequency?: Record<string, Record<string, Record<string, number>>>;
+  company_job_count?: Record<string, number>;
+  company_body_type_avg_value?: Record<string, Record<string, number>>;
 }
 
 export interface AllData {
@@ -186,6 +190,7 @@ export interface BodyTypeProfile {
   hasHCT: boolean;
   doublesCountries: string[];
   hctCountries: string[];
+  dominatedBy: string | null; // if non-null, this body type's cargo ⊂ the named body type
 }
 
 export interface CargoPoolEntry {
@@ -597,7 +602,55 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
       hasHCT: hctSet.size > 0,
       doublesCountries: [...doublesSet].sort(),
       hctCountries: [...hctSet].sort(),
+      dominatedBy: null,
     });
+  }
+
+  // Merge container into flatbed: a flatbed with container pins can haul both pools.
+  // The game models flatbed+pins as body_type=container, but physically it's one trailer.
+  const flatbedIdx = profiles.findIndex((p) => p.bodyType === 'flatbed');
+  const containerIdx = profiles.findIndex((p) => p.bodyType === 'container');
+  if (flatbedIdx >= 0 && containerIdx >= 0) {
+    const fb = profiles[flatbedIdx];
+    const ct = profiles[containerIdx];
+    for (const c of ct.cargoIds) fb.cargoIds.add(c);
+    fb.cargoCount = fb.cargoIds.size;
+    fb.displayName = 'Flatbed w/ container pins';
+    if (ct.hasDoubles) {
+      fb.hasDoubles = true;
+      for (const c of ct.doublesCountries) {
+        if (!fb.doublesCountries.includes(c)) fb.doublesCountries.push(c);
+      }
+      fb.doublesCountries.sort();
+    }
+    if (ct.hasHCT) {
+      fb.hasHCT = true;
+      for (const c of ct.hctCountries) {
+        if (!fb.hctCountries.includes(c)) fb.hctCountries.push(c);
+      }
+      fb.hctCountries.sort();
+    }
+    profiles.splice(containerIdx, 1);
+  }
+
+  // Detect dominated body types: A is dominated if A's cargo ⊂ B's cargo (strict subset).
+  // Pick smallest dominator (most specific superset) for the label.
+  for (const a of profiles) {
+    let bestDominator: BodyTypeProfile | null = null;
+    for (const b of profiles) {
+      if (a === b) continue;
+      if (b.cargoCount <= a.cargoCount) continue;
+      let isSubset = true;
+      for (const c of a.cargoIds) {
+        if (!b.cargoIds.has(c)) { isSubset = false; break; }
+      }
+      if (isSubset && (!bestDominator || b.cargoCount < bestDominator.cargoCount)) {
+        bestDominator = b;
+      }
+    }
+    if (bestDominator) {
+      a.dominatedBy = bestDominator.bodyType;
+    }
   }
 
   // Sort by cargo count descending

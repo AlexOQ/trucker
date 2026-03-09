@@ -78,8 +78,8 @@ function renderProfileList(filter = ''): void {
           ${filtered
             .map(
               (p) => `
-              <tr class="clickable" data-body-type="${p.bodyType}" tabindex="0">
-                <td><strong>${p.displayName}</strong></td>
+              <tr class="clickable${p.dominatedBy ? ' dominated-row' : ''}" data-body-type="${p.bodyType}" tabindex="0">
+                <td><strong>${p.displayName}</strong>${p.dominatedBy ? `<span class="dominated-label"> (use ${p.dominatedBy.replace(/_/g, ' ')})</span>` : ''}</td>
                 <td>${p.bestTrailerName}</td>
                 <td class="amount">${p.cargoCount}</td>
                 <td class="amount">${p.hasDoubles ? `<span class="coverage">${p.doublesCountries.length} countries</span>` : '—'}</td>
@@ -185,6 +185,7 @@ function showProfileDetail(bodyType: string): void {
         ${profile.bestTrailerName}
         ${profile.hasDoubles ? ' · Doubles available' : ''}
         ${profile.hasHCT ? ' · HCT available' : ''}
+        ${profile.dominatedBy ? ` · <span class="dominated-label">Redundant (use ${profile.dominatedBy.replace(/_/g, ' ')})</span>` : ''}
       </div>
     </div>
 

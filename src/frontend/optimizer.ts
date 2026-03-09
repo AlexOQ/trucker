@@ -27,6 +27,7 @@ const DRIVER_COUNT = 5;
  * k=20 means a city needs ~20 observed jobs to reach 50% confidence.
  */
 const CONFIDENCE_K = 20;
+const DEPOT_K = 5;
 
 // ============================================
 // Math utilities
@@ -75,6 +76,7 @@ export interface CityBodyTypeStats {
   cargoCount: number;     // distinct cargo types covered
   hasDoubles: boolean;
   hasHCT: boolean;
+  dominatedBy: string | null; // body type whose cargo is a strict superset
 }
 
 /**
@@ -89,8 +91,14 @@ export function getCityBodyTypeStats(
   const obs = data.observations;
 
   let stats: CityBodyTypeStats[];
-  // Use observation data when available
-  if (obs?.city_body_type_frequency?.[cityId] && obs?.body_type_avg_value) {
+  // Use observation data when available — prefer company-level pooling,
+  // fall back to per-city observations, then game-defs theoretical pools
+  const hasCompanyObs = obs?.city_companies?.[cityId]
+    && obs?.company_body_type_frequency
+    && obs?.company_job_count;
+  const hasCityObs = obs?.city_body_type_frequency?.[cityId]
+    && obs?.body_type_avg_value;
+  if (hasCompanyObs || hasCityObs) {
     stats = getStatsFromObservations(cityId, data, lookups);
   } else {
     // Fallback: game-defs theoretical pools
@@ -127,6 +135,7 @@ export function getCityBodyTypeStats(
         cargoCount: profile.cargoCount,
         hasDoubles: profile.hasDoubles,
         hasHCT: profile.hasHCT,
+        dominatedBy: profile.dominatedBy,
       });
     }
   }
@@ -139,14 +148,19 @@ function getZoneBestTrailerName(
   zone: string,
   data: AllData,
 ): string | null {
-  const zonePattern = zone === 'doubles' ? /double|bdouble/
-    : zone === 'hct' ? /hct/
-    : zone === 'long_chassis' ? /long/
-    : null;
-  if (!zonePattern) return null;
+  // Map zone name back to chain_types
+  const zoneChainTypes: string[] =
+    zone === 'doubles' ? ['double', 'b_double']
+    : zone === 'hct' ? ['hct']
+    : [];
+  if (zoneChainTypes.length === 0) return null;
 
+  // For flatbed, also include container body_type trailers (flatbed w/ container pins)
+  const matchBodyType = bodyType === 'flatbed'
+    ? (bt: string) => bt === 'flatbed' || bt === 'container'
+    : (bt: string) => bt === bodyType;
   const candidates = data.trailers.filter(
-    (t) => t.ownable && t.body_type === bodyType && zonePattern.test(t.id)
+    (t) => t.ownable && matchBodyType(t.body_type) && zoneChainTypes.includes(t.chain_type)
   );
   if (candidates.length === 0) return null;
 
@@ -162,42 +176,180 @@ function getZoneBestTrailerName(
   return formatTrailerSpec(pool[0]);
 }
 
+/**
+ * Fold dominated body types into their dominators.
+ * A dominated body type's cargo is a strict subset of its dominator,
+ * so the dominator's trailer can serve all dominated jobs.
+ * Also folds container into flatbed (flatbed w/ container pins covers both pools).
+ */
+function mergeDominatedBodyTypes(
+  btFreq: Record<string, number>,
+  avgValues: Record<string, number>,
+  profiles: BodyTypeProfile[]
+): { freq: Record<string, number>; avg: Record<string, number> } {
+  const freq = { ...btFreq };
+  const avg = { ...avgValues };
+
+  // Container → flatbed (physical merge: flatbed chassis with container pins)
+  if (freq['container'] && freq['container'] > 0) {
+    const cCount = freq['container'];
+    const fCount = freq['flatbed'] ?? 0;
+    const cVal = avg['container'] ?? 1.0;
+    const fVal = avg['flatbed'] ?? cVal;
+    const total = fCount + cCount;
+    avg['flatbed'] = (fVal * fCount + cVal * cCount) / total;
+    freq['flatbed'] = total;
+    delete freq['container'];
+    delete avg['container'];
+  }
+
+  // Dominated body types → their dominator (e.g. dryvan → curtainside)
+  for (const profile of profiles) {
+    if (!profile.dominatedBy) continue;
+    const src = profile.bodyType;
+    const dst = profile.dominatedBy;
+    const srcCount = freq[src] ?? 0;
+    if (srcCount === 0) continue;
+    const dstCount = freq[dst] ?? 0;
+    const srcVal = avg[src] ?? 1.0;
+    const dstVal = avg[dst] ?? srcVal;
+    const total = dstCount + srcCount;
+    avg[dst] = (dstVal * dstCount + srcVal * srcCount) / total;
+    freq[dst] = total;
+    delete freq[src];
+    delete avg[src];
+  }
+
+  return { freq, avg };
+}
+
+/**
+ * Synthesize a city's body type distribution from its companies' global observations.
+ *
+ * A city's job pool is determined by its depots. If Istanbul has ns_oil (1 depot)
+ * and fle (1 depot), the probability of seeing body type B equals:
+ *   Σ(company c in city) depotCount(c) × companyRate(c, B) / Σ depotCount(c) × companyTotalRate(c)
+ *
+ * This pools all observations of each company across ALL cities, giving much larger
+ * sample sizes than the ~49 jobs observed in Istanbul alone.
+ *
+ * Falls back to raw per-city observations when company-level data is unavailable.
+ */
 function getStatsFromObservations(
   cityId: string,
   data: AllData,
   lookups: Lookups
 ): CityBodyTypeStats[] {
   const obs = data.observations!;
-  const totalJobs = obs.city_job_count[cityId] || 0;
-  if (totalJobs === 0) return [];
-
-  // Prefer zone-level frequency; fall back to flat frequency wrapped in 'standard'
-  const zoneFreq = obs.city_zone_body_type_frequency?.[cityId];
-  const zones: Record<string, Record<string, number>> =
-    zoneFreq && Object.keys(zoneFreq).length > 0
-      ? zoneFreq
-      : { standard: obs.city_body_type_frequency[cityId] || {} };
 
   const profiles = getBodyTypeProfiles(data, lookups);
   const profileByBT = new Map<string, BodyTypeProfile>();
   for (const p of profiles) profileByBT.set(p.bodyType, p);
 
+  // Filter zones by city's country — doubles/HCT only available in certain countries
+  const city = lookups.citiesById.get(cityId);
+  const country = city?.country ?? '';
+  const validZones = getValidZonesForCountry(country, data);
+
+  // Synthesize city stats from company-level observations when available
+  const cityComps = obs.city_companies?.[cityId];
+  const hasCompanyData = cityComps
+    && obs.company_body_type_frequency
+    && obs.company_job_count;
+
+  let zones: Record<string, Record<string, number>>;
+  let avgValueSource: Record<string, Record<string, number>>;
+  let totalPool: number;
+
+  if (hasCompanyData) {
+    // Build city pool from companies: weight each company's body type distribution
+    // by its depot count in this city. Only include zones valid for this country.
+    const zoneBTFreq: Record<string, Record<string, number>> = {};
+    const zoneBTValueAcc: Record<string, Record<string, { total: number; count: number }>> = {};
+    totalPool = 0;
+
+    for (const [comp, depots] of Object.entries(cityComps!)) {
+      const compJobs = obs.company_job_count![comp];
+      if (!compJobs) continue;
+
+      // Prefer zone-level; fall back to flat frequency
+      const compZoneFreq = obs.company_zone_body_type_frequency?.[comp];
+      const compZones: Record<string, Record<string, number>> =
+        compZoneFreq && Object.keys(compZoneFreq).length > 0
+          ? compZoneFreq
+          : { standard: obs.company_body_type_frequency![comp] || {} };
+      const compAvgValues = obs.company_body_type_avg_value?.[comp] || {};
+
+      for (const [zone, btFreq] of Object.entries(compZones)) {
+        // Skip zones not available in this city's country
+        if (!validZones.has(zone)) continue;
+
+        if (!zoneBTFreq[zone]) zoneBTFreq[zone] = {};
+        if (!zoneBTValueAcc[zone]) zoneBTValueAcc[zone] = {};
+
+        for (const [bt, count] of Object.entries(btFreq)) {
+          // Weight by depot count: company with 2 depots contributes 2× the jobs
+          const weighted = count * depots;
+          zoneBTFreq[zone][bt] = (zoneBTFreq[zone][bt] || 0) + weighted;
+          totalPool += weighted;
+
+          // Weighted value accumulation for per-company avg values
+          const val = compAvgValues[bt] ?? obs.body_type_avg_value?.[bt] ?? 1.0;
+          if (!zoneBTValueAcc[zone][bt]) zoneBTValueAcc[zone][bt] = { total: 0, count: 0 };
+          zoneBTValueAcc[zone][bt].total += val * weighted;
+          zoneBTValueAcc[zone][bt].count += weighted;
+        }
+      }
+    }
+
+    zones = zoneBTFreq;
+    // Convert value accumulators to averages
+    avgValueSource = {};
+    for (const [zone, bts] of Object.entries(zoneBTValueAcc)) {
+      avgValueSource[zone] = {};
+      for (const [bt, acc] of Object.entries(bts)) {
+        avgValueSource[zone][bt] = acc.count > 0 ? acc.total / acc.count : 1.0;
+      }
+    }
+  } else {
+    // Fallback: raw per-city observations — also filter by valid zones
+    totalPool = 0;
+
+    const zoneFreq = obs.city_zone_body_type_frequency?.[cityId];
+    const rawZones = zoneFreq && Object.keys(zoneFreq).length > 0
+      ? zoneFreq
+      : { standard: obs.city_body_type_frequency[cityId] || {} };
+    zones = {};
+    avgValueSource = {};
+    for (const [zone, btFreq] of Object.entries(rawZones)) {
+      if (!validZones.has(zone)) continue;
+      zones[zone] = btFreq;
+      avgValueSource[zone] = obs.zone_body_type_avg_value?.[zone] || {};
+      for (const count of Object.values(btFreq)) totalPool += count;
+    }
+  }
+
+  if (totalPool === 0) return [];
+
   const stats: CityBodyTypeStats[] = [];
 
-  for (const [zone, btFreq] of Object.entries(zones)) {
-    const zoneAvgValues = obs.zone_body_type_avg_value?.[zone] || {};
+  for (const [zone, rawBtFreq] of Object.entries(zones)) {
+    const rawAvgValues = avgValueSource[zone] || {};
     const isStandard = zone === 'standard';
 
+    // Fold dominated body types into their dominators (dryvan→curtainside, container→flatbed)
+    const { freq: btFreq, avg: zoneAvgValues } = mergeDominatedBodyTypes(rawBtFreq, rawAvgValues, profiles);
+
     for (const [bt, count] of Object.entries(btFreq)) {
-      const avgValue = zoneAvgValues[bt] ?? obs.body_type_avg_value?.[bt] ?? 1.0;
       const profile = profileByBT.get(bt);
-      const baseName = bt.charAt(0).toUpperCase() + bt.slice(1).replace(/_/g, ' ');
+      if (!profile) continue;
+      const avgValue = zoneAvgValues[bt] ?? obs.body_type_avg_value?.[bt] ?? 1.0;
 
       const compositeKey = isStandard ? bt : `${bt}:${zone}`;
       const zoneSuffix = isStandard ? '' : ` (${zone.charAt(0).toUpperCase() + zone.slice(1)})`;
-      const displayName = (profile?.displayName ?? baseName) + zoneSuffix;
+      const displayName = profile.displayName + zoneSuffix;
 
-      let bestTrailerName = profile?.bestTrailerName ?? baseName;
+      let bestTrailerName = profile.bestTrailerName;
       if (!isStandard) {
         bestTrailerName = getZoneBestTrailerName(bt, zone, data) ?? bestTrailerName;
       }
@@ -207,13 +359,14 @@ function getStatsFromObservations(
         zone,
         displayName,
         bestTrailerName,
-        probability: count / totalJobs,
+        probability: count / totalPool,
         avgValue,
-        pool: count,
-        totalPool: totalJobs,
-        cargoCount: profile?.cargoCount ?? 0,
-        hasDoubles: profile?.hasDoubles ?? false,
-        hasHCT: profile?.hasHCT ?? false,
+        pool: Math.round(count),
+        totalPool: Math.round(totalPool),
+        cargoCount: profile.cargoCount,
+        hasDoubles: profile.hasDoubles,
+        hasHCT: profile.hasHCT,
+        dominatedBy: profile.dominatedBy,
       });
     }
   }
@@ -234,11 +387,18 @@ function getStatsFromGameDefs(
   const trailers = getTrailersForCountry(getOwnableTrailers(data), country);
   const profiles = getBodyTypeProfiles(data, lookups);
 
+  // Build remap: dominated body types fold into their dominator, container folds into flatbed
+  const btRemap = new Map<string, string>();
+  btRemap.set('container', 'flatbed');
+  for (const p of profiles) {
+    if (p.dominatedBy) btRemap.set(p.bodyType, p.dominatedBy);
+  }
+
   const bodyCargoSets = new Map<string, Set<string>>();
   for (const trailer of trailers) {
     const cargoes = lookups.trailerCargoMap.get(trailer.id);
     if (!cargoes) continue;
-    const bt = trailer.body_type;
+    const bt = btRemap.get(trailer.body_type) ?? trailer.body_type;
     if (!bodyCargoSets.has(bt)) bodyCargoSets.set(bt, new Set());
     const set = bodyCargoSets.get(bt)!;
     for (const c of cargoes) set.add(c);
@@ -285,11 +445,34 @@ function getStatsFromGameDefs(
       cargoCount,
       hasDoubles: profile?.hasDoubles ?? false,
       hasHCT: profile?.hasHCT ?? false,
+      dominatedBy: profile?.dominatedBy ?? null,
     });
   }
 
   stats.sort((a, b) => (b.probability * b.avgValue) - (a.probability * a.avgValue));
   return stats;
+}
+
+/** chain_type → zone name. Matches CHAIN_TYPE_ZONE in parse-saves.cjs. */
+const CHAIN_TYPE_ZONE: Record<string, string> = {
+  single: 'standard',
+  double: 'doubles',
+  b_double: 'doubles',
+  hct: 'hct',
+};
+
+/** Which zone tiers are available in this country? Derived from trailer chain_type + country_validity. */
+function getValidZonesForCountry(country: string, data: AllData): Set<string> {
+  const zones = new Set(['standard']);
+  if (!country) return zones;
+  for (const t of data.trailers) {
+    if (!t.ownable) continue;
+    if (!t.country_validity || t.country_validity.length === 0) continue;
+    if (!t.country_validity.includes(country)) continue;
+    const zone = CHAIN_TYPE_ZONE[t.chain_type];
+    if (zone) zones.add(zone);
+  }
+  return zones;
 }
 
 function getTrailersForCountry(trailers: Trailer[], country: string): Trailer[] {
@@ -405,6 +588,7 @@ export function expectedIncome(
 
 /**
  * Greedy allocation: fill N trailer slots by picking highest marginal value each round.
+ * Dominated body types are excluded — their superset covers more cargo.
  */
 export function greedyAllocation(
   stats: CityBodyTypeStats[],
@@ -412,10 +596,11 @@ export function greedyAllocation(
   driverCount: number,
   existingTrailers: string[] = []
 ): string[] {
+  const nonDominated = stats.filter((s) => !s.dominatedBy);
   const result = [...existingTrailers];
 
   for (let slot = result.length; slot < maxSlots; slot++) {
-    const options = getMarginalOptions(stats, result, driverCount);
+    const options = getMarginalOptions(nonDominated, result, driverCount);
     if (options.length === 0 || options[0].marginalValue <= 0) break;
     result.push(options[0].bodyType);
   }
@@ -440,6 +625,41 @@ export interface CityRanking {
 }
 
 /**
+ * Effective observation count for a city.
+ * When company-level data exists, sums each company's global job count
+ * (a city is just a set of its depots — knowing the company = knowing the city).
+ * Falls back to raw per-city observation count.
+ */
+export function getEffectiveObservations(cityId: string, data: AllData): number {
+  const obs = data.observations;
+  if (!obs) return 0;
+
+  const cityComps = obs.city_companies?.[cityId];
+  if (cityComps && obs.company_job_count) {
+    let total = 0;
+    for (const comp of Object.keys(cityComps)) {
+      total += obs.company_job_count[comp] ?? 0;
+    }
+    return total;
+  }
+
+  return obs.city_job_count?.[cityId] ?? 0;
+}
+
+/**
+ * Blended confidence: geometric mean of evidence confidence and depot diversity.
+ * - Evidence: how well we know the companies (pooled observations)
+ * - Depot diversity: how many depots feed the city's job market
+ * A 2-depot city with well-known companies can be top-10 but needs ~5 depots to compete for #1.
+ */
+export function getCityConfidence(cityId: string, depotCount: number, data: AllData): number {
+  const pooledObs = getEffectiveObservations(cityId, data);
+  const evidenceConf = pooledObs / (pooledObs + CONFIDENCE_K);
+  const depotConf = depotCount / (depotCount + DEPOT_K);
+  return Math.sqrt(evidenceConf * depotConf);
+}
+
+/**
  * Rank all cities by E[income/cycle] with optimal 10-trailer allocation and 5 drivers.
  */
 export function calculateCityRankings(
@@ -459,8 +679,8 @@ export function calculateCityRankings(
     let depotCount = 0;
     for (const { count } of cityCompanies) depotCount += count;
 
-    const observedJobs = data.observations?.city_job_count?.[city.id] ?? 0;
-    const confidence = observedJobs / (observedJobs + CONFIDENCE_K);
+    const observedJobs = getEffectiveObservations(city.id, data);
+    const confidence = getCityConfidence(city.id, depotCount, data);
 
     rankings.push({
       id: city.id,

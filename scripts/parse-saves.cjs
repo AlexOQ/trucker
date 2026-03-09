@@ -24,82 +24,50 @@ const DATA_DIR = path.join(__dirname, '..', 'public', 'data');
 const OBS_PATH = path.join(DATA_DIR, 'observations.json');
 const MAX_SAVES = 20;
 
-// Trailer variant → body type mapping.
-// Variants are the short IDs from save files (trailer_variant field).
-// Body types are what the player actually buys.
-// Suffixes like _a, _s, _m are brand/size subvariants of the same body type.
-// Suffixes _2 = double, _b2 = b-double, _hct = HCT (high-capacity transport).
-const VARIANT_BODY_TYPE = {
-  // Curtainside
-  scs_curt:      'curtainside',
-  scs_curt_a:    'curtainside',
-  scs_curt_s:    'curtainside',
-  scs_curt_2:    'curtainside',   // double
-  scs_curt_b2:   'curtainside',   // b-double
-  // Dryvan
-  scs_dry:       'dryvan',
-  scs_dry_a:     'dryvan',
-  scs_dry_m:     'dryvan',
-  scs_dry_ms:    'dryvan',
-  scs_dry_s:     'dryvan',
-  scs_dry_2:     'dryvan',        // double
-  scs_dry_b2:    'dryvan',        // b-double
-  // Refrigerated
-  scs_ref:       'refrigerated',
-  scs_ref_a:     'refrigerated',
-  scs_ref_s:     'refrigerated',
-  scs_ref_2:     'refrigerated',  // double
-  scs_ref_b2:    'refrigerated',  // b-double
-  // Insulated
-  scs_ins:       'insulated',
-  scs_ins_a:     'insulated',
-  scs_ins_s:     'insulated',
-  scs_ins_2:     'insulated',     // double
-  scs_ins_b2:    'insulated',     // b-double
-  // Other body types (standard only — no double/HCT variants exist)
-  scs_flat_b:    'flatbed',
-  scs_lowbed_3:  'lowbed',
-  scs_lowbed_4:  'lowbed',
-  scs_lowbed41:  'lowbed',
-  scs_lowlow2e:  'lowboy',
-  scs_lowlow4e:  'lowboy',
-  scs_lowlowd2:  'lowboy',
-  scs_lowlowd4:  'lowboy',
-  scs_gosck20:   'container',
-  scs_gosck220:  'container',
-  scs_gosck40:   'container',
-  scs_dumper:    'dumper',
-  scs_silo:      'silo',
-  scs_log:       'log',
-  scs_gastank:   'gastank',
-  scs_fueltank:  'fueltank',
-  scs_chemt:     'chemtank',
-  scs_fodt:      'foodtank',
-  scs_brick_r:   'brick',
-  scs_livestk:   'livestock',
-  car_trans:     'car_transporter',
-  truck_trans:   'truck_transporter',
-  van_trans:     'van_transporter',
-  panel_trans:   'panel_transporter',
-  gls_trailer:   'glass',
+// chain_type (from game-defs trailers) → zone tier name.
+// Standard trailers are global, doubles/b-doubles share a zone, HCT is separate.
+const CHAIN_TYPE_ZONE = {
+  single:   'standard',
+  double:   'doubles',
+  b_double: 'doubles',
+  hct:      'hct',
 };
 
-// Trailer variant → zone tier mapping.
-// Zone determines which countries the job can route between.
-// Standard (no suffix) = global, _2 = doubles zone, _b2 = b-doubles zone (same countries),
-// _hct = HCT zone (Finland + Sweden only), _ch = long chassis (Finland + Germany + Russia).
-const VARIANT_ZONE = {
-  scs_curt_2:   'doubles',
-  scs_curt_b2:  'doubles',
-  scs_dry_2:    'doubles',
-  scs_dry_b2:   'doubles',
-  scs_ref_2:    'doubles',
-  scs_ref_b2:   'doubles',
-  scs_ins_2:    'doubles',
-  scs_ins_b2:   'doubles',
-  // HCT variants will be added when observed in saves
-  // Long chassis variants will be added when observed in saves
-};
+/**
+ * Build variant → { body_type, zone } lookup dynamically from game-defs.
+ * Each job in a save has both trailer_variant (short ID) and trailer_definition
+ * (full path like "trailer_def.scs.box.single_3.curtain"). The trailer_definition
+ * maps to game-defs trailer IDs, which have body_type and chain_type.
+ * This eliminates hardcoded variant maps — new DLC trailers just work.
+ */
+function buildVariantLookup(gameDefs) {
+  // Populated per-save from trailer_variant → trailer_definition pairs.
+  // Returns { resolve(variant, trailerDef), cache } where cache is the Map.
+  const cache = new Map();
+
+  function resolve(variant, trailerDef) {
+    if (cache.has(variant)) return cache.get(variant);
+
+    if (gameDefs && trailerDef) {
+      const defId = trailerDef.replace('trailer_def.', '');
+      const trailer = gameDefs.trailers[defId];
+      if (trailer) {
+        const result = {
+          bodyType: trailer.body_type,
+          zone: CHAIN_TYPE_ZONE[trailer.chain_type] || 'standard',
+        };
+        cache.set(variant, result);
+        return result;
+      }
+    }
+
+    // No match in game-defs (vehicle transports, unknown DLC trailers)
+    cache.set(variant, null);
+    return null;
+  }
+
+  return { resolve, cache };
+}
 
 function decryptSave(filePath) {
   const result = SIIDecryptor.decrypt(filePath);
@@ -164,15 +132,6 @@ function median(arr) {
   return sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 }
 
-function inc(obj, ...keys) {
-  let cur = obj;
-  for (let i = 0; i < keys.length - 1; i++) {
-    if (!cur[keys[i]]) cur[keys[i]] = i === keys.length - 2 ? 0 : {};
-    cur = cur[keys[i]];
-  }
-  // This is for the "leaf increment" pattern — but we need a different approach
-}
-
 function loadGameDefs() {
   const defsPath = path.join(DATA_DIR, 'game-defs.json');
   if (!fs.existsSync(defsPath)) return null;
@@ -224,7 +183,10 @@ function main() {
   }
 
   const gameDefs = loadGameDefs();
-  if (!gameDefs) console.warn('  WARNING: game-defs.json not found, cargo values will be 1.0');
+  if (!gameDefs) console.warn('  WARNING: game-defs.json not found, cargo values will be 1.0 and trailer types unresolved');
+
+  const variantLookup = buildVariantLookup(gameDefs);
+  const resolveVariant = variantLookup.resolve;
 
   console.log(`Parsing ${filesToParse.length} save file(s) (window: last ${MAX_SAVES})`);
 
@@ -240,6 +202,10 @@ function main() {
   const bodyTypeValueAcc = {};     // bodyType -> { totalValue, count }
   const cityZoneBodyTypeFreq = {}; // city -> zone -> bodyType -> count
   const zoneBodyTypeValueAcc = {}; // zone -> bodyType -> { totalValue, count }
+  const compBodyTypeFreq = {};     // company -> bodyType -> count
+  const compZoneBodyTypeFreq = {}; // company -> zone -> bodyType -> count
+  const compJobCount = {};         // company -> total job count
+  const compBodyTypeValueAcc = {}; // company -> bodyType -> { totalValue, count }
   const unknownVariants = new Set();
   let totalJobs = 0;
 
@@ -273,9 +239,11 @@ function main() {
         const gid = job.cargo_game_id;
         const city = job.source_city;
         const variant = job.trailer_variant;
-        const bodyType = VARIANT_BODY_TYPE[variant];
+        const resolved = resolveVariant(variant, job.trailer_def);
+        const bodyType = resolved?.bodyType ?? null;
+        const zone = resolved?.zone ?? 'standard';
 
-        if (!bodyType) unknownVariants.add(variant);
+        if (!resolved) unknownVariants.add(variant);
 
         // Units per cargo + trailer pair
         if (!unitsSamples[gid]) unitsSamples[gid] = {};
@@ -305,21 +273,36 @@ function main() {
           if (!cityBodyTypeFreq[city]) cityBodyTypeFreq[city] = {};
           cityBodyTypeFreq[city][bodyType] = (cityBodyTypeFreq[city][bodyType] || 0) + 1;
 
-          const value = getCargoValue(gameDefs, gid);
+          const valuePerUnit = getCargoValue(gameDefs, gid);
+          const jobValue = valuePerUnit * (job.units_count || 1);
           if (!bodyTypeValueAcc[bodyType]) bodyTypeValueAcc[bodyType] = { totalValue: 0, count: 0 };
-          bodyTypeValueAcc[bodyType].totalValue += value;
+          bodyTypeValueAcc[bodyType].totalValue += jobValue;
           bodyTypeValueAcc[bodyType].count += 1;
 
-          // Zone-aware tracking: "standard" for global variants, zone name for restricted
-          const zone = VARIANT_ZONE[variant] || 'standard';
+          // Zone-aware tracking
           if (!cityZoneBodyTypeFreq[city]) cityZoneBodyTypeFreq[city] = {};
           if (!cityZoneBodyTypeFreq[city][zone]) cityZoneBodyTypeFreq[city][zone] = {};
           cityZoneBodyTypeFreq[city][zone][bodyType] = (cityZoneBodyTypeFreq[city][zone][bodyType] || 0) + 1;
 
           if (!zoneBodyTypeValueAcc[zone]) zoneBodyTypeValueAcc[zone] = {};
           if (!zoneBodyTypeValueAcc[zone][bodyType]) zoneBodyTypeValueAcc[zone][bodyType] = { totalValue: 0, count: 0 };
-          zoneBodyTypeValueAcc[zone][bodyType].totalValue += value;
+          zoneBodyTypeValueAcc[zone][bodyType].totalValue += jobValue;
           zoneBodyTypeValueAcc[zone][bodyType].count += 1;
+
+          // Per-company body type frequency + zone + value
+          const comp = job.source_company;
+          compJobCount[comp] = (compJobCount[comp] || 0) + 1;
+          if (!compBodyTypeFreq[comp]) compBodyTypeFreq[comp] = {};
+          compBodyTypeFreq[comp][bodyType] = (compBodyTypeFreq[comp][bodyType] || 0) + 1;
+
+          if (!compZoneBodyTypeFreq[comp]) compZoneBodyTypeFreq[comp] = {};
+          if (!compZoneBodyTypeFreq[comp][zone]) compZoneBodyTypeFreq[comp][zone] = {};
+          compZoneBodyTypeFreq[comp][zone][bodyType] = (compZoneBodyTypeFreq[comp][zone][bodyType] || 0) + 1;
+
+          if (!compBodyTypeValueAcc[comp]) compBodyTypeValueAcc[comp] = {};
+          if (!compBodyTypeValueAcc[comp][bodyType]) compBodyTypeValueAcc[comp][bodyType] = { totalValue: 0, count: 0 };
+          compBodyTypeValueAcc[comp][bodyType].totalValue += jobValue;
+          compBodyTypeValueAcc[comp][bodyType].count += 1;
         }
       }
 
@@ -335,7 +318,7 @@ function main() {
   }
 
   if (unknownVariants.size > 0) {
-    console.warn(`\n  WARNING: Unknown trailer variants (add to VARIANT_BODY_TYPE):`);
+    console.warn(`\n  WARNING: Unknown trailer variants (not in game-defs.json):`);
     for (const v of [...unknownVariants].sort()) console.warn(`    ${v}`);
   }
 
@@ -392,15 +375,30 @@ function main() {
     }
   }
 
+  // Per-company body type average values
+  const compBodyTypeAvgValue = {};
+  for (const [comp, bodyTypes] of Object.entries(compBodyTypeValueAcc)) {
+    compBodyTypeAvgValue[comp] = {};
+    for (const [bt, acc] of Object.entries(bodyTypes)) {
+      compBodyTypeAvgValue[comp][bt] = Math.round(acc.totalValue / acc.count * 100) / 100;
+    }
+  }
+
   // Entity lists
   const allCities = Object.keys(cityCompaniesAgg).sort();
   const allCompanies = [...new Set(Object.values(cityCompaniesAgg).flatMap(c => Object.keys(c)))].sort();
   const allCargo = Object.keys(cargoFreq).sort();
   const allTrailers = [...new Set(Object.values(cargoTrailerUnits).flatMap(t => Object.keys(t)))].sort();
 
+  // Build variant_body_type from resolved cache for observations output
+  const variantBodyType = {};
+  for (const [variant, info] of variantLookup.cache) {
+    if (info) variantBodyType[variant] = info.bodyType;
+  }
+
   const output = {
     meta,
-    variant_body_type: VARIANT_BODY_TYPE,
+    variant_body_type: variantBodyType,
     cities: allCities,
     companies: allCompanies,
     cargo: allCargo,
@@ -419,6 +417,10 @@ function main() {
     body_type_avg_value: bodyTypeAvgValue,
     city_zone_body_type_frequency: cityZoneBodyTypeFreq,
     zone_body_type_avg_value: zoneBodyTypeAvgValue,
+    company_body_type_frequency: compBodyTypeFreq,
+    company_zone_body_type_frequency: compZoneBodyTypeFreq,
+    company_job_count: compJobCount,
+    company_body_type_avg_value: compBodyTypeAvgValue,
   };
 
   fs.writeFileSync(OBS_PATH, JSON.stringify(output, null, 2) + '\n');
@@ -431,7 +433,7 @@ function main() {
   console.log(`  Companies: ${allCompanies.length}`);
   console.log(`  Cargo types: ${allCargo.length}`);
   console.log(`  Trailer variants: ${allTrailers.length}`);
-  console.log(`  Body types: ${new Set(Object.values(VARIANT_BODY_TYPE)).size}`);
+  console.log(`  Body types: ${new Set(Object.values(variantBodyType)).size}`);
 
   // Per-city job distribution
   const jobCounts = Object.values(cityJobCount).sort((a, b) => b - a);

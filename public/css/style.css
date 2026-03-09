@@ -695,6 +695,14 @@ tr.clickable:focus td:first-child {
 tr.owned-row td {
   background: rgba(243, 156, 18, 0.06);
 }
+tr.dominated-row td {
+  opacity: 0.5;
+}
+.dominated-label {
+  font-size: 0.75rem;
+  color: #e67e22;
+  margin-left: 0.5em;
+}
 .fleet-actions {
   white-space: nowrap;
   text-align: right;

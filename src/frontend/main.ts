@@ -18,7 +18,7 @@ import {
   addCityTrailer,
   removeCityTrailer,
 } from './storage.js';
-import { getMarginalOptions } from './optimizer.js';
+import { getMarginalOptions, getEffectiveObservations, getCityConfidence } from './optimizer.js';
 import type { AllData, Lookups } from './data.js';
 
 const DRIVER_COUNT = 5;
@@ -335,12 +335,12 @@ function renderCity(cityId: string) {
   }
 
   const cityRank = getCityRank(cityId);
-  const observedJobs = data?.observations?.city_job_count?.[cityId] ?? 0;
-  const confidence = observedJobs / (observedJobs + 20);
-
   const cityCompanies = lookups!.cityCompanyMap.get(cityId) || [];
   let depotCount = 0;
   for (const { count } of cityCompanies) depotCount += count;
+
+  const observedJobs = getEffectiveObservations(cityId, data!);
+  const confidence = getCityConfidence(cityId, depotCount, data!);
 
   const confidencePct = (confidence * 100).toFixed(0);
   const confidenceClass = confidence >= 0.5 ? 'high' : confidence >= 0.25 ? 'med' : 'low';
@@ -419,10 +419,16 @@ function renderCity(cityId: string) {
             const owned = ownedCounts.get(s.bodyType) || 0;
             const marginal = marginalByBT.get(s.bodyType);
             const hasMore = marginal !== undefined && marginal > 0;
+            const dominated = s.dominatedBy;
+            const domLabel = dominated ? ` (use ${formatBodyTypeKey(dominated)})` : '';
+            const rowClass = [
+              owned > 0 ? 'owned-row' : '',
+              dominated ? 'dominated-row' : '',
+            ].filter(Boolean).join(' ');
             return `
-            <tr class="${owned > 0 ? 'owned-row' : ''}">
+            <tr class="${rowClass}">
               <td>
-                <div>${s.displayName}</div>
+                <div>${s.displayName}${dominated ? `<span class="dominated-label">${domLabel}</span>` : ''}</div>
                 <div class="trailer-spec">${s.bestTrailerName}</div>
               </td>
               <td class="amount">${s.pool}</td>

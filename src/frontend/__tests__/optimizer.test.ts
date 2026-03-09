@@ -139,6 +139,13 @@ describe('optimizer', () => {
 
     it('produces zone-qualified entries from zone frequency data', () => {
       const data = createMockData();
+      // Add a doubles trailer valid in Germany so the zone isn't filtered
+      data.trailers.push({
+        id: 'box_double', name: 'Box Double', body_type: 'dryvan',
+        volume: 90, chassis_mass: 0, body_mass: 0, gross_weight_limit: 0,
+        length: 22, chain_type: 'double', ownable: true,
+        country_validity: ['Germany'],
+      });
       data.observations!.city_zone_body_type_frequency = {
         berlin: {
           standard: { dryvan: 10, flatbed: 5 },
@@ -346,6 +353,41 @@ describe('optimizer', () => {
         expect(rank.confidence).toBeLessThanOrEqual(1);
         expect(rank.optimalTrailers.length).toBeGreaterThan(0);
       }
+    });
+
+    it('greedy allocation excludes dominated body types', () => {
+      const data = createMockData();
+      // Add a curtainside trailer that can haul everything dryvan can plus more
+      data.trailers.push({
+        id: 'curtainside_trailer', name: 'Curtainside', body_type: 'curtainside',
+        volume: 90, chassis_mass: 0, body_mass: 0, gross_weight_limit: 0,
+        length: 13.6, chain_type: 'single', ownable: true,
+      });
+      // Make curtainside haul all dryvan cargo plus an extra
+      data.observations!.cargo_trailers!.electronics.push('curtainside_trailer');
+      data.observations!.cargo_trailers!.furniture.push('curtainside_trailer');
+      data.observations!.cargo_trailers!.excluded_cargo.push('curtainside_trailer');
+      // dryvan (box_trailer) hauls: electronics, furniture, excluded_cargo
+      // curtainside hauls: electronics, furniture, excluded_cargo + machinery
+      data.observations!.cargo_trailers!.machinery.push('curtainside_trailer');
+
+      data.observations!.city_body_type_frequency = {
+        berlin: { dryvan: 10, curtainside: 12, flatbed: 5 },
+      };
+      data.observations!.body_type_avg_value = { dryvan: 2.0, curtainside: 2.2, flatbed: 3.0 };
+      data.observations!.city_job_count = { berlin: 27 };
+
+      const lookups = buildLookups(data);
+      const stats = getCityBodyTypeStats('berlin', data, lookups);
+
+      // dryvan should be marked as dominated by curtainside
+      const dryvan = stats.find(s => s.bodyType === 'dryvan');
+      expect(dryvan?.dominatedBy).toBe('curtainside');
+
+      // Greedy allocation should not pick dryvan
+      const allocation = greedyAllocation(stats, 5, 5);
+      expect(allocation).not.toContain('dryvan');
+      expect(allocation).toContain('curtainside');
     });
 
     it('berlin ranks higher than paris when observation data differs', () => {
