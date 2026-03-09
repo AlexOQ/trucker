@@ -1,13 +1,12 @@
 /**
  * LocalStorage wrapper for ETS2 Trucker Advisor
- * Persists user settings and future game state
+ * Persists user settings, garage state, and per-city trailer sets
  */
 
 const STORAGE_KEY = 'ets2-trucker-advisor';
 
 interface Settings {
-  maxTrailers: number;
-  diminishingFactor: number;
+  driverCount: number;
 }
 
 interface AppState {
@@ -15,20 +14,19 @@ interface AppState {
   ownedGarages: string[];
   garageFilterMode: string;
   selectedCountries: string[];
-  ownedTrailers: Record<string, any>;
+  cityTrailers: Record<string, string[]>;  // cityId -> array of body type IDs
 }
 
 const LEGACY_COUNTRIES_KEY = 'ets2-selected-countries';
 
 const defaultState: AppState = {
   settings: {
-    maxTrailers: 10,
-    diminishingFactor: 75,
+    driverCount: 5,
   },
   ownedGarages: [],
   garageFilterMode: 'all',
   selectedCountries: [],
-  ownedTrailers: {},
+  cityTrailers: {},
 };
 
 /**
@@ -39,14 +37,19 @@ export function loadState(): AppState {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       const parsed = JSON.parse(stored);
-      const state = {
+      const state: AppState = {
         ...defaultState,
         ...parsed,
         settings: {
           ...defaultState.settings,
           ...parsed.settings,
         },
+        cityTrailers: parsed.cityTrailers ?? {},
       };
+      // Migrate legacy settings
+      if (parsed.settings?.maxTrailers && !parsed.settings?.driverCount) {
+        state.settings.driverCount = defaultState.settings.driverCount;
+      }
       // Migrate legacy country filter key into unified state
       if (!parsed.selectedCountries) {
         const legacy = localStorage.getItem(LEGACY_COUNTRIES_KEY);
@@ -107,16 +110,10 @@ export function resetToDefaults(): Settings {
 // Garage Management Functions
 // ============================================
 
-/**
- * Get list of owned garage city IDs
- */
 export function getOwnedGarages(): string[] {
   return loadState().ownedGarages || [];
 }
 
-/**
- * Add a city to owned garages
- */
 export function addOwnedGarage(cityId: string): string[] {
   const state = loadState();
   if (!state.ownedGarages.includes(cityId)) {
@@ -126,9 +123,6 @@ export function addOwnedGarage(cityId: string): string[] {
   return state.ownedGarages;
 }
 
-/**
- * Remove a city from owned garages
- */
 export function removeOwnedGarage(cityId: string): string[] {
   const state = loadState();
   state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId);
@@ -136,17 +130,10 @@ export function removeOwnedGarage(cityId: string): string[] {
   return state.ownedGarages;
 }
 
-/**
- * Check if a city is an owned garage
- */
 export function isOwnedGarage(cityId: string): boolean {
   return getOwnedGarages().includes(cityId);
 }
 
-/**
- * Toggle a city's owned garage status
- * @returns {boolean} New state (true = now owned)
- */
 export function toggleOwnedGarage(cityId: string): boolean {
   const state = loadState();
   const isOwned = state.ownedGarages.includes(cityId);
@@ -159,16 +146,14 @@ export function toggleOwnedGarage(cityId: string): boolean {
   return !isOwned;
 }
 
-/**
- * Get current garage filter mode
- */
+// ============================================
+// Garage Filter Functions
+// ============================================
+
 export function getFilterMode(): string {
   return loadState().garageFilterMode || 'all';
 }
 
-/**
- * Set garage filter mode
- */
 export function setFilterMode(mode: string): string {
   const state = loadState();
   state.garageFilterMode = mode;
@@ -180,18 +165,67 @@ export function setFilterMode(mode: string): string {
 // Country Filter Functions
 // ============================================
 
-/**
- * Get list of selected countries
- */
 export function getSelectedCountries(): string[] {
   return loadState().selectedCountries || [];
 }
 
-/**
- * Set selected countries list
- */
 export function setSelectedCountries(countries: string[]): void {
   const state = loadState();
   state.selectedCountries = countries;
+  saveState(state);
+}
+
+// ============================================
+// Per-City Trailer Management
+// ============================================
+
+/**
+ * Get trailer set (body type IDs) for a city
+ */
+export function getCityTrailers(cityId: string): string[] {
+  return loadState().cityTrailers[cityId] || [];
+}
+
+/**
+ * Add a trailer (body type) to a city's set
+ */
+export function addCityTrailer(cityId: string, bodyType: string): string[] {
+  const state = loadState();
+  if (!state.cityTrailers[cityId]) {
+    state.cityTrailers[cityId] = [];
+  }
+  state.cityTrailers[cityId].push(bodyType);
+  // Auto-add to owned garages
+  if (!state.ownedGarages.includes(cityId)) {
+    state.ownedGarages = [...state.ownedGarages, cityId];
+  }
+  saveState(state);
+  return state.cityTrailers[cityId];
+}
+
+/**
+ * Remove a trailer at index from a city's set
+ */
+export function removeCityTrailer(cityId: string, index: number): string[] {
+  const state = loadState();
+  const trailers = state.cityTrailers[cityId] || [];
+  if (index >= 0 && index < trailers.length) {
+    trailers.splice(index, 1);
+    state.cityTrailers[cityId] = trailers;
+    // Auto-remove from owned garages if no trailers left
+    if (trailers.length === 0) {
+      state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId);
+    }
+    saveState(state);
+  }
+  return state.cityTrailers[cityId] || [];
+}
+
+/**
+ * Set entire trailer set for a city
+ */
+export function setCityTrailers(cityId: string, trailers: string[]): void {
+  const state = loadState();
+  state.cityTrailers[cityId] = trailers;
   saveState(state);
 }

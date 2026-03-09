@@ -7,3 +7,5 @@ dist/
 specs/
 analysis/
 saves/
+coverage/
+test-results/

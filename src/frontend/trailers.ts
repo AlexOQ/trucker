@@ -4,7 +4,7 @@
  */
 
 import {
-  loadAllData, buildLookups, normalize, getBodyTypeProfiles,
+  loadAllData, buildLookups, normalize, getBodyTypeProfiles, getChassisMergeMap, pickBestTrailer,
   type AllData, type Lookups, type Cargo, type BodyTypeProfile,
 } from './data';
 
@@ -20,7 +20,8 @@ const backLink = document.getElementById('back-link') as HTMLElement;
 
 interface CargoWithUnits extends Cargo {
   units: number;
-  effectiveValue: number;
+  unitValue: number;      // value per unit with bonuses applied
+  haulValue: number;      // unitValue × units = max haul value
 }
 
 function getProfileCargo(profile: BodyTypeProfile): CargoWithUnits[] {
@@ -32,14 +33,16 @@ function getProfileCargo(profile: BodyTypeProfile): CargoWithUnits[] {
       if (!cargo || cargo.excluded) return null;
       const units = lookups!.cargoTrailerUnits.get(`${cargoId}:${profile.bestTrailerId}`) ?? 1;
       const multiplier = 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
+      const unitValue = cargo.value * multiplier;
       return {
         ...cargo,
         units,
-        effectiveValue: cargo.value * multiplier * units,
+        unitValue,
+        haulValue: unitValue * units,
       };
     })
     .filter((c): c is CargoWithUnits => c !== null)
-    .sort((a, b) => b.effectiveValue - a.effectiveValue);
+    .sort((a, b) => b.haulValue - a.haulValue);
 }
 
 function renderProfileList(filter = ''): void {
@@ -68,24 +71,28 @@ function renderProfileList(filter = ''): void {
         <thead>
           <tr>
             <th>Body Type</th>
-            <th>Representative Trailer</th>
+            <th>Best Trailer</th>
             <th class="tooltip" data-tooltip="Number of cargo types this body type can haul">Cargo</th>
-            <th class="tooltip" data-tooltip="Double trailer variants available">Doubles</th>
+            <th class="tooltip" data-tooltip="Double/B-Double trailer variants available">Doubles</th>
             <th class="tooltip" data-tooltip="HCT (High Capacity Transport) variants available">HCT</th>
           </tr>
         </thead>
         <tbody>
           ${filtered
             .map(
-              (p) => `
-              <tr class="clickable" data-body-type="${p.bodyType}" tabindex="0">
-                <td><strong>${p.displayName}</strong></td>
+              (p) => {
+                const doublesCountries = new Set([...p.doublesCountries, ...p.bdoublesCountries]);
+                const hasAnyDoubles = p.hasDoubles || p.hasBDoubles;
+                return `
+              <tr class="clickable${p.dominatedBy ? ' dominated-row' : ''}" data-body-type="${p.bodyType}" tabindex="0">
+                <td><strong>${p.displayName}</strong>${p.dominatedBy ? `<span class="dominated-label"> (use ${p.dominatedBy.replace(/_/g, ' ')})</span>` : ''}</td>
                 <td>${p.bestTrailerName}</td>
                 <td class="amount">${p.cargoCount}</td>
-                <td class="amount">${p.hasDoubles ? `<span class="coverage">${p.doublesCountries.length} countries</span>` : '—'}</td>
+                <td class="amount">${hasAnyDoubles ? `<span class="coverage">${doublesCountries.size} countries</span>` : '—'}</td>
                 <td class="amount">${p.hasHCT ? `<span class="coverage">${p.hctCountries.length} countries</span>` : '—'}</td>
               </tr>
-            `
+            `;
+              }
             )
             .join('')}
         </tbody>
@@ -113,24 +120,64 @@ function showProfileDetail(bodyType: string): void {
   if (!profile) return;
 
   const cargoList = getProfileCargo(profile);
-  const totalEffective = cargoList.reduce((sum, c) => sum + c.effectiveValue, 0);
 
-  // Get all ownable trailer variants for this body type
-  const variants = data.trailers
-    .filter((t) => t.ownable && t.body_type === bodyType)
-    .map((t) => {
-      const tier = t.id.includes('hct') ? 'HCT'
-        : (t.id.includes('double') || t.id.includes('bdouble')) ? 'Double'
-        : 'Standard';
-      const countries = t.country_validity && t.country_validity.length > 0
-        ? t.country_validity.join(', ')
-        : 'All';
-      return { ...t, tier, countries };
-    })
-    .sort((a, b) => {
-      const tierOrder = { HCT: 0, Double: 1, Standard: 2 };
-      const tierDiff = tierOrder[a.tier as keyof typeof tierOrder] - tierOrder[b.tier as keyof typeof tierOrder];
-      return tierDiff || b.volume - a.volume;
+  // Collapse ownable trailer variants into tiers (Standard/Double/HCT)
+  // All variants within a tier haul the same cargo — show best (max volume) variant
+  interface TierSummary {
+    tier: string;
+    count: number;
+    bestName: string;
+    bestId: string;
+    volume: number;
+    length: number;
+    gwl: number;
+    countries: string;
+  }
+
+  // Include all merged body types (e.g. flatbed + container + flatbed_brck)
+  const mergedBodyTypes = new Set([bodyType]);
+  const mergeMap = getChassisMergeMap(data!, lookups!);
+  for (const [absorbed, survivor] of mergeMap) {
+    if (survivor === bodyType) mergedBodyTypes.add(absorbed);
+  }
+
+  const tierMap = new Map<string, typeof data.trailers>();
+  for (const t of data.trailers) {
+    if (!t.ownable || !mergedBodyTypes.has(t.body_type)) continue;
+    const tier = t.id.includes('hct') ? 'HCT'
+      : (t.id.includes('double') || t.id.includes('bdouble')) ? 'Double'
+      : 'Standard';
+    if (!tierMap.has(tier)) tierMap.set(tier, []);
+    tierMap.get(tier)!.push(t);
+  }
+
+  const tierOrder = ['Standard', 'Double', 'HCT'];
+  const tiers: TierSummary[] = tierOrder
+    .filter((tier) => tierMap.has(tier))
+    .map((tier) => {
+      const variants = tierMap.get(tier)!;
+      // Best = SCS preferred, then max GWL, then max volume (same logic as profile best)
+      const best = pickBestTrailer(variants, variants[0], lookups!);
+      // Merge country restrictions across all variants in tier
+      const countrySet = new Set<string>();
+      let allCountries = false;
+      for (const v of variants) {
+        if (!v.country_validity || v.country_validity.length === 0) {
+          allCountries = true;
+        } else {
+          for (const c of v.country_validity) countrySet.add(c);
+        }
+      }
+      return {
+        tier,
+        count: variants.length,
+        bestName: best.name,
+        bestId: best.id,
+        volume: best.volume,
+        length: best.length,
+        gwl: best.gross_weight_limit,
+        countries: allCountries ? 'All' : [...countrySet].sort().join(', '),
+      };
     });
 
   content.style.display = 'none';
@@ -142,8 +189,9 @@ function showProfileDetail(bodyType: string): void {
       <h2>${profile.displayName}</h2>
       <div class="subtitle">
         ${profile.bestTrailerName}
-        ${profile.hasDoubles ? ' · Doubles available' : ''}
+        ${(profile.hasDoubles || profile.hasBDoubles) ? ' · Doubles available' : ''}
         ${profile.hasHCT ? ' · HCT available' : ''}
+        ${profile.dominatedBy ? ` · <span class="dominated-label">Redundant (use ${profile.dominatedBy.replace(/_/g, ' ')})</span>` : ''}
       </div>
     </div>
 
@@ -153,36 +201,37 @@ function showProfileDetail(bodyType: string): void {
         <div class="stat-label">Cargo Types</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${variants.length}</div>
-        <div class="stat-label">Trailer Variants</div>
-      </div>
-      <div class="stat">
-        <div class="stat-value">${Math.round(totalEffective)}</div>
-        <div class="stat-label">Total Value</div>
+        <div class="stat-value">${tiers.length}</div>
+        <div class="stat-label">Tiers</div>
       </div>
     </div>
 
-    ${variants.length > 0 ? `
+    ${tiers.length > 0 ? `
     <div class="table-section">
-      <h2>Trailer Variants (${variants.length})</h2>
+      <h2>Available Tiers</h2>
+      <p class="table-hint">All variants within a tier haul the same cargo. Best variant shown.</p>
       <table>
         <thead>
           <tr>
-            <th>Trailer</th>
             <th>Tier</th>
-            <th class="tooltip" data-tooltip="Cargo volume capacity in m³">Volume</th>
-            <th class="tooltip" data-tooltip="Trailer length in meters">Length</th>
+            <th>Best Model</th>
+            <th class="tooltip" data-tooltip="Number of ownable variants in this tier">Variants</th>
+            <th class="tooltip" data-tooltip="Volume of best variant (m³)">Volume</th>
+            <th class="tooltip" data-tooltip="Length of best variant (m)">Length</th>
+            <th class="tooltip" data-tooltip="Gross weight limit (tonnes)">GWL</th>
             <th>Countries</th>
           </tr>
         </thead>
         <tbody>
-          ${variants.map((v) => `
-            <tr${v.id === profile.bestTrailerId ? ' class="highlighted"' : ''}>
-              <td>${v.name}${v.id === profile.bestTrailerId ? ' <span class="tag highlight">Best</span>' : ''}</td>
-              <td>${v.tier}</td>
-              <td class="amount">${v.volume}</td>
-              <td class="amount">${v.length}</td>
-              <td>${v.countries}</td>
+          ${tiers.map((t) => `
+            <tr>
+              <td><strong>${t.tier}</strong></td>
+              <td>${t.bestName}</td>
+              <td class="amount">${t.count}</td>
+              <td class="amount">${t.volume}</td>
+              <td class="amount">${t.length}</td>
+              <td class="amount">${Math.round(t.gwl / 1000)}t</td>
+              <td>${t.countries}</td>
             </tr>
           `).join('')}
         </tbody>
@@ -192,24 +241,25 @@ function showProfileDetail(bodyType: string): void {
 
     <div class="table-section">
       <h2>Compatible Cargo (${cargoList.length})</h2>
+      <p class="table-hint">Values for best standard trailer (vol ${tiers.find((t) => t.tier === 'Standard')?.volume ?? '?'}).</p>
       ${cargoList.length > 0 ? `
         <table>
           <thead>
             <tr>
               <th>Cargo</th>
-              <th class="tooltip" data-tooltip="Base value per unit per km">Value</th>
-              <th class="tooltip" data-tooltip="Units that fit in the best standard trailer">Units</th>
-              <th class="tooltip" data-tooltip="Value × Multiplier × Units">Effective</th>
+              <th class="tooltip" data-tooltip="Value per unit per km (with fragile/high-value bonuses)">Value/Unit</th>
+              <th class="tooltip" data-tooltip="Units fitting in best standard trailer">Units</th>
+              <th class="tooltip" data-tooltip="Value/Unit × Units = max haul value per km">Haul Value</th>
               <th>Properties</th>
             </tr>
           </thead>
           <tbody>
             ${cargoList.map((c) => `
               <tr>
-                <td><a href="cargo.html#cargo-${c.id}" class="link">${c.name}</a></td>
-                <td class="value">${c.value.toFixed(2)}</td>
+                <td><a href="cargo.html#cargo-${c.id}" class="link">${c.name || c.id}</a></td>
+                <td class="value">${c.unitValue.toFixed(2)}</td>
                 <td class="amount">${c.units}</td>
-                <td class="value">${c.effectiveValue.toFixed(2)}</td>
+                <td class="value">${c.haulValue.toFixed(2)}</td>
                 <td>
                   ${c.high_value ? '<span class="tag highlight">High Value</span>' : ''}
                   ${c.fragile ? '<span class="tag">Fragile</span>' : ''}

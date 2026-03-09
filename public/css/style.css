@@ -587,6 +587,9 @@ input[type="range"]::-moz-range-thumb {
   font-weight: bold;
   color: #f39c12;
 }
+.confidence-high { color: #27ae60; }
+.confidence-med { color: #f39c12; }
+.confidence-low { color: #e74c3c; }
 
 .stat-label {
   font-size: 0.8rem;
@@ -680,6 +683,58 @@ tr.clickable:focus td:first-child {
 
 .value {
   color: #3498db;
+}
+
+.trailer-spec {
+  font-size: 0.75rem;
+  color: #7a8a9a;
+  margin-top: 0.15rem;
+}
+
+/* Fleet table */
+tr.owned-row td {
+  background: rgba(243, 156, 18, 0.06);
+}
+tr.dominated-row td {
+  opacity: 0.5;
+}
+.dominated-label {
+  font-size: 0.75rem;
+  color: #e67e22;
+  margin-left: 0.5em;
+}
+.fleet-actions {
+  white-space: nowrap;
+  text-align: right;
+}
+.btn-fleet {
+  background: none;
+  border: 1px solid #4a5a6a;
+  color: #9a9a9a;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 28px;
+  height: 28px;
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-fleet + .btn-fleet {
+  margin-left: 0.25rem;
+}
+.btn-fleet-plus {
+  color: #27ae60;
+  border-color: #27ae60;
+}
+.btn-fleet-plus:hover {
+  background: #27ae60;
+  color: #fff;
+}
+.btn-fleet-minus:hover {
+  border-color: #e74c3c;
+  color: #e74c3c;
 }
 
 .score {
