@@ -70,10 +70,11 @@ jobs:
           test -f public/dist/cities.html || (echo "ERROR: cities.html missing" && exit 1)
           test -f public/dist/companies.html || (echo "ERROR: companies.html missing" && exit 1)
           test -f public/dist/cargo.html || (echo "ERROR: cargo.html missing" && exit 1)
+          test -f public/dist/trailers.html || (echo "ERROR: trailers.html missing" && exit 1)
 
           # Check data files copied
           test -d public/dist/data || (echo "ERROR: data directory missing" && exit 1)
-          test -f public/dist/data/cities.json || (echo "ERROR: cities.json missing" && exit 1)
+          test -f public/dist/data/game-defs.json || (echo "ERROR: game-defs.json missing" && exit 1)
 
           # Check assets directory exists
           test -d public/dist/assets || (echo "ERROR: assets directory missing" && exit 1)
