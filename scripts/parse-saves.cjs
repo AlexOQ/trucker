@@ -72,6 +72,7 @@ const VARIANT_BODY_TYPE = {
   scs_silo:      'silo',
   scs_log:       'log',
   scs_gastank:   'gastank',
+  scs_fueltank:  'fueltank',
   scs_chemt:     'chemtank',
   scs_fodt:      'foodtank',
   scs_brick_r:   'brick',
