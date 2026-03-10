@@ -852,8 +852,13 @@ export function formatTrailerSpec(t: Trailer): string {
   const brandRaw = idParts[0];
   const brand = brandRaw.charAt(0).toUpperCase() + brandRaw.slice(1);
 
-  // Extract axle count from ID. Only the first digit(s) after "single_" are axles.
-  // Special case: "41" = 4+1 axle (lowbed/lowboy), "4_1" = 4+1 axle (lowboy)
+  // Chain type label for non-single trailers
+  let chainLabel = '';
+  if (t.chain_type === 'hct') chainLabel = 'HCT';
+  else if (t.chain_type === 'b_double') chainLabel = 'B-double';
+  else if (t.chain_type === 'double') chainLabel = 'Double';
+
+  // Extract axle count from ID
   let axleStr = '';
   const singleMatch = t.id.match(/single_(\d+)/);
   if (singleMatch) {
@@ -866,6 +871,13 @@ export function formatTrailerSpec(t: Trailer): string {
   } else if (t.id.includes('ch_')) {
     const chMatch = t.id.match(/ch_(\d+)/);
     if (chMatch) axleStr = `${chMatch[1]}-axle`;
+  } else if (chainLabel) {
+    // HCT: hct_3_2_3 → 3+2+3, hct_3_2s_4 → 3+2+4
+    const hctMatch = t.id.match(/hct_(\d+)_(\d+)s?_(\d+)/);
+    if (hctMatch) axleStr = `${hctMatch[1]}+${hctMatch[2]}+${hctMatch[3]}-axle`;
+    // Double/b_double: double_3_2 → 3+2, bdouble_2_2 → 2+2
+    const dblMatch = t.id.match(/(?:double|bdouble)_(\d+)_(\d+)/);
+    if (!hctMatch && dblMatch) axleStr = `${dblMatch[1]}+${dblMatch[2]}-axle`;
   }
 
   const isLong = t.id.includes('.long') || t.id.includes('_ln.');
@@ -874,7 +886,7 @@ export function formatTrailerSpec(t: Trailer): string {
   const gwt = `${Math.round(t.gross_weight_limit / 1000)}t`;
   const len = `${t.length}m`;
 
-  const parts = [brand, axleStr, lengthLabel, gwt, len].filter(Boolean);
+  const parts = [brand, chainLabel, axleStr, lengthLabel, gwt, len].filter(Boolean);
   return parts.join(' ');
 }
 

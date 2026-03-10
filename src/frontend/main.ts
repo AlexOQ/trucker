@@ -299,7 +299,7 @@ function renderFleetRow(entry: OptimalFleetEntry): string {
         <div>${entry.displayName}${countLabel}</div>
         <div class="trailer-spec">${entry.trailerSpec}</div>
       </td>
-      <td class="amount">${entry.role === 'driver' ? formatNumber(entry.ev) : `+${entry.ev.toFixed(1)}`}</td>
+      <td class="amount">${formatNumber(entry.ev)}</td>
       <td class="amount">${entry.cargoMatched}</td>
     </tr>
   `;
@@ -335,7 +335,6 @@ function renderCity(cityId: string) {
   const cargoTypes = rankingEntry?.cargoTypes ?? 0;
   const score = rankingEntry?.score ?? 0;
 
-  const driverCount = optimal.drivers.reduce((s, d) => s + d.count, 0);
 
   cityContent.innerHTML = `
     <div class="city-header">
@@ -364,8 +363,6 @@ function renderCity(cityId: string) {
 
     <div class="table-section">
       <h2>Recommended Fleet — ${optimal.totalTrailers} trailers</h2>
-
-      <h3>Driver Trailers (${driverCount})</h3>
       <table>
         <thead>
           <tr>
@@ -379,22 +376,6 @@ function renderCity(cityId: string) {
         </tbody>
       </table>
 
-      ${optimal.spares.length > 0 ? `
-        <h3>Spare Trailers (${optimal.spares.length})</h3>
-        <p class="table-hint">Parked trailers that expand cargo options when a driver returns.</p>
-        <table>
-          <thead>
-            <tr>
-              <th>Trailer Type</th>
-              <th class="tooltip" data-tooltip="Average incremental EV when a driver returns">+EV</th>
-              <th class="tooltip" data-tooltip="Cargo types this trailer can haul">Cargo</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${optimal.spares.map(renderFleetRow).join('')}
-          </tbody>
-        </table>
-      ` : '<p class="table-hint">No spare trailers add meaningful value — driver trailers already cover the cargo pool.</p>'}
     </div>
   `;
 }
