@@ -184,8 +184,11 @@ export interface BodyTypeProfile {
   displayName: string;
   cargoIds: Set<string>;
   cargoCount: number;
-  bestTrailerId: string;     // standard ownable trailer with max volume
+  bestTrailerId: string;     // absolute best trailer (any chain type) by totalHV
   bestTrailerName: string;
+  bestTotalHV: number;       // sum of haulValue across all cargo for the best trailer
+  bestChainType: string;     // chain_type of the best trailer
+  bestCountries: string[];   // country_validity of the best trailer (empty = all)
   hasDoubles: boolean;
   hasBDoubles: boolean;
   hasHCT: boolean;
@@ -883,43 +886,63 @@ export function formatTrailerSpec(t: Trailer): string {
   const isLong = t.id.includes('.long') || t.id.includes('_ln.');
   const lengthLabel = isLong ? 'long' : '';
 
+  // Extract meaningful subtype from last ID segment (belly/straight, crane, etc.)
+  let subtype = '';
+  const lastSeg = idParts[idParts.length - 1];
+  if (/belly/.test(lastSeg)) subtype = 'belly';
+  else if (/\bstr\b/.test(lastSeg)) subtype = 'straight';
+  else if (/brick_crane/.test(lastSeg)) subtype = 'crane';
+  else if (/\blight\b/.test(lastSeg)) subtype = 'light';
+  else if (/\bsolid\b/.test(lastSeg)) subtype = 'solid';
+  else if (/_sh\b/.test(idParts[idParts.length - 2] ?? '')) subtype = 'short';
+
   const gwt = `${Math.round(t.gross_weight_limit / 1000)}t`;
   const len = `${t.length}m`;
 
-  const parts = [brand, chainLabel, axleStr, lengthLabel, gwt, len].filter(Boolean);
+  const parts = [brand, chainLabel, axleStr, lengthLabel, subtype, gwt, len].filter(Boolean);
   return parts.join(' ');
 }
 
 /**
+ * Total haul value for a trailer: sum of (value × bonus × units) across all compatible cargo.
+ * Uses cargo_trailer_units which accounts for both volume and weight limits.
+ */
+export function trailerTotalHV(t: Trailer, lookups: Lookups): number {
+  const cargoes = lookups.trailerCargoMap.get(t.id);
+  if (!cargoes) return 0;
+  let total = 0;
+  for (const cargoId of cargoes) {
+    const cargo = lookups.cargoById.get(cargoId);
+    if (!cargo || cargo.excluded) continue;
+    const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
+    const bonus = 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
+    total += cargo.value * bonus * units;
+  }
+  return total;
+}
+
+/**
  * Pick the best trailer by total haul value across all compatible cargo.
- * Uses cargo_trailer_units which accounts for both volume and weight limits,
- * so this correctly handles weight-limited body types (tanks, silos) where
- * higher GWL beats higher volume. Tie-break: shorter length (more maneuverable).
+ * Tie-break order: SCS (base game) preferred over DLC, then shorter length.
  */
 export function pickBestTrailer(candidates: Trailer[], fallback: Trailer, lookups: Lookups): Trailer {
   if (candidates.length === 0) return fallback;
 
-  function totalHaulValue(t: Trailer): number {
-    const cargoes = lookups.trailerCargoMap.get(t.id);
-    if (!cargoes) return 0;
-    let total = 0;
-    for (const cargoId of cargoes) {
-      const cargo = lookups.cargoById.get(cargoId);
-      if (!cargo || cargo.excluded) continue;
-      const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
-      const bonus = 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
-      total += cargo.value * bonus * units;
-    }
-    return total;
-  }
-
   let bestTrailer = candidates[0];
-  let bestValue = totalHaulValue(bestTrailer);
+  let bestValue = trailerTotalHV(bestTrailer, lookups);
+  let bestIsSCS = bestTrailer.id.startsWith('scs.');
   for (let i = 1; i < candidates.length; i++) {
-    const v = totalHaulValue(candidates[i]);
-    if (v > bestValue || (v === bestValue && candidates[i].length < bestTrailer.length)) {
-      bestTrailer = candidates[i];
-      bestValue = v;
+    const c = candidates[i];
+    const v = trailerTotalHV(c, lookups);
+    if (v > bestValue) {
+      bestTrailer = c; bestValue = v; bestIsSCS = c.id.startsWith('scs.');
+    } else if (v === bestValue) {
+      const cIsSCS = c.id.startsWith('scs.');
+      if (cIsSCS && !bestIsSCS) {
+        bestTrailer = c; bestIsSCS = true;
+      } else if (cIsSCS === bestIsSCS && c.length < bestTrailer.length) {
+        bestTrailer = c;
+      }
     }
   }
   return bestTrailer;
@@ -1037,13 +1060,9 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
     }
     if (cargoIds.size === 0) continue;
 
-    // Pick best standard trailer: prefer SCS (base game) over DLC brands at same tier
-    // Only pick DLC if it covers cargo that no SCS trailer of this body type does
-    const standards = trailers.filter(
-      (t) => !t.id.includes('hct') && !t.id.includes('double') && !t.id.includes('bdouble')
-        && (!t.country_validity || t.country_validity.length === 0)
-    );
-    const best = pickBestTrailer(standards, trailers[0], lookups);
+    // Pick absolute best trailer across all chain types by totalHV
+    const best = pickBestTrailer(trailers, trailers[0], lookups);
+    const bestHV = trailerTotalHV(best, lookups);
 
     // Check doubles/b-doubles/HCT availability from country_validity
     const doublesSet = new Set<string>();
@@ -1069,6 +1088,9 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
       cargoCount: cargoIds.size,
       bestTrailerId: best.id,
       bestTrailerName: formatTrailerSpec(best),
+      bestTotalHV: bestHV,
+      bestChainType: best.chain_type || 'single',
+      bestCountries: best.country_validity ?? [],
       hasDoubles: doublesSet.size > 0,
       hasBDoubles: bdoublesSet.size > 0,
       hasHCT: hctSet.size > 0,
@@ -1155,7 +1177,7 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
     }
   }
 
-  // Sort by cargo count descending
-  profiles.sort((a, b) => b.cargoCount - a.cargoCount);
+  // Sort by totalHV descending (earning potential)
+  profiles.sort((a, b) => b.bestTotalHV - a.bestTotalHV);
   return profiles;
 }

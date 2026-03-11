@@ -310,10 +310,11 @@ function ensureRankingsCached() {
 
 function renderFleetRow(entry: OptimalFleetEntry): string {
   const countLabel = entry.count > 1 ? ` ×${entry.count}` : '';
+  const trailerLink = `trailers.html#body-${entry.bodyType}`;
   return `
     <tr>
       <td>
-        <div>${entry.displayName}${countLabel}</div>
+        <div><a href="${trailerLink}" class="body-type-link">${entry.displayName}${countLabel}</a></div>
         <div class="trailer-spec">${entry.trailerSpec}</div>
       </td>
       <td class="amount">${formatNumber(entry.ev)}</td>

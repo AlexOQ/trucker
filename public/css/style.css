@@ -691,12 +691,30 @@ tr.clickable:focus td:first-child {
   margin-top: 0.15rem;
 }
 
+a.body-type-link {
+  color: #f39c12;
+  text-decoration: none;
+  font-weight: 600;
+}
+a.body-type-link:hover {
+  text-decoration: underline;
+}
+
 /* Fleet table */
 tr.owned-row td {
   background: rgba(243, 156, 18, 0.06);
 }
 tr.dominated-row td {
   opacity: 0.5;
+}
+tr.best-row td {
+  font-weight: 600;
+}
+tr.scs-fallback-row td {
+  opacity: 0.65;
+  font-size: 0.9rem;
+  border-top: none;
+  padding-top: 0;
 }
 .dominated-label {
   font-size: 0.75rem;
