@@ -10,7 +10,6 @@ import {
   getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs,
   COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP,
 } from './storage.js';
-import { initDLCPanel } from './dlc-ui.js';
 import type { AllData, Lookups } from './data.js';
 
 let data: AllData | null = null;
@@ -478,8 +477,6 @@ async function init() {
     const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);
     data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
     lookups = buildLookups(data);
-
-    initDLCPanel();
 
     renderCountryCheckboxes();
     updateCountryButtonText();

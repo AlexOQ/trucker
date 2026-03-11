@@ -11,7 +11,6 @@ import {
   type AllData, type Lookups, type Cargo, type Trailer,
 } from './data';
 import { getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs, COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP } from './storage';
-import { initDLCPanel } from './dlc-ui';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -562,8 +561,6 @@ async function init(): Promise<void> {
     data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
     lookups = buildLookups(data);
     bodyTypes = buildBodyTypes();
-
-    initDLCPanel();
 
     renderList();
 

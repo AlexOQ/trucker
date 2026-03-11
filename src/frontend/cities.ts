@@ -5,7 +5,6 @@
 
 import { loadAllData, buildLookups, applyDLCFilter, getBlockedCities, normalize, type AllData, type Lookups, type Company } from './data';
 import { isOwnedGarage, getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs, COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP } from './storage';
-import { initDLCPanel } from './dlc-ui';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -273,8 +272,6 @@ async function init(): Promise<void> {
     const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);
     data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
     lookups = buildLookups(data);
-
-    initDLCPanel();
 
     renderCityList();
 
