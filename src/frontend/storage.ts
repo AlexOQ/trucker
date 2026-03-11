@@ -49,6 +49,95 @@ export const MAP_DLCS: Record<string, string> = {
 
 export const ALL_MAP_DLC_IDS = Object.keys(MAP_DLCS);
 
+/**
+ * Cities that have a garage available in-game (wiki-verified).
+ * Only these cities matter for fleet optimization and DLC value calculations.
+ * Source: https://trucksimulator.wiki.gg/wiki/Garages/Euro_Truck_Simulator_2
+ */
+export const GARAGE_CITIES: ReadonlySet<string> = new Set([
+  // Austria (6)
+  'graz','innsbruck','klagenfurt','linz','salzburg','wien',
+  // Albania (1)
+  'tirana',
+  // Belgium (2)
+  'brussel','liege',
+  // Bosnia (2)
+  'banja_luka','sarajevo',
+  // Bulgaria (6)
+  'burgas','pleven','plovdiv','ruse','sofia','varna',
+  // Croatia (3)
+  'rijeka','split','zagreb',
+  // Czech (3)
+  'brno','ostrava','prague',
+  // Denmark (4)
+  'aalborg','aarhus','kobenhavn','odense',
+  // Finland (7)
+  'helsinki','kotka','kouvola','lahti','pori','tampere','turku',
+  // France (24)
+  'ajaccio','bastia','bordeaux','brest','calais','calvi','clermont','dijon',
+  'larochelle','lehavre','lemans','lille','limoges','lyon','marseille','metz',
+  'montpellier','nantes','nice','paris','reims','rennes','strasbourg','toulouse',
+  // Germany (21)
+  'berlin','bremen','dortmund','dresden','duisburg','dusseldorf','erfurt','frankfurt',
+  'hamburg','hannover','kassel','kiel','koln','leipzig','magdeburg','mannheim',
+  'munchen','nurnberg','osnabruck','rostock','stuttgart',
+  // Greece (5)
+  'athens','kalamata','lamia','patras','thessaloniki',
+  // Hungary (4)
+  'budapest','debrecen','pecs','szeged',
+  // Italy (21)
+  'ancona','bari','bologna','cagliari','catania','catanzaro','firenze','genova',
+  'livorno','messina','milano','napoli','olbia','palermo','pescara','roma',
+  'sassari','taranto','torino','venezia','verona',
+  // Kosovo (1)
+  'pristina',
+  // Latvia (5)
+  'daugavpils','liepaja','rezekne','riga','valmiera',
+  // Lithuania (5)
+  'kaunas','klaipeda','panevezys','siauliai','vilnius',
+  // Luxembourg (1)
+  'luxembourg',
+  // Montenegro (1)
+  'podgorica',
+  // Netherlands (3)
+  'amsterdam','groningen','rotterdam',
+  // North Macedonia (1)
+  'skopje',
+  // Norway (4)
+  'bergen','kristiansand','oslo','stavanger',
+  // Poland (11)
+  'bialystok','gdansk','katowice','krakow','lodz','lublin','olsztyn','poznan',
+  'szczecin','warszawa','wroclaw',
+  // Portugal (3)
+  'coimbra','lisboa','porto',
+  // Romania (10)
+  'brasov','bucuresti','cluj_napoca','constanta','craiova','galati','iasi',
+  'pitesti','targu_mures','timisoara',
+  // Russia (4)
+  'kaliningrad','luga','pskov','petersburg',
+  // Serbia (3)
+  'beograd','kragujevac','novi_sad',
+  // Slovakia (3)
+  'bystrica','bratislava','kosice',
+  // Slovenia (2)
+  'ljubljana','maribor',
+  // Spain (17)
+  'a_coruna','albacete','algeciras','almeria','barcelona','bilbao','burgos',
+  'cordoba','madrid','malaga','murcia','salamanca','sevilla','valencia',
+  'valladolid','vigo','zaragoza',
+  // Sweden (13)
+  'goteborg','helsingborg','jonkoping','kalmar','karlskrona','karlstad',
+  'linkoping','malmo','orebro','stockholm','uppsala','vasteraas','vaxjo',
+  // Switzerland (3)
+  'bern','geneve','zurich',
+  // Turkey (3)
+  'edirne','istanbul','tekirdag',
+  // UK (18)
+  'aberdeen','birmingham','cambridge','cardiff','carlisle','dover','edinburgh',
+  'felixstowe','glasgow','grimsby','liverpool','london','manchester','newcastle',
+  'plymouth','sheffield','southampton','swansea',
+]);
+
 /** Map DLC → cities that require it */
 export const CITY_DLC_MAP: Record<string, string[]> = {
   going_east: [

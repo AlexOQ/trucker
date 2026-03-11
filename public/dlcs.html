@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cargo - ETS2 Trucker Advisor</title>
+  <title>DLCs - ETS2 Trucker Advisor</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -18,28 +18,29 @@
         <a href="index.html">Rankings</a>
         <a href="cities.html">Cities</a>
         <a href="companies.html">Companies</a>
-        <a href="cargo.html" class="active">Cargo</a>
+        <a href="cargo.html">Cargo</a>
         <a href="trailers.html">Trailers</a>
-        <a href="dlcs.html">DLCs</a>
+        <a href="dlcs.html" class="active">DLCs</a>
       </nav>
     </header>
 
     <main id="main-content">
-    <div class="search-box">
-      <input type="text" id="search" placeholder="Search cargo..." aria-label="Search cargo">
+    <div id="dlc-settings">
+      <div class="loading">Loading DLC settings...</div>
     </div>
 
-    <div id="content">
-      <div class="loading">Loading cargo...</div>
-    </div>
-
-    <div id="cargo-detail" style="display: none;">
-      <a href="#" class="back-link" id="back-link">← Back to cargo</a>
-      <div id="detail-content"></div>
+    <div id="dlc-value-section" style="display: none;">
+      <div class="section-header">
+        <h2>DLC Value Analysis</h2>
+        <button id="calc-value-btn" class="calc-btn">Calculate Marginal Value</button>
+      </div>
+      <p class="dlc-value-hint">Shows how much fleet EV each unowned DLC would add. Requires at least one owned garage.</p>
+      <div id="dlc-value-progress" style="display: none;"></div>
+      <div id="dlc-value-results"></div>
     </div>
     </main>
   </div>
 
-  <script type="module" src="/src/frontend/cargo.ts"></script>
+  <script type="module" src="/src/frontend/dlcs.ts"></script>
 </body>
 </html>

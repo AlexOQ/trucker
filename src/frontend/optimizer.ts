@@ -271,6 +271,11 @@ function bestJob(board: DepotCargoItem[], bodyType: string): { hv: number; idx: 
 /** Cache: country → bodyType → best trailer info */
 const trailerInfoCache = new Map<string, Map<string, { trailerId: string; trailerSpec: string }>>();
 
+/** Clear trailer info cache — needed when DLC filter state changes between optimizer runs */
+export function clearTrailerInfoCache(): void {
+  trailerInfoCache.clear();
+}
+
 /**
  * Get the best representative trailer per body type for a specific country.
  * Picks the ownable trailer valid in this country with highest total haul value,
