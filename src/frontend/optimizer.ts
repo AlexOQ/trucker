@@ -67,6 +67,7 @@ export interface CityRanking {
   id: string;
   name: string;
   country: string;
+  hasGarage: boolean;
   depotCount: number;
   cargoTypes: number;
   score: number;
@@ -600,6 +601,7 @@ export function calculateCityRankings(
       id: city.id,
       name: city.name,
       country: city.country,
+      hasGarage: city.hasGarage,
       depotCount,
       cargoTypes: cargoIds.size,
       score,

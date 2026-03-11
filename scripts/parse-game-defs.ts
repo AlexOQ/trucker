@@ -1138,6 +1138,7 @@ function buildFrontendData(
     cities: Object.fromEntries(cities.map(c => [c.id, {
       name: c.name,
       country: c.country,
+      has_garage: GARAGE_CITIES.has(c.id),
     }])),
     countries: Object.fromEntries(countries.map(c => [c.id, { name: c.name }])),
     cargo_trailer_units: (() => {
@@ -1335,7 +1336,10 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
     if (oldVal.country !== newVal.country) diffs.push(`country: ${oldVal.country} → ${newVal.country}`);
     return diffs.length > 0 ? diffs.join(', ') : null;
   }, (id, val) => {
-    // New city: needs_input if no DLC mapping exists
+    // New city: always needs_input — confirm DLC mapping and garage status
+    if (!GARAGE_CITIES.has(id)) {
+      return 'needs_input'; // garage status unknown
+    }
     const hasDlcMapping = Object.values(CITY_DLC_MAP).some(cities => cities.includes(id));
     return hasDlcMapping ? 'clean' : 'needs_input';
   });
