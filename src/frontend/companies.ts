@@ -4,6 +4,7 @@
  */
 
 import { loadAllData, buildLookups, normalize, type AllData, type Lookups, type City, type Cargo } from './data';
+import { initDLCPanel } from './dlc-ui';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -290,6 +291,8 @@ async function init(): Promise<void> {
   try {
     data = await loadAllData();
     lookups = buildLookups(data);
+
+    initDLCPanel();
 
     renderCompanyList();
 

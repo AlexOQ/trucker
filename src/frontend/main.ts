@@ -1,4 +1,4 @@
-import { loadAllData, buildLookups } from './data.js';
+import { loadAllData, buildLookups, applyDLCFilter } from './data.js';
 import {
   calculateCityRankings, computeOptimalFleet,
   type CityRanking, type FleetEntry, type OptimalFleetEntry,
@@ -7,7 +7,9 @@ import {
   getOwnedGarages, toggleOwnedGarage,
   getFilterMode, setFilterMode,
   getSelectedCountries, setSelectedCountries,
+  getOwnedTrailerDLCs,
 } from './storage.js';
+import { initDLCPanel } from './dlc-ui.js';
 import type { AllData, Lookups } from './data.js';
 
 let data: AllData | null = null;
@@ -471,8 +473,10 @@ async function init() {
   showLoading();
 
   try {
-    data = await loadAllData();
+    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs());
     lookups = buildLookups(data);
+
+    initDLCPanel();
 
     renderCountryCheckboxes();
     updateCountryButtonText();

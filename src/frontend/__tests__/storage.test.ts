@@ -30,6 +30,7 @@ describe('storage', () => {
         garageFilterMode: 'all',
         selectedCountries: [],
         cityTrailers: {},
+        ownedTrailerDLCs: storage.ALL_DLC_IDS,
       });
     });
 

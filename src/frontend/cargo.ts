@@ -3,7 +3,9 @@
  * Displays cargo browser with provider/trailer information
  */
 
-import { loadAllData, buildLookups, normalize, type AllData, type Lookups, type Company, type Trailer } from './data';
+import { loadAllData, buildLookups, applyDLCFilter, normalize, type AllData, type Lookups, type Company, type Trailer } from './data';
+import { getOwnedTrailerDLCs } from './storage';
+import { initDLCPanel } from './dlc-ui';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -313,8 +315,10 @@ async function init(): Promise<void> {
   content.innerHTML = '<div class="loading">Loading cargo...</div>';
 
   try {
-    data = await loadAllData();
+    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs());
     lookups = buildLookups(data);
+
+    initDLCPanel();
 
     renderCargoList();
 

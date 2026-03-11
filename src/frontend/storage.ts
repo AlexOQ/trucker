@@ -5,6 +5,20 @@
 
 const STORAGE_KEY = 'ets2-trucker-advisor';
 
+/** Trailer DLC packs — brand prefix → display name */
+export const TRAILER_DLCS: Record<string, string> = {
+  feldbinder: 'Feldbinder',
+  kassbohrer: 'Kassbohrer',
+  kogel: 'Kögel',
+  krone: 'Krone',
+  schmitz: 'Schmitz Cargobull',
+  schwmuller: 'Schwarzmüller',
+  tirsan: 'Tirsan',
+  wielton: 'Wielton',
+};
+
+export const ALL_DLC_IDS = Object.keys(TRAILER_DLCS);
+
 interface Settings {
   driverCount: number;
 }
@@ -15,6 +29,7 @@ interface AppState {
   garageFilterMode: string;
   selectedCountries: string[];
   cityTrailers: Record<string, string[]>;  // cityId -> array of body type IDs
+  ownedTrailerDLCs: string[];              // DLC brand IDs the user owns
 }
 
 const LEGACY_COUNTRIES_KEY = 'ets2-selected-countries';
@@ -27,6 +42,7 @@ const defaultState: AppState = {
   garageFilterMode: 'all',
   selectedCountries: [],
   cityTrailers: {},
+  ownedTrailerDLCs: [...ALL_DLC_IDS],  // all owned by default
 };
 
 /**
@@ -45,6 +61,7 @@ export function loadState(): AppState {
           ...parsed.settings,
         },
         cityTrailers: parsed.cityTrailers ?? {},
+        ownedTrailerDLCs: parsed.ownedTrailerDLCs ?? [...ALL_DLC_IDS],
       };
       // Migrate legacy settings
       if (parsed.settings?.maxTrailers && !parsed.settings?.driverCount) {
@@ -228,4 +245,34 @@ export function setCityTrailers(cityId: string, trailers: string[]): void {
   const state = loadState();
   state.cityTrailers[cityId] = trailers;
   saveState(state);
+}
+
+// ============================================
+// Trailer DLC Management
+// ============================================
+
+export function getOwnedTrailerDLCs(): string[] {
+  return loadState().ownedTrailerDLCs;
+}
+
+export function setOwnedTrailerDLCs(dlcs: string[]): void {
+  const state = loadState();
+  state.ownedTrailerDLCs = dlcs;
+  saveState(state);
+}
+
+export function toggleTrailerDLC(dlcId: string): boolean {
+  const state = loadState();
+  const idx = state.ownedTrailerDLCs.indexOf(dlcId);
+  if (idx >= 0) {
+    state.ownedTrailerDLCs.splice(idx, 1);
+  } else {
+    state.ownedTrailerDLCs.push(dlcId);
+  }
+  saveState(state);
+  return idx < 0; // returns new owned state
+}
+
+export function isDLCOwned(dlcId: string): boolean {
+  return getOwnedTrailerDLCs().includes(dlcId);
 }

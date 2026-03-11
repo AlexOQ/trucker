@@ -105,6 +105,81 @@ nav a:focus {
   outline-offset: 2px;
 }
 
+/* DLC panel */
+nav {
+  position: relative;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.dlc-btn {
+  background: #16213e;
+  color: #aaa;
+  border: 1px solid #2a3a5a;
+  padding: 0.5rem 1rem;
+  min-height: 44px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.dlc-btn:hover {
+  color: #f39c12;
+  border-color: #f39c12;
+}
+.dlc-btn.dlc-filtered {
+  color: #f39c12;
+  border-color: #f39c12;
+}
+.dlc-panel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: #16213e;
+  border: 1px solid #2a3a5a;
+  border-radius: 6px;
+  padding: 0.5rem;
+  z-index: 100;
+  min-width: 200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.dlc-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.25rem 0.5rem 0.5rem;
+  border-bottom: 1px solid #2a3a5a;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #f39c12;
+}
+.dlc-actions button {
+  background: none;
+  border: none;
+  color: #7a8a9a;
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.4rem;
+}
+.dlc-actions button:hover {
+  color: #f39c12;
+}
+.dlc-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  border-radius: 3px;
+}
+.dlc-row:hover {
+  background: #1a2744;
+}
+.dlc-row input[type="checkbox"] {
+  accent-color: #f39c12;
+}
+
 /* Onboarding Section */
 .onboarding {
   background: linear-gradient(135deg, #16213e 0%, #1a2744 100%);

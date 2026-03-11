@@ -6,10 +6,12 @@
  */
 
 import {
-  loadAllData, buildLookups, normalize, getOwnableTrailers,
+  loadAllData, buildLookups, applyDLCFilter, normalize, getOwnableTrailers,
   pickBestTrailer, trailerTotalHV, formatTrailerSpec,
   type AllData, type Lookups, type Cargo, type Trailer,
 } from './data';
+import { getOwnedTrailerDLCs } from './storage';
+import { initDLCPanel } from './dlc-ui';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -555,9 +557,11 @@ async function init(): Promise<void> {
   content.innerHTML = '<div class="loading">Loading trailers...</div>';
 
   try {
-    data = await loadAllData();
+    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs());
     lookups = buildLookups(data);
     bodyTypes = buildBodyTypes();
+
+    initDLCPanel();
 
     renderList();
 
