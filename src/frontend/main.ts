@@ -4,7 +4,7 @@ import {
   type CityRanking, type FleetEntry, type OptimalFleetEntry,
 } from './optimizer.js';
 import {
-  getOwnedGarages,
+  getOwnedGarages, toggleOwnedGarage,
   getFilterMode, setFilterMode,
   getSelectedCountries, setSelectedCountries,
 } from './storage.js';
@@ -235,24 +235,27 @@ function renderRankings() {
   rankingsContent.innerHTML = `
     <div class="table-section">
       <h2>City Rankings (${displayRankings.length} cities)</h2>
-      <p class="table-hint">Ranked by cargo pool earning potential. Click any city for details.</p>
+      <p class="table-hint">Ranked by combined fleet EV (top 5 trailer types). Click any city for details.</p>
       <table class="table-rankings">
         <thead>
           <tr>
+            <th></th>
             <th>#</th>
             <th>City</th>
             <th>Country</th>
             <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
             <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
-            <th class="tooltip" data-tooltip="Total weighted cargo value — earning potential">Score</th>
+            <th class="tooltip" data-tooltip="Sum of top 5 body type EVs — fleet earning potential">Fleet EV</th>
             <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
           </tr>
         </thead>
         <tbody>
           ${displayRankings.map((r, i) => {
             const trailerSummary = summarizeTrailers(r.topTrailers);
+            const starred = ownedSet.has(r.id);
             return `
-            <tr class="clickable${ownedSet.has(r.id) ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
+            <tr class="clickable${starred ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
+              <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage' : 'Mark as garage'}">${starred ? '\u2605' : '\u2606'}</td>
               <td>${i + 1}</td>
               <td>${r.name}</td>
               <td class="country">${r.country}</td>
@@ -267,6 +270,20 @@ function renderRankings() {
       </table>
     </div>
   `;
+
+  // Star click toggles garage without navigating to city
+  rankingsContent.querySelectorAll('.garage-star').forEach((star) => {
+    star.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const cityId = (star as HTMLElement).dataset.cityId!;
+      const nowOwned = toggleOwnedGarage(cityId);
+      (star as HTMLElement).textContent = nowOwned ? '\u2605' : '\u2606';
+      (star as HTMLElement).title = nowOwned ? 'Remove garage' : 'Mark as garage';
+      const row = (star as HTMLElement).closest('tr')!;
+      row.classList.toggle('owned-garage', nowOwned);
+      updateGarageCount();
+    });
+  });
 
   rankingsContent.querySelectorAll('tr.clickable').forEach((row) => {
     row.addEventListener('click', () => showCity((row as HTMLElement).dataset.cityId!));
