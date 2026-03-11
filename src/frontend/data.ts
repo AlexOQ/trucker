@@ -13,6 +13,7 @@ export interface City {
   id: string;
   name: string;
   country: string;
+  hasGarage: boolean;
 }
 
 export interface Company {
@@ -50,6 +51,8 @@ export interface Trailer {
   ownable: boolean;
 }
 
+import { initDlcData, GARAGE_CITIES, type DlcSection } from './dlc-data';
+
 export interface GameDefs {
   cargo: Record<string, {
     name: string;
@@ -86,6 +89,7 @@ export interface GameDefs {
   cities: Record<string, {
     name: string;
     country: string;
+    has_garage?: boolean;
   }>;
   countries: Record<string, { name: string }>;
   cargo_trailer_units: Record<string, Record<string, number>>;
@@ -97,6 +101,7 @@ export interface GameDefs {
     revenue_coef_per_km: number;
     cargo_market_revenue_coef_per_km: number;
   };
+  dlc?: DlcSection;
   trucks: Array<{
     id: string;
     brand: string;
@@ -313,6 +318,11 @@ export async function loadAllData(): Promise<AllData> {
     throw new Error('No data sources available. Need game-defs.json or observations.json.');
   }
 
+  // Initialize DLC data from game-defs.json when available
+  if (gameDefs?.dlc) {
+    initDlcData(gameDefs.dlc);
+  }
+
   // Build entities from game defs (primary) with observations fallback
   const cities = buildCities(gameDefs, observations);
   const companies = buildCompanies(gameDefs, observations);
@@ -328,10 +338,11 @@ function buildCities(defs: GameDefs | null, obs: Observations | null): City[] {
       id,
       name: city.name,
       country: city.country,
+      hasGarage: city.has_garage ?? GARAGE_CITIES.has(id),
     }));
   }
   if (obs) {
-    return obs.cities.map((id) => ({ id, name: titleCase(id), country: '' }));
+    return obs.cities.map((id) => ({ id, name: titleCase(id), country: '', hasGarage: GARAGE_CITIES.has(id) }));
   }
   return [];
 }
@@ -454,7 +465,7 @@ export function applyDLCFilter(
 
   const trailers = data.trailers.filter((t) => isTrailerAllowed(t.id));
   const cargo = data.cargo.filter((c) => isCargoAllowed(c.id));
-  const cities = data.cities.filter((c) => isCityAllowed(c.id));
+  const cities = data.cities.filter((c) => c.hasGarage && isCityAllowed(c.id));
 
   let gameDefs = data.gameDefs;
   if (gameDefs) {
@@ -491,16 +502,19 @@ export function applyDLCFilter(
       if (filtered.length > 0) filteredCC[compId] = filtered;
     }
 
-    // Filter city_companies to remove blocked cities
+    // Filter city_companies to remove blocked and non-garage cities
     const filteredCityCompanies: typeof gameDefs.city_companies = {};
     for (const [cityId, comps] of Object.entries(gameDefs.city_companies)) {
-      if (isCityAllowed(cityId)) filteredCityCompanies[cityId] = comps;
+      const city = gameDefs.cities[cityId];
+      const hasGarage = city ? (city.has_garage ?? GARAGE_CITIES.has(cityId)) : GARAGE_CITIES.has(cityId);
+      if (hasGarage && isCityAllowed(cityId)) filteredCityCompanies[cityId] = comps;
     }
 
     // Filter cities from gameDefs
     const filteredCities: typeof gameDefs.cities = {};
     for (const [cityId, city] of Object.entries(gameDefs.cities)) {
-      if (isCityAllowed(cityId)) filteredCities[cityId] = city;
+      const hasGarage = city.has_garage ?? GARAGE_CITIES.has(cityId);
+      if (hasGarage && isCityAllowed(cityId)) filteredCities[cityId] = city;
     }
 
     gameDefs = {
