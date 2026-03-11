@@ -1,14 +1,20 @@
 // ETS2 Game Definition Parser
 // Parses extracted SII/SUI files from ETS2 game archives and generates
 // JSON data files for the Trucker Advisor frontend.
-// Usage: npx tsx scripts/parse-game-defs.ts <path-to-extracted-def-folder>
+//
+// Usage:
+//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder>          # Parse and write
+//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --diff   # Diff against existing, don't write
 
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, mkdirSync } from 'fs';
 import { join, basename, dirname } from 'path';
 
-const defsPath = process.argv[2];
+const args = process.argv.slice(2);
+const diffMode = args.includes('--diff');
+const defsPath = args.find(a => !a.startsWith('--'));
 if (!defsPath || !existsSync(defsPath)) {
-  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder>');
+  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff]');
+  console.error('  --diff  Compare against existing game-defs.json without writing');
   console.error('Example: npx tsx scripts/parse-game-defs.ts /tmp/ets2-defs/def');
   process.exit(1);
 }
@@ -193,6 +199,257 @@ const CARGO_DLC_MAP: Record<string, string> = {
   log_stacker: 'forest_machinery', mob_tr_winch: 'forest_machinery', mulcher: 'forest_machinery',
   skidder: 'forest_machinery', wood_chipper: 'forest_machinery',
 };
+
+// ─── DLC Registries (display names for the frontend DLC section) ─────
+
+/** Trailer DLC packs — brand prefix → display name */
+const TRAILER_DLCS: Record<string, string> = {
+  feldbinder: 'Feldbinder',
+  kassbohrer: 'Kassbohrer',
+  kogel: 'Kögel',
+  krone: 'Krone',
+  schmitz: 'Schmitz Cargobull',
+  schwmuller: 'Schwarzmüller',
+  tirsan: 'Tirsan',
+  wielton: 'Wielton',
+};
+
+/** Cargo DLC packs — pack ID → display name */
+const CARGO_DLCS: Record<string, string> = {
+  high_power: 'High Power Cargo',
+  heavy_cargo: 'Heavy Cargo',
+  special_transport: 'Special Transport',
+  volvo_ce: 'Volvo Construction',
+  jcb: 'JCB Equipment',
+  bobcat: 'Bobcat Cargo',
+  krone_agri: 'KRONE Agriculture',
+  farm_machinery: 'Farm Machinery',
+  forest_machinery: 'Forest Machinery',
+};
+
+/** Map expansion DLCs — DLC ID → display name */
+const MAP_DLCS: Record<string, string> = {
+  going_east: 'Going East!',
+  scandinavia: 'Scandinavia',
+  vive_la_france: 'Vive la France!',
+  italia: 'Italia',
+  beyond_the_baltic_sea: 'Beyond the Baltic Sea',
+  road_to_the_black_sea: 'Road to the Black Sea',
+  iberia: 'Iberia',
+  west_balkans: 'West Balkans',
+  greece: 'Greece',
+};
+
+/** Map DLC → cities that require it (wiki-verified) */
+const CITY_DLC_MAP: Record<string, string[]> = {
+  going_east: [
+    'bialystok','bratislava','brno','budapest','bystrica','debrecen','gdansk','gdyne',
+    'katowice','kosice','krakow','lodz','lublin','olsztyn','ostrava','pecs','poznan',
+    'prague','szczecin','szeged','warszawa','wroclaw',
+  ],
+  scandinavia: [
+    'aalborg','aarhus','bergen','esbjerg','frederikshv','gedser','goteborg','helsingborg',
+    'hirtshals','jonkoping','kalmar','kapellskar','karlskrona','karlstad','kobenhavn',
+    'kristiansand','linkoping','malmo','nynashamn','odense','orebro','oslo','sodertalje',
+    'stavanger','stockholm','trelleborg','uppsala','vasteraas','vaxjo',
+  ],
+  vive_la_france: [
+    'ajaccio','alban','bastia','bayonne','bonifacio','bordeaux','bourges','brest','calvi',
+    'civaux','clermont','dijon','golfech','lacq','larochelle','laurent','lehavre','lemans',
+    'lile_rousse','lille','limoges','marseille','metz','montpellier','nantes','nice',
+    'paluel','porto_vecchi','reims','rennes','roscoff','toulouse',
+  ],
+  italia: [
+    'ancona','bari','bologna','cagliari','cassino','catania','catanzaro','firenze',
+    'livorno','messina','napoli','olbia','palermo','parma','pescara','roma',
+    'sangiovanni','sassari','suzzara','taranto','terni','trieste',
+  ],
+  beyond_the_baltic_sea: [
+    'daugavpils','helsinki','kaliningrad','kaunas','klaipeda','kotka','kouvola','kunda',
+    'lahti','liepaja','loviisa','luga','mazeikiai','naantali','narva','olkiluoto',
+    'paldiski','panevezys','parnu','petersburg','pori','pskov','rezekne','riga',
+    'siauliai','sosnovy_bor','tallinn','tampere','tartu','turku','utena','valmiera',
+    'ventspils','vilnius','vyborg',
+  ],
+  road_to_the_black_sea: [
+    'artand','bacau','brasov','bucuresti','burgas','calarasi','cernavoda','cluj_napoca',
+    'constanta','craiova','edirne','galati','giurgiu','hamzabeyli','hunedoara','iasi',
+    'istanbul','kapikule','karlovo','kozloduy','mangalia','nadlac','pernik','pirdop',
+    'pitesti','pleven','plovdiv','resita','ruse','sofia','targu_mures','tekirdag',
+    'timisoara','varna','veli_tarnovi',
+  ],
+  iberia: [
+    'a_coruna','albacete','algeciras','almaraz','almeria','badajoz','bailen','barcelona',
+    'beja','bilbao','burgos','ciudad_real','coimbra','cordoba','corticadas','el_ejido',
+    'evora','faro','gijon','granada','guarda','huelva','leon','lisboa','lleida',
+    'madrid','malaga','mengibar','murcia','navia','o_barco','olhao','pamplona',
+    'ponte_de_sor','port_sagunt','porto','puertollano','salamanca','santander','setubal',
+    'sevilla','sines','soria','tarragona','teruel','valencia','valladolid','vandellos',
+    'vigo','villarreal','zaragoza',
+  ],
+  west_balkans: [
+    'banja_luka','beograd','bihac','bijelo_polje','bitola','durres','fier','karakaj',
+    'koper','kragujevac','ljubljana','maribor','mostar','niksic','nis','novi_sad',
+    'novo_mesto','osijek','podgorica','pristina','rijeka','sarajevo','skopje','split',
+    'tirana','tuzla','vlore','zadar','zagreb','zenica',
+  ],
+  greece: [
+    'argostoli','athens','chania','chios','heraklion','ioannina','kalamata','kavala',
+    'lamia','larissa','mitilini','patras','rhodes','thessaloniki','trikala',
+  ],
+};
+
+/**
+ * Shadow cargo DLC entries for map expansions (wiki-verified).
+ * Same filtering mechanism as cargo pack DLCs, toggled by map DLC ownership.
+ * Cargo packs trump map DLCs for dual-tagged cargo (those stay in CARGO_DLC_MAP only).
+ */
+const MAP_DLC_CARGO: Record<string, string> = {
+  // Beyond the Baltic Sea (6)
+  concr_cent: 'beyond_the_baltic_sea', concr_stair: 'beyond_the_baltic_sea',
+  metal_beams: 'beyond_the_baltic_sea', re_bars: 'beyond_the_baltic_sea',
+  train_part: 'beyond_the_baltic_sea', train_part2: 'beyond_the_baltic_sea',
+  // Greece (3) — aircond/hvac/mob_crusher/mob_screener/mob_stacker are cargo-pack-gated
+  cott_harvest: 'greece', ter_forklift: 'greece', watertank: 'greece',
+  // Iberia (1)
+  olive_tree: 'iberia',
+  // Italia (22)
+  brake_pads: 'italia', can_sardines: 'italia', carbn_pwdr_c: 'italia',
+  exhausts_c: 'italia', froz_octopi: 'italia', frsh_herbs: 'italia',
+  gnocchi: 'italia', marb_blck: 'italia', marb_blck2: 'italia',
+  marb_slab: 'italia', moto_tires: 'italia', mozzarela: 'italia',
+  mtl_coil: 'italia', olive_oil: 'italia', olive_oil_t: 'italia',
+  pasta: 'italia', perfor_frks: 'italia', pesto: 'italia',
+  prosciutto: 'italia', seal_bearing: 'italia', sq_tub: 'italia', wrk_cloth: 'italia',
+  // Scandinavia (55)
+  atl_cod_flt: 'scandinavia', barley: 'scandinavia', brake_fluid: 'scandinavia',
+  canned_beef: 'scandinavia', canned_pork: 'scandinavia', canned_tuna: 'scandinavia',
+  caviar: 'scandinavia', chicken_meat: 'scandinavia', cott_cheese: 'scandinavia',
+  desinfection: 'scandinavia', elect_wiring: 'scandinavia', empty_barr: 'scandinavia',
+  fish_chips: 'scandinavia', fresh_fish: 'scandinavia', frozen_hake: 'scandinavia',
+  fuel_tanks: 'scandinavia', garlic: 'scandinavia', guard_rails: 'scandinavia',
+  ibc_cont: 'scandinavia', lamb_stom: 'scandinavia', live_cattle: 'scandinavia',
+  liver_paste: 'scandinavia', metal_cans: 'scandinavia', onion: 'scandinavia',
+  pears: 'scandinavia', pet_food: 'scandinavia', pet_food_c: 'scandinavia',
+  plast_film: 'scandinavia', plast_film_c: 'scandinavia', plumb_suppl: 'scandinavia',
+  polyst_box: 'scandinavia', pork_meat: 'scandinavia', pot_flowers: 'scandinavia',
+  refl_posts: 'scandinavia', rye: 'scandinavia', salm_fillet: 'scandinavia',
+  salt_spice_c: 'scandinavia', salt_spices: 'scandinavia', sausages: 'scandinavia',
+  scaffoldings: 'scandinavia', sheep_wool: 'scandinavia', shock_absorb: 'scandinavia',
+  smokd_eel: 'scandinavia', smokd_sprats: 'scandinavia', stone_wool: 'scandinavia',
+  transmis: 'scandinavia', truck_batt: 'scandinavia', truck_batt_c: 'scandinavia',
+  truck_rims: 'scandinavia', truck_rims_c: 'scandinavia', truck_tyres: 'scandinavia',
+  wheat: 'scandinavia', windml_eng: 'scandinavia', windml_tube: 'scandinavia',
+  wood_bark: 'scandinavia', wooden_beams: 'scandinavia',
+  // Vive la France! (34)
+  air_mails: 'vive_la_france', aircft_tires: 'vive_la_france',
+  backfl_prev: 'vive_la_france', basil: 'vive_la_france',
+  boric_acid: 'vive_la_france', coconut_milk: 'vive_la_france',
+  coconut_oil: 'vive_la_france', comp_process: 'vive_la_france',
+  conc_juice_t: 'vive_la_france', concen_juice: 'vive_la_france',
+  corks: 'vive_la_france', cut_flowers: 'vive_la_france',
+  diesel_gen: 'vive_la_france', emp_wine_bar: 'vive_la_france',
+  emp_wine_bot: 'vive_la_france', fuel_oil: 'vive_la_france',
+  granite_cube: 'vive_la_france', gummy_bears: 'vive_la_france',
+  harvest_bins: 'vive_la_france', hi_volt_cabl: 'vive_la_france',
+  iced_coffee: 'vive_la_france', lavender: 'vive_la_france',
+  natur_rubber: 'vive_la_france', nylon_cord: 'vive_la_france',
+  olives: 'vive_la_france', post_packag: 'vive_la_france',
+  press_sl_val: 'vive_la_france', protec_cloth: 'vive_la_france',
+  pumps: 'vive_la_france', silica: 'vive_la_france',
+  soy_milk: 'vive_la_france', soy_milk_t: 'vive_la_france',
+  spher_valves: 'vive_la_france', steel_cord: 'vive_la_france',
+  // West Balkans (2)
+  alu_ingot: 'west_balkans', alu_profile: 'west_balkans',
+};
+
+/**
+ * Cities that have a garage available in-game (wiki-verified).
+ * Source: https://trucksimulator.wiki.gg/wiki/Garages/Euro_Truck_Simulator_2
+ */
+const GARAGE_CITIES: ReadonlySet<string> = new Set([
+  // Austria (6)
+  'graz','innsbruck','klagenfurt','linz','salzburg','wien',
+  // Albania (1)
+  'tirana',
+  // Belgium (2)
+  'brussel','liege',
+  // Bosnia (2)
+  'banja_luka','sarajevo',
+  // Bulgaria (6)
+  'burgas','pleven','plovdiv','ruse','sofia','varna',
+  // Croatia (3)
+  'rijeka','split','zagreb',
+  // Czech (3)
+  'brno','ostrava','prague',
+  // Denmark (4)
+  'aalborg','aarhus','kobenhavn','odense',
+  // Finland (7)
+  'helsinki','kotka','kouvola','lahti','pori','tampere','turku',
+  // France (24)
+  'ajaccio','bastia','bordeaux','brest','calais','calvi','clermont','dijon',
+  'larochelle','lehavre','lemans','lille','limoges','lyon','marseille','metz',
+  'montpellier','nantes','nice','paris','reims','rennes','strasbourg','toulouse',
+  // Germany (21)
+  'berlin','bremen','dortmund','dresden','duisburg','dusseldorf','erfurt','frankfurt',
+  'hamburg','hannover','kassel','kiel','koln','leipzig','magdeburg','mannheim',
+  'munchen','nurnberg','osnabruck','rostock','stuttgart',
+  // Greece (5)
+  'athens','kalamata','lamia','patras','thessaloniki',
+  // Hungary (4)
+  'budapest','debrecen','pecs','szeged',
+  // Italy (21)
+  'ancona','bari','bologna','cagliari','catania','catanzaro','firenze','genova',
+  'livorno','messina','milano','napoli','olbia','palermo','pescara','roma',
+  'sassari','taranto','torino','venezia','verona',
+  // Kosovo (1)
+  'pristina',
+  // Latvia (5)
+  'daugavpils','liepaja','rezekne','riga','valmiera',
+  // Lithuania (5)
+  'kaunas','klaipeda','panevezys','siauliai','vilnius',
+  // Luxembourg (1)
+  'luxembourg',
+  // Montenegro (1)
+  'podgorica',
+  // Netherlands (3)
+  'amsterdam','groningen','rotterdam',
+  // North Macedonia (1)
+  'skopje',
+  // Norway (4)
+  'bergen','kristiansand','oslo','stavanger',
+  // Poland (11)
+  'bialystok','gdansk','katowice','krakow','lodz','lublin','olsztyn','poznan',
+  'szczecin','warszawa','wroclaw',
+  // Portugal (3)
+  'coimbra','lisboa','porto',
+  // Romania (10)
+  'brasov','bucuresti','cluj_napoca','constanta','craiova','galati','iasi',
+  'pitesti','targu_mures','timisoara',
+  // Russia (4)
+  'kaliningrad','luga','pskov','petersburg',
+  // Serbia (3)
+  'beograd','kragujevac','novi_sad',
+  // Slovakia (3)
+  'bystrica','bratislava','kosice',
+  // Slovenia (2)
+  'ljubljana','maribor',
+  // Spain (17)
+  'a_coruna','albacete','algeciras','almeria','barcelona','bilbao','burgos',
+  'cordoba','madrid','malaga','murcia','salamanca','sevilla','valencia',
+  'valladolid','vigo','zaragoza',
+  // Sweden (13)
+  'goteborg','helsingborg','jonkoping','kalmar','karlskrona','karlstad',
+  'linkoping','malmo','orebro','stockholm','uppsala','vasteraas','vaxjo',
+  // Switzerland (3)
+  'bern','geneve','zurich',
+  // Turkey (3)
+  'edirne','istanbul','tekirdag',
+  // UK (18)
+  'aberdeen','birmingham','cambridge','cardiff','carlisle','dover','edinburgh',
+  'felixstowe','glasgow','grimsby','liverpool','london','manchester','newcastle',
+  'plymouth','sheffield','southampton','swansea',
+]);
 
 function extractCargo(): CargoData[] {
   const cargoDir = join(defsPath, 'cargo');
@@ -826,33 +1083,25 @@ function main() {
   const cityCompanyMap = buildCityCompanyMap(companies);
   console.log(`  Found ${cityCompanyMap.length} city-company placements`);
 
-  // Output directory
-  const outputDir = join(dirname(defsPath), 'parsed');
-  if (!existsSync(outputDir)) {
-    mkdirSync(outputDir, { recursive: true });
+  // Build frontend-compatible data structure
+  const frontendData = buildFrontendData(cargo, trailers, companies, cities, countries, matches, cityCompanyMap, economy, trucks);
+
+  if (diffMode) {
+    runDiff(frontendData);
+  } else {
+    writeOutput(cargo, trailers, companies, cities, countries, economy, trucks, matches, cityCompanyMap, frontendData);
+    printSummary(cargo, trailers, companies, cities, countries, trucks, matches, cityCompanyMap);
   }
+}
 
-  // Write JSON files
-  const write = (name: string, data: unknown) => {
-    const path = join(outputDir, name);
-    writeFileSync(path, JSON.stringify(data, null, 2));
-    console.log(`  Wrote ${path}`);
-  };
+// ─── Frontend Data Builder ────────────────────────────────────────────
 
-  console.log('\nWriting raw parsed files...');
-  write('cargo.json', cargo);
-  write('trailers.json', trailers);
-  write('companies.json', companies);
-  write('cities.json', cities);
-  write('countries.json', countries);
-  write('economy.json', economy);
-  write('trucks.json', trucks);
-  write('cargo-trailers.json', matches);
-  write('city-companies.json', cityCompanyMap);
-
-  // Generate frontend-compatible game-defs.json for public/data/
-  console.log('\nGenerating frontend data file...');
-  const frontendData = {
+function buildFrontendData(
+  cargo: CargoData[], trailers: TrailerData[], companies: CompanyData[],
+  cities: CityData[], countries: CountryData[], matches: CargoTrailerMatch[],
+  cityCompanyMap: CityCompanyEntry[], economy: EconomyData, trucks: TruckData[],
+) {
+  return {
     cargo: Object.fromEntries(cargo.map(c => [c.id, {
       name: c.name,
       value: c.value,
@@ -891,7 +1140,6 @@ function main() {
       country: c.country,
     }])),
     countries: Object.fromEntries(countries.map(c => [c.id, { name: c.name }])),
-    // Cargo-trailer units: compact format { cargoId: { trailerId: units } }
     cargo_trailer_units: (() => {
       const result: Record<string, Record<string, number>> = {};
       for (const m of matches) {
@@ -900,9 +1148,7 @@ function main() {
       }
       return result;
     })(),
-    // Company-cargo mapping (out only — what companies ship)
     company_cargo: Object.fromEntries(companies.map(co => [co.id, co.cargo_out])),
-    // Cargo-trailer compatibility (compact: cargo_id → trailer_ids)
     cargo_trailers: (() => {
       const result: Record<string, string[]> = {};
       for (const m of matches) {
@@ -913,7 +1159,6 @@ function main() {
       }
       return result;
     })(),
-    // City-company map: { cityId: { companyId: count } }
     city_companies: (() => {
       const result: Record<string, Record<string, number>> = {};
       for (const entry of cityCompanyMap) {
@@ -924,21 +1169,66 @@ function main() {
     })(),
     economy,
     trucks: trucks.map(t => ({
-      id: t.id,
-      brand: t.brand,
-      model: t.model,
-      engines: t.engines,
-      transmissions: t.transmissions,
-      chassis: t.chassis,
+      id: t.id, brand: t.brand, model: t.model,
+      engines: t.engines, transmissions: t.transmissions, chassis: t.chassis,
     })),
+    // DLC registry — single source of truth for frontend
+    dlc: {
+      trailer_dlcs: TRAILER_DLCS,
+      cargo_dlcs: CARGO_DLCS,
+      map_dlcs: MAP_DLCS,
+      city_dlc_map: CITY_DLC_MAP,
+      cargo_dlc_map: CARGO_DLC_MAP,
+      map_dlc_cargo: MAP_DLC_CARGO,
+      garage_cities: [...GARAGE_CITIES].sort(),
+    },
+  };
+}
+
+// ─── Write Output ─────────────────────────────────────────────────────
+
+function writeOutput(
+  cargo: CargoData[], trailers: TrailerData[], companies: CompanyData[],
+  cities: CityData[], countries: CountryData[], economy: EconomyData,
+  trucks: TruckData[], matches: CargoTrailerMatch[], cityCompanyMap: CityCompanyEntry[],
+  frontendData: ReturnType<typeof buildFrontendData>,
+) {
+  // Raw parsed files
+  const outputDir = join(dirname(defsPath!), 'parsed');
+  if (!existsSync(outputDir)) mkdirSync(outputDir, { recursive: true });
+
+  const write = (name: string, data: unknown) => {
+    const path = join(outputDir, name);
+    writeFileSync(path, JSON.stringify(data, null, 2));
+    console.log(`  Wrote ${path}`);
   };
 
+  console.log('\nWriting raw parsed files...');
+  write('cargo.json', cargo);
+  write('trailers.json', trailers);
+  write('companies.json', companies);
+  write('cities.json', cities);
+  write('countries.json', countries);
+  write('economy.json', economy);
+  write('trucks.json', trucks);
+  write('cargo-trailers.json', matches);
+  write('city-companies.json', cityCompanyMap);
+
+  // Frontend game-defs.json
+  console.log('\nGenerating frontend data file...');
   const frontendPath = join(process.cwd(), 'public', 'data', 'game-defs.json');
   writeFileSync(frontendPath, JSON.stringify(frontendData));
   const sizeMB = (Buffer.byteLength(JSON.stringify(frontendData)) / 1024 / 1024).toFixed(1);
   console.log(`  Wrote ${frontendPath} (${sizeMB}MB)`);
+}
 
-  // Summary stats
+// ─── Summary ──────────────────────────────────────────────────────────
+
+function printSummary(
+  cargo: CargoData[], trailers: TrailerData[], companies: CompanyData[],
+  cities: CityData[], countries: CountryData[], trucks: TruckData[],
+  matches: CargoTrailerMatch[], cityCompanyMap: CityCompanyEntry[],
+) {
   console.log('\n=== Summary ===');
   console.log(`Cargo: ${cargo.length} types`);
   console.log(`  High value: ${cargo.filter(c => c.high_value).length}`);
@@ -955,20 +1245,207 @@ function main() {
   console.log(`Trucks: ${trucks.length} models, ${trucks.reduce((s, t) => s + t.engines.length, 0)} engines`);
   console.log(`Cargo-trailer matches: ${matches.length}`);
   console.log(`City-company placements: ${cityCompanyMap.length}`);
+}
 
-  // Answer some questions from game-data-questions.md
-  console.log('\n=== Game Data Answers ===');
-  console.log('Q1: group[] tokens:', [...new Set(cargo.flatMap(c => c.groups))].sort().join(', '));
-  console.log('Q2: "fragile" is NOT in group[]. Fragile = fragility >= 0.5 threshold.');
-  console.log('Q3: valuable:true = High Value Cargo skill. Count:', cargo.filter(c => c.high_value).length);
-  console.log('Q4: body_types across cargo:', [...new Set(cargo.flatMap(c => c.body_types))].sort().join(', '));
-  console.log('Q5: ADR classes used:', [...new Set(cargo.filter(c => c.adr_class > 0).map(c => c.adr_class))].sort().join(', '));
-  console.log('Q6: prob_coef range:', Math.min(...cargo.map(c => c.prob_coef)), '-', Math.max(...cargo.map(c => c.prob_coef)));
-  console.log('Q7: Cargo with min_distance:', cargo.filter(c => c.min_distance > 0).length);
-  console.log('Q7: Cargo with max_distance:', cargo.filter(c => c.max_distance > 0).length);
-  console.log('Q10: trailer body_types:', [...new Set(trailers.map(t => t.body_type))].sort().join(', '));
-  console.log('Q12: Trailer lengths:', [...new Set(trailers.map(t => t.length))].sort((a, b) => a - b).join(', '));
-  console.log('Q13: Chain types:', [...new Set(trailers.map(t => t.chain_type))].sort().join(', '));
+// ─── Diff Mode ────────────────────────────────────────────────────────
+
+interface DiffChange {
+  category: 'clean' | 'needs_input';
+  section: string;
+  type: 'added' | 'removed' | 'changed';
+  id: string;
+  detail: string;
+}
+
+function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
+  const existingPath = join(process.cwd(), 'public', 'data', 'game-defs.json');
+  if (!existsSync(existingPath)) {
+    console.log('No existing game-defs.json found — nothing to diff against.');
+    console.log('Run without --diff to generate initial file.');
+    return;
+  }
+
+  console.log('\n=== DIFF MODE ===');
+  console.log(`Comparing against: ${existingPath}\n`);
+
+  const existing = JSON.parse(readFileSync(existingPath, 'utf-8'));
+  const changes: DiffChange[] = [];
+
+  // --- Cargo diff ---
+  diffSection(changes, 'cargo', existing.cargo || {}, newData.cargo, (id, oldVal, newVal) => {
+    const diffs: string[] = [];
+    if (oldVal.value !== newVal.value) diffs.push(`value: ${oldVal.value} → ${newVal.value}`);
+    if (oldVal.volume !== newVal.volume) diffs.push(`volume: ${oldVal.volume} → ${newVal.volume}`);
+    if (oldVal.mass !== newVal.mass) diffs.push(`mass: ${oldVal.mass} → ${newVal.mass}`);
+    if (oldVal.prob_coef !== newVal.prob_coef) diffs.push(`prob_coef: ${oldVal.prob_coef} → ${newVal.prob_coef}`);
+    if (oldVal.fragile !== newVal.fragile) diffs.push(`fragile: ${oldVal.fragile} → ${newVal.fragile}`);
+    if (oldVal.high_value !== newVal.high_value) diffs.push(`high_value: ${oldVal.high_value} → ${newVal.high_value}`);
+    if (JSON.stringify(oldVal.body_types) !== JSON.stringify(newVal.body_types))
+      diffs.push(`body_types changed`);
+    if (oldVal.dlc !== newVal.dlc) diffs.push(`dlc: ${oldVal.dlc || 'none'} → ${newVal.dlc || 'none'}`);
+    return diffs.length > 0 ? diffs.join(', ') : null;
+  }, (id, val) => {
+    // New cargo: clean if DLC is known, needs_input otherwise
+    const hasDlc = val.dlc || CARGO_DLC_MAP[id] || MAP_DLC_CARGO[id];
+    return hasDlc ? 'clean' : 'needs_input';
+  });
+
+  // --- Trailer diff ---
+  diffSection(changes, 'trailers', existing.trailers || {}, newData.trailers, (id, oldVal, newVal) => {
+    const diffs: string[] = [];
+    if (oldVal.volume !== newVal.volume) diffs.push(`volume: ${oldVal.volume} → ${newVal.volume}`);
+    if (oldVal.body_type !== newVal.body_type) diffs.push(`body_type: ${oldVal.body_type} → ${newVal.body_type}`);
+    if (oldVal.gross_weight_limit !== newVal.gross_weight_limit)
+      diffs.push(`gross_weight_limit: ${oldVal.gross_weight_limit} → ${newVal.gross_weight_limit}`);
+    if (JSON.stringify(oldVal.country_validity) !== JSON.stringify(newVal.country_validity))
+      diffs.push(`country_validity changed`);
+    return diffs.length > 0 ? diffs.join(', ') : null;
+  }, (id) => {
+    // New trailer: clean if brand is known, needs_input for new brands
+    const brand = id.split('.')[0];
+    return TRAILER_DLCS[brand] ? 'clean' : 'needs_input';
+  });
+
+  // --- Company diff ---
+  diffSection(changes, 'companies', existing.companies || {}, newData.companies, (id, oldVal, newVal) => {
+    const diffs: string[] = [];
+    const oldOut = (oldVal.cargo_out || []).sort();
+    const newOut = (newVal.cargo_out || []).sort();
+    if (JSON.stringify(oldOut) !== JSON.stringify(newOut)) {
+      const added = newOut.filter((c: string) => !oldOut.includes(c));
+      const removed = oldOut.filter((c: string) => !newOut.includes(c));
+      if (added.length) diffs.push(`+cargo_out: ${added.join(', ')}`);
+      if (removed.length) diffs.push(`-cargo_out: ${removed.join(', ')}`);
+    }
+    const oldCities = (oldVal.cities || []).sort();
+    const newCities = (newVal.cities || []).sort();
+    if (JSON.stringify(oldCities) !== JSON.stringify(newCities)) {
+      const added = newCities.filter((c: string) => !oldCities.includes(c));
+      const removed = oldCities.filter((c: string) => !newCities.includes(c));
+      if (added.length) diffs.push(`+cities: ${added.join(', ')}`);
+      if (removed.length) diffs.push(`-cities: ${removed.join(', ')}`);
+    }
+    return diffs.length > 0 ? diffs.join('; ') : null;
+  });
+
+  // --- City diff ---
+  diffSection(changes, 'cities', existing.cities || {}, newData.cities, (id, oldVal, newVal) => {
+    const diffs: string[] = [];
+    if (oldVal.name !== newVal.name) diffs.push(`name: "${oldVal.name}" → "${newVal.name}"`);
+    if (oldVal.country !== newVal.country) diffs.push(`country: ${oldVal.country} → ${newVal.country}`);
+    return diffs.length > 0 ? diffs.join(', ') : null;
+  }, (id, val) => {
+    // New city: needs_input if no DLC mapping exists
+    const hasDlcMapping = Object.values(CITY_DLC_MAP).some(cities => cities.includes(id));
+    return hasDlcMapping ? 'clean' : 'needs_input';
+  });
+
+  // --- Country diff ---
+  diffSection(changes, 'countries', existing.countries || {}, newData.countries, (id, oldVal, newVal) => {
+    if (oldVal.name !== newVal.name) return `name: "${oldVal.name}" → "${newVal.name}"`;
+    return null;
+  }, () => 'needs_input'); // New countries always need input
+
+  // --- Economy diff ---
+  const econChanges: string[] = [];
+  const oldEcon = existing.economy || {};
+  const newEcon = newData.economy;
+  for (const key of Object.keys(newEcon) as (keyof EconomyData)[]) {
+    const oldV = JSON.stringify(oldEcon[key]);
+    const newV = JSON.stringify(newEcon[key]);
+    if (oldV !== newV) econChanges.push(`${key}: ${oldV} → ${newV}`);
+  }
+  if (econChanges.length > 0) {
+    changes.push({ category: 'clean', section: 'economy', type: 'changed', id: 'economy', detail: econChanges.join(', ') });
+  }
+
+  // --- Print results ---
+  const clean = changes.filter(c => c.category === 'clean');
+  const needsInput = changes.filter(c => c.category === 'needs_input');
+  const removed = changes.filter(c => c.type === 'removed');
+
+  if (changes.length === 0) {
+    console.log('No differences found. Game defs are up to date.');
+    return;
+  }
+
+  console.log(`Found ${changes.length} changes:\n`);
+
+  if (clean.length > 0) {
+    console.log(`--- CLEAN (${clean.length}) — safe to auto-apply ---`);
+    for (const c of clean) {
+      const icon = c.type === 'added' ? '+' : c.type === 'removed' ? '-' : '~';
+      console.log(`  ${icon} [${c.section}] ${c.id}: ${c.detail}`);
+    }
+    console.log('');
+  }
+
+  if (needsInput.length > 0) {
+    console.log(`--- NEEDS INPUT (${needsInput.length}) — requires user decision ---`);
+    for (const c of needsInput) {
+      const icon = c.type === 'added' ? '+' : c.type === 'removed' ? '-' : '~';
+      console.log(`  ${icon} [${c.section}] ${c.id}: ${c.detail}`);
+    }
+    console.log('');
+  }
+
+  if (removed.length > 0) {
+    console.log(`--- REMOVED (${removed.length}) — content no longer in defs ---`);
+    for (const c of removed) {
+      console.log(`  - [${c.section}] ${c.id}: ${c.detail}`);
+    }
+    console.log('');
+  }
+
+  if (needsInput.length === 0 && removed.length === 0) {
+    console.log('All changes are clean. Re-run without --diff to apply.');
+  } else {
+    console.log('Review the above. Resolve needs-input items, then re-run without --diff to apply.');
+  }
+}
+
+/**
+ * Generic diff helper for keyed object sections.
+ * Calls `compareFn` for each shared key (return null if unchanged, string detail if changed).
+ * Calls `classifyNewFn` for added keys (return 'clean' or 'needs_input').
+ * Removals are always classified as 'needs_input'.
+ */
+function diffSection(
+  changes: DiffChange[],
+  section: string,
+  oldObj: Record<string, any>,
+  newObj: Record<string, any>,
+  compareFn: (id: string, oldVal: any, newVal: any) => string | null,
+  classifyNewFn: (id: string, newVal: any) => 'clean' | 'needs_input' = () => 'clean',
+): void {
+  const oldKeys = new Set(Object.keys(oldObj));
+  const newKeys = new Set(Object.keys(newObj));
+
+  // Added
+  for (const id of newKeys) {
+    if (!oldKeys.has(id)) {
+      const category = classifyNewFn(id, newObj[id]);
+      const name = newObj[id]?.name ? ` (${newObj[id].name})` : '';
+      changes.push({ category, section, type: 'added', id, detail: `new${name}` });
+    }
+  }
+
+  // Removed
+  for (const id of oldKeys) {
+    if (!newKeys.has(id)) {
+      const name = oldObj[id]?.name ? ` (${oldObj[id].name})` : '';
+      changes.push({ category: 'needs_input', section, type: 'removed', id, detail: `removed${name}` });
+    }
+  }
+
+  // Changed
+  for (const id of newKeys) {
+    if (!oldKeys.has(id)) continue;
+    const detail = compareFn(id, oldObj[id], newObj[id]);
+    if (detail) {
+      changes.push({ category: 'clean', section, type: 'changed', id, detail });
+    }
+  }
 }
 
 main();
