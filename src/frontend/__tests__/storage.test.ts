@@ -31,6 +31,7 @@ describe('storage', () => {
         selectedCountries: [],
         cityTrailers: {},
         ownedTrailerDLCs: storage.ALL_DLC_IDS,
+        ownedCargoDLCs: storage.ALL_CARGO_DLC_IDS,
       });
     });
 

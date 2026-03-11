@@ -153,6 +153,11 @@ nav {
   font-size: 0.85rem;
   color: #f39c12;
 }
+.dlc-section-sep {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #2a3a5a;
+}
 .dlc-actions button {
   background: none;
   border: none;

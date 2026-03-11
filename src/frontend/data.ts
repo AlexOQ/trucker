@@ -425,48 +425,76 @@ function buildTrailers(defs: GameDefs | null, obs: Observations | null): Trailer
  * Returns a new AllData with filtered trailers and cleaned-up gameDefs maps.
  * SCS trailers always pass. DLC trailers pass only if their brand is in ownedDLCs.
  */
-export function applyDLCFilter(data: AllData, ownedDLCs: string[]): AllData {
-  const ownedSet = new Set(ownedDLCs);
+export function applyDLCFilter(
+  data: AllData,
+  ownedTrailerDLCs: string[],
+  ownedCargoDLCs?: string[],
+  cargoDLCMap?: Record<string, string>
+): AllData {
+  const ownedTrailerSet = new Set(ownedTrailerDLCs);
 
-  function isAllowed(trailerId: string): boolean {
+  function isTrailerAllowed(trailerId: string): boolean {
     const brand = trailerId.split('.')[0];
-    return brand === 'scs' || ownedSet.has(brand);
+    return brand === 'scs' || ownedTrailerSet.has(brand);
   }
 
-  const trailers = data.trailers.filter((t) => isAllowed(t.id));
+  // Filter cargo by DLC ownership
+  const ownedCargoSet = ownedCargoDLCs ? new Set(ownedCargoDLCs) : null;
+  function isCargoAllowed(cargoId: string): boolean {
+    if (!ownedCargoSet || !cargoDLCMap) return true;
+    const dlc = cargoDLCMap[cargoId];
+    return !dlc || ownedCargoSet.has(dlc);
+  }
 
-  // Clone gameDefs with filtered trailer-related maps
+  const trailers = data.trailers.filter((t) => isTrailerAllowed(t.id));
+  const cargo = data.cargo.filter((c) => isCargoAllowed(c.id));
+
   let gameDefs = data.gameDefs;
   if (gameDefs) {
     const filteredTrailers: typeof gameDefs.trailers = {};
     for (const [id, t] of Object.entries(gameDefs.trailers)) {
-      if (isAllowed(id)) filteredTrailers[id] = t;
+      if (isTrailerAllowed(id)) filteredTrailers[id] = t;
+    }
+
+    const filteredCargo: typeof gameDefs.cargo = {};
+    for (const [id, c] of Object.entries(gameDefs.cargo)) {
+      if (isCargoAllowed(id)) filteredCargo[id] = c;
     }
 
     const filteredCTU: typeof gameDefs.cargo_trailer_units = {};
     for (const [cargoId, tmap] of Object.entries(gameDefs.cargo_trailer_units)) {
+      if (!isCargoAllowed(cargoId)) continue;
       const filtered: Record<string, number> = {};
       for (const [tid, units] of Object.entries(tmap)) {
-        if (isAllowed(tid)) filtered[tid] = units;
+        if (isTrailerAllowed(tid)) filtered[tid] = units;
       }
       if (Object.keys(filtered).length > 0) filteredCTU[cargoId] = filtered;
     }
 
     const filteredCT: typeof gameDefs.cargo_trailers = {};
     for (const [cargoId, tids] of Object.entries(gameDefs.cargo_trailers)) {
-      const filtered = tids.filter(isAllowed);
+      if (!isCargoAllowed(cargoId)) continue;
+      const filtered = tids.filter(isTrailerAllowed);
       if (filtered.length > 0) filteredCT[cargoId] = filtered;
+    }
+
+    const filteredCC: typeof gameDefs.company_cargo = {};
+    for (const [compId, cargoIds] of Object.entries(gameDefs.company_cargo)) {
+      const filtered = cargoIds.filter(isCargoAllowed);
+      if (filtered.length > 0) filteredCC[compId] = filtered;
     }
 
     gameDefs = {
       ...gameDefs,
+      cargo: filteredCargo,
       trailers: filteredTrailers,
       cargo_trailer_units: filteredCTU,
       cargo_trailers: filteredCT,
+      company_cargo: filteredCC,
     };
   }
 
-  return { ...data, trailers, gameDefs };
+  return { ...data, trailers, cargo, gameDefs };
 }
 
 // Build lookup maps for efficient access

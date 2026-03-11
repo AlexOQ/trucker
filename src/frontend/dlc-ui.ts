@@ -1,11 +1,14 @@
 /**
  * Shared DLC settings panel for all pages.
- * Renders a "DLCs" button in the nav and a dropdown with checkboxes.
+ * Renders a "DLCs" button in the nav and a dropdown with checkboxes
+ * for both trailer DLCs and cargo DLCs.
  * Changing DLC selection saves to localStorage and reloads the page.
  */
 import {
   TRAILER_DLCS, ALL_DLC_IDS,
   getOwnedTrailerDLCs, toggleTrailerDLC, setOwnedTrailerDLCs,
+  CARGO_DLCS, ALL_CARGO_DLC_IDS,
+  getOwnedCargoDLCs, toggleCargoDLC, setOwnedCargoDLCs,
 } from './storage';
 
 /**
@@ -38,51 +41,89 @@ export function initDLCPanel(): void {
     }
   });
 
-  panel.querySelectorAll<HTMLInputElement>('input[data-dlc]').forEach((cb) => {
+  // Trailer DLC checkboxes
+  panel.querySelectorAll<HTMLInputElement>('input[data-trailer-dlc]').forEach((cb) => {
     cb.addEventListener('change', () => {
-      toggleTrailerDLC(cb.dataset.dlc!);
+      toggleTrailerDLC(cb.dataset.trailerDlc!);
       location.reload();
     });
   });
 
-  panel.querySelector('.dlc-all')?.addEventListener('click', () => {
+  panel.querySelector('.dlc-trailer-all')?.addEventListener('click', () => {
     setOwnedTrailerDLCs([...ALL_DLC_IDS]);
     location.reload();
   });
-  panel.querySelector('.dlc-none')?.addEventListener('click', () => {
+  panel.querySelector('.dlc-trailer-none')?.addEventListener('click', () => {
     setOwnedTrailerDLCs([]);
+    location.reload();
+  });
+
+  // Cargo DLC checkboxes
+  panel.querySelectorAll<HTMLInputElement>('input[data-cargo-dlc]').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      toggleCargoDLC(cb.dataset.cargoDlc!);
+      location.reload();
+    });
+  });
+
+  panel.querySelector('.dlc-cargo-all')?.addEventListener('click', () => {
+    setOwnedCargoDLCs([...ALL_CARGO_DLC_IDS]);
+    location.reload();
+  });
+  panel.querySelector('.dlc-cargo-none')?.addEventListener('click', () => {
+    setOwnedCargoDLCs([]);
     location.reload();
   });
 }
 
 function updateBadge(btn: HTMLButtonElement): void {
-  const owned = getOwnedTrailerDLCs();
-  const total = ALL_DLC_IDS.length;
-  if (owned.length === total) {
+  const ownedTrailers = getOwnedTrailerDLCs();
+  const ownedCargo = getOwnedCargoDLCs();
+  const totalTrailer = ALL_DLC_IDS.length;
+  const totalCargo = ALL_CARGO_DLC_IDS.length;
+  const allOwned = ownedTrailers.length === totalTrailer && ownedCargo.length === totalCargo;
+
+  if (allOwned) {
     btn.textContent = 'DLCs';
     btn.classList.remove('dlc-filtered');
   } else {
-    btn.textContent = `DLCs (${owned.length}/${total})`;
+    const parts: string[] = [];
+    if (ownedTrailers.length < totalTrailer) parts.push(`T:${ownedTrailers.length}/${totalTrailer}`);
+    if (ownedCargo.length < totalCargo) parts.push(`C:${ownedCargo.length}/${totalCargo}`);
+    btn.textContent = `DLCs (${parts.join(' ')})`;
     btn.classList.add('dlc-filtered');
   }
 }
 
 function buildPanelHTML(): string {
-  const owned = getOwnedTrailerDLCs();
-  const rows = ALL_DLC_IDS.map((id) => {
-    const checked = owned.includes(id) ? 'checked' : '';
-    const name = TRAILER_DLCS[id];
-    return `<label class="dlc-row"><input type="checkbox" data-dlc="${id}" ${checked}> ${name}</label>`;
+  const ownedTrailers = getOwnedTrailerDLCs();
+  const trailerRows = ALL_DLC_IDS.map((id) => {
+    const checked = ownedTrailers.includes(id) ? 'checked' : '';
+    return `<label class="dlc-row"><input type="checkbox" data-trailer-dlc="${id}" ${checked}> ${TRAILER_DLCS[id]}</label>`;
+  }).join('');
+
+  const ownedCargo = getOwnedCargoDLCs();
+  const cargoRows = ALL_CARGO_DLC_IDS.map((id) => {
+    const checked = ownedCargo.includes(id) ? 'checked' : '';
+    return `<label class="dlc-row"><input type="checkbox" data-cargo-dlc="${id}" ${checked}> ${CARGO_DLCS[id]}</label>`;
   }).join('');
 
   return `
     <div class="dlc-panel-header">
       <span>Trailer DLCs</span>
       <span class="dlc-actions">
-        <button class="dlc-all">All</button>
-        <button class="dlc-none">None</button>
+        <button class="dlc-trailer-all">All</button>
+        <button class="dlc-trailer-none">None</button>
       </span>
     </div>
-    ${rows}
+    ${trailerRows}
+    <div class="dlc-panel-header dlc-section-sep">
+      <span>Cargo DLCs</span>
+      <span class="dlc-actions">
+        <button class="dlc-cargo-all">All</button>
+        <button class="dlc-cargo-none">None</button>
+      </span>
+    </div>
+    ${cargoRows}
   `;
 }

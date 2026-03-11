@@ -19,6 +19,56 @@ export const TRAILER_DLCS: Record<string, string> = {
 
 export const ALL_DLC_IDS = Object.keys(TRAILER_DLCS);
 
+/** Cargo DLC packs — pack ID → display name */
+export const CARGO_DLCS: Record<string, string> = {
+  high_power: 'High Power Cargo',
+  heavy_cargo: 'Heavy Cargo',
+  special_transport: 'Special Transport',
+  volvo_ce: 'Volvo Construction',
+  jcb: 'JCB Equipment',
+  bobcat: 'Bobcat Cargo',
+  krone_agri: 'KRONE Agriculture',
+  farm_machinery: 'Farm Machinery',
+  forest_machinery: 'Forest Machinery',
+};
+
+export const ALL_CARGO_DLC_IDS = Object.keys(CARGO_DLCS);
+
+/** Cargo ID → DLC pack mapping (wiki-verified) */
+export const CARGO_DLC_MAP: Record<string, string> = {
+  // High Power Cargo Pack
+  aircond: 'high_power', hvac: 'high_power', crawler: 'high_power', driller: 'high_power',
+  tube: 'high_power', helicopter: 'high_power', roller: 'high_power', tracks: 'high_power', yacht: 'high_power',
+  // Heavy Cargo Pack
+  asph_miller: 'heavy_cargo', concr_beams: 'heavy_cargo', concr_beams2: 'heavy_cargo',
+  dozer: 'heavy_cargo', cable_reel: 'heavy_cargo', locomotive: 'heavy_cargo',
+  metal_center: 'heavy_cargo', mobile_crane: 'heavy_cargo', mob_crusher: 'heavy_cargo',
+  mob_screener: 'heavy_cargo', mob_stacker: 'heavy_cargo', transformat: 'heavy_cargo',
+  // Special Transport (only non-escort items with regular body types)
+  czl_es300: 'special_transport', czl_muv75: 'special_transport',
+  // Volvo Construction Equipment
+  volvo_a25g: 'volvo_ce', volvo_bucket: 'volvo_ce', volvo_sd160b: 'volvo_ce',
+  volvo_ec220e: 'volvo_ce', volvo_l250h: 'volvo_ce', volvo_rims: 'volvo_ce', vol_ew240emh: 'volvo_ce',
+  // JCB Equipment Pack
+  jcb_bhl4cx: 'jcb', jcb_g100rs: 'jcb', jcb_dmphtd5e: 'jcb', jcb_mexc19ce: 'jcb',
+  jcb_exc245xr: 'jcb', jcb_pw125qe: 'jcb', jcb_dmp6t2: 'jcb', jcb_th540180: 'jcb',
+  jcb_ft4220: 'jcb', jcb_wload457: 'jcb',
+  // Bobcat Cargo Pack
+  bob_tl3070a: 'bobcat', bob_pa127v: 'bobcat', bob_e60: 'bobcat', bob_d30: 'bobcat',
+  bob_e10e: 'bobcat', bob_s86: 'bobcat', bob_l95: 'bobcat',
+  // KRONE Agriculture Equipment
+  kr_ecb880cv: 'krone_agri', kr_bigx1180: 'krone_agri', kr_bigm450: 'krone_agri',
+  kr_stc1370: 'krone_agri', kr_vpv190xc: 'krone_agri', kr_bigp1290: 'krone_agri', kr_gx520: 'krone_agri',
+  // Farm Machinery
+  auger_wag: 'farm_machinery', tractor_au: 'farm_machinery', tractor_c: 'farm_machinery',
+  disc_harrows: 'farm_machinery', fert_spread: 'farm_machinery', forage_harv: 'farm_machinery',
+  planter: 'farm_machinery', sprayer: 'farm_machinery', square_baler: 'farm_machinery',
+  // Forest Machinery
+  exc_craw: 'forest_machinery', forwarder: 'forest_machinery', log_harvest: 'forest_machinery',
+  log_stacker: 'forest_machinery', mob_tr_winch: 'forest_machinery', mulcher: 'forest_machinery',
+  skidder: 'forest_machinery', wood_chipper: 'forest_machinery',
+};
+
 interface Settings {
   driverCount: number;
 }
@@ -30,6 +80,7 @@ interface AppState {
   selectedCountries: string[];
   cityTrailers: Record<string, string[]>;  // cityId -> array of body type IDs
   ownedTrailerDLCs: string[];              // DLC brand IDs the user owns
+  ownedCargoDLCs: string[];               // Cargo DLC pack IDs the user owns
 }
 
 const LEGACY_COUNTRIES_KEY = 'ets2-selected-countries';
@@ -43,6 +94,7 @@ const defaultState: AppState = {
   selectedCountries: [],
   cityTrailers: {},
   ownedTrailerDLCs: [...ALL_DLC_IDS],  // all owned by default
+  ownedCargoDLCs: [...ALL_CARGO_DLC_IDS],  // all owned by default
 };
 
 /**
@@ -62,6 +114,7 @@ export function loadState(): AppState {
         },
         cityTrailers: parsed.cityTrailers ?? {},
         ownedTrailerDLCs: parsed.ownedTrailerDLCs ?? [...ALL_DLC_IDS],
+        ownedCargoDLCs: parsed.ownedCargoDLCs ?? [...ALL_CARGO_DLC_IDS],
       };
       // Migrate legacy settings
       if (parsed.settings?.maxTrailers && !parsed.settings?.driverCount) {
@@ -275,4 +328,30 @@ export function toggleTrailerDLC(dlcId: string): boolean {
 
 export function isDLCOwned(dlcId: string): boolean {
   return getOwnedTrailerDLCs().includes(dlcId);
+}
+
+// ============================================
+// Cargo DLC Management
+// ============================================
+
+export function getOwnedCargoDLCs(): string[] {
+  return loadState().ownedCargoDLCs;
+}
+
+export function setOwnedCargoDLCs(dlcs: string[]): void {
+  const state = loadState();
+  state.ownedCargoDLCs = dlcs;
+  saveState(state);
+}
+
+export function toggleCargoDLC(dlcId: string): boolean {
+  const state = loadState();
+  const idx = state.ownedCargoDLCs.indexOf(dlcId);
+  if (idx >= 0) {
+    state.ownedCargoDLCs.splice(idx, 1);
+  } else {
+    state.ownedCargoDLCs.push(dlcId);
+  }
+  saveState(state);
+  return idx < 0;
 }
