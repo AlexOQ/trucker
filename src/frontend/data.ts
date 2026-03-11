@@ -50,6 +50,8 @@ export interface Trailer {
   ownable: boolean;
 }
 
+import { initDlcData, type DlcSection } from './dlc-data';
+
 export interface GameDefs {
   cargo: Record<string, {
     name: string;
@@ -97,6 +99,7 @@ export interface GameDefs {
     revenue_coef_per_km: number;
     cargo_market_revenue_coef_per_km: number;
   };
+  dlc?: DlcSection;
   trucks: Array<{
     id: string;
     brand: string;
@@ -311,6 +314,11 @@ export async function loadAllData(): Promise<AllData> {
 
   if (!gameDefs && !observations) {
     throw new Error('No data sources available. Need game-defs.json or observations.json.');
+  }
+
+  // Initialize DLC data from game-defs.json when available
+  if (gameDefs?.dlc) {
+    initDlcData(gameDefs.dlc);
   }
 
   // Build entities from game defs (primary) with observations fallback
