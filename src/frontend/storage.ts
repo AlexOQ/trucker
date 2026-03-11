@@ -34,6 +34,144 @@ export const CARGO_DLCS: Record<string, string> = {
 
 export const ALL_CARGO_DLC_IDS = Object.keys(CARGO_DLCS);
 
+/** Map expansion DLCs — DLC ID → display name */
+export const MAP_DLCS: Record<string, string> = {
+  going_east: 'Going East!',
+  scandinavia: 'Scandinavia',
+  vive_la_france: 'Vive la France!',
+  italia: 'Italia',
+  beyond_the_baltic_sea: 'Beyond the Baltic Sea',
+  road_to_the_black_sea: 'Road to the Black Sea',
+  iberia: 'Iberia',
+  west_balkans: 'West Balkans',
+  greece: 'Greece',
+};
+
+export const ALL_MAP_DLC_IDS = Object.keys(MAP_DLCS);
+
+/** Map DLC → cities that require it */
+export const CITY_DLC_MAP: Record<string, string[]> = {
+  going_east: [
+    'bialystok','bratislava','brno','budapest','bystrica','debrecen','gdansk','gdyne',
+    'katowice','kosice','krakow','lodz','lublin','olsztyn','ostrava','pecs','poznan',
+    'prague','szczecin','szeged','warszawa','wroclaw',
+  ],
+  scandinavia: [
+    'aalborg','aarhus','bergen','esbjerg','frederikshv','gedser','goteborg','helsingborg',
+    'hirtshals','jonkoping','kalmar','kapellskar','karlskrona','karlstad','kobenhavn',
+    'kristiansand','linkoping','malmo','nynashamn','odense','orebro','oslo','sodertalje',
+    'stavanger','stockholm','trelleborg','uppsala','vasteraas','vaxjo',
+  ],
+  vive_la_france: [
+    'ajaccio','alban','bastia','bayonne','bonifacio','bordeaux','bourges','brest','calvi',
+    'civaux','clermont','dijon','golfech','lacq','larochelle','laurent','lehavre','lemans',
+    'lile_rousse','lille','limoges','marseille','metz','montpellier','nantes','nice',
+    'paluel','porto_vecchi','reims','rennes','roscoff','toulouse',
+  ],
+  italia: [
+    'ancona','bari','bologna','cagliari','cassino','catania','catanzaro','firenze',
+    'livorno','messina','napoli','olbia','palermo','parma','pescara','roma',
+    'sangiovanni','sassari','suzzara','taranto','terni','trieste',
+  ],
+  beyond_the_baltic_sea: [
+    'daugavpils','helsinki','kaliningrad','kaunas','klaipeda','kotka','kouvola','kunda',
+    'lahti','liepaja','loviisa','luga','mazeikiai','naantali','narva','olkiluoto',
+    'paldiski','panevezys','parnu','petersburg','pori','pskov','rezekne','riga',
+    'siauliai','sosnovy_bor','tallinn','tampere','tartu','turku','utena','valmiera',
+    'ventspils','vilnius','vyborg',
+  ],
+  road_to_the_black_sea: [
+    'artand','bacau','brasov','bucuresti','burgas','calarasi','cernavoda','cluj_napoca',
+    'constanta','craiova','edirne','galati','giurgiu','hamzabeyli','hunedoara','iasi',
+    'istanbul','kapikule','karlovo','kozloduy','mangalia','nadlac','pernik','pirdop',
+    'pitesti','pleven','plovdiv','resita','ruse','sofia','targu_mures','tekirdag',
+    'timisoara','varna','veli_tarnovo',
+  ],
+  iberia: [
+    'a_coruna','albacete','algeciras','almaraz','almeria','badajoz','bailen','barcelona',
+    'beja','bilbao','burgos','ciudad_real','coimbra','cordoba','corticadas','el_ejido',
+    'evora','faro','gijon','granada','guarda','huelva','leon','lisboa','lleida',
+    'madrid','malaga','mengibar','murcia','navia','o_barco','olhao','pamplona',
+    'ponte_de_sor','port_sagunt','porto','puertollano','salamanca','santander','setubal',
+    'sevilla','sines','soria','tarragona','teruel','valencia','valladolid','vandellos',
+    'vigo','villarreal','zaragoza',
+  ],
+  west_balkans: [
+    'banja_luka','beograd','bihac','bijelo_polje','bitola','durres','fier','karakaj',
+    'koper','kragujevac','ljubljana','maribor','mostar','niksic','nis','novi_sad',
+    'novo_mesto','osijek','podgorica','pristina','rijeka','sarajevo','skopje','split',
+    'tirana','tuzla','vlore','zadar','zagreb','zenica',
+  ],
+  greece: [
+    'argostoli','athens','chania','chios','heraklion','ioannina','kalamata','kavala',
+    'lamia','larissa','mitilini','patras','rhodes','thessaloniki','trikala',
+  ],
+};
+
+/**
+ * Shadow cargo DLC entries for map expansions (wiki-verified).
+ * Same filtering mechanism as cargo pack DLCs, toggled by map DLC ownership.
+ * Cargo packs trump map DLCs for dual-tagged cargo (those stay in CARGO_DLC_MAP only).
+ */
+export const MAP_DLC_CARGO: Record<string, string> = {
+  // Beyond the Baltic Sea (6)
+  concr_cent: 'beyond_the_baltic_sea', concr_stair: 'beyond_the_baltic_sea',
+  metal_beams: 'beyond_the_baltic_sea', re_bars: 'beyond_the_baltic_sea',
+  train_part: 'beyond_the_baltic_sea', train_part2: 'beyond_the_baltic_sea',
+  // Greece (3) — aircond/hvac/mob_crusher/mob_screener/mob_stacker are cargo-pack-gated
+  cott_harvest: 'greece', ter_forklift: 'greece', watertank: 'greece',
+  // Iberia (1)
+  olive_tree: 'iberia',
+  // Italia (22)
+  brake_pads: 'italia', can_sardines: 'italia', carbn_pwdr_c: 'italia',
+  exhausts_c: 'italia', froz_octopi: 'italia', frsh_herbs: 'italia',
+  gnocchi: 'italia', marb_blck: 'italia', marb_blck2: 'italia',
+  marb_slab: 'italia', moto_tires: 'italia', mozzarela: 'italia',
+  mtl_coil: 'italia', olive_oil: 'italia', olive_oil_t: 'italia',
+  pasta: 'italia', perfor_frks: 'italia', pesto: 'italia',
+  prosciutto: 'italia', seal_bearing: 'italia', sq_tub: 'italia', wrk_cloth: 'italia',
+  // Scandinavia (55)
+  atl_cod_flt: 'scandinavia', barley: 'scandinavia', brake_fluid: 'scandinavia',
+  canned_beef: 'scandinavia', canned_pork: 'scandinavia', canned_tuna: 'scandinavia',
+  caviar: 'scandinavia', chicken_meat: 'scandinavia', cott_cheese: 'scandinavia',
+  desinfection: 'scandinavia', elect_wiring: 'scandinavia', empty_barr: 'scandinavia',
+  fish_chips: 'scandinavia', fresh_fish: 'scandinavia', frozen_hake: 'scandinavia',
+  fuel_tanks: 'scandinavia', garlic: 'scandinavia', guard_rails: 'scandinavia',
+  ibc_cont: 'scandinavia', lamb_stom: 'scandinavia', live_cattle: 'scandinavia',
+  liver_paste: 'scandinavia', metal_cans: 'scandinavia', onion: 'scandinavia',
+  pears: 'scandinavia', pet_food: 'scandinavia', pet_food_c: 'scandinavia',
+  plast_film: 'scandinavia', plast_film_c: 'scandinavia', plumb_suppl: 'scandinavia',
+  polyst_box: 'scandinavia', pork_meat: 'scandinavia', pot_flowers: 'scandinavia',
+  refl_posts: 'scandinavia', rye: 'scandinavia', salm_fillet: 'scandinavia',
+  salt_spice_c: 'scandinavia', salt_spices: 'scandinavia', sausages: 'scandinavia',
+  scaffoldings: 'scandinavia', sheep_wool: 'scandinavia', shock_absorb: 'scandinavia',
+  smokd_eel: 'scandinavia', smokd_sprats: 'scandinavia', stone_wool: 'scandinavia',
+  transmis: 'scandinavia', truck_batt: 'scandinavia', truck_batt_c: 'scandinavia',
+  truck_rims: 'scandinavia', truck_rims_c: 'scandinavia', truck_tyres: 'scandinavia',
+  wheat: 'scandinavia', windml_eng: 'scandinavia', windml_tube: 'scandinavia',
+  wood_bark: 'scandinavia', wooden_beams: 'scandinavia',
+  // Vive la France! (34)
+  air_mails: 'vive_la_france', aircft_tires: 'vive_la_france',
+  backfl_prev: 'vive_la_france', basil: 'vive_la_france',
+  boric_acid: 'vive_la_france', coconut_milk: 'vive_la_france',
+  coconut_oil: 'vive_la_france', comp_process: 'vive_la_france',
+  conc_juice_t: 'vive_la_france', concen_juice: 'vive_la_france',
+  corks: 'vive_la_france', cut_flowers: 'vive_la_france',
+  diesel_gen: 'vive_la_france', emp_wine_bar: 'vive_la_france',
+  emp_wine_bot: 'vive_la_france', fuel_oil: 'vive_la_france',
+  granite_cube: 'vive_la_france', gummy_bears: 'vive_la_france',
+  harvest_bins: 'vive_la_france', hi_volt_cabl: 'vive_la_france',
+  iced_coffee: 'vive_la_france', lavender: 'vive_la_france',
+  natur_rubber: 'vive_la_france', nylon_cord: 'vive_la_france',
+  olives: 'vive_la_france', post_packag: 'vive_la_france',
+  press_sl_val: 'vive_la_france', protec_cloth: 'vive_la_france',
+  pumps: 'vive_la_france', silica: 'vive_la_france',
+  soy_milk: 'vive_la_france', soy_milk_t: 'vive_la_france',
+  spher_valves: 'vive_la_france', steel_cord: 'vive_la_france',
+  // West Balkans (2)
+  alu_ingot: 'west_balkans', alu_profile: 'west_balkans',
+};
+
 /** Cargo ID → DLC pack mapping (wiki-verified) */
 export const CARGO_DLC_MAP: Record<string, string> = {
   // High Power Cargo Pack
@@ -69,6 +207,12 @@ export const CARGO_DLC_MAP: Record<string, string> = {
   skidder: 'forest_machinery', wood_chipper: 'forest_machinery',
 };
 
+/** Combined cargo DLC map — merges cargo packs + map DLC shadow entries */
+export const COMBINED_CARGO_DLC_MAP: Record<string, string> = {
+  ...CARGO_DLC_MAP,
+  ...MAP_DLC_CARGO,
+};
+
 interface Settings {
   driverCount: number;
 }
@@ -81,6 +225,7 @@ interface AppState {
   cityTrailers: Record<string, string[]>;  // cityId -> array of body type IDs
   ownedTrailerDLCs: string[];              // DLC brand IDs the user owns
   ownedCargoDLCs: string[];               // Cargo DLC pack IDs the user owns
+  ownedMapDLCs: string[];                 // Map expansion DLC IDs the user owns
 }
 
 const LEGACY_COUNTRIES_KEY = 'ets2-selected-countries';
@@ -95,6 +240,7 @@ const defaultState: AppState = {
   cityTrailers: {},
   ownedTrailerDLCs: [...ALL_DLC_IDS],  // all owned by default
   ownedCargoDLCs: [...ALL_CARGO_DLC_IDS],  // all owned by default
+  ownedMapDLCs: [...ALL_MAP_DLC_IDS],  // all owned by default
 };
 
 /**
@@ -115,6 +261,7 @@ export function loadState(): AppState {
         cityTrailers: parsed.cityTrailers ?? {},
         ownedTrailerDLCs: parsed.ownedTrailerDLCs ?? [...ALL_DLC_IDS],
         ownedCargoDLCs: parsed.ownedCargoDLCs ?? [...ALL_CARGO_DLC_IDS],
+        ownedMapDLCs: parsed.ownedMapDLCs ?? [...ALL_MAP_DLC_IDS],
       };
       // Migrate legacy settings
       if (parsed.settings?.maxTrailers && !parsed.settings?.driverCount) {
@@ -351,6 +498,32 @@ export function toggleCargoDLC(dlcId: string): boolean {
     state.ownedCargoDLCs.splice(idx, 1);
   } else {
     state.ownedCargoDLCs.push(dlcId);
+  }
+  saveState(state);
+  return idx < 0;
+}
+
+// ============================================
+// Map DLC Management
+// ============================================
+
+export function getOwnedMapDLCs(): string[] {
+  return loadState().ownedMapDLCs;
+}
+
+export function setOwnedMapDLCs(dlcs: string[]): void {
+  const state = loadState();
+  state.ownedMapDLCs = dlcs;
+  saveState(state);
+}
+
+export function toggleMapDLC(dlcId: string): boolean {
+  const state = loadState();
+  const idx = state.ownedMapDLCs.indexOf(dlcId);
+  if (idx >= 0) {
+    state.ownedMapDLCs.splice(idx, 1);
+  } else {
+    state.ownedMapDLCs.push(dlcId);
   }
   saveState(state);
   return idx < 0;

@@ -32,6 +32,7 @@ describe('storage', () => {
         cityTrailers: {},
         ownedTrailerDLCs: storage.ALL_DLC_IDS,
         ownedCargoDLCs: storage.ALL_CARGO_DLC_IDS,
+        ownedMapDLCs: storage.ALL_MAP_DLC_IDS,
       });
     });
 

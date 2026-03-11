@@ -3,8 +3,8 @@
  * Displays cargo browser with provider/trailer information
  */
 
-import { loadAllData, buildLookups, applyDLCFilter, normalize, type AllData, type Lookups, type Company, type Trailer } from './data';
-import { getOwnedTrailerDLCs, getOwnedCargoDLCs, CARGO_DLC_MAP } from './storage';
+import { loadAllData, buildLookups, applyDLCFilter, getBlockedCities, normalize, type AllData, type Lookups, type Company, type Trailer } from './data';
+import { getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs, COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP } from './storage';
 import { initDLCPanel } from './dlc-ui';
 
 let data: AllData | null = null;
@@ -315,7 +315,9 @@ async function init(): Promise<void> {
   content.innerHTML = '<div class="loading">Loading cargo...</div>';
 
   try {
-    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), getOwnedCargoDLCs(), CARGO_DLC_MAP);
+    const ownedCargoAndMap = new Set([...getOwnedCargoDLCs(), ...getOwnedMapDLCs()]);
+    const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);
+    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
     lookups = buildLookups(data);
 
     initDLCPanel();

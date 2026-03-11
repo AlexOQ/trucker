@@ -421,15 +421,19 @@ function buildTrailers(defs: GameDefs | null, obs: Observations | null): Trailer
 }
 
 /**
- * Filter out trailers from unowned DLCs.
- * Returns a new AllData with filtered trailers and cleaned-up gameDefs maps.
- * SCS trailers always pass. DLC trailers pass only if their brand is in ownedDLCs.
+ * Filter out trailers/cargo/cities from unowned DLCs.
+ * Returns a new AllData with filtered content and cleaned-up gameDefs maps.
+ *
+ * cargoDLCMap should be the COMBINED map (cargo packs + map DLC shadow entries).
+ * ownedCargoDLCSet should be the union of owned cargo pack IDs + owned map DLC IDs.
+ * blockedCities is the set of city IDs from unowned map DLCs.
  */
 export function applyDLCFilter(
   data: AllData,
   ownedTrailerDLCs: string[],
-  ownedCargoDLCs?: string[],
-  cargoDLCMap?: Record<string, string>
+  ownedCargoDLCSet?: Set<string>,
+  cargoDLCMap?: Record<string, string>,
+  blockedCities?: Set<string>,
 ): AllData {
   const ownedTrailerSet = new Set(ownedTrailerDLCs);
 
@@ -438,16 +442,19 @@ export function applyDLCFilter(
     return brand === 'scs' || ownedTrailerSet.has(brand);
   }
 
-  // Filter cargo by DLC ownership
-  const ownedCargoSet = ownedCargoDLCs ? new Set(ownedCargoDLCs) : null;
   function isCargoAllowed(cargoId: string): boolean {
-    if (!ownedCargoSet || !cargoDLCMap) return true;
+    if (!ownedCargoDLCSet || !cargoDLCMap) return true;
     const dlc = cargoDLCMap[cargoId];
-    return !dlc || ownedCargoSet.has(dlc);
+    return !dlc || ownedCargoDLCSet.has(dlc);
+  }
+
+  function isCityAllowed(cityId: string): boolean {
+    return !blockedCities || !blockedCities.has(cityId);
   }
 
   const trailers = data.trailers.filter((t) => isTrailerAllowed(t.id));
   const cargo = data.cargo.filter((c) => isCargoAllowed(c.id));
+  const cities = data.cities.filter((c) => isCityAllowed(c.id));
 
   let gameDefs = data.gameDefs;
   if (gameDefs) {
@@ -484,6 +491,18 @@ export function applyDLCFilter(
       if (filtered.length > 0) filteredCC[compId] = filtered;
     }
 
+    // Filter city_companies to remove blocked cities
+    const filteredCityCompanies: typeof gameDefs.city_companies = {};
+    for (const [cityId, comps] of Object.entries(gameDefs.city_companies)) {
+      if (isCityAllowed(cityId)) filteredCityCompanies[cityId] = comps;
+    }
+
+    // Filter cities from gameDefs
+    const filteredCities: typeof gameDefs.cities = {};
+    for (const [cityId, city] of Object.entries(gameDefs.cities)) {
+      if (isCityAllowed(cityId)) filteredCities[cityId] = city;
+    }
+
     gameDefs = {
       ...gameDefs,
       cargo: filteredCargo,
@@ -491,10 +510,29 @@ export function applyDLCFilter(
       cargo_trailer_units: filteredCTU,
       cargo_trailers: filteredCT,
       company_cargo: filteredCC,
+      city_companies: filteredCityCompanies,
+      cities: filteredCities,
     };
   }
 
-  return { ...data, trailers, cargo, gameDefs };
+  return { ...data, trailers, cargo, cities, gameDefs };
+}
+
+/**
+ * Build the set of blocked city IDs from unowned map DLCs.
+ */
+export function getBlockedCities(
+  ownedMapDLCs: string[],
+  cityDLCMap: Record<string, string[]>,
+): Set<string> {
+  const owned = new Set(ownedMapDLCs);
+  const blocked = new Set<string>();
+  for (const [dlcId, cities] of Object.entries(cityDLCMap)) {
+    if (!owned.has(dlcId)) {
+      for (const city of cities) blocked.add(city);
+    }
+  }
+  return blocked;
 }
 
 // Build lookup maps for efficient access

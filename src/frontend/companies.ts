@@ -3,7 +3,8 @@
  * Displays company browser with city/cargo information
  */
 
-import { loadAllData, buildLookups, normalize, type AllData, type Lookups, type City, type Cargo } from './data';
+import { loadAllData, buildLookups, applyDLCFilter, getBlockedCities, normalize, type AllData, type Lookups, type City, type Cargo } from './data';
+import { getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs, COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP } from './storage';
 import { initDLCPanel } from './dlc-ui';
 
 let data: AllData | null = null;
@@ -289,7 +290,9 @@ async function init(): Promise<void> {
   content.innerHTML = '<div class="loading">Loading companies...</div>';
 
   try {
-    data = await loadAllData();
+    const ownedCargoAndMap = new Set([...getOwnedCargoDLCs(), ...getOwnedMapDLCs()]);
+    const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);
+    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
     lookups = buildLookups(data);
 
     initDLCPanel();

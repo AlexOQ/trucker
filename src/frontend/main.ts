@@ -1,4 +1,4 @@
-import { loadAllData, buildLookups, applyDLCFilter } from './data.js';
+import { loadAllData, buildLookups, applyDLCFilter, getBlockedCities } from './data.js';
 import {
   calculateCityRankings, computeOptimalFleet,
   type CityRanking, type FleetEntry, type OptimalFleetEntry,
@@ -7,7 +7,8 @@ import {
   getOwnedGarages, toggleOwnedGarage,
   getFilterMode, setFilterMode,
   getSelectedCountries, setSelectedCountries,
-  getOwnedTrailerDLCs, getOwnedCargoDLCs, CARGO_DLC_MAP,
+  getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs,
+  COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP,
 } from './storage.js';
 import { initDLCPanel } from './dlc-ui.js';
 import type { AllData, Lookups } from './data.js';
@@ -473,7 +474,9 @@ async function init() {
   showLoading();
 
   try {
-    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), getOwnedCargoDLCs(), CARGO_DLC_MAP);
+    const ownedCargoAndMap = new Set([...getOwnedCargoDLCs(), ...getOwnedMapDLCs()]);
+    const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);
+    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
     lookups = buildLookups(data);
 
     initDLCPanel();

@@ -139,8 +139,20 @@ nav {
   border-radius: 6px;
   padding: 0.5rem;
   z-index: 100;
-  min-width: 200px;
+  max-height: 80vh;
+  overflow-y: auto;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.dlc-columns {
+  display: flex;
+  gap: 0.75rem;
+}
+.dlc-column {
+  min-width: 170px;
+}
+.dlc-column + .dlc-column {
+  border-left: 1px solid #2a3a5a;
+  padding-left: 0.75rem;
 }
 .dlc-panel-header {
   display: flex;
@@ -152,11 +164,6 @@ nav {
   font-weight: 600;
   font-size: 0.85rem;
   color: #f39c12;
-}
-.dlc-section-sep {
-  margin-top: 0.5rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid #2a3a5a;
 }
 .dlc-actions button {
   background: none;

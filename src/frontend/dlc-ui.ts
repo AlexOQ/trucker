@@ -1,7 +1,7 @@
 /**
  * Shared DLC settings panel for all pages.
  * Renders a "DLCs" button in the nav and a dropdown with checkboxes
- * for both trailer DLCs and cargo DLCs.
+ * for trailer DLCs, cargo DLCs, and map expansion DLCs.
  * Changing DLC selection saves to localStorage and reloads the page.
  */
 import {
@@ -9,6 +9,8 @@ import {
   getOwnedTrailerDLCs, toggleTrailerDLC, setOwnedTrailerDLCs,
   CARGO_DLCS, ALL_CARGO_DLC_IDS,
   getOwnedCargoDLCs, toggleCargoDLC, setOwnedCargoDLCs,
+  MAP_DLCS, ALL_MAP_DLC_IDS,
+  getOwnedMapDLCs, toggleMapDLC, setOwnedMapDLCs,
 } from './storage';
 
 /**
@@ -39,6 +41,23 @@ export function initDLCPanel(): void {
     if (!panel.contains(e.target as Node) && e.target !== btn) {
       panel.style.display = 'none';
     }
+  });
+
+  // Map DLC checkboxes
+  panel.querySelectorAll<HTMLInputElement>('input[data-map-dlc]').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      toggleMapDLC(cb.dataset.mapDlc!);
+      location.reload();
+    });
+  });
+
+  panel.querySelector('.dlc-map-all')?.addEventListener('click', () => {
+    setOwnedMapDLCs([...ALL_MAP_DLC_IDS]);
+    location.reload();
+  });
+  panel.querySelector('.dlc-map-none')?.addEventListener('click', () => {
+    setOwnedMapDLCs([]);
+    location.reload();
   });
 
   // Trailer DLC checkboxes
@@ -79,15 +98,20 @@ export function initDLCPanel(): void {
 function updateBadge(btn: HTMLButtonElement): void {
   const ownedTrailers = getOwnedTrailerDLCs();
   const ownedCargo = getOwnedCargoDLCs();
+  const ownedMap = getOwnedMapDLCs();
   const totalTrailer = ALL_DLC_IDS.length;
   const totalCargo = ALL_CARGO_DLC_IDS.length;
-  const allOwned = ownedTrailers.length === totalTrailer && ownedCargo.length === totalCargo;
+  const totalMap = ALL_MAP_DLC_IDS.length;
+  const allOwned = ownedTrailers.length === totalTrailer
+    && ownedCargo.length === totalCargo
+    && ownedMap.length === totalMap;
 
   if (allOwned) {
     btn.textContent = 'DLCs';
     btn.classList.remove('dlc-filtered');
   } else {
     const parts: string[] = [];
+    if (ownedMap.length < totalMap) parts.push(`M:${ownedMap.length}/${totalMap}`);
     if (ownedTrailers.length < totalTrailer) parts.push(`T:${ownedTrailers.length}/${totalTrailer}`);
     if (ownedCargo.length < totalCargo) parts.push(`C:${ownedCargo.length}/${totalCargo}`);
     btn.textContent = `DLCs (${parts.join(' ')})`;
@@ -95,35 +119,61 @@ function updateBadge(btn: HTMLButtonElement): void {
   }
 }
 
+function sortedEntries(dict: Record<string, string>): [string, string][] {
+  return Object.entries(dict).sort((a, b) => a[1].localeCompare(b[1]));
+}
+
 function buildPanelHTML(): string {
+  const ownedMap = getOwnedMapDLCs();
+  const mapRows = sortedEntries(MAP_DLCS).map(([id, name]) => {
+    const checked = ownedMap.includes(id) ? 'checked' : '';
+    return `<label class="dlc-row"><input type="checkbox" data-map-dlc="${id}" ${checked}> ${name}</label>`;
+  }).join('');
+
   const ownedTrailers = getOwnedTrailerDLCs();
-  const trailerRows = ALL_DLC_IDS.map((id) => {
+  const trailerRows = sortedEntries(TRAILER_DLCS).map(([id, name]) => {
     const checked = ownedTrailers.includes(id) ? 'checked' : '';
-    return `<label class="dlc-row"><input type="checkbox" data-trailer-dlc="${id}" ${checked}> ${TRAILER_DLCS[id]}</label>`;
+    return `<label class="dlc-row"><input type="checkbox" data-trailer-dlc="${id}" ${checked}> ${name}</label>`;
   }).join('');
 
   const ownedCargo = getOwnedCargoDLCs();
-  const cargoRows = ALL_CARGO_DLC_IDS.map((id) => {
+  const cargoRows = sortedEntries(CARGO_DLCS).map(([id, name]) => {
     const checked = ownedCargo.includes(id) ? 'checked' : '';
-    return `<label class="dlc-row"><input type="checkbox" data-cargo-dlc="${id}" ${checked}> ${CARGO_DLCS[id]}</label>`;
+    return `<label class="dlc-row"><input type="checkbox" data-cargo-dlc="${id}" ${checked}> ${name}</label>`;
   }).join('');
 
   return `
-    <div class="dlc-panel-header">
-      <span>Trailer DLCs</span>
-      <span class="dlc-actions">
-        <button class="dlc-trailer-all">All</button>
-        <button class="dlc-trailer-none">None</button>
-      </span>
+    <div class="dlc-columns">
+      <div class="dlc-column">
+        <div class="dlc-panel-header">
+          <span>Map Expansions</span>
+          <span class="dlc-actions">
+            <button class="dlc-map-all">All</button>
+            <button class="dlc-map-none">None</button>
+          </span>
+        </div>
+        ${mapRows}
+      </div>
+      <div class="dlc-column">
+        <div class="dlc-panel-header">
+          <span>Trailer DLCs</span>
+          <span class="dlc-actions">
+            <button class="dlc-trailer-all">All</button>
+            <button class="dlc-trailer-none">None</button>
+          </span>
+        </div>
+        ${trailerRows}
+      </div>
+      <div class="dlc-column">
+        <div class="dlc-panel-header">
+          <span>Cargo DLCs</span>
+          <span class="dlc-actions">
+            <button class="dlc-cargo-all">All</button>
+            <button class="dlc-cargo-none">None</button>
+          </span>
+        </div>
+        ${cargoRows}
+      </div>
     </div>
-    ${trailerRows}
-    <div class="dlc-panel-header dlc-section-sep">
-      <span>Cargo DLCs</span>
-      <span class="dlc-actions">
-        <button class="dlc-cargo-all">All</button>
-        <button class="dlc-cargo-none">None</button>
-      </span>
-    </div>
-    ${cargoRows}
   `;
 }
