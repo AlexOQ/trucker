@@ -19,6 +19,7 @@ interface ParsedUnit {
   type: string;       // e.g. "cargo_data", "trailer_def", "city_data"
   name: string;       // e.g. "cargo.almond", "trailer_def.feldbinder..."
   props: Record<string, string | string[] | number | boolean>;
+  sourceFile?: string; // filename this unit was parsed from (for DLC tracking)
 }
 
 function parseSiiFile(content: string): ParsedUnit[] {
@@ -126,7 +127,9 @@ function readAllSiiFiles(dir: string, ext = '.sui'): ParsedUnit[] {
   for (const file of readdirSync(dir)) {
     if (file.endsWith(ext) || file.endsWith('.sii')) {
       const content = readFileSync(join(dir, file), 'utf-8');
-      units.push(...parseSiiFile(content));
+      const parsed = parseSiiFile(content);
+      for (const unit of parsed) unit.sourceFile = file;
+      units.push(...parsed);
     }
   }
   return units;
@@ -152,7 +155,44 @@ interface CargoData {
   overweight: boolean;
   excluded: boolean;
   unit_load_time: number;
+  dlc?: string;          // cargo DLC pack ID (see CARGO_DLC_MAP below)
 }
+
+// Cargo DLC mapping — verified against trucksimulator.wiki.gg/wiki/Cargo_types
+// Source: https://trucksimulator.wiki.gg/wiki/Cargo_types/Euro_Truck_Simulator_2
+const CARGO_DLC_MAP: Record<string, string> = {
+  // High Power Cargo Pack (8 cargo types)
+  aircond: 'high_power', hvac: 'high_power', crawler: 'high_power', driller: 'high_power',
+  tube: 'high_power', helicopter: 'high_power', roller: 'high_power', tracks: 'high_power', yacht: 'high_power',
+  // Heavy Cargo Pack (11 cargo types)
+  asph_miller: 'heavy_cargo', concr_beams: 'heavy_cargo', concr_beams2: 'heavy_cargo',
+  dozer: 'heavy_cargo', cable_reel: 'heavy_cargo', locomotive: 'heavy_cargo',
+  metal_center: 'heavy_cargo', mobile_crane: 'heavy_cargo', mob_crusher: 'heavy_cargo',
+  mob_screener: 'heavy_cargo', mob_stacker: 'heavy_cargo', transformat: 'heavy_cargo',
+  // Special Transport (14 cargo types, most escort-only; only CZLoko has regular body types)
+  czl_es300: 'special_transport', czl_muv75: 'special_transport',
+  // Volvo Construction Equipment (7 cargo types)
+  volvo_a25g: 'volvo_ce', volvo_bucket: 'volvo_ce', volvo_sd160b: 'volvo_ce',
+  volvo_ec220e: 'volvo_ce', volvo_l250h: 'volvo_ce', volvo_rims: 'volvo_ce', vol_ew240emh: 'volvo_ce',
+  // JCB Equipment Pack (10 cargo types)
+  jcb_bhl4cx: 'jcb', jcb_g100rs: 'jcb', jcb_dmphtd5e: 'jcb', jcb_mexc19ce: 'jcb',
+  jcb_exc245xr: 'jcb', jcb_pw125qe: 'jcb', jcb_dmp6t2: 'jcb', jcb_th540180: 'jcb',
+  jcb_ft4220: 'jcb', jcb_wload457: 'jcb',
+  // Bobcat Cargo Pack (7 cargo types)
+  bob_tl3070a: 'bobcat', bob_pa127v: 'bobcat', bob_e60: 'bobcat', bob_d30: 'bobcat',
+  bob_e10e: 'bobcat', bob_s86: 'bobcat', bob_l95: 'bobcat',
+  // KRONE Agriculture Equipment (7 cargo types)
+  kr_ecb880cv: 'krone_agri', kr_bigx1180: 'krone_agri', kr_bigm450: 'krone_agri',
+  kr_stc1370: 'krone_agri', kr_vpv190xc: 'krone_agri', kr_bigp1290: 'krone_agri', kr_gx520: 'krone_agri',
+  // Farm Machinery (9 cargo types)
+  auger_wag: 'farm_machinery', tractor_au: 'farm_machinery', tractor_c: 'farm_machinery',
+  disc_harrows: 'farm_machinery', fert_spread: 'farm_machinery', forage_harv: 'farm_machinery',
+  planter: 'farm_machinery', sprayer: 'farm_machinery', square_baler: 'farm_machinery',
+  // Forest Machinery (8 cargo types)
+  exc_craw: 'forest_machinery', forwarder: 'forest_machinery', log_harvest: 'forest_machinery',
+  log_stacker: 'forest_machinery', mob_tr_winch: 'forest_machinery', mulcher: 'forest_machinery',
+  skidder: 'forest_machinery', wood_chipper: 'forest_machinery',
+};
 
 function extractCargo(): CargoData[] {
   const cargoDir = join(defsPath, 'cargo');
@@ -212,6 +252,7 @@ function extractCargo(): CargoData[] {
       overweight: id === 'overweight' || groups.includes('oversize'),
       excluded: false,
       unit_load_time: typeof unit.props.unit_load_time === 'number' ? unit.props.unit_load_time : 0,
+      dlc: CARGO_DLC_MAP[id],
     });
   }
 
@@ -825,6 +866,7 @@ function main() {
       body_types: c.body_types,
       groups: c.groups,
       excluded: c.excluded,
+      ...(c.dlc ? { dlc: c.dlc } : {}),
     }])),
     trailers: Object.fromEntries(trailers.map(t => [t.id, {
       name: t.name,

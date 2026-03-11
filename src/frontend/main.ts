@@ -7,7 +7,7 @@ import {
   getOwnedGarages, toggleOwnedGarage,
   getFilterMode, setFilterMode,
   getSelectedCountries, setSelectedCountries,
-  getOwnedTrailerDLCs,
+  getOwnedTrailerDLCs, getOwnedCargoDLCs, CARGO_DLC_MAP,
 } from './storage.js';
 import { initDLCPanel } from './dlc-ui.js';
 import type { AllData, Lookups } from './data.js';
@@ -473,7 +473,7 @@ async function init() {
   showLoading();
 
   try {
-    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs());
+    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), getOwnedCargoDLCs(), CARGO_DLC_MAP);
     lookups = buildLookups(data);
 
     initDLCPanel();
