@@ -95,7 +95,7 @@ interface DepotCargoItem {
 }
 
 /** A depot instance with its cargo profile and sampling CDF */
-interface CityDepotData {
+export interface CityDepotData {
   companyId: string;
   cargo: DepotCargoItem[];
   totalProbCoef: number;
@@ -109,7 +109,7 @@ interface CityDepotData {
  * Each cargo item includes best haul value per body type from ownable trailers
  * available in the city's country (standard + zone variants if country qualifies).
  */
-function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDepotData[] | null {
+export function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDepotData[] | null {
   const city = lookups.citiesById.get(cityId);
   const country = city?.country ?? '';
   const cityCompanies = lookups.cityCompanyMap.get(cityId) || [];
@@ -184,7 +184,7 @@ function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDepotData
  *
  * Then E[max] = Σ_i hv_i × [P(max ≤ hv_i) - P(max ≤ hv_{i-1})]
  */
-function analyticalFirstPickEV(depots: CityDepotData[], bodyType: string): number {
+export function analyticalFirstPickEV(depots: CityDepotData[], bodyType: string): number {
   // Collect all unique HV values across all depots for this body type
   const hvSet = new Set<number>([0]);
   for (const depot of depots) {
