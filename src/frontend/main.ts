@@ -17,6 +17,7 @@ let data: AllData | null = null;
 let lookups: Lookups | null = null;
 let currentCityId: string | null = null;
 let cachedRankings: CityRanking[] | null = null;
+let displayedRankings: CityRanking[] | null = null;
 
 function debounce(fn: () => void, ms: number): () => void {
   let timer: ReturnType<typeof setTimeout>;
@@ -157,10 +158,10 @@ function updateGarageCount() {
 // ============================================
 
 function getCityRank(cityId: string) {
-  if (!cachedRankings) return null;
-  const index = cachedRankings.findIndex((r) => r.id === cityId);
+  if (!displayedRankings) return null;
+  const index = displayedRankings.findIndex((r) => r.id === cityId);
   if (index === -1) return null;
-  return { rank: index + 1, total: cachedRankings.length };
+  return { rank: index + 1, total: displayedRankings.length };
 }
 
 function formatRank(rank: number, total: number): string {
@@ -224,6 +225,7 @@ function renderRankings() {
   const filterMode = getFilterMode();
   const ownedSet = new Set(getOwnedGarages());
   const displayRankings = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
+  displayedRankings = displayRankings;
 
   if (filterMode === 'owned' && displayRankings.length === 0) {
     rankingsContent.innerHTML = `
@@ -308,6 +310,20 @@ function renderRankings() {
 function ensureRankingsCached() {
   if (cachedRankings === null && data && lookups) {
     cachedRankings = calculateCityRankings(data, lookups);
+  }
+  if (displayedRankings === null && cachedRankings) {
+    // Apply current filters to build displayed rankings
+    const searchTerm = normalize(citySearch.value);
+    let filtered = cachedRankings.filter(
+      (r) => normalize(r.name).includes(searchTerm) || normalize(r.country).includes(searchTerm)
+    );
+    const selectedCountries = getSelectedCountries();
+    if (selectedCountries.length > 0) {
+      filtered = filtered.filter((r) => selectedCountries.includes(r.country));
+    }
+    const filterMode = getFilterMode();
+    const ownedSet = new Set(getOwnedGarages());
+    displayedRankings = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
   }
 }
 
