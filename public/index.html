@@ -25,50 +25,57 @@
     </header>
 
     <main id="main-content">
-    <div class="onboarding">
-      <h2>Getting Started</h2>
-      <p class="onboarding-intro">
-        This tool helps you choose the most profitable garage locations and the best trailers to buy for each one.
-        It analyzes all cargo jobs available in each city and recommends which trailers will maximize your income.
-      </p>
-      <div class="quick-steps">
-        <div class="step">
-          <span class="step-number">1</span>
-          <div class="step-content">
-            <strong>Browse city rankings</strong>
-            <span>Cities are ranked by job availability and cargo value</span>
-          </div>
-        </div>
-        <div class="step">
-          <span class="step-number">2</span>
-          <div class="step-content">
-            <strong>Click a city for trailer recommendations</strong>
-            <span>See which trailers work best for that location</span>
-          </div>
-        </div>
-        <div class="step">
-          <span class="step-number">3</span>
-          <div class="step-content">
-            <strong>Mark your garages with ★</strong>
-            <span>Track which cities you've set up garages in</span>
-          </div>
-        </div>
+    <div class="onboarding" id="onboarding">
+      <div class="onboarding-header">
+        <button class="onboarding-toggle" id="onboarding-toggle" aria-expanded="true">
+          <span class="toggle-icon">▼</span>
+          <h2>Getting Started</h2>
+        </button>
       </div>
-      <div class="terminology">
-        <h3>Key Terms</h3>
-        <dl class="term-list">
-          <dt class="tooltip" tabindex="0" data-tooltip="Company facilities (like Posped, EuroGoodies, etc.) that offer cargo jobs in a city">Depots</dt>
-          <dd>Company facilities where you pick up cargo</dd>
+      <div class="onboarding-content" id="onboarding-content">
+        <p class="onboarding-intro">
+          This tool helps you choose the most profitable garage locations and the best trailers to buy for each one.
+          It analyzes all cargo jobs available in each city and recommends which trailers will maximize your income.
+        </p>
+        <div class="quick-steps">
+          <div class="step">
+            <span class="step-number">1</span>
+            <div class="step-content">
+              <strong>Browse city rankings</strong>
+              <span>Cities are ranked by job availability and cargo value</span>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">2</span>
+            <div class="step-content">
+              <strong>Click a city for trailer recommendations</strong>
+              <span>See which trailers work best for that location</span>
+            </div>
+          </div>
+          <div class="step">
+            <span class="step-number">3</span>
+            <div class="step-content">
+              <strong>Mark your garages with ★</strong>
+              <span>Track which cities you've set up garages in</span>
+            </div>
+          </div>
+        </div>
+        <div class="terminology">
+          <h3>Key Terms</h3>
+          <dl class="term-list">
+            <dt class="tooltip" tabindex="0" data-tooltip="Company facilities (like Posped, EuroGoodies, etc.) that offer cargo jobs in a city">Depots</dt>
+            <dd>Company facilities where you pick up cargo</dd>
 
-          <dt class="tooltip" tabindex="0" data-tooltip="Earning value weighted by cargo value, spawn rate, and depot count">EV (Expected Value)</dt>
-          <dd>A trailer's earning potential in a specific city</dd>
+            <dt class="tooltip" tabindex="0" data-tooltip="Earning value weighted by cargo value, spawn rate, and depot count">EV (Expected Value)</dt>
+            <dd>A trailer's earning potential in a specific city</dd>
 
-          <dt class="tooltip" tabindex="0" data-tooltip="What fraction of the city's total earning potential this trailer covers">Share</dt>
-          <dd>Percentage of city value covered by a trailer type</dd>
+            <dt class="tooltip" tabindex="0" data-tooltip="What fraction of the city's total earning potential this trailer covers">Share</dt>
+            <dd>Percentage of city value covered by a trailer type</dd>
 
-          <dt class="tooltip" tabindex="0" data-tooltip="Total weighted cargo value — higher score means more profitable garage location">Score</dt>
-          <dd>Overall earning potential of a city's job market</dd>
-        </dl>
+            <dt class="tooltip" tabindex="0" data-tooltip="Total weighted cargo value — higher score means more profitable garage location">Score</dt>
+            <dd>Overall earning potential of a city's job market</dd>
+          </dl>
+        </div>
       </div>
     </div>
 

@@ -9,6 +9,7 @@ import {
   getSelectedCountries, setSelectedCountries,
   getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs,
   isFirstVisit, isBannerDismissed, dismissBanner,
+  isOnboardingCollapsed, setOnboardingCollapsed,
   COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP,
 } from './storage.js';
 import type { AllData, Lookups } from './data.js';
@@ -200,6 +201,8 @@ const backLink = document.getElementById('back-link')!;
 const filterToggle = document.getElementById('filter-toggle')!;
 const citySearch = document.getElementById('city-search') as HTMLInputElement;
 const howItWorksToggle = document.getElementById('how-it-works-toggle');
+const onboardingToggle = document.getElementById('onboarding-toggle');
+const onboardingSection = document.getElementById('onboarding');
 
 // Filter toggle
 filterToggle.addEventListener('click', (e) => {
@@ -621,6 +624,31 @@ function showDLCBanner() {
 
 async function init() {
   showDLCBanner();
+
+  // Initialize onboarding section collapsed state
+  if (onboardingSection && onboardingToggle) {
+    const collapsed = isOnboardingCollapsed();
+    if (collapsed) {
+      onboardingSection.classList.add('collapsed');
+      onboardingToggle.setAttribute('aria-expanded', 'false');
+      onboardingToggle.querySelector('.toggle-icon')!.textContent = '▶';
+    }
+    onboardingToggle.addEventListener('click', () => {
+      const isCollapsed = onboardingSection.classList.contains('collapsed');
+      if (isCollapsed) {
+        onboardingSection.classList.remove('collapsed');
+        onboardingToggle.setAttribute('aria-expanded', 'true');
+        onboardingToggle.querySelector('.toggle-icon')!.textContent = '▼';
+        setOnboardingCollapsed(false);
+      } else {
+        onboardingSection.classList.add('collapsed');
+        onboardingToggle.setAttribute('aria-expanded', 'false');
+        onboardingToggle.querySelector('.toggle-icon')!.textContent = '▶';
+        setOnboardingCollapsed(true);
+      }
+    });
+  }
+
   showLoading();
 
   try {

@@ -326,6 +326,56 @@ nav {
   border-left: 4px solid #f39c12;
 }
 
+.onboarding-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.onboarding.collapsed .onboarding-header {
+  margin-bottom: 0;
+}
+
+.onboarding-toggle {
+  background: transparent;
+  border: none;
+  color: #f39c12;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  min-height: 44px;
+  font-size: 1rem;
+}
+
+.onboarding-toggle:hover {
+  color: #ffa726;
+}
+
+.onboarding-toggle:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
+}
+
+.onboarding-toggle h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.onboarding-content {
+  overflow: hidden;
+  max-height: 800px;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.onboarding.collapsed .onboarding-content {
+  max-height: 0;
+  opacity: 0;
+}
+
 .onboarding h2 {
   margin-bottom: 1rem;
 }
