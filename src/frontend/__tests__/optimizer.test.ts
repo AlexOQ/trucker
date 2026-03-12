@@ -3,6 +3,9 @@ import { buildLookups, type AllData } from '../data.ts';
 import {
   calculateCityRankings,
   computeOptimalFleet,
+  analyticalFirstPickEV,
+  buildCityDepotProfiles,
+  type CityDepotData,
 } from '../optimizer.ts';
 
 describe('optimizer', () => {
@@ -211,6 +214,198 @@ describe('optimizer', () => {
         for (let i = 0; i < rank.topTrailers.length - 1; i++) {
           expect(rank.topTrailers[i].cityValue).toBeGreaterThanOrEqual(rank.topTrailers[i + 1].cityValue);
         }
+      }
+    });
+  });
+
+  describe('analyticalFirstPickEV', () => {
+    it('returns 0 for body type with no compatible cargo', () => {
+      // Single depot with one cargo that has no HV for "nonexistent" body type
+      const depots: CityDepotData[] = [{
+        companyId: 'test',
+        cargo: [{ cargoId: 'electronics', probCoef: 1, bodyHV: { dryvan: 225 } }],
+        totalProbCoef: 1,
+        cumProbs: [1],
+      }];
+
+      expect(analyticalFirstPickEV(depots, 'nonexistent')).toBe(0);
+    });
+
+    it('returns exact HV when single depot has single cargo (deterministic)', () => {
+      // One depot, one cargo, one body type => P(max = HV) = 1
+      // All 3 jobs will be the same cargo, so max = HV = 225
+      const depots: CityDepotData[] = [{
+        companyId: 'test',
+        cargo: [{ cargoId: 'electronics', probCoef: 1, bodyHV: { dryvan: 225 } }],
+        totalProbCoef: 1,
+        cumProbs: [1],
+      }];
+
+      const ev = analyticalFirstPickEV(depots, 'dryvan');
+      expect(ev).toBeCloseTo(225, 5);
+    });
+
+    it('returns weighted EV for single depot with two cargo items', () => {
+      // Depot with 2 cargo: electronics (prob=1, HV=225) and machinery (prob=1, HV=3)
+      // 3 draws per depot. E[max of 3] should be > simple expected value
+      const depots: CityDepotData[] = [{
+        companyId: 'test',
+        cargo: [
+          { cargoId: 'electronics', probCoef: 1, bodyHV: { dryvan: 225 } },
+          { cargoId: 'machinery', probCoef: 1, bodyHV: { dryvan: 3 } },
+        ],
+        totalProbCoef: 2,
+        cumProbs: [0.5, 1],
+      }];
+
+      const ev = analyticalFirstPickEV(depots, 'dryvan');
+
+      // P(electronics) = 0.5, P(machinery) = 0.5
+      // P(max <= 3) = P(all 3 draws are machinery) = 0.5^3 = 0.125
+      // P(max = 3) = P(max<=3) - P(max<=0) = 0.125 - 0 = 0.125
+      // P(max = 225) = 1 - 0.125 = 0.875
+      // E[max] = 3 * 0.125 + 225 * 0.875 = 0.375 + 196.875 = 197.25
+      expect(ev).toBeCloseTo(197.25, 5);
+    });
+
+    it('increases EV with more depots (more draws)', () => {
+      // Same cargo profile at 1 depot vs 2 depot instances
+      const singleDepot: CityDepotData[] = [{
+        companyId: 'test',
+        cargo: [
+          { cargoId: 'electronics', probCoef: 1, bodyHV: { dryvan: 225 } },
+          { cargoId: 'machinery', probCoef: 1, bodyHV: { dryvan: 3 } },
+        ],
+        totalProbCoef: 2,
+        cumProbs: [0.5, 1],
+      }];
+
+      const twoDepots: CityDepotData[] = [
+        ...singleDepot,
+        { ...singleDepot[0] }, // duplicate depot instance
+      ];
+
+      const ev1 = analyticalFirstPickEV(singleDepot, 'dryvan');
+      const ev2 = analyticalFirstPickEV(twoDepots, 'dryvan');
+
+      // More depots = more draws = higher E[max]
+      expect(ev2).toBeGreaterThan(ev1);
+    });
+
+    it('respects prob_coef weighting (rare cargo less likely to appear)', () => {
+      // High-value cargo with very low prob_coef vs normal cargo
+      const depots: CityDepotData[] = [{
+        companyId: 'test',
+        cargo: [
+          { cargoId: 'rare', probCoef: 0.1, bodyHV: { dryvan: 1000 } },
+          { cargoId: 'common', probCoef: 2.0, bodyHV: { dryvan: 100 } },
+        ],
+        totalProbCoef: 2.1,
+        cumProbs: [0.1 / 2.1, 1],
+      }];
+
+      const ev = analyticalFirstPickEV(depots, 'dryvan');
+
+      // P(rare) = 0.1/2.1 ~= 0.0476, P(common) = 2.0/2.1 ~= 0.9524
+      // P(max <= 100) = P(all draws are common or zero) = (2.0/2.1)^3
+      // Since all cargo has HV > 0, P(max <= 100) = (2.0/2.1)^3 ~= 0.864
+      // P(max = 1000) = 1 - 0.864 ~= 0.136
+      // E[max] ~= 100 * 0.864 + 1000 * 0.136 ~= 86.4 + 136.2 ~= 222.6
+      // EV should be between 100 and 1000, much closer to 100 because rare is rare
+      expect(ev).toBeGreaterThan(100);
+      expect(ev).toBeLessThan(1000);
+    });
+
+    it('can be computed via buildCityDepotProfiles from real mock data', () => {
+      // Integration test: build depot profiles from the standard mock data
+      // and verify analyticalFirstPickEV produces reasonable results
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const depots = buildCityDepotProfiles('berlin', lookups);
+
+      expect(depots).not.toBeNull();
+
+      // Berlin has 3 logistics_co + 2 transport_inc depots
+      // Test each body type that has cargo
+      const dryvanEV = analyticalFirstPickEV(depots!, 'dryvan');
+      const flatbedEV = analyticalFirstPickEV(depots!, 'flatbed');
+      const tankerEV = analyticalFirstPickEV(depots!, 'tanker');
+
+      // All should be positive
+      expect(dryvanEV).toBeGreaterThan(0);
+      expect(flatbedEV).toBeGreaterThan(0);
+      expect(tankerEV).toBeGreaterThan(0);
+
+      // Dryvan handles electronics (HV=225) and furniture (HV=135),
+      // so its EV should be > tanker which handles only chemicals (HV=166.4)
+      // with lower units but fragile bonus
+      expect(dryvanEV).toBeGreaterThan(tankerEV);
+    });
+
+    it('returns consistent results with calculateCityRankings', () => {
+      // The ranking score for a city is the sum of top 5 body type EVs
+      // from analyticalFirstPickEV. Verify they agree.
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const rankings = calculateCityRankings(data, lookups);
+      const depots = buildCityDepotProfiles('paris', lookups);
+
+      expect(depots).not.toBeNull();
+      const paris = rankings.find((r) => r.id === 'paris');
+      expect(paris).toBeDefined();
+
+      // Paris should have a positive score
+      expect(paris!.score).toBeGreaterThan(0);
+
+      // Compute EV for each body type manually and verify sum matches score
+      // (minus dominated body types, which we can't easily replicate here)
+      // At minimum, the top trailer's cityValue should match analyticalFirstPickEV
+      const topBT = paris!.topTrailers[0].bodyType;
+      const topEV = analyticalFirstPickEV(depots!, topBT);
+      expect(paris!.topTrailers[0].cityValue).toBeCloseTo(topEV, 2);
+    });
+  });
+
+  describe('buildCityDepotProfiles', () => {
+    it('returns null for city with no companies', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      expect(buildCityDepotProfiles('empty_city', lookups)).toBeNull();
+    });
+
+    it('creates correct number of depot instances from depot counts', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const depots = buildCityDepotProfiles('berlin', lookups);
+
+      expect(depots).not.toBeNull();
+      // Berlin: logistics_co × 3 + transport_inc × 2 = 5 depot instances
+      expect(depots!.length).toBe(5);
+    });
+
+    it('excludes excluded cargo from depot profiles', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const depots = buildCityDepotProfiles('berlin', lookups);
+
+      // None of the depot entries should contain excluded_cargo
+      for (const depot of depots!) {
+        const cargoIds = depot.cargo.map((c) => c.cargoId);
+        expect(cargoIds).not.toContain('excluded_cargo');
+      }
+    });
+
+    it('builds correct CDF for sampling', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const depots = buildCityDepotProfiles('berlin', lookups);
+
+      for (const depot of depots!) {
+        // CDF should be monotonically increasing and end at 1
+        for (let i = 1; i < depot.cumProbs.length; i++) {
+          expect(depot.cumProbs[i]).toBeGreaterThan(depot.cumProbs[i - 1]);
+        }
+        expect(depot.cumProbs[depot.cumProbs.length - 1]).toBeCloseTo(1, 10);
       }
     });
   });
