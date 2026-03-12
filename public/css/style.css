@@ -172,11 +172,14 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
 }
 .section-header h2 {
   margin: 0;
+  min-width: 0;
 }
 .calc-btn {
   background: #f39c12;
@@ -752,10 +755,13 @@ input[type="range"]::-moz-range-thumb {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
 .section-header h2 {
   margin-bottom: 0;
+  min-width: 0;
 }
 
 .export-buttons {
@@ -1008,6 +1014,7 @@ tr.scs-fallback-row td {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 1rem;
 }
 
@@ -1669,5 +1676,23 @@ tr.owned-garage {
   .dlc-row {
     min-height: 44px;
     padding: 0.5rem 0.75rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-header .calc-btn,
+  .section-header .export-buttons {
+    width: 100%;
+  }
+
+  .section-header .calc-btn {
+    text-align: center;
+  }
+
+  .city-header-row {
+    gap: 0.5rem;
   }
 }
