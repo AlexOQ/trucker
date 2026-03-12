@@ -4,13 +4,13 @@ Euro Truck Simulator 2 trucking company analyzer - optimizes trailer sets per ci
 
 ## Project Overview
 
-**Goal**: Recommend optimal set of 10 trailers per city to maximize income coverage.
+**Goal**: Recommend optimal fleet of up to 5 AI drivers per city garage to maximize expected income.
 
 **Core Logic**:
-- Cities contain depot types (company facilities)
-- Depot types export cargoes (same cargo at multiple depots = multiplied in pool)
-- Cargoes have value and compatible trailer types
-- Algorithm: greedy weighted set cover to find best trailer mix
+- Cities contain depots (company facilities), each spawning random cargo jobs
+- Cargoes have value, spawn probability (prob_coef), and compatible trailer body types
+- Monte Carlo simulation finds best fleet: greedy driver selection maximizing marginal EV
+- City rankings use analytical E[max of N] formula for speed (no MC needed per city)
 
 ## Tech Stack
 
@@ -29,33 +29,35 @@ Euro Truck Simulator 2 trucking company analyzer - optimizes trailer sets per ci
 
 ## Data Model
 
-**JSON Files** (in `/public/data/`):
-- `cities.json`: City name, country
-- `companies.json`: Depot/company types
-- `cargo.json`: Cargo name, value, fragile/high_value flags, excluded
-- `trailers.json`: Trailer name, ownable flag
-- `city-companies.json`: Which companies in which cities (with depot counts)
-- `company-cargo.json`: Which cargoes at which companies
-- `cargo-trailers.json`: Which trailers compatible with which cargoes
+**JSON Data Sources** (in `/public/data/`):
+- `game-defs.json`: Authoritative game data extracted from ETS2 game files — cargo definitions (value, volume, mass, fragility, prob_coef, body_types, groups), trailer specs (body_type, volume, gross_weight_limit, chain_type, country_validity, ownable), company mappings (cargo_out/in, cities), city/country data, cargo-trailer unit counts, economy constants, truck specs, and DLC registry
+- `observations.json`: Observed data from save game parsing — city-company mappings, cargo-trailer compatibility, cargo spawn frequencies, unit counts per trailer. Supplements and validates game defs but does NOT override authoritative values
 
-**Data Sources**:
-- `game-defs.json`: Authoritative game data — cargo values, trailer specs, company mappings, prob_coef
-- `observations.json`: Observed data from save game parsing — supplements and validates game defs
+**Data Loading** (`loadAllData()`):
+- Loads both JSON files in parallel via fetch
+- Initializes DLC registry from `game-defs.json` `dlc` section if present
+- Builds entity arrays (cities, companies, cargo, trailers) from game defs as primary source, observations as fallback
 - `prob_coef` (from game defs) is the authoritative spawn probability coefficient (range 0.3-2.0, most cargo at 1.0)
 
 **Body Types**:
 - 15-17 body types cover all ~359 cargo types in the game
 - All trailers within a body type haul the SAME cargo set — difference is only volume/units
-- Trailer tiers: Standard (1.0×), Double (1.5×), HCT (2.0×)
+- Trailer tiers: Standard, Double, HCT (identified by trailer ID keywords)
 - Body type profiles are built dynamically from game-defs.json via `getBodyTypeProfiles()`
 - Optimizer works at body-type level, not individual trailer level
 
-**EV Formula**: `value_per_km × units × prob_coef × depotCount × tierMultiplier`
+**Haul Value Formula**: `unitValue × units` where `unitValue = cargo.value × (1 + 0.3×fragile + 0.3×high_value)`
 
 **Cargo Value Bonuses**:
 - Fragile cargo: +30% value bonus
 - High-value cargo: +30% value bonus
 - Bonuses stack (fragile + high_value = +60%)
+
+**DLC Filtering** (`applyDLCFilter()`):
+- Filters trailers by brand prefix (e.g., `feldbinder.` prefix requires Feldbinder DLC)
+- Filters cargo by DLC pack or map expansion association
+- Filters cities to garage-only cities not blocked by unowned map DLCs
+- All browser pages apply DLC filter before displaying data
 
 **Optional Database** (for bulk data entry):
 - PostgreSQL schema mirrors JSON structure
@@ -70,72 +72,107 @@ Euro Truck Simulator 2 trucking company analyzer - optimizes trailer sets per ci
 3. Parser reads all `.sii/.sui` files: cargo, trailers, companies, cities, countries, economy, trucks
 4. Computes cargo-trailer compatibility from `body_type` matching
 5. Computes units per trailer: `floor(trailer_volume / cargo_volume)`, weight-limited if `gross_weight_limit` applies
-6. Outputs `public/data/game-defs.json` — single file, idempotent, includes all DLC content
-7. Re-run on every game update or DLC — full reseed, no incremental merge needed
+6. Generates DLC registry: trailer DLCs (by brand), cargo DLCs (by pack), map DLCs (by city membership), garage cities, cargo-DLC associations
+7. Outputs `public/data/game-defs.json` — single file, idempotent, includes all DLC content
+8. Re-run on every game update or DLC — full reseed, no incremental merge needed
+
+**Diff mode**: `npx tsx scripts/parse-game-defs.ts /path/to/def --diff`
+- Compares freshly parsed data against existing `game-defs.json` without writing
+- Reports added/removed/changed entries for cargo, trailers, companies, cities
+- Useful for reviewing game updates before committing new data
 
 ### Body Type Profiles (`getBodyTypeProfiles()`)
 1. Group all ownable trailers by `body_type`
 2. For each body type, collect union of all compatible cargo IDs (via `trailerCargoMap`)
 3. All trailers within a body type haul the SAME cargo set — difference is only volume/capacity
-4. Pick "best" standard trailer per body type: max volume, no country restriction, not double/HCT
+4. Pick best trailer per body type by total haul value across all compatible cargo
 5. Detect doubles/HCT availability by scanning trailer IDs for `double`/`bdouble`/`hct` keywords
 6. Result: ~15-17 body types covering all ~359 cargo types
 
-### Dominated Body Type Elimination (`findNonDominatedBodyTypes()`)
-- Body type A is **dominated** if body type B can haul all of A's cargo plus more (A ⊂ B)
-- Example: dryvan(127 cargo) ⊂ curtainside(131 cargo) → dryvan eliminated
+### Dominated Body Type Elimination (`findDominatedBodyTypes()`)
+- Body type A is **dominated** by B if B can haul every cargo A can with >= haul value, AND B covers strictly more cargo (or has strictly higher HV somewhere)
+- Dominated body types are excluded from the optimizer
 - Only non-dominated body types enter the optimizer
 
-### EV Calculation (`calculateBodyTypeStats()`)
-For each (bodyType, tier) combination available in the city's country:
-
+### Depot Cargo Model (`buildCityDepotProfiles()`)
+Each depot instance in a city gets a cargo profile:
 ```
-CargoPool = all (companyId, cargoId, depotCount) tuples for the city
-           where cargo.excluded = false
-
-For each cargo in CargoPool that this body type can haul:
-  value = cargo.value × (1 + 0.3×fragile + 0.3×high_value)    // base value with bonuses
-  units = max units fitting in best standard trailer for this body type
-  spawnWeight = cargo.prob_coef                                 // authoritative from game defs
-
-  contribution = value × units × depotCount × spawnWeight × tierMultiplier
-
-bodyTypeEV = sum of all cargo contributions
+For each company in city:
+  For each depot instance (count from city_companies):
+    Build cargo pool: all non-excluded cargo the company exports
+    For each cargo item:
+      probCoef = cargo.prob_coef (spawn probability)
+      For each compatible ownable trailer valid in city's country:
+        bodyHV[bodyType] = max(unitValue × units) across trailers of that body type
+    Build cumulative probability distribution (CDF) for fast MC sampling
 ```
 
-**Tier multipliers** (separate optimizer entries per tier):
-- Standard: 1.0× (available everywhere)
-- Double: 1.5× (country-restricted, e.g., 8 countries)
-- HCT: 2.0× (country-restricted, e.g., Finland/Sweden)
-
-### Trailer Set Optimization (Greedy with Diminishing Returns)
-Parameters: `maxTrailers` (garage slots, default 10), `diminishingFactor` (0-100, default 75)
+### Fleet Optimization — Monte Carlo Simulation (`computeOptimalFleet()`)
+Constants: `MAX_DRIVERS = 5`, `MC_SIMS = 20,000`, `JOBS_PER_DEPOT = 3`
 
 ```
-1. Build CargoPool for the city
-2. Filter ownable trailers valid in city's country
-3. Eliminate dominated body types
-4. Calculate EV for each (bodyType, tier) combo
-5. Greedy selection loop (maxTrailers rounds):
-   a. For each candidate body type:
-      effectiveEV = bodyTypeEV × diminishingFactor^(copies_already_selected)
-   b. Pick body type with highest effectiveEV
-   c. Add to selected set, increment its copy count
-6. Output recommendations sorted by count DESC, then score DESC
+Phase 1 — Greedy driver selection (up to MAX_DRIVERS rounds):
+  1. Pre-filter: compute analytical first-pick EV per body type, keep top 15
+  2. For each pick round:
+     a. Generate MC_SIMS random job boards (JOBS_PER_DEPOT jobs per depot)
+     b. Simulate existing fleet on each board (drivers pick best job, remove it)
+     c. For each candidate body type, measure marginal EV on remaining boards
+     d. Pick body type with highest average marginal EV
+     e. Add to fleet
+
+Phase 2 — Per-driver EV computation:
+  Simulate final fleet across MC_SIMS boards to get each driver's EV
+
+Phase 3 — Collapse:
+  Group drivers by body type, output count and EV per group
 ```
 
-**diminishingFactor behavior**:
-- 100 = no penalty → top body type fills all slots (dim^n = 1.0 always)
-- 75 = moderate diversity → each copy scores 0.75× the previous
-- 0 = max diversity → only first copy of each type selected (0^1 = 0)
-
-### Coverage Calculation
-- `coveragePct = cargoCount / totalCargoPoolSize × 100`
-- Measures what % of available cargo types this body type can haul in this city
-
-### City Ranking Score
-- `score = sqrt(totalJobs × totalValue)` — geometric mean balancing job availability with cargo value
+### City Ranking Score (`calculateCityRankings()`)
+- Uses analytical E[max of N] formula (`analyticalFirstPickEV()`) — no MC needed
+- For each non-dominated body type: compute expected value of the best job across all depots
+- `score = sum of top RANKING_DRIVERS (5) body type EVs`
 - Cities ranked by score descending
+
+### Analytical E[max of N] (`analyticalFirstPickEV()`)
+Multi-depot formula for ranking speed:
+```
+P(max across all depots ≤ H) = Π_d CDF_d(H)^JOBS_PER_DEPOT
+E[max] = Σ_i hv_i × [P(max ≤ hv_i) - P(max ≤ hv_{i-1})]
+```
+This gives the expected value of the single best job a driver with a given body type would find.
+
+## DLC System
+
+Three categories of DLC content affect optimization results:
+
+**Trailer Brand DLCs** (8 brands): Feldbinder, Kassbohrer, Kogel, Krone, Schmitz Cargobull, Schwarzmuller, Tirsan, Wielton
+- Trailer ID prefix determines brand (e.g., `feldbinder.` trailers require Feldbinder DLC)
+- Base game trailers use `scs.` prefix and are always available
+
+**Cargo Pack DLCs** (9 packs): High Power Cargo, Heavy Cargo, Special Transport, Volvo Construction, JCB Equipment, Bobcat Cargo, KRONE Agriculture, Farm Machinery, Forest Machinery
+- Each pack adds specific cargo IDs to the game
+- Cargo-DLC mapping maintained in `CARGO_DLC_MAP` in `dlc-data.ts`
+
+**Map Expansion DLCs** (9 maps): Going East!, Scandinavia, Vive la France!, Italia, Beyond the Baltic Sea, Road to the Black Sea, Iberia, West Balkans, Greece
+- Each map adds cities (tracked in `CITY_DLC_MAP`)
+- Maps also add "shadow cargo" — cargo types that only appear with the map DLC (tracked in `MAP_DLC_CARGO`)
+- `GARAGE_CITIES` set tracks which cities have purchasable garages
+
+**DLC Filtering Pipeline**:
+1. User toggles DLC ownership on the DLCs page (stored in localStorage)
+2. On page load, `applyDLCFilter()` removes unowned trailers, cargo, and cities
+3. All pages (rankings, city detail, browsers) operate on filtered data
+
+**Marginal Value Calculator** (`dlc-value.ts`):
+- For each unowned DLC, computes the fleet EV delta if the player owned it
+- Uses analytical city rankings (fast) — evaluates each DLC by adding it hypothetically and re-ranking
+- Map DLCs show both "shadow cargo" improvement at existing garages and potential new garage cities
+- Results sorted by total EV delta descending
+
+**DLC Data Initialization**:
+- Hardcoded fallbacks in `dlc-data.ts` used until game-defs.json loads
+- `initDlcData()` overrides with live data from `game-defs.json` `dlc` section
+- DLC registry generated by `parse-game-defs.ts` from game file analysis
 
 ## Commands
 
@@ -170,7 +207,7 @@ npm run export           # Export database to JSON files
 
 ## Data Entry
 
-Data is entered via conversation with Claude - no UI for data entry.
+Primary data source is `game-defs.json` generated by the parser. Manual data entry via the optional database is only needed for supplementary data not in game files.
 
 ### Data Entry Rules
 
@@ -182,54 +219,48 @@ Data is entered via conversation with Claude - no UI for data entry.
 
 **City names**:
 - Use proper Unicode/diacritics (Córdoba not Cordoba, Zürich not Zurich)
-- Fix duplicates by migrating city_depots to accented version, delete ASCII duplicate
-
-**Multi-type depots**:
-- Create separate depot_types entries with naming: "Company Name Depot Type"
-- Example: "ITCC Factory", "ITCC Scrapyard"
-
-**SQL Pattern for bulk cargo insert**:
-```sql
-WITH cargo_list AS (
-  SELECT LOWER(name) as cargo_name FROM (VALUES
-    ('Cargo1'),('Cargo2')
-  ) AS t(name)
-)
-INSERT INTO depot_type_cargoes (depot_type_id, cargo_type_id)
-SELECT [depot_id], ct.id FROM cargo_types ct
-JOIN cargo_list cl ON LOWER(ct.name) = cl.cargo_name
-ON CONFLICT DO NOTHING;
-```
 
 ## Project Structure
 
 ```
-/src/frontend    - TypeScript source (compiled by Vite)
-  main.ts        - main application entry point
-  data.ts        - data loading, caching, body type profiles
-  optimizer.ts   - trailer optimization algorithm (body-type-based)
-  storage.ts     - localStorage wrapper
-  trailers.ts    - trailers/body type browser page
+/src/frontend       - TypeScript source (compiled by Vite)
+  main.ts           - rankings page: city rankings, city detail with fleet recommendations
+  data.ts           - data loading, entity builders, DLC filtering, body type profiles, lookups
+  optimizer.ts      - Monte Carlo fleet optimizer and analytical city rankings
+  storage.ts        - localStorage wrapper, re-exports DLC registries from dlc-data
+  dlc-data.ts       - DLC registry (trailer/cargo/map DLCs), GARAGE_CITIES, CITY_DLC_MAP
+  dlc-value.ts      - DLC marginal value calculator (EV delta for unowned DLCs)
+  dlcs.ts           - DLC settings page: toggle ownership, run marginal value analysis
+  cities.ts         - city browser page with company/depot info
+  companies.ts      - company browser page with city/cargo info
+  cargo.ts          - cargo browser page with provider/trailer info
+  trailers.ts       - trailer/body type browser: body types → tiers → variants
+  __tests__/        - test suite
+    data.test.ts    - data loading and lookup tests
+    optimizer.test.ts - optimizer algorithm tests
+    storage.test.ts - storage/state management tests
 
-/public          - static assets and HTML entry points
-  /css           - stylesheets
-  /data          - JSON data files (cities, cargo, trailers, etc)
-  index.html     - main page (imports src/frontend/main.ts)
-  cities.html    - city browser
-  companies.html - company browser
-  cargo.html     - cargo browser
-  trailers.html  - trailer/body type browser
+/public             - static assets and HTML entry points
+  /css              - stylesheets
+  /data             - JSON data files (game-defs.json, observations.json)
+  index.html        - main page: rankings + city detail (imports src/frontend/main.ts)
+  cities.html       - city browser
+  companies.html    - company browser
+  cargo.html        - cargo browser
+  trailers.html     - trailer/body type browser
+  dlcs.html         - DLC settings and marginal value calculator
 
-/public/dist     - production build output (generated by Vite)
+/public/dist        - production build output (generated by Vite)
 
-/src             - backend code (optional, for data entry only)
-  /db            - database connection, migrations, queries
-  /api           - express routes for data entry
-  /types         - TypeScript interfaces
+/src                - backend code (optional, for data entry only)
+  /db               - database connection, migrations, queries
+  /api              - express routes for data entry
+  /types            - TypeScript interfaces
 
-/scripts         - data export/migration utilities
-/docs            - tracked documentation
-/analysis        - untracked, ephemeral agent outputs
+/scripts            - data pipeline and analysis utilities
+  parse-game-defs.ts - ETS2 game definition parser (generates game-defs.json)
+/docs               - tracked documentation
+/analysis           - untracked, ephemeral agent outputs
 ```
 
 ## Agent Workflow System

@@ -83,26 +83,27 @@
         <div class="explanation-section">
           <h3>The Recommendation Algorithm</h3>
           <p>
-            The advisor uses a <strong>profile-based proportional allocation</strong> to recommend trailers.
+            The advisor uses a <strong>Monte Carlo simulation</strong> to find the best fleet
+            of up to 5 AI drivers for each city garage.
           </p>
           <ol class="algorithm-steps">
             <li>
-              <strong>Build city cargo profile:</strong> Sum all cargo from the city's depots,
-              weighted by spawn rate (prob_coef) and depot count.
+              <strong>Build depot cargo pools:</strong> Each depot in the city has a pool of cargo
+              it can spawn, weighted by spawn probability (prob_coef). The simulation models
+              3 random jobs per depot on each visit.
             </li>
             <li>
-              <strong>Score trailer types:</strong> 43 unique trailer types (after deduplication and domination
-              elimination) are scored against the city. Each trailer's EV = sum of
-              (haul value × spawn weight × depot count) for its compatible cargo.
+              <strong>Eliminate dominated body types:</strong> If one trailer type can haul everything
+              another can (and more), the weaker type is removed from consideration.
             </li>
             <li>
-              <strong>Zone filtering:</strong> Doubles and HCT trailers only score in countries where
-              they're valid. HCT carries ~2× cargo, Doubles ~1.5×.
+              <strong>Greedy driver selection (20,000 simulations):</strong> Each round picks the
+              body type that adds the most marginal earning value. Drivers pick the highest-value
+              job they can haul from the shared job board, then that job is removed.
             </li>
             <li>
-              <strong>Proportional allocation:</strong> Garage slots are allocated proportional to
-              each trailer type's share of total earning potential. A city dominated by heavy machinery
-              cargo gets mostly lowbed/lowboy trailers.
+              <strong>Country-aware filtering:</strong> Trailers are filtered to those valid in the
+              city's country. HCT and double trailers are only available in specific regions.
             </li>
           </ol>
         </div>
@@ -110,17 +111,19 @@
         <div class="explanation-section">
           <h3>Understanding the Scores</h3>
           <p>
-            <strong>City Score</strong> = total weighted cargo value across all depots.
-            Higher score means more earning potential from diverse, valuable cargo.
+            <strong>City Score</strong> = sum of the top 5 body types' analytical expected values.
+            Each body type's EV uses an E[max of N] formula across all depots — the expected value
+            of the best job a driver with that trailer would find. Higher score means more
+            earning potential.
           </p>
           <p>
-            <strong>Trailer EV</strong> = expected earning value for that trailer type in a specific city.
-            Based on cargo value × units per haul × spawn probability × depot availability.
+            <strong>Trailer EV</strong> = expected earning value for that driver's trailer type,
+            computed via Monte Carlo simulation of the full fleet interacting with random job boards.
           </p>
           <p>
-            <strong>Share %</strong> = what fraction of the city's earning potential this trailer captures.
-            Trailers are not "reserved" per driver — they're a shared pool where the most probable
-            highest-earning trailer matters most.
+            <strong>Share %</strong> = what fraction of the city's total fleet EV this trailer type
+            contributes. Multiple drivers can use the same trailer type if it remains the most
+            profitable pick after earlier drivers have claimed jobs.
           </p>
         </div>
       </div>
