@@ -4,7 +4,7 @@ import {
   type CityRanking, type FleetEntry, type OptimalFleetEntry,
 } from './optimizer.js';
 import {
-  getOwnedGarages, toggleOwnedGarage,
+  getOwnedGarages, toggleOwnedGarage, isOwnedGarage,
   getFilterMode, setFilterMode,
   getSelectedCountries, setSelectedCountries,
   getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs,
@@ -337,13 +337,23 @@ function renderCity(cityId: string) {
 
   const optimal = computeOptimalFleet(cityId, data!, lookups!);
   if (!optimal) {
+    const emptyOwned = isOwnedGarage(cityId);
     cityContent.innerHTML = `
       <div class="city-header">
-        <h2>${city.name}</h2>
-        <span class="country">${city.country}</span>
+        <div class="city-header-row">
+          <div>
+            <h2>${city.name}</h2>
+            <span class="country">${city.country}</span>
+          </div>
+          <button class="garage-toggle" id="city-garage-toggle"
+            aria-pressed="${emptyOwned}" aria-label="${emptyOwned ? 'Remove garage' : 'Mark as garage'}"
+            title="${emptyOwned ? 'Remove garage' : 'Mark as garage'}"
+            data-city-id="${cityId}">${emptyOwned ? '\u2605' : '\u2606'}</button>
+        </div>
       </div>
       <div class="empty-state">No cargo data for this city yet.</div>
     `;
+    wireGarageToggle(cityId);
     return;
   }
 
@@ -356,11 +366,20 @@ function renderCity(cityId: string) {
   const cargoTypes = rankingEntry?.cargoTypes ?? 0;
   const score = rankingEntry?.score ?? 0;
 
+  const owned = isOwnedGarage(cityId);
 
   cityContent.innerHTML = `
     <div class="city-header">
-      <h2>${city.name}</h2>
-      <span class="country">${city.country}</span>
+      <div class="city-header-row">
+        <div>
+          <h2>${city.name}</h2>
+          <span class="country">${city.country}</span>
+        </div>
+        <button class="garage-toggle" id="city-garage-toggle"
+          aria-pressed="${owned}" aria-label="${owned ? 'Remove garage' : 'Mark as garage'}"
+          title="${owned ? 'Remove garage' : 'Mark as garage'}"
+          data-city-id="${cityId}">${owned ? '\u2605' : '\u2606'}</button>
+      </div>
     </div>
 
     <div class="stats">
@@ -399,6 +418,30 @@ function renderCity(cityId: string) {
 
     </div>
   `;
+
+  wireGarageToggle(cityId);
+}
+
+function wireGarageToggle(cityId: string) {
+  const garageToggle = document.getElementById('city-garage-toggle');
+  if (garageToggle) {
+    garageToggle.addEventListener('click', () => {
+      const nowOwned = toggleOwnedGarage(cityId);
+      garageToggle.textContent = nowOwned ? '\u2605' : '\u2606';
+      garageToggle.setAttribute('aria-pressed', String(nowOwned));
+      garageToggle.setAttribute('aria-label', nowOwned ? 'Remove garage' : 'Mark as garage');
+      garageToggle.title = nowOwned ? 'Remove garage' : 'Mark as garage';
+      // Sync the rankings table star if it exists
+      const rankingStar = rankingsContent.querySelector(`.garage-star[data-city-id="${cityId}"]`) as HTMLElement | null;
+      if (rankingStar) {
+        rankingStar.textContent = nowOwned ? '\u2605' : '\u2606';
+        rankingStar.title = nowOwned ? 'Remove garage' : 'Mark as garage';
+        const row = rankingStar.closest('tr')!;
+        row.classList.toggle('owned-garage', nowOwned);
+      }
+      updateGarageCount();
+    });
+  }
 }
 
 
