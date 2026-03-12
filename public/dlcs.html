@@ -25,8 +25,8 @@
     </header>
 
     <main id="main-content">
-    <div id="dlc-settings">
-      <div class="loading">Loading DLC settings...</div>
+    <div id="dlc-settings" aria-live="polite">
+      <div class="loading" role="status">Loading DLC settings...</div>
     </div>
 
     <div id="dlc-value-section" style="display: none;">
@@ -35,8 +35,8 @@
         <button id="calc-value-btn" class="calc-btn">Calculate Marginal Value</button>
       </div>
       <p class="dlc-value-hint">Shows how much fleet EV each unowned DLC would add. Requires at least one owned garage.</p>
-      <div id="dlc-value-progress" style="display: none;"></div>
-      <div id="dlc-value-results"></div>
+      <div id="dlc-value-progress" role="status" aria-live="polite" style="display: none;"></div>
+      <div id="dlc-value-results" aria-live="polite"></div>
     </div>
     </main>
   </div>

@@ -284,7 +284,7 @@ function renderRankings() {
             </tr>
           </thead>
           <tbody>
-            <tr><td colspan="8" class="no-results">${message}</td></tr>
+            <tr><td colspan="8" class="no-results" role="status">${message}</td></tr>
           </tbody>
         </table>
       </div>
@@ -588,7 +588,7 @@ function handleHashNavigation(): boolean {
 
 function showLoading() {
   rankingsContent.innerHTML = `
-    <div class="table-section">
+    <div class="table-section" role="status" aria-label="Loading city data">
       <h2>Loading city data...</h2>
       <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
       <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
@@ -599,9 +599,9 @@ function showLoading() {
 
 function showError(errorMessage: string) {
   rankingsContent.innerHTML = `
-    <div class="empty-state">
+    <div class="empty-state" role="alert" aria-live="assertive">
       <p>Failed to load data</p>
-      <p style="color: #888; font-size: 0.9rem; margin-top: 0.5rem;">${errorMessage}</p>
+      <p class="error-detail">${errorMessage}</p>
     </div>
   `;
 }

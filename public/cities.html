@@ -29,13 +29,13 @@
       <input type="text" id="search" placeholder="Search cities..." aria-label="Search cities">
     </div>
 
-    <div id="content">
-      <div class="loading">Loading cities...</div>
+    <div id="content" aria-live="polite">
+      <div class="loading" role="status">Loading cities...</div>
     </div>
 
     <div id="city-detail" style="display: none;">
       <a href="#" class="back-link" id="back-link">← Back to cities</a>
-      <div id="detail-content"></div>
+      <div id="detail-content" aria-live="polite"></div>
     </div>
     </main>
   </div>

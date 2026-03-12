@@ -592,9 +592,9 @@ async function init(): Promise<void> {
     console.error('Failed to initialize:', err);
     const message = err instanceof Error ? err.message : 'Unknown error occurred';
     content.innerHTML = `
-      <div class="empty-state">
+      <div class="empty-state" role="alert">
         <p>Failed to load data</p>
-        <p style="color: #888; font-size: 0.9rem; margin-top: 0.5rem;">${message}</p>
+        <p class="error-detail">${message}</p>
       </div>
     `;
   }
