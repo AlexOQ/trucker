@@ -11,6 +11,7 @@ import {
   isFirstVisit, isBannerDismissed, dismissBanner,
   COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP,
 } from './storage.js';
+import { copyToClipboard } from './clipboard.js';
 import type { AllData, Lookups } from './data.js';
 
 let data: AllData | null = null;
@@ -452,7 +453,12 @@ function renderCity(cityId: string) {
     </div>
 
     <div class="table-section">
-      <h2>Recommended Fleet — ${optimal.totalTrailers} trailers</h2>
+      <div class="section-header">
+        <h2>Recommended Fleet — ${optimal.totalTrailers} trailers</h2>
+        <div class="export-buttons">
+          <button class="btn copy-btn" id="copy-fleet-btn" type="button">Copy Fleet</button>
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
@@ -470,6 +476,21 @@ function renderCity(cityId: string) {
   `;
 
   wireGarageToggle(cityId);
+  wireCopyFleetButton(city.name, optimal.drivers);
+}
+
+function wireCopyFleetButton(cityName: string, drivers: OptimalFleetEntry[]) {
+  const copyBtn = document.getElementById('copy-fleet-btn') as HTMLButtonElement | null;
+  if (!copyBtn) return;
+
+  copyBtn.addEventListener('click', () => {
+    const lines = drivers.map(d => {
+      const countLabel = d.count > 1 ? ` x${d.count}` : '';
+      return `${d.displayName}${countLabel} (EV: ${formatNumber(d.ev)}, ${d.cargoMatched} cargo)`;
+    });
+    const text = `${cityName} Fleet:\n${lines.join('\n')}`;
+    copyToClipboard(text, copyBtn);
+  });
 }
 
 function wireGarageToggle(cityId: string) {
