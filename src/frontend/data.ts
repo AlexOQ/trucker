@@ -43,6 +43,9 @@ export {
 // Body types
 export { getBodyTypeProfiles, getChassisMergeMap } from './body-types';
 
+// Page initialization
+export { initPageData, type PageData } from './page-init';
+
 // Utils
 export {
   normalize, formatTrailerSpec, trailerTotalHV, pickBestTrailer,
