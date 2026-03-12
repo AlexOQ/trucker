@@ -975,6 +975,23 @@ tr.scs-fallback-row td {
   font-weight: bold;
 }
 
+/* Score tier indicators — color-coded by percentile rank */
+.score-tier-excellent {
+  color: #22c55e;
+}
+
+.score-tier-good {
+  color: #3b82f6;
+}
+
+.score-tier-average {
+  color: #eab308;
+}
+
+.score-tier-below {
+  color: #888;
+}
+
 /* Rank Display */
 .rank-display {
   white-space: nowrap;

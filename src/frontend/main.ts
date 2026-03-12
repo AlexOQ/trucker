@@ -154,6 +154,24 @@ function updateGarageCount() {
 }
 
 // ============================================
+// Score tier helpers
+// ============================================
+
+interface ScoreTier {
+  className: string;
+  label: string;
+}
+
+function getScoreTier(index: number, total: number): ScoreTier {
+  if (total === 0) return { className: '', label: '' };
+  const percentile = (index / total) * 100;
+  if (percentile < 10) return { className: 'score-tier-excellent', label: 'Excellent — top 10%' };
+  if (percentile < 25) return { className: 'score-tier-good', label: 'Good — top 25%' };
+  if (percentile < 50) return { className: 'score-tier-average', label: 'Average — top 50%' };
+  return { className: 'score-tier-below', label: 'Below average — bottom 50%' };
+}
+
+// ============================================
 // Rank helpers
 // ============================================
 
@@ -292,6 +310,7 @@ function renderRankings() {
           ${displayRankings.map((r, i) => {
             const trailerSummary = summarizeTrailers(r.topTrailers);
             const starred = ownedSet.has(r.id);
+            const tier = getScoreTier(i, displayRankings.length);
             return `
             <tr class="clickable${starred ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
               <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage' : 'Mark as garage'}">${starred ? '\u2605' : '\u2606'}</td>
@@ -300,7 +319,7 @@ function renderRankings() {
               <td class="country">${r.country}</td>
               <td>${r.depotCount}</td>
               <td class="amount">${r.cargoTypes}</td>
-              <td class="score">${formatNumber(r.score)}</td>
+              <td class="score ${tier.className}" title="${tier.label}">${formatNumber(r.score)}</td>
               <td class="trailer-summary">${trailerSummary}</td>
             </tr>
           `;
@@ -416,6 +435,15 @@ function renderCity(cityId: string) {
   const cargoTypes = rankingEntry?.cargoTypes ?? 0;
   const score = rankingEntry?.score ?? 0;
 
+  // Compute score tier for city detail
+  let cityScoreTier: ScoreTier = { className: '', label: '' };
+  if (cachedRankings && rankingEntry) {
+    const rankIndex = cachedRankings.findIndex(r => r.id === cityId);
+    if (rankIndex >= 0) {
+      cityScoreTier = getScoreTier(rankIndex, cachedRankings.length);
+    }
+  }
+
   const owned = isOwnedGarage(cityId);
 
   cityContent.innerHTML = `
@@ -446,8 +474,8 @@ function renderCity(cityId: string) {
         <div class="stat-label">Rank</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${formatNumber(score)}</div>
-        <div class="stat-label">Score</div>
+        <div class="stat-value ${cityScoreTier.className}" title="${cityScoreTier.label}">${formatNumber(score)}</div>
+        <div class="stat-label">Score${cityScoreTier.label ? ` — ${cityScoreTier.label.split(' — ')[0]}` : ''}</div>
       </div>
     </div>
 
