@@ -3,8 +3,8 @@
  * Displays cargo browser with provider/trailer information
  */
 
-import { loadAllData, buildLookups, applyDLCFilter, getBlockedCities, normalize, type AllData, type Lookups, type Company, type Trailer } from './data';
-import { getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs, COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP } from './storage';
+import { initPageData } from './page-init';
+import { normalize, type AllData, type Lookups, type Company, type Trailer } from './data';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -314,10 +314,9 @@ async function init(): Promise<void> {
   content.innerHTML = '<div class="loading">Loading cargo...</div>';
 
   try {
-    const ownedCargoAndMap = new Set([...getOwnedCargoDLCs(), ...getOwnedMapDLCs()]);
-    const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);
-    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
-    lookups = buildLookups(data);
+    const page = await initPageData();
+    data = page.data;
+    lookups = page.lookups;
 
     renderCargoList();
 
