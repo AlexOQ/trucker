@@ -1,4 +1,4 @@
-import { loadAllData, buildLookups, applyDLCFilter, getBlockedCities } from './data.js';
+import { initPageData } from './page-init.js';
 import {
   calculateCityRankings, computeOptimalFleet,
   type CityRanking, type FleetEntry, type OptimalFleetEntry,
@@ -7,10 +7,8 @@ import {
   getOwnedGarages, toggleOwnedGarage, isOwnedGarage,
   getFilterMode, setFilterMode,
   getSelectedCountries, setSelectedCountries,
-  getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs,
   isFirstVisit, isBannerDismissed, dismissBanner,
   isOnboardingCollapsed, setOnboardingCollapsed,
-  COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP,
 } from './storage.js';
 import { copyToClipboard } from './clipboard.js';
 import type { AllData, Lookups } from './data.js';
@@ -673,10 +671,9 @@ async function init() {
   showLoading();
 
   try {
-    const ownedCargoAndMap = new Set([...getOwnedCargoDLCs(), ...getOwnedMapDLCs()]);
-    const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);
-    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
-    lookups = buildLookups(data);
+    const page = await initPageData();
+    data = page.data;
+    lookups = page.lookups;
 
     renderCountryCheckboxes();
     updateCountryButtonText();

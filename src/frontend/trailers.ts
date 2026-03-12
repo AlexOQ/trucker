@@ -5,12 +5,12 @@
  * Level 3: All trailer variants within a tier, sorted by totalHV
  */
 
+import { initPageData } from './page-init';
 import {
-  loadAllData, buildLookups, applyDLCFilter, getBlockedCities, normalize, getOwnableTrailers,
+  normalize, getOwnableTrailers,
   pickBestTrailer, trailerTotalHV, formatTrailerSpec,
   type AllData, type Lookups, type Cargo, type Trailer,
 } from './data';
-import { getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs, COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP } from './storage';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -556,10 +556,9 @@ async function init(): Promise<void> {
   content.innerHTML = '<div class="loading">Loading trailers...</div>';
 
   try {
-    const ownedCargoAndMap = new Set([...getOwnedCargoDLCs(), ...getOwnedMapDLCs()]);
-    const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);
-    data = applyDLCFilter(await loadAllData(), getOwnedTrailerDLCs(), ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
-    lookups = buildLookups(data);
+    const page = await initPageData();
+    data = page.data;
+    lookups = page.lookups;
     bodyTypes = buildBodyTypes();
 
     renderList();
