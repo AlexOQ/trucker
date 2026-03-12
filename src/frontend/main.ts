@@ -235,6 +235,40 @@ function renderRankings() {
     return;
   }
 
+  if (displayRankings.length === 0) {
+    let message: string;
+    if (searchTerm) {
+      message = `No cities match '${citySearch.value.trim()}'`;
+    } else if (selectedCountries.length > 0) {
+      message = 'No cities match your filters';
+    } else {
+      message = 'No results found';
+    }
+    rankingsContent.innerHTML = `
+      <div class="table-section">
+        <table class="table-rankings">
+          <thead>
+            <tr>
+              <th></th>
+              <th>#</th>
+              <th>City</th>
+              <th>Country</th>
+              <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
+              <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
+              <th class="tooltip" data-tooltip="Sum of top 5 body type EVs — fleet earning potential">Fleet EV</th>
+              <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="8" class="no-results">${message}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+    updateGarageCount();
+    return;
+  }
+
   rankingsContent.innerHTML = `
     <div class="table-section">
       <h2>City Rankings (${displayRankings.length} cities)</h2>
