@@ -20,6 +20,7 @@ export {
 
 const STORAGE_KEY = 'ets2-trucker-advisor';
 const BANNER_DISMISSED_KEY = 'ets2-dlc-banner-dismissed';
+const ONBOARDING_COLLAPSED_KEY = 'ets2-onboarding-collapsed';
 
 interface Settings {
   driverCount: number;
@@ -360,4 +361,26 @@ export function isBannerDismissed(): boolean {
  */
 export function dismissBanner(): void {
   localStorage.setItem(BANNER_DISMISSED_KEY, 'true');
+}
+
+// ============================================
+// Onboarding Section Collapsed State
+// ============================================
+
+/**
+ * Returns true if the Getting Started section should be collapsed.
+ * Defaults to expanded for first-time visitors, collapsed for returning visitors.
+ */
+export function isOnboardingCollapsed(): boolean {
+  const stored = localStorage.getItem(ONBOARDING_COLLAPSED_KEY);
+  if (stored !== null) return stored === 'true';
+  // First-time visitors see it expanded; returning visitors (who have state) see it collapsed
+  return !isFirstVisit();
+}
+
+/**
+ * Save the onboarding collapsed state.
+ */
+export function setOnboardingCollapsed(collapsed: boolean): void {
+  localStorage.setItem(ONBOARDING_COLLAPSED_KEY, collapsed ? 'true' : 'false');
 }
