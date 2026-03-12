@@ -19,6 +19,7 @@ export {
 } from './dlc-data';
 
 const STORAGE_KEY = 'ets2-trucker-advisor';
+const BANNER_DISMISSED_KEY = 'ets2-dlc-banner-dismissed';
 
 interface Settings {
   driverCount: number;
@@ -45,9 +46,9 @@ const defaultState: AppState = {
   garageFilterMode: 'all',
   selectedCountries: [],
   cityTrailers: {},
-  ownedTrailerDLCs: [...ALL_DLC_IDS],  // all owned by default
-  ownedCargoDLCs: [...ALL_CARGO_DLC_IDS],  // all owned by default
-  ownedMapDLCs: [...ALL_MAP_DLC_IDS],  // all owned by default
+  ownedTrailerDLCs: [],  // none owned by default — first-time visitors configure on DLC page
+  ownedCargoDLCs: [],   // none owned by default
+  ownedMapDLCs: [],     // none owned by default
 };
 
 /**
@@ -334,4 +335,29 @@ export function toggleMapDLC(dlcId: string): boolean {
   }
   saveState(state);
   return idx < 0;
+}
+
+// ============================================
+// First-Visit Detection
+// ============================================
+
+/**
+ * Returns true if the user has never saved any state (first visit).
+ */
+export function isFirstVisit(): boolean {
+  return localStorage.getItem(STORAGE_KEY) === null;
+}
+
+/**
+ * Returns true if the DLC configuration banner has been dismissed.
+ */
+export function isBannerDismissed(): boolean {
+  return localStorage.getItem(BANNER_DISMISSED_KEY) === 'true';
+}
+
+/**
+ * Mark the DLC configuration banner as dismissed.
+ */
+export function dismissBanner(): void {
+  localStorage.setItem(BANNER_DISMISSED_KEY, 'true');
 }

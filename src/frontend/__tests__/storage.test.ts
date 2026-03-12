@@ -30,9 +30,9 @@ describe('storage', () => {
         garageFilterMode: 'all',
         selectedCountries: [],
         cityTrailers: {},
-        ownedTrailerDLCs: storage.ALL_DLC_IDS,
-        ownedCargoDLCs: storage.ALL_CARGO_DLC_IDS,
-        ownedMapDLCs: storage.ALL_MAP_DLC_IDS,
+        ownedTrailerDLCs: [],
+        ownedCargoDLCs: [],
+        ownedMapDLCs: [],
       });
     });
 
@@ -146,6 +146,28 @@ describe('storage', () => {
       expect(storage.getFilterMode()).toBe('all');
       storage.setFilterMode('owned');
       expect(storage.getFilterMode()).toBe('owned');
+    });
+  });
+
+  describe('first-visit detection', () => {
+    it('detects first visit when no state exists', () => {
+      expect(storage.isFirstVisit()).toBe(true);
+    });
+
+    it('detects returning visitor after state is saved', () => {
+      storage.saveState(storage.loadState());
+      expect(storage.isFirstVisit()).toBe(false);
+    });
+  });
+
+  describe('banner dismissal', () => {
+    it('banner is not dismissed by default', () => {
+      expect(storage.isBannerDismissed()).toBe(false);
+    });
+
+    it('remembers banner dismissal', () => {
+      storage.dismissBanner();
+      expect(storage.isBannerDismissed()).toBe(true);
     });
   });
 
