@@ -1577,4 +1577,13 @@ tr.owned-garage {
   .cards-grid {
     grid-template-columns: 1fr;
   }
+
+  .dlc-page-columns {
+    flex-direction: column;
+  }
+
+  .dlc-row {
+    min-height: 44px;
+    padding: 0.5rem 0.75rem;
+  }
 }
