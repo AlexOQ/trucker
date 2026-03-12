@@ -1547,6 +1547,14 @@ tr.owned-garage {
   background: rgba(243, 156, 18, 0.06);
 }
 
+/* No Results State */
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #888;
+  font-size: 0.95rem;
+}
+
 /* Empty Garages State */
 .empty-garages {
   text-align: center;
