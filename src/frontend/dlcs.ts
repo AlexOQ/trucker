@@ -9,13 +9,14 @@ import {
   TRAILER_DLCS, ALL_DLC_IDS,
   CARGO_DLCS, ALL_CARGO_DLC_IDS,
   MAP_DLCS, ALL_MAP_DLC_IDS,
-  GARAGE_CITIES,
+  GARAGE_CITIES, CITY_DLC_MAP, COMBINED_CARGO_DLC_MAP,
   getOwnedTrailerDLCs, setOwnedTrailerDLCs, toggleTrailerDLC,
   getOwnedCargoDLCs, setOwnedCargoDLCs, toggleCargoDLC,
   getOwnedMapDLCs, setOwnedMapDLCs, toggleMapDLC,
   getOwnedGarages,
 } from './storage';
-import { computeAllDLCValues, type DLCMarginalValue } from './dlc-value';
+import { computeDLCValuesAsync } from './optimizer-client';
+import type { DLCMarginalValue } from './dlc-value';
 
 const settingsEl = document.getElementById('dlc-settings') as HTMLElement;
 const valueSection = document.getElementById('dlc-value-section') as HTMLElement;
@@ -230,7 +231,24 @@ async function runCalculation(): Promise<void> {
   resultsEl.innerHTML = '';
 
   try {
-    const results = await computeAllDLCValues(rawData, (done, total) => {
+    const dlcConfig = {
+      ownedTrailer: getOwnedTrailerDLCs(),
+      ownedCargo: getOwnedCargoDLCs(),
+      ownedMap: getOwnedMapDLCs(),
+      ownedGarages: getOwnedGarages(),
+      allTrailerDLCIds: [...ALL_DLC_IDS],
+      allCargoDLCIds: [...ALL_CARGO_DLC_IDS],
+      allMapDLCIds: [...ALL_MAP_DLC_IDS],
+      cityDlcMap: CITY_DLC_MAP,
+      combinedCargoDlcMap: COMBINED_CARGO_DLC_MAP,
+      garageCities: [...GARAGE_CITIES],
+    };
+    const dlcNameMap: Record<string, string> = {
+      ...MAP_DLCS,
+      ...TRAILER_DLCS,
+      ...CARGO_DLCS,
+    };
+    const results = await computeDLCValuesAsync(rawData, dlcConfig, dlcNameMap, (done, total) => {
       progressEl.textContent = `Evaluating ${done} / ${total} DLCs...`;
     });
 
