@@ -8,6 +8,7 @@ import {
   getFilterMode, setFilterMode,
   getSelectedCountries, setSelectedCountries,
   getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs,
+  isFirstVisit, isBannerDismissed, dismissBanner,
   COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP,
 } from './storage.js';
 import type { AllData, Lookups } from './data.js';
@@ -466,10 +467,39 @@ function showError(errorMessage: string) {
 
 
 // ============================================
+// First-visit DLC banner
+// ============================================
+
+function showDLCBanner() {
+  // Show banner only for first-time visitors who haven't dismissed it
+  if (!isFirstVisit() || isBannerDismissed()) return;
+
+  const banner = document.createElement('div');
+  banner.className = 'dlc-banner';
+  banner.setAttribute('role', 'alert');
+  banner.innerHTML = `
+    <span class="dlc-banner-text">
+      First time here? Configure your owned DLCs for accurate recommendations.
+    </span>
+    <a href="dlcs.html" class="dlc-banner-link">DLC Settings</a>
+    <button class="dlc-banner-dismiss" aria-label="Dismiss banner" type="button">&times;</button>
+  `;
+
+  const main = document.getElementById('main-content')!;
+  main.insertBefore(banner, main.firstChild);
+
+  banner.querySelector('.dlc-banner-dismiss')!.addEventListener('click', () => {
+    dismissBanner();
+    banner.remove();
+  });
+}
+
+// ============================================
 // Init
 // ============================================
 
 async function init() {
+  showDLCBanner();
   showLoading();
 
   try {

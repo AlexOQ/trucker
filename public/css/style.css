@@ -261,6 +261,59 @@ nav {
   border-top: 1px solid #2a3a5a;
 }
 
+/* First-Visit DLC Banner */
+.dlc-banner {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(135deg, #1a2744 0%, #16213e 100%);
+  border: 1px solid #f39c12;
+  border-radius: 6px;
+}
+
+.dlc-banner-text {
+  flex: 1;
+  color: #ccc;
+  font-size: 0.95rem;
+}
+
+.dlc-banner-link {
+  color: #1a1a2e;
+  background: #f39c12;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition: background 0.2s;
+}
+
+.dlc-banner-link:hover {
+  background: #e67e22;
+}
+
+.dlc-banner-dismiss {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dlc-banner-dismiss:hover {
+  color: #f39c12;
+}
+
 /* Onboarding Section */
 .onboarding {
   background: linear-gradient(135deg, #16213e 0%, #1a2744 100%);
@@ -1572,6 +1625,22 @@ tr.owned-garage {
   .stat {
     flex: 1;
     min-width: 140px;
+  }
+
+  .dlc-banner {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .dlc-banner-dismiss {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .dlc-banner {
+    position: relative;
   }
 
   .cards-grid {
