@@ -73,9 +73,9 @@ describe('optimizer', () => {
     },
     observations: null,
     cities: [
-      { id: 'berlin', name: 'Berlin', country: 'germany' },
-      { id: 'paris', name: 'Paris', country: 'france' },
-      { id: 'empty_city', name: 'Empty City', country: '' },
+      { id: 'berlin', name: 'Berlin', country: 'germany', hasGarage: true },
+      { id: 'paris', name: 'Paris', country: 'france', hasGarage: true },
+      { id: 'empty_city', name: 'Empty City', country: '', hasGarage: true },
     ],
     companies: [
       { id: 'logistics_co', name: 'Logistics Co' },

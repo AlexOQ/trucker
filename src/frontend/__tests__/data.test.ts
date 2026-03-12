@@ -53,6 +53,7 @@ function buildAllData(obs = sampleObservations) {
       id,
       name: titleCase(id),
       country: '',
+      hasGarage: true,
     })),
     companies: obs.companies.map((id) => ({
       id,
@@ -117,7 +118,7 @@ describe('data.ts', () => {
       expect(result.observations).toEqual(sampleObservations);
       expect(result.gameDefs).toBeNull();
       expect(result.cities).toHaveLength(2);
-      expect(result.cities[0]).toEqual({ id: 'berlin', name: 'Berlin', country: '' });
+      expect(result.cities[0]).toEqual({ id: 'berlin', name: 'Berlin', country: '', hasGarage: true });
       expect(result.companies).toHaveLength(2);
       expect(result.cargo).toHaveLength(4);
       expect(result.trailers).toHaveLength(3);
@@ -208,8 +209,8 @@ describe('data.ts', () => {
     it('creates citiesById map correctly', () => {
       const lookups = data.buildLookups(testData);
 
-      expect(lookups.citiesById.get('berlin')).toEqual({ id: 'berlin', name: 'Berlin', country: '' });
-      expect(lookups.citiesById.get('paris')).toEqual({ id: 'paris', name: 'Paris', country: '' });
+      expect(lookups.citiesById.get('berlin')).toEqual({ id: 'berlin', name: 'Berlin', country: '', hasGarage: true });
+      expect(lookups.citiesById.get('paris')).toEqual({ id: 'paris', name: 'Paris', country: '', hasGarage: true });
       expect(lookups.citiesById.get('unknown')).toBeUndefined();
     });
 
