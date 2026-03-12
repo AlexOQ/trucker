@@ -30,6 +30,32 @@ function normalize(str: string): string {
   return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
+/**
+ * Create a filesystem-safe filename from a string.
+ * Transliterates diacritics to ASCII equivalents (e.g., ö→o, é→e)
+ * and replaces only filesystem-unsafe characters.
+ */
+function sanitizeFilename(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')  // strip combining diacritics (ö→o, é→e, etc.)
+    .replace(/[/\\:*?"<>|]/g, '_')    // replace filesystem-unsafe chars
+    .replace(/_+/g, '_')              // collapse consecutive underscores
+    .replace(/^_|_$/g, '');           // trim leading/trailing underscores
+}
+
+function downloadFile(filename: string, content: string, mimeType: string): void {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 function formatNumber(n: number): string {
   return Math.round(n).toLocaleString();
 }
@@ -402,7 +428,13 @@ function renderCity(cityId: string) {
     </div>
 
     <div class="table-section">
-      <h2>Recommended Fleet — ${optimal.totalTrailers} trailers</h2>
+      <div class="section-header">
+        <h2>Recommended Fleet — ${optimal.totalTrailers} trailers</h2>
+        <div class="export-buttons">
+          <button class="export-btn" id="export-json-btn" title="Export fleet as JSON">Export JSON</button>
+          <button class="export-btn" id="export-csv-btn" title="Export fleet as CSV">Export CSV</button>
+        </div>
+      </div>
       <table>
         <thead>
           <tr>
@@ -420,6 +452,40 @@ function renderCity(cityId: string) {
   `;
 
   wireGarageToggle(cityId);
+
+  // Wire export buttons
+  const safeName = sanitizeFilename(city.name);
+  document.getElementById('export-json-btn')?.addEventListener('click', () => {
+    const exportData = {
+      city: city.name,
+      country: city.country,
+      totalTrailers: optimal.totalTrailers,
+      fleet: optimal.drivers.map((d) => ({
+        bodyType: d.bodyType,
+        displayName: d.displayName,
+        count: d.count,
+        ev: Math.round(d.ev),
+        cargoMatched: d.cargoMatched,
+        trailerSpec: d.trailerSpec,
+      })),
+    };
+    downloadFile(`${safeName}_fleet.json`, JSON.stringify(exportData, null, 2), 'application/json');
+  });
+
+  document.getElementById('export-csv-btn')?.addEventListener('click', () => {
+    const rows = [
+      ['Trailer Type', 'Count', 'EV', 'Cargo Matched', 'Spec'],
+      ...optimal.drivers.map((d) => [
+        d.displayName,
+        String(d.count),
+        String(Math.round(d.ev)),
+        String(d.cargoMatched),
+        d.trailerSpec,
+      ]),
+    ];
+    const csv = rows.map((r) => r.map((v) => `"${v.replace(/"/g, '""')}"`).join(',')).join('\n');
+    downloadFile(`${safeName}_fleet.csv`, csv, 'text/csv');
+  });
 }
 
 function wireGarageToggle(cityId: string) {
