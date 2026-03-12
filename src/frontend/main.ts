@@ -1,8 +1,6 @@
 import { loadAllData, buildLookups, applyDLCFilter, getBlockedCities } from './data.js';
-import {
-  calculateCityRankings, computeOptimalFleet,
-  type CityRanking, type FleetEntry, type OptimalFleetEntry,
-} from './optimizer.js';
+import { computeFleetAsync, computeRankingsAsync } from './optimizer-client.js';
+import type { CityRanking, FleetEntry, OptimalFleetEntry } from './optimizer.js';
 import {
   getOwnedGarages, toggleOwnedGarage, isOwnedGarage,
   getFilterMode, setFilterMode,
@@ -224,8 +222,8 @@ function summarizeTrailers(fleet: FleetEntry[]): string {
   return fleet.map(e => e.displayName).join(', ');
 }
 
-function renderRankings() {
-  const rankings = calculateCityRankings(data!, lookups!);
+async function renderRankings() {
+  const rankings = await computeRankingsAsync(data!, lookups!);
   cachedRankings = rankings;
 
   if (rankings.length === 0) {
@@ -364,9 +362,9 @@ function renderRankings() {
 // City detail rendering
 // ============================================
 
-function ensureRankingsCached() {
+async function ensureRankingsCached() {
   if (cachedRankings === null && data && lookups) {
-    cachedRankings = calculateCityRankings(data, lookups);
+    cachedRankings = await computeRankingsAsync(data, lookups);
   }
   if (displayedRankings === null && cachedRankings) {
     // Apply current filters to build displayed rankings
@@ -399,8 +397,8 @@ function renderFleetRow(entry: OptimalFleetEntry): string {
   `;
 }
 
-function renderCity(cityId: string) {
-  ensureRankingsCached();
+async function renderCity(cityId: string) {
+  await ensureRankingsCached();
 
   const city = lookups!.citiesById.get(cityId);
   if (!city) {
@@ -408,7 +406,7 @@ function renderCity(cityId: string) {
     return;
   }
 
-  const optimal = computeOptimalFleet(cityId, data!, lookups!);
+  const optimal = await computeFleetAsync(cityId, data!, lookups!);
   if (!optimal) {
     const emptyOwned = isOwnedGarage(cityId);
     cityContent.innerHTML = `
@@ -551,14 +549,14 @@ function wireGarageToggle(cityId: string) {
 // Navigation
 // ============================================
 
-function showCity(cityId: string) {
+async function showCity(cityId: string) {
   currentCityId = cityId;
   rankingsView.style.display = 'none';
   cityView.style.display = 'block';
   if (window.location.hash !== `#city-${cityId}`) {
     window.location.hash = `city-${cityId}`;
   }
-  renderCity(cityId);
+  await renderCity(cityId);
   window.scrollTo(0, 0);
 }
 
