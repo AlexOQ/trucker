@@ -62,7 +62,7 @@ h1 {
 }
 
 .subtitle {
-  color: #888;
+  color: #9a9a9a;
   font-size: 0.95rem;
   font-weight: normal;
 }
@@ -114,7 +114,7 @@ nav {
 .dlc-actions button {
   background: none;
   border: none;
-  color: #7a8a9a;
+  color: #8b95a0;
   cursor: pointer;
   font-size: 0.75rem;
   padding: 0.15rem 0.4rem;
@@ -165,7 +165,7 @@ nav {
 .dlc-count {
   font-weight: 400;
   font-size: 0.8rem;
-  color: #7a8a9a;
+  color: #8b95a0;
 }
 
 /* DLC value analysis */
@@ -202,7 +202,7 @@ nav {
   cursor: not-allowed;
 }
 .dlc-value-hint {
-  color: #7a8a9a;
+  color: #8b95a0;
   font-size: 0.85rem;
   margin-bottom: 1rem;
 }
@@ -217,7 +217,7 @@ nav {
   gap: 0.5rem;
 }
 .dlc-value-summary {
-  color: #7a8a9a;
+  color: #8b95a0;
   font-size: 0.85rem;
   margin-bottom: 0.5rem;
 }
@@ -241,7 +241,7 @@ nav {
 }
 .dlc-value-type {
   font-size: 0.75rem;
-  color: #7a8a9a;
+  color: #8b95a0;
   background: #1a2744;
   padding: 0.1rem 0.5rem;
   border-radius: 3px;
@@ -259,7 +259,7 @@ nav {
 .dlc-value-detail {
   width: 100%;
   font-size: 0.8rem;
-  color: #7a8a9a;
+  color: #8b95a0;
   margin-top: 0.3rem;
   padding-top: 0.3rem;
   border-top: 1px solid #2a3a5a;
@@ -302,7 +302,7 @@ nav {
 .dlc-banner-dismiss {
   background: none;
   border: none;
-  color: #888;
+  color: #9a9a9a;
   font-size: 1.25rem;
   cursor: pointer;
   padding: 0.25rem;
@@ -699,7 +699,7 @@ nav {
 }
 
 .slider-description {
-  color: #888;
+  color: #9a9a9a;
   font-size: 0.85rem;
   margin: -0.25rem 0 0.25rem 0;
   line-height: 1.4;
@@ -774,7 +774,7 @@ input[type="range"]::-moz-range-thumb {
 
 .reset-btn, .btn {
   background: transparent;
-  border: 1px solid #666;
+  border: 1px solid #8b8b8b;
   color: #9a9a9a;
   padding: 0.4rem 0.8rem;
   min-height: 44px;
@@ -963,7 +963,7 @@ tr.clickable:focus td:first-child {
 
 .trailer-spec {
   font-size: 0.75rem;
-  color: #7a8a9a;
+  color: #8b95a0;
   margin-top: 0.15rem;
 }
 
@@ -1032,7 +1032,7 @@ tr.scs-fallback-row td {
 }
 
 .score {
-  color: #e74c3c;
+  color: #ef5350;
   font-weight: bold;
 }
 
@@ -1050,7 +1050,7 @@ tr.scs-fallback-row td {
 }
 
 .score-tier-below {
-  color: #888;
+  color: #9a9a9a;
 }
 
 /* Rank Display */
@@ -1079,7 +1079,7 @@ tr.scs-fallback-row td {
 
 .trailer-cargoes {
   font-size: 0.8rem;
-  color: #888;
+  color: #9a9a9a;
   margin-top: 0.25rem;
 }
 
@@ -1153,7 +1153,7 @@ a.link:hover {
 }
 
 .country-count {
-  color: #888;
+  color: #9a9a9a;
   font-size: 0.9rem;
 }
 
@@ -1237,7 +1237,7 @@ a.link:hover {
 }
 
 .detail-header .subtitle {
-  color: #888;
+  color: #9a9a9a;
   font-size: 1rem;
 }
 
@@ -1291,11 +1291,17 @@ a.link:hover {
 .empty-state, .loading {
   text-align: center;
   padding: 3rem;
-  color: #e74c3c;
+  color: #ef5350;
 }
 
 .loading {
-  color: #888;
+  color: #9a9a9a;
+}
+
+.error-detail {
+  color: #9a9a9a;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 
 /* Loading Skeleton */
@@ -1585,7 +1591,7 @@ th.tooltip::before {
   background: transparent;
   border: none;
   font-size: 1.5rem;
-  color: #666;
+  color: #8b8b8b;
   cursor: pointer;
   padding: 0.25rem;
   min-width: 44px;
@@ -1616,7 +1622,7 @@ th.tooltip::before {
   font-size: 1.2rem;
   width: 2rem;
   text-align: center;
-  color: #666;
+  color: #8b8b8b;
   user-select: none;
 }
 
@@ -1637,7 +1643,7 @@ tr.owned-garage {
 .no-results {
   text-align: center;
   padding: 2rem;
-  color: #888;
+  color: #9a9a9a;
   font-size: 0.95rem;
 }
 
@@ -1645,7 +1651,7 @@ tr.owned-garage {
 .empty-garages {
   text-align: center;
   padding: 3rem;
-  color: #888;
+  color: #9a9a9a;
 }
 
 .empty-garages p {
@@ -1653,7 +1659,7 @@ tr.owned-garage {
 }
 
 .empty-garages .hint {
-  color: #666;
+  color: #8b8b8b;
   font-size: 0.9rem;
 }
 

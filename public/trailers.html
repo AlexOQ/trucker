@@ -29,13 +29,13 @@
       <input type="text" id="search" placeholder="Search trailers..." aria-label="Search trailers">
     </div>
 
-    <div id="content">
-      <div class="loading">Loading trailers...</div>
+    <div id="content" aria-live="polite">
+      <div class="loading" role="status">Loading trailers...</div>
     </div>
 
     <div id="trailer-detail" style="display: none;">
       <a href="#" class="back-link" id="back-link">&larr; Back to trailers</a>
-      <div id="detail-content"></div>
+      <div id="detail-content" aria-live="polite"></div>
     </div>
     </main>
   </div>

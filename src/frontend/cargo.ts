@@ -254,7 +254,7 @@ function showCargoDetail(cargoId: string): void {
           ? `
             <div class="table-section">
               <h2>Trailer Information</h2>
-              <p style="padding: 1rem; color: #888;">
+              <p style="padding: 1rem;" class="error-detail">
                 This is a trailer delivery job. The trailer is pre-assigned and cannot be chosen.
               </p>
             </div>
@@ -336,9 +336,9 @@ async function init(): Promise<void> {
     console.error('Failed to initialize:', err);
     const message = err instanceof Error ? err.message : 'Unknown error occurred';
     content.innerHTML = `
-      <div class="empty-state">
+      <div class="empty-state" role="alert">
         <p>Failed to load data</p>
-        <p style="color: #888; font-size: 0.9rem; margin-top: 0.5rem;">${message}</p>
+        <p class="error-detail">${message}</p>
       </div>
     `;
   }
