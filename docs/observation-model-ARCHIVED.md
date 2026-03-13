@@ -1,4 +1,6 @@
-# Observation-Based City Ranking Model
+# ARCHIVED: Observation-Based City Ranking Model
+
+> **ARCHIVED**: This document describes a historical approach (Binomial Contention Model) that was replaced by analytical E[max of N] and Monte Carlo simulation. See CLAUDE.md for current algorithm documentation.
 
 How the advisor recommends optimal garage locations and trailer sets.
 
