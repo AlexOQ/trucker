@@ -1294,6 +1294,14 @@ a.link:hover {
   color: #999;
 }
 
+.results-count {
+  display: block;
+  color: #9a9a9a;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  min-height: 1.25em;
+}
+
 /* States */
 .empty-state, .loading {
   text-align: center;
