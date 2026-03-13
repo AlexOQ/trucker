@@ -16,9 +16,11 @@ import type { CityRanking } from './optimizer.js';
 import {
   renderRankings, initRankingsView,
   showLoading, showError,
+  getComparisonCityIds, clearComparison,
   type RankingsState,
 } from './rankings-view.js';
 import { renderCity } from './city-detail-view.js';
+import { renderComparison } from './comparison-view.js';
 
 // ============================================
 // Shared state
@@ -65,10 +67,43 @@ function debounce(fn: () => void, ms: number): () => void {
 // Navigation
 // ============================================
 
+// ============================================
+// Comparison view container (created lazily)
+// ============================================
+
+let compareView: HTMLElement | null = null;
+let compareContent: HTMLElement | null = null;
+let compareBackLink: HTMLElement | null = null;
+
+function ensureCompareView() {
+  if (compareView) return;
+  compareView = document.createElement('div');
+  compareView.id = 'compare-view';
+  compareView.style.display = 'none';
+
+  compareBackLink = document.createElement('button');
+  compareBackLink.className = 'back-link';
+  compareBackLink.id = 'compare-back-link';
+  (compareBackLink as HTMLButtonElement).type = 'button';
+  compareBackLink.textContent = '\u2190 Back to rankings';
+  compareBackLink.addEventListener('click', showRankings);
+
+  compareContent = document.createElement('div');
+  compareContent.id = 'compare-content';
+  compareContent.setAttribute('aria-live', 'polite');
+
+  compareView.appendChild(compareBackLink);
+  compareView.appendChild(compareContent);
+
+  // Insert alongside the other views
+  cityView.parentNode!.insertBefore(compareView, cityView.nextSibling);
+}
+
 async function showCity(cityId: string) {
   currentCityId = cityId;
   rankingsView.style.display = 'none';
   cityView.style.display = 'block';
+  if (compareView) compareView.style.display = 'none';
   if (window.location.hash !== `#city-${cityId}`) {
     window.location.hash = `city-${cityId}`;
   }
@@ -76,9 +111,23 @@ async function showCity(cityId: string) {
   window.scrollTo(0, 0);
 }
 
+async function showComparison() {
+  ensureCompareView();
+  currentCityId = null;
+  rankingsView.style.display = 'none';
+  cityView.style.display = 'none';
+  compareView!.style.display = 'block';
+  if (window.location.hash !== '#compare') {
+    window.location.hash = 'compare';
+  }
+  await renderComparison(getComparisonCityIds(), state, compareContent!);
+  window.scrollTo(0, 0);
+}
+
 function showRankings() {
   currentCityId = null;
   cityView.style.display = 'none';
+  if (compareView) compareView.style.display = 'none';
   rankingsView.style.display = 'block';
   window.location.hash = '';
   renderRankings(state, rankingsContent, citySearch, resultsCount, showCity);
@@ -86,6 +135,14 @@ function showRankings() {
 
 function handleHashNavigation(): boolean {
   const hash = window.location.hash;
+  if (hash === '#compare') {
+    const ids = getComparisonCityIds();
+    if (ids.length >= 2) {
+      showComparison();
+      return true;
+    }
+    return false;
+  }
   if (hash.startsWith('#city-')) {
     const cityId = hash.replace('#city-', '');
     if (cityId && state.lookups?.citiesById.has(cityId)) {
