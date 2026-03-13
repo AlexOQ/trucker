@@ -320,7 +320,7 @@ async function renderRankings() {
               <td class="country">${r.country}</td>
               <td>${r.depotCount}</td>
               <td class="amount">${r.cargoTypes}</td>
-              <td class="score ${tier.className}" title="${tier.label}">${formatNumber(r.score)}</td>
+              <td class="score ${tier.className}" title="${tier.label}">${formatNumber(r.score)}${tier.label ? `<span class="score-tier-label">${tier.label.split(' — ')[0]}</span>` : ''}</td>
               <td class="trailer-summary">${trailerSummary}</td>
             </tr>
           `;
@@ -475,7 +475,7 @@ async function renderCity(cityId: string) {
         <div class="stat-label">Rank</div>
       </div>
       <div class="stat">
-        <div class="stat-value ${cityScoreTier.className}" title="${cityScoreTier.label}">${formatNumber(score)}</div>
+        <div class="stat-value ${cityScoreTier.className}" title="${cityScoreTier.label}" aria-label="Score ${formatNumber(score)}, ${cityScoreTier.label || 'unranked'}">${formatNumber(score)}</div>
         <div class="stat-label">Score${cityScoreTier.label ? ` — ${cityScoreTier.label.split(' — ')[0]}` : ''}</div>
       </div>
     </div>

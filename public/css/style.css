@@ -963,7 +963,7 @@ tr.clickable:focus td:first-child {
 
 .trailer-spec {
   font-size: 0.75rem;
-  color: #8b95a0;
+  color: #96a0ab;
   margin-top: 0.15rem;
 }
 
@@ -1042,7 +1042,7 @@ tr.scs-fallback-row td {
 }
 
 .score-tier-good {
-  color: #3b82f6;
+  color: #60a5fa;
 }
 
 .score-tier-average {
@@ -1050,7 +1050,14 @@ tr.scs-fallback-row td {
 }
 
 .score-tier-below {
-  color: #9a9a9a;
+  color: #a3a3a3;
+}
+
+.score-tier-label {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: normal;
+  opacity: 0.85;
 }
 
 /* Rank Display */
@@ -1622,7 +1629,7 @@ th.tooltip::before {
   font-size: 1.2rem;
   width: 2rem;
   text-align: center;
-  color: #8b8b8b;
+  color: #9e9e9e;
   user-select: none;
 }
 
