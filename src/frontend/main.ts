@@ -9,6 +9,7 @@ import {
   isOnboardingCollapsed, setOnboardingCollapsed,
 } from './storage.js';
 import { copyToClipboard } from './clipboard.js';
+import { normalize } from './data.js';
 import type { AllData, Lookups } from './data.js';
 
 let data: AllData | null = null;
@@ -23,10 +24,6 @@ function debounce(fn: () => void, ms: number): () => void {
     clearTimeout(timer);
     timer = setTimeout(fn, ms);
   };
-}
-
-function normalize(str: string): string {
-  return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
 function formatNumber(n: number): string {
@@ -258,7 +255,8 @@ async function renderRankings() {
   if (displayRankings.length === 0) {
     let message: string;
     if (searchTerm) {
-      message = `No cities match '${citySearch.value.trim()}'`;
+      const escaped = citySearch.value.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      message = `No cities match '${escaped}'`;
     } else if (selectedCountries.length > 0) {
       message = 'No cities match your filters';
     } else {

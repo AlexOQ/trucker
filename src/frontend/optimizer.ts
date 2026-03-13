@@ -14,8 +14,8 @@
 import {
   formatTrailerSpec,
   cargoBonus,
-} from './data.js';
-import type { AllData, Lookups, Trailer } from './data.js';
+} from './utils.js';
+import type { AllData, Lookups, Trailer } from './types.js';
 
 /** Jobs spawned per depot instance on each visit */
 const JOBS_PER_DEPOT = 3;
