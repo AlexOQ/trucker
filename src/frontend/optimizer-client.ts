@@ -3,6 +3,13 @@
  *
  * Provides Promise-based functions that mirror the synchronous optimizer API.
  * Falls back to synchronous (main-thread) execution if Workers are unavailable.
+ *
+ * Data lifecycle:
+ *   - initWorkerData(data, lookups)  — sends AllData + Lookups once
+ *   - computeFleetAsync(cityId)      — sends only cityId (data already in worker)
+ *   - computeRankingsAsync()         — no payload (data already in worker)
+ *   - computeDLCValuesAsync(config)  — sends only dlcConfig (data already in worker)
+ *   - resetWorkerData(data, lookups) — replaces stored data (e.g., after DLC change)
  */
 
 import type { AllData, Lookups } from './types';
@@ -17,6 +24,9 @@ const pendingRequests = new Map<number, {
   reject: (reason: unknown) => void;
   onProgress?: (completed: number, total: number) => void;
 }>();
+
+/** Tracks whether the worker has been initialized with data */
+let initPromise: Promise<void> | null = null;
 
 function getWorker(): Worker | null {
   if (worker) return worker;
@@ -44,6 +54,8 @@ function getWorker(): Worker | null {
 
       if (msg.type === 'error') {
         pending.reject(new Error(msg.message));
+      } else if (msg.type === 'initResult') {
+        pending.resolve(undefined);
       } else if (msg.type === 'fleetResult') {
         pending.resolve(msg.result);
       } else if (msg.type === 'rankingsResult') {
@@ -63,6 +75,7 @@ function getWorker(): Worker | null {
       // Kill the broken worker so next call falls back to sync
       worker?.terminate();
       worker = null;
+      initPromise = null;
     };
 
     return worker;
@@ -77,6 +90,40 @@ function postRequest(msg: WorkerRequest, onProgress?: (completed: number, total:
     pendingRequests.set(msg.id, { resolve, reject, onProgress });
     getWorker()!.postMessage(msg);
   });
+}
+
+// ============================================
+// Initialization API
+// ============================================
+
+/**
+ * Send AllData + Lookups to the worker once. Must be called before
+ * computeFleetAsync / computeRankingsAsync. Idempotent — repeated
+ * calls with the same data are no-ops.
+ */
+export function initWorkerData(data: AllData, lookups: Lookups | null): Promise<void> {
+  const w = getWorker();
+  if (!w) return Promise.resolve(); // sync fallback needs no init
+
+  if (initPromise) return initPromise;
+
+  const id = ++requestId;
+  initPromise = postRequest({ type: 'init', id, data, lookups }) as Promise<void>;
+  return initPromise;
+}
+
+/**
+ * Replace stored data in the worker (e.g., after DLC ownership changes
+ * require re-filtering). Resets the init state so the next compute call
+ * waits for the new data.
+ */
+export async function resetWorkerData(data: AllData, lookups: Lookups | null): Promise<void> {
+  const w = getWorker();
+  if (!w) return; // sync fallback needs no reset
+
+  const id = ++requestId;
+  initPromise = postRequest({ type: 'reset', id, data, lookups }) as Promise<void>;
+  await initPromise;
 }
 
 // ============================================
@@ -97,8 +144,14 @@ export async function computeFleetAsync(
     return computeOptimalFleet(cityId, data, lookups);
   }
 
+  // Ensure worker is initialized (auto-init on first call)
+  if (!initPromise) {
+    initPromise = initWorkerData(data, lookups);
+  }
+  await initPromise;
+
   const id = ++requestId;
-  const result = await postRequest({ type: 'computeFleet', id, cityId, data, lookups });
+  const result = await postRequest({ type: 'computeFleet', id, cityId });
   return result as OptimalFleet | null;
 }
 
@@ -115,8 +168,14 @@ export async function computeRankingsAsync(
     return calculateCityRankings(data, lookups);
   }
 
+  // Ensure worker is initialized (auto-init on first call)
+  if (!initPromise) {
+    initPromise = initWorkerData(data, lookups);
+  }
+  await initPromise;
+
   const id = ++requestId;
-  const result = await postRequest({ type: 'computeRankings', id, data, lookups });
+  const result = await postRequest({ type: 'computeRankings', id });
   return result as CityRanking[];
 }
 
@@ -139,9 +198,15 @@ export async function computeDLCValuesAsync(
     return computeAllDLCValues(rawData, onProgress);
   }
 
+  // Ensure worker has the raw data (auto-init with lookups=null for DLC page)
+  if (!initPromise) {
+    initPromise = initWorkerData(rawData, null);
+  }
+  await initPromise;
+
   const id = ++requestId;
   const result = await postRequest(
-    { type: 'computeDLCValues', id, rawData, dlcConfig },
+    { type: 'computeDLCValues', id, dlcConfig },
     onProgress,
   );
 
@@ -159,5 +224,6 @@ export function terminateWorker(): void {
     worker.terminate();
     worker = null;
     pendingRequests.clear();
+    initPromise = null;
   }
 }

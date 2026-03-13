@@ -7,6 +7,11 @@
  *
  * Communication uses the structured clone algorithm, which handles
  * Map and Set natively — no manual serialization needed.
+ *
+ * Data lifecycle:
+ *   1. Client sends `init` with AllData + Lookups (once per page load)
+ *   2. Subsequent calls (`computeFleet`, etc.) use stored data
+ *   3. `reset` replaces stored data (e.g., after DLC settings change)
  */
 
 import {
@@ -17,15 +22,25 @@ import type { AllData, Lookups } from './types';
 import { sumGarageScores, type DLCMarginalValue } from './dlc-value';
 
 // ============================================
+// Module-level data store
+// ============================================
+
+let storedData: AllData | null = null;
+let storedLookups: Lookups | null = null;
+
+// ============================================
 // Message types
 // ============================================
 
 export type WorkerRequest =
-  | { type: 'computeFleet'; id: number; cityId: string; data: AllData; lookups: Lookups }
-  | { type: 'computeRankings'; id: number; data: AllData; lookups: Lookups }
-  | { type: 'computeDLCValues'; id: number; rawData: AllData; dlcConfig: DLCConfig }
+  | { type: 'init'; id: number; data: AllData; lookups: Lookups | null }
+  | { type: 'reset'; id: number; data: AllData; lookups: Lookups | null }
+  | { type: 'computeFleet'; id: number; cityId: string }
+  | { type: 'computeRankings'; id: number }
+  | { type: 'computeDLCValues'; id: number; dlcConfig: DLCConfig }
 
 export type WorkerResponse =
+  | { type: 'initResult'; id: number }
   | { type: 'fleetResult'; id: number; result: OptimalFleet | null }
   | { type: 'rankingsResult'; id: number; result: CityRanking[] }
   | { type: 'dlcValuesResult'; id: number; result: DLCMarginalValue[] }
@@ -161,21 +176,38 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
 
   try {
     switch (msg.type) {
+      case 'init':
+      case 'reset': {
+        storedData = msg.data;
+        storedLookups = msg.lookups;
+        self.postMessage({ type: 'initResult', id: msg.id } satisfies WorkerResponse);
+        break;
+      }
+
       case 'computeFleet': {
-        const result = computeOptimalFleet(msg.cityId, msg.data, msg.lookups);
+        if (!storedData || !storedLookups) {
+          throw new Error('Worker not initialized — send "init" before computeFleet');
+        }
+        const result = computeOptimalFleet(msg.cityId, storedData, storedLookups);
         self.postMessage({ type: 'fleetResult', id: msg.id, result } satisfies WorkerResponse);
         break;
       }
 
       case 'computeRankings': {
-        const result = calculateCityRankings(msg.data, msg.lookups);
+        if (!storedData || !storedLookups) {
+          throw new Error('Worker not initialized — send "init" before computeRankings');
+        }
+        const result = calculateCityRankings(storedData, storedLookups);
         self.postMessage({ type: 'rankingsResult', id: msg.id, result } satisfies WorkerResponse);
         break;
       }
 
       case 'computeDLCValues': {
+        if (!storedData) {
+          throw new Error('Worker not initialized — send "init" before computeDLCValues');
+        }
         const result = computeDLCValuesInWorker(
-          msg.rawData,
+          storedData,
           msg.dlcConfig,
           (completed, total) => {
             self.postMessage({ type: 'dlcProgress', id: msg.id, completed, total } satisfies WorkerResponse);
