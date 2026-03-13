@@ -1710,18 +1710,18 @@ tr.owned-garage {
     margin-bottom: 1rem;
   }
 
-  /* Rankings table only: show City, Value, Score on mobile */
-  /* Hide: #(1), Country(3), Depots(4), Jobs(5), €/Job(7) */
+  /* Rankings table only: show City(3), Fleet EV(7), Best Trailers(8) on mobile */
+  /* Hide: Star(1), Rank(2), Country(4), Depots(5), Cargo(6) */
   .table-rankings th:nth-child(1),
   .table-rankings td:nth-child(1),
-  .table-rankings th:nth-child(3),
-  .table-rankings td:nth-child(3),
+  .table-rankings th:nth-child(2),
+  .table-rankings td:nth-child(2),
   .table-rankings th:nth-child(4),
   .table-rankings td:nth-child(4),
   .table-rankings th:nth-child(5),
   .table-rankings td:nth-child(5),
-  .table-rankings th:nth-child(7),
-  .table-rankings td:nth-child(7) {
+  .table-rankings th:nth-child(6),
+  .table-rankings td:nth-child(6) {
     display: none;
   }
 
