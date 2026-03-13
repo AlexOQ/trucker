@@ -6,6 +6,7 @@
   <title>Trailers - ETS2 Trucker Advisor</title>
   <link rel="stylesheet" href="css/style.css">
   <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/trucker/sw.js');</script>
+  <script>(function(){var t=localStorage.getItem('ets2-theme');if(!t)t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.setAttribute('data-theme',t)})()</script>
 </head>
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -22,6 +23,7 @@
         <a href="cargo.html">Cargo</a>
         <a href="trailers.html" class="active">Trailers</a>
         <a href="dlcs.html">DLCs</a>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark/light theme" title="Toggle theme"></button>
       </nav>
     </header>
 
