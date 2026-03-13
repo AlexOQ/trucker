@@ -11,6 +11,7 @@ import {
   pickBestTrailer, trailerTotalHV, formatTrailerSpec,
   type AllData, type Lookups, type Cargo, type Trailer,
 } from './data';
+import { escapeHtml } from './utils';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -183,7 +184,7 @@ function renderList(filter = ''): void {
   const totalCargo = data.cargo.filter((c) => !c.excluded).length;
 
   if (filtered.length === 0) {
-    const escaped = filter.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const escaped = escapeHtml(filter);
     content.innerHTML = filter
       ? `<div class="empty-state">No body types found matching "${escaped}".</div>`
       : '<div class="empty-state">No trailer data found.</div>';
@@ -594,7 +595,7 @@ async function init(): Promise<void> {
     content.innerHTML = `
       <div class="empty-state" role="alert">
         <p>Failed to load data</p>
-        <p class="error-detail">${message}</p>
+        <p class="error-detail">${escapeHtml(message)}</p>
       </div>
     `;
   }

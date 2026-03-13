@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { normalize, titleCase, trailerTotalHV, formatTrailerSpec } from '../utils';
+import { normalize, titleCase, trailerTotalHV, formatTrailerSpec, escapeHtml } from '../utils';
 import type { Trailer, Lookups, Cargo } from '../types';
 
 describe('normalize', () => {
@@ -291,5 +291,39 @@ describe('formatTrailerSpec', () => {
   it('includes length in meters', () => {
     const spec = formatTrailerSpec(makeTrailer({ length: 15.0 }));
     expect(spec).toContain('15m');
+  });
+});
+
+describe('escapeHtml', () => {
+  it('escapes ampersands', () => {
+    expect(escapeHtml('Tom & Jerry')).toBe('Tom &amp; Jerry');
+  });
+
+  it('escapes angle brackets', () => {
+    expect(escapeHtml('<script>alert("xss")</script>')).toBe(
+      '&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;',
+    );
+  });
+
+  it('escapes double quotes', () => {
+    expect(escapeHtml('say "hello"')).toBe('say &quot;hello&quot;');
+  });
+
+  it('escapes single quotes', () => {
+    expect(escapeHtml("it's")).toBe('it&#39;s');
+  });
+
+  it('handles strings with no special characters', () => {
+    expect(escapeHtml('plain text')).toBe('plain text');
+  });
+
+  it('handles empty string', () => {
+    expect(escapeHtml('')).toBe('');
+  });
+
+  it('escapes all special characters together', () => {
+    expect(escapeHtml('<div class="x">&\'</div>')).toBe(
+      '&lt;div class=&quot;x&quot;&gt;&amp;&#39;&lt;/div&gt;',
+    );
   });
 });

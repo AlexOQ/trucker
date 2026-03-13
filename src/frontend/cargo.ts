@@ -5,6 +5,7 @@
 
 import { initPageData, initThemeToggle } from './page-init';
 import { normalize, type AllData, type Lookups, type Company, type Trailer } from './data';
+import { escapeHtml } from './utils';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -98,7 +99,7 @@ function renderCargoList(filter = ''): void {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   if (filtered.length === 0) {
-    const escaped = filter.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const escaped = escapeHtml(filter);
     content.innerHTML = filter
       ? `<div class="empty-state">No cargo found matching "${escaped}". Try a different search term.</div>`
       : '<div class="empty-state">No cargo found.</div>';
@@ -338,7 +339,7 @@ async function init(): Promise<void> {
     content.innerHTML = `
       <div class="empty-state" role="alert">
         <p>Failed to load data</p>
-        <p class="error-detail">${message}</p>
+        <p class="error-detail">${escapeHtml(message)}</p>
       </div>
     `;
   }
