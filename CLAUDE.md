@@ -12,6 +12,12 @@ Euro Truck Simulator 2 trucking company analyzer - optimizes trailer sets per ci
 - Monte Carlo simulation finds best fleet: greedy driver selection maximizing marginal EV
 - City rankings use analytical E[max of N] formula for speed (no MC needed per city)
 
+**First-Visit UX**:
+- DLC configuration banner prompts new visitors to set up owned DLCs for accurate results
+- Collapsible "Getting Started" onboarding section explains what the tool does and how to use it
+- Collapsible "How It Works" section explains the optimization methodology
+- Onboarding state (collapsed/dismissed) persisted in localStorage
+
 ## Tech Stack
 
 **Production (GitHub Pages)**:
@@ -19,7 +25,7 @@ Euro Truck Simulator 2 trucking company analyzer - optimizes trailer sets per ci
 - **Static Site**: HTML/CSS + bundled JS (no backend)
 - **Data**: JSON files in `/public/data/`
 - **Client-Side**: TypeScript modules with fuzzy autocomplete
-- **Computation**: All optimization runs in browser
+- **Computation**: All optimization runs in browser via Web Worker (`optimizer-worker.ts`) with async client wrapper (`optimizer-client.ts`) and synchronous fallback if Workers are unavailable
 
 **Development**:
 - **Frontend**: Vite dev server with hot reload
@@ -197,6 +203,11 @@ docker compose up -d     # Start PostgreSQL
 npm run migrate          # Run database migrations
 npm run dev              # Start Express server (http://localhost:3000)
 npm run export           # Export database to JSON files
+```
+
+**Data Pipeline**:
+```bash
+npm run parse-saves       # Parse ETS2 save game files into observations.json
 ```
 
 **Note**: Backend is only for bulk data entry. Production site runs entirely client-side from JSON files.

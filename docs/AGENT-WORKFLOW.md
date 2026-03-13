@@ -80,10 +80,11 @@ Multi-agent development workflow with centralized PM coordination and phase-awar
 - `notes`: Brief context for next session
 
 **What's NOT in state** (tracked in GitHub instead):
-- Blocked issues → Use "blocked by #XX" in issue body
 - All open issues → `gh issue list --state open`
 - Issue priorities → Labels on GitHub
 - Issue dependencies → References in issue bodies
+
+**Note**: `blockedIssues` IS tracked in state for cycle management. GitHub issue bodies also reference blockers with "blocked by #XX" for cross-cycle visibility.
 
 **State Transitions**:
 - `analysis` → `pm-review`: When all required analyses complete
@@ -275,8 +276,8 @@ Task tool:
 **State Updates**:
 - Set `developmentQueue` with selected batch (max 5)
 - Set `completedThisCycle` to []
+- Issues with unresolved dependencies go to `blockedIssues` in state
 - Transition to "development"
-- Note: NO `blockedIssues` in state - GitHub tracks this
 
 ---
 
