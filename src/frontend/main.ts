@@ -310,7 +310,8 @@ async function renderRankings() {
           ${displayRankings.map((r, i) => {
             const trailerSummary = summarizeTrailers(r.topTrailers);
             const starred = ownedSet.has(r.id);
-            const tier = getScoreTier(i, displayRankings.length);
+            const globalIndex = cachedRankings!.findIndex(cr => cr.id === r.id);
+            const tier = getScoreTier(globalIndex >= 0 ? globalIndex : i, cachedRankings!.length);
             return `
             <tr class="clickable${starred ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
               <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage' : 'Mark as garage'}">${starred ? '\u2605' : '\u2606'}</td>
