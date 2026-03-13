@@ -32,6 +32,68 @@ export interface RankingsState {
 }
 
 // ============================================
+// Comparison selection state (session only)
+// ============================================
+
+const MAX_COMPARE = 5;
+const comparisonSet = new Set<string>();
+
+export function getComparisonCityIds(): string[] {
+  return Array.from(comparisonSet);
+}
+
+export function clearComparison(): void {
+  comparisonSet.clear();
+}
+
+function toggleComparison(cityId: string): boolean {
+  if (comparisonSet.has(cityId)) {
+    comparisonSet.delete(cityId);
+    return false;
+  }
+  if (comparisonSet.size >= MAX_COMPARE) return false; // silently reject
+  comparisonSet.add(cityId);
+  return true;
+}
+
+function updateCompareBar() {
+  let bar = document.getElementById('compare-bar');
+  const count = comparisonSet.size;
+
+  if (count < 2) {
+    if (bar) bar.style.display = 'none';
+    return;
+  }
+
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'compare-bar';
+    bar.className = 'compare-bar';
+    document.body.appendChild(bar);
+  }
+
+  bar.style.display = 'flex';
+  bar.innerHTML = `
+    <span>Compare ${count} cities</span>
+    <button class="compare-bar-go" id="compare-bar-go" type="button">Compare</button>
+    <button class="compare-bar-clear" id="compare-bar-clear" type="button">&times;</button>
+  `;
+
+  document.getElementById('compare-bar-go')!.addEventListener('click', () => {
+    window.location.hash = 'compare';
+  });
+
+  document.getElementById('compare-bar-clear')!.addEventListener('click', () => {
+    comparisonSet.clear();
+    updateCompareBar();
+    // Uncheck all checkboxes
+    document.querySelectorAll('.compare-check').forEach(cb => {
+      (cb as HTMLInputElement).checked = false;
+    });
+  });
+}
+
+// ============================================
 // Utility functions
 // ============================================
 
@@ -269,10 +331,11 @@ export async function renderRankings(
               <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
               <th class="tooltip" data-tooltip="Sum of top 5 body type EVs \u2014 fleet earning potential">Fleet EV</th>
               <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
+              <th class="compare-col tooltip" data-tooltip="Select cities to compare side by side">Cmp</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td colspan="8" class="no-results" role="status">${message}</td></tr>
+            <tr><td colspan="9" class="no-results" role="status">${message}</td></tr>
           </tbody>
         </table>
       </div>
@@ -297,6 +360,7 @@ export async function renderRankings(
             <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
             <th class="tooltip" data-tooltip="Sum of top 5 body type EVs \u2014 fleet earning potential">Fleet EV</th>
             <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
+            <th class="compare-col tooltip" data-tooltip="Select cities to compare side by side">Cmp</th>
           </tr>
         </thead>
         <tbody>
@@ -305,6 +369,7 @@ export async function renderRankings(
             const starred = ownedSet.has(r.id);
             const globalIndex = state.cachedRankings!.findIndex(cr => cr.id === r.id);
             const tier = getScoreTier(globalIndex >= 0 ? globalIndex : i, state.cachedRankings!.length);
+            const checked = comparisonSet.has(r.id);
             return `
             <tr class="clickable${starred ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
               <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage' : 'Mark as garage'}" tabindex="0" role="button" aria-label="${starred ? 'Remove garage for' : 'Toggle garage for'} ${r.name}">${starred ? '\u2605' : '\u2606'}</td>
@@ -315,6 +380,7 @@ export async function renderRankings(
               <td class="amount">${r.cargoTypes}</td>
               <td class="score ${tier.className}" title="${tier.label}">${formatNumber(r.score)}${tier.label ? `<span class="score-tier-label">${tier.label.split(' \u2014 ')[0]}</span>` : ''}</td>
               <td class="trailer-summary">${trailerSummary}</td>
+              <td class="compare-col"><input type="checkbox" class="compare-check" data-city-id="${r.id}" ${checked ? 'checked' : ''} aria-label="Compare ${r.name}" title="Compare ${r.name}"></td>
             </tr>
           `;
           }).join('')}
@@ -348,15 +414,38 @@ export async function renderRankings(
   });
 
   rankingsContent.querySelectorAll('tr.clickable').forEach((row) => {
-    row.addEventListener('click', () => showCity((row as HTMLElement).dataset.cityId!));
+    row.addEventListener('click', (e) => {
+      // Don't navigate when clicking the compare checkbox
+      if ((e.target as HTMLElement).classList.contains('compare-check')) return;
+      showCity((row as HTMLElement).dataset.cityId!);
+    });
     row.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+        if ((e.target as HTMLElement).classList.contains('compare-check')) return;
         e.preventDefault();
         showCity((row as HTMLElement).dataset.cityId!);
       }
     });
   });
 
+  // Comparison checkboxes
+  rankingsContent.querySelectorAll('.compare-check').forEach((cb) => {
+    cb.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+    cb.addEventListener('change', (e) => {
+      const el = e.target as HTMLInputElement;
+      const cityId = el.dataset.cityId!;
+      const added = toggleComparison(cityId);
+      // If we tried to add but the set was full, uncheck
+      if (el.checked && !added && !comparisonSet.has(cityId)) {
+        el.checked = false;
+      }
+      updateCompareBar();
+    });
+  });
+
+  updateCompareBar();
   updateGarageCount(state.data, state.lookups, citySearch);
   updateResultsCount(resultsCount, displayRankings.length, rankings.length);
 }
