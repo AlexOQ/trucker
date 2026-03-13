@@ -18,6 +18,11 @@ let currentCityId: string | null = null;
 let cachedRankings: CityRanking[] | null = null;
 let displayedRankings: CityRanking[] | null = null;
 
+// Column sorting state
+type SortColumn = 'rank' | 'city' | 'country' | 'depots' | 'cargo' | 'score' | 'trailers';
+let currentSortColumn: SortColumn = 'score';
+let currentSortAsc = false; // default: score descending
+
 function debounce(fn: () => void, ms: number): () => void {
   let timer: ReturnType<typeof setTimeout>;
   return () => {
@@ -217,6 +222,63 @@ function summarizeTrailers(fleet: FleetEntry[]): string {
   return fleet.map(e => e.displayName).join(', ');
 }
 
+function sortIndicator(column: SortColumn): string {
+  if (currentSortColumn !== column) return '';
+  return currentSortAsc ? ' \u25B2' : ' \u25BC';
+}
+
+function toggleSort(column: SortColumn) {
+  if (currentSortColumn === column) {
+    currentSortAsc = !currentSortAsc;
+  } else {
+    currentSortColumn = column;
+    // Default direction: ascending for text columns, descending for numeric
+    currentSortAsc = column === 'city' || column === 'country' || column === 'trailers';
+  }
+  renderRankings();
+}
+
+function applySortToRankings(rankings: CityRanking[]): CityRanking[] {
+  const sorted = [...rankings];
+  sorted.sort((a, b) => {
+    let cmp = 0;
+    switch (currentSortColumn) {
+      case 'rank':
+      case 'score':
+        cmp = a.score - b.score;
+        break;
+      case 'city':
+        cmp = a.name.localeCompare(b.name);
+        break;
+      case 'country':
+        cmp = a.country.localeCompare(b.country) || a.name.localeCompare(b.name);
+        break;
+      case 'depots':
+        cmp = a.depotCount - b.depotCount;
+        break;
+      case 'cargo':
+        cmp = a.cargoTypes - b.cargoTypes;
+        break;
+      case 'trailers':
+        cmp = summarizeTrailers(a.topTrailers).localeCompare(summarizeTrailers(b.topTrailers));
+        break;
+    }
+    return currentSortAsc ? cmp : -cmp;
+  });
+  return sorted;
+}
+
+function renderSortableHeader(column: SortColumn, label: string, tooltip?: string): string {
+  const indicator = sortIndicator(column);
+  const tooltipAttrs = tooltip
+    ? ` class="sortable tooltip" data-tooltip="${tooltip}"`
+    : ' class="sortable"';
+  const ariaSort = currentSortColumn === column
+    ? ` aria-sort="${currentSortAsc ? 'ascending' : 'descending'}"`
+    : '';
+  return `<th${tooltipAttrs} data-sort="${column}" role="columnheader"${ariaSort} tabindex="0">${label}${indicator}</th>`;
+}
+
 async function renderRankings() {
   const rankings = await computeRankingsAsync(data!, lookups!);
   cachedRankings = rankings;
@@ -239,7 +301,8 @@ async function renderRankings() {
 
   const filterMode = getFilterMode();
   const ownedSet = new Set(getOwnedGarages());
-  const displayRankings = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
+  const filteredByMode = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
+  const displayRankings = applySortToRankings(filteredByMode);
   displayedRankings = displayRankings;
 
   if (filterMode === 'owned' && displayRankings.length === 0) {
@@ -268,13 +331,13 @@ async function renderRankings() {
           <thead>
             <tr>
               <th></th>
-              <th>#</th>
-              <th>City</th>
-              <th>Country</th>
-              <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
-              <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
-              <th class="tooltip" data-tooltip="Sum of top 5 body type EVs — fleet earning potential">Fleet EV</th>
-              <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
+              ${renderSortableHeader('rank', '#')}
+              ${renderSortableHeader('city', 'City')}
+              ${renderSortableHeader('country', 'Country')}
+              ${renderSortableHeader('depots', 'Depots', 'Company facilities in this city')}
+              ${renderSortableHeader('cargo', 'Cargo', 'Distinct cargo types available')}
+              ${renderSortableHeader('score', 'Fleet EV', 'Sum of top 5 body type EVs — fleet earning potential')}
+              ${renderSortableHeader('trailers', 'Best Trailers', 'Top earning trailer types for this city')}
             </tr>
           </thead>
           <tbody>
@@ -283,6 +346,7 @@ async function renderRankings() {
         </table>
       </div>
     `;
+    wireSortHeaders();
     updateGarageCount();
     return;
   }
@@ -290,18 +354,18 @@ async function renderRankings() {
   rankingsContent.innerHTML = `
     <div class="table-section">
       <h2>City Rankings (${displayRankings.length} cities)</h2>
-      <p class="table-hint">Ranked by combined fleet EV (top 5 trailer types). Click any city for details.</p>
+      <p class="table-hint">Ranked by combined fleet EV (top 5 trailer types). Click any city for details. Click column headers to sort.</p>
       <table class="table-rankings">
         <thead>
           <tr>
             <th></th>
-            <th>#</th>
-            <th>City</th>
-            <th>Country</th>
-            <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
-            <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
-            <th class="tooltip" data-tooltip="Sum of top 5 body type EVs — fleet earning potential">Fleet EV</th>
-            <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
+            ${renderSortableHeader('rank', '#')}
+            ${renderSortableHeader('city', 'City')}
+            ${renderSortableHeader('country', 'Country')}
+            ${renderSortableHeader('depots', 'Depots', 'Company facilities in this city')}
+            ${renderSortableHeader('cargo', 'Cargo', 'Distinct cargo types available')}
+            ${renderSortableHeader('score', 'Fleet EV', 'Sum of top 5 body type EVs — fleet earning potential')}
+            ${renderSortableHeader('trailers', 'Best Trailers', 'Top earning trailer types for this city')}
           </tr>
         </thead>
         <tbody>
@@ -362,7 +426,26 @@ async function renderRankings() {
     });
   });
 
+  wireSortHeaders();
   updateGarageCount();
+}
+
+function wireSortHeaders() {
+  rankingsContent.querySelectorAll('th.sortable').forEach((th) => {
+    const column = (th as HTMLElement).dataset.sort as SortColumn;
+    if (!column) return;
+    const handleSort = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      toggleSort(column);
+    };
+    th.addEventListener('click', handleSort);
+    th.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+        handleSort(e);
+      }
+    });
+  });
 }
 
 // ============================================

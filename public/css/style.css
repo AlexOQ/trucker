@@ -920,6 +920,26 @@ th {
   top: 0;
 }
 
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+th.sortable:hover {
+  color: #ffc107;
+}
+
+th.sortable:focus {
+  outline: 2px solid #f39c12;
+  outline-offset: -2px;
+}
+
+th.sortable[aria-sort] {
+  color: #ffc107;
+}
+
 tr:last-child td {
   border-bottom: none;
 }
