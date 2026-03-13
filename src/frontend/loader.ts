@@ -2,11 +2,13 @@
  * Data loader for ETS2 Trucker Advisor
  *
  * Hybrid data model:
- * - game-defs.json: authoritative game data (cargo values, trailer specs, company mappings)
- * - observations.json: observed spawn probabilities from save game parsing
+ * - game-defs.json: authoritative game data (cargo values, trailer specs, company mappings,
+ *   prob_coef spawn probability coefficients)
+ * - observations.json: supplementary data from save game parsing (city-company mappings,
+ *   cargo-trailer compatibility, unit counts). Validates but does NOT override game defs.
  *
- * Game defs provide the value side (what a job is worth).
- * Observations provide the probability side (how often cargoes spawn).
+ * Game defs are the single source of truth for both value and probability.
+ * Observations fill gaps and cross-validate.
  */
 
 import { initDlcData, GARAGE_CITIES } from './dlc-data';
