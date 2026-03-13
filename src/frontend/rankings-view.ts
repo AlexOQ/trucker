@@ -1,0 +1,420 @@
+/**
+ * Rankings table view for ETS2 Trucker Advisor
+ *
+ * Renders the city rankings table with search, country filter,
+ * garage filter, and score tiers. Extracted from main.ts.
+ */
+
+import { computeRankingsAsync } from './optimizer-client.js';
+import type { CityRanking, FleetEntry } from './optimizer.js';
+import {
+  getOwnedGarages, toggleOwnedGarage,
+  getFilterMode, setFilterMode,
+  getSelectedCountries, setSelectedCountries,
+} from './storage.js';
+import { normalize } from './data.js';
+import type { AllData, Lookups } from './data.js';
+
+// ============================================
+// Shared state interface
+// ============================================
+
+export interface MainState {
+  data: AllData | null;
+  lookups: Lookups | null;
+  cachedRankings: CityRanking[] | null;
+  displayedRankings: CityRanking[] | null;
+}
+
+// ============================================
+// Score tier helpers
+// ============================================
+
+export interface ScoreTier {
+  className: string;
+  label: string;
+}
+
+export function getScoreTier(index: number, total: number): ScoreTier {
+  if (total === 0) return { className: '', label: '' };
+  const percentile = (index / total) * 100;
+  if (percentile < 10) return { className: 'score-tier-excellent', label: 'Excellent — top 10%' };
+  if (percentile < 25) return { className: 'score-tier-good', label: 'Good — top 25%' };
+  if (percentile < 50) return { className: 'score-tier-average', label: 'Average — top 50%' };
+  return { className: 'score-tier-below', label: 'Below average — bottom 50%' };
+}
+
+// ============================================
+// Country filter dropdown
+// ============================================
+
+function getUniqueCountries(data: AllData | null): string[] {
+  if (!data || !data.cities) return [];
+  const countries = Array.from(new Set(data.cities.map((c) => c.country)));
+  return countries.sort();
+}
+
+function toggleDropdown() {
+  const dropdown = document.getElementById('country-dropdown')!;
+  const btn = document.getElementById('country-filter-btn')!;
+  const isVisible = dropdown.style.display !== 'none';
+  if (isVisible) {
+    dropdown.style.display = 'none';
+    btn.setAttribute('aria-expanded', 'false');
+  } else {
+    dropdown.style.display = 'block';
+    btn.setAttribute('aria-expanded', 'true');
+    const firstCheckbox = dropdown.querySelector('input[type="checkbox"]');
+    if (firstCheckbox) (firstCheckbox as HTMLElement).focus();
+  }
+}
+
+function closeDropdown() {
+  const dropdown = document.getElementById('country-dropdown')!;
+  const btn = document.getElementById('country-filter-btn')!;
+  dropdown.style.display = 'none';
+  btn.setAttribute('aria-expanded', 'false');
+}
+
+export function updateCountryButtonText(): void {
+  const selected = getSelectedCountries();
+  const btn = document.getElementById('country-filter-btn')!;
+  if (selected.length === 0) {
+    btn.textContent = 'All Countries';
+    btn.setAttribute('aria-label', 'Filter by country');
+  } else if (selected.length === 1) {
+    btn.textContent = '1 Country';
+    btn.setAttribute('aria-label', 'Filter by country, 1 selected');
+  } else {
+    btn.textContent = `${selected.length} Countries`;
+    btn.setAttribute('aria-label', `Filter by country, ${selected.length} selected`);
+  }
+}
+
+export function renderCountryCheckboxes(
+  data: AllData | null,
+  renderRankings: () => void,
+): void {
+  const countries = getUniqueCountries(data);
+  const countryOptions = document.getElementById('country-options')!;
+  const selected = getSelectedCountries();
+
+  countryOptions.innerHTML = `
+    <label class="country-option all-countries" role="option">
+      <input type="checkbox" id="all-countries-checkbox"
+        aria-checked="${selected.length === 0 ? 'true' : 'false'}"
+        ${selected.length === 0 ? 'checked' : ''}>
+      <span>All Countries</span>
+    </label>
+    ${countries.map((country) => `
+      <label class="country-option" role="option">
+        <input type="checkbox" value="${country}"
+          aria-checked="${selected.includes(country) ? 'true' : 'false'}"
+          aria-label="${country}"
+          ${selected.includes(country) ? 'checked' : ''}>
+        <span>${country}</span>
+      </label>
+    `).join('')}
+  `;
+
+  document.getElementById('all-countries-checkbox')!.addEventListener('change', (e) => {
+    if ((e.target as HTMLInputElement).checked) {
+      setSelectedCountries([]);
+      renderCountryCheckboxes(data, renderRankings);
+      updateCountryButtonText();
+      renderRankings();
+    }
+  });
+
+  countryOptions.querySelectorAll('input[type="checkbox"]:not(#all-countries-checkbox)').forEach((checkbox) => {
+    checkbox.addEventListener('change', (e) => {
+      const country = (e.target as HTMLInputElement).value;
+      const sel = getSelectedCountries();
+      if ((e.target as HTMLInputElement).checked) {
+        if (!sel.includes(country)) setSelectedCountries([...sel, country]);
+      } else {
+        setSelectedCountries(sel.filter((c) => c !== country));
+      }
+      renderCountryCheckboxes(data, renderRankings);
+      updateCountryButtonText();
+      renderRankings();
+    });
+  });
+}
+
+// ============================================
+// Garage count badge
+// ============================================
+
+export function updateGarageCount(
+  state: MainState,
+  citySearch: HTMLInputElement,
+): void {
+  const ownedGarages = getOwnedGarages();
+  if (!state.data || !state.lookups) {
+    document.getElementById('garage-count')!.textContent = ownedGarages.length.toString();
+    return;
+  }
+  const searchTerm = normalize(citySearch.value);
+  const selectedCountries = getSelectedCountries();
+  let count = 0;
+  for (const cityIdStr of ownedGarages) {
+    const city = state.lookups.citiesById.get(cityIdStr);
+    if (!city) continue;
+    if (searchTerm && !normalize(city.name).includes(searchTerm) && !normalize(city.country).includes(searchTerm)) continue;
+    if (selectedCountries.length > 0 && !selectedCountries.includes(city.country)) continue;
+    count++;
+  }
+  document.getElementById('garage-count')!.textContent = count.toString();
+}
+
+// ============================================
+// Rankings rendering
+// ============================================
+
+function formatNumber(n: number): string {
+  return Math.round(n).toLocaleString();
+}
+
+function summarizeTrailers(fleet: FleetEntry[]): string {
+  return fleet.map(e => e.displayName).join(', ');
+}
+
+export async function renderRankings(
+  state: MainState,
+  rankingsContent: HTMLElement,
+  citySearch: HTMLInputElement,
+  showCity: (cityId: string) => void,
+): Promise<void> {
+  const rankings = await computeRankingsAsync(state.data!, state.lookups!);
+  state.cachedRankings = rankings;
+
+  if (rankings.length === 0) {
+    state.cachedRankings = null;
+    rankingsContent.innerHTML = '<div class="empty-state">No cities with data yet.</div>';
+    return;
+  }
+
+  const searchTerm = normalize(citySearch.value);
+  let filtered = rankings.filter(
+    (r) => normalize(r.name).includes(searchTerm) || normalize(r.country).includes(searchTerm)
+  );
+
+  const selectedCountries = getSelectedCountries();
+  if (selectedCountries.length > 0) {
+    filtered = filtered.filter((r) => selectedCountries.includes(r.country));
+  }
+
+  const filterMode = getFilterMode();
+  const ownedSet = new Set(getOwnedGarages());
+  const displayRankings = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
+  state.displayedRankings = displayRankings;
+
+  if (filterMode === 'owned' && displayRankings.length === 0) {
+    rankingsContent.innerHTML = `
+      <div class="empty-garages">
+        <p>No garages marked yet.</p>
+        <p class="hint">Click any city row, then click the star to mark it as your garage.</p>
+      </div>
+    `;
+    return;
+  }
+
+  if (displayRankings.length === 0) {
+    let message: string;
+    if (searchTerm) {
+      const escaped = citySearch.value.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      message = `No cities match '${escaped}'`;
+    } else if (selectedCountries.length > 0) {
+      message = 'No cities match your filters';
+    } else {
+      message = 'No results found';
+    }
+    rankingsContent.innerHTML = `
+      <div class="table-section">
+        <table class="table-rankings">
+          <thead>
+            <tr>
+              <th></th>
+              <th>#</th>
+              <th>City</th>
+              <th>Country</th>
+              <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
+              <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
+              <th class="tooltip" data-tooltip="Sum of top 5 body type EVs — fleet earning potential">Fleet EV</th>
+              <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="8" class="no-results" role="status">${message}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    `;
+    updateGarageCount(state, citySearch);
+    return;
+  }
+
+  rankingsContent.innerHTML = `
+    <div class="table-section">
+      <h2>City Rankings (${displayRankings.length} cities)</h2>
+      <p class="table-hint">Ranked by combined fleet EV (top 5 trailer types). Click any city for details.</p>
+      <table class="table-rankings">
+        <thead>
+          <tr>
+            <th></th>
+            <th>#</th>
+            <th>City</th>
+            <th>Country</th>
+            <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
+            <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
+            <th class="tooltip" data-tooltip="Sum of top 5 body type EVs — fleet earning potential">Fleet EV</th>
+            <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${displayRankings.map((r, i) => {
+            const trailerSummary = summarizeTrailers(r.topTrailers);
+            const starred = ownedSet.has(r.id);
+            const globalIndex = state.cachedRankings!.findIndex(cr => cr.id === r.id);
+            const tier = getScoreTier(globalIndex >= 0 ? globalIndex : i, state.cachedRankings!.length);
+            return `
+            <tr class="clickable${starred ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
+              <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage' : 'Mark as garage'}" tabindex="0" role="button" aria-label="${starred ? 'Remove garage for' : 'Toggle garage for'} ${r.name}">${starred ? '\u2605' : '\u2606'}</td>
+              <td>${i + 1}</td>
+              <td>${r.name}</td>
+              <td class="country">${r.country}</td>
+              <td>${r.depotCount}</td>
+              <td class="amount">${r.cargoTypes}</td>
+              <td class="score ${tier.className}" title="${tier.label}">${formatNumber(r.score)}${tier.label ? `<span class="score-tier-label">${tier.label.split(' — ')[0]}</span>` : ''}</td>
+              <td class="trailer-summary">${trailerSummary}</td>
+            </tr>
+          `;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  // Star click/keyboard toggles garage without navigating to city
+  rankingsContent.querySelectorAll('.garage-star').forEach((star) => {
+    const toggleStar = (e: Event) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const el = star as HTMLElement;
+      const cityId = el.dataset.cityId!;
+      const nowOwned = toggleOwnedGarage(cityId);
+      el.textContent = nowOwned ? '\u2605' : '\u2606';
+      el.title = nowOwned ? 'Remove garage' : 'Mark as garage';
+      const cityName = el.closest('tr')!.querySelector('td:nth-child(3)')!.textContent!;
+      el.setAttribute('aria-label', `${nowOwned ? 'Remove garage for' : 'Toggle garage for'} ${cityName}`);
+      const row = el.closest('tr')!;
+      row.classList.toggle('owned-garage', nowOwned);
+      updateGarageCount(state, citySearch);
+    };
+    star.addEventListener('click', toggleStar);
+    star.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+        toggleStar(e);
+      }
+    });
+  });
+
+  rankingsContent.querySelectorAll('tr.clickable').forEach((row) => {
+    row.addEventListener('click', () => showCity((row as HTMLElement).dataset.cityId!));
+    row.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+        e.preventDefault();
+        showCity((row as HTMLElement).dataset.cityId!);
+      }
+    });
+  });
+
+  updateGarageCount(state, citySearch);
+}
+
+// ============================================
+// Loading / Error states
+// ============================================
+
+export function showLoading(rankingsContent: HTMLElement): void {
+  rankingsContent.innerHTML = `
+    <div class="table-section" role="status" aria-label="Loading city data">
+      <h2>Loading city data...</h2>
+      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
+      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
+      <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
+    </div>
+  `;
+}
+
+export function showError(rankingsContent: HTMLElement, errorMessage: string): void {
+  rankingsContent.innerHTML = `
+    <div class="empty-state" role="alert" aria-live="assertive">
+      <p>Failed to load data</p>
+      <p class="error-detail">${errorMessage}</p>
+    </div>
+  `;
+}
+
+// ============================================
+// Filter toggle wiring
+// ============================================
+
+export function wireFilterToggle(
+  filterToggle: HTMLElement,
+  renderRankingsFn: () => void,
+): void {
+  filterToggle.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest('.filter-btn');
+    if (!btn) return;
+    const mode = btn.getAttribute('data-filter')!;
+    filterToggle.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    setFilterMode(mode);
+    renderRankingsFn();
+  });
+}
+
+// ============================================
+// Country filter wiring
+// ============================================
+
+export function wireCountryFilter(): void {
+  const countryFilterBtn = document.getElementById('country-filter-btn')!;
+  countryFilterBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleDropdown(); });
+  countryFilterBtn.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+      e.preventDefault();
+      toggleDropdown();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    const dropdown = document.getElementById('country-dropdown')!;
+    if (dropdown.style.display === 'none') return;
+    if ((e as KeyboardEvent).key === 'Escape') {
+      e.preventDefault();
+      closeDropdown();
+      countryFilterBtn.focus();
+    } else if ((e as KeyboardEvent).key === 'ArrowDown' || (e as KeyboardEvent).key === 'ArrowUp') {
+      e.preventDefault();
+      const checkboxes = Array.from(dropdown.querySelectorAll('input[type="checkbox"]'));
+      const currentIndex = checkboxes.findIndex(
+        (cb) => cb === document.activeElement || (cb as HTMLElement).parentElement === document.activeElement
+      );
+      const nextIndex = (e as KeyboardEvent).key === 'ArrowDown'
+        ? (currentIndex < checkboxes.length - 1 ? currentIndex + 1 : 0)
+        : (currentIndex > 0 ? currentIndex - 1 : checkboxes.length - 1);
+      (checkboxes[nextIndex] as HTMLElement).focus();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('country-dropdown')!;
+    const filterContainer = document.querySelector('.country-filter')!;
+    if (!filterContainer.contains(e.target as Node) && dropdown.style.display !== 'none') {
+      closeDropdown();
+    }
+  });
+}
