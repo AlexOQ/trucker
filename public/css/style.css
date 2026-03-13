@@ -44,10 +44,18 @@
   --purple: #9b59b6;
 
   --score-excellent: #22c55e;
+  --score-excellent-bg: rgba(34, 197, 94, 0.2);
+  --score-excellent-border: rgba(34, 197, 94, 0.4);
   --score-good: #60a5fa;
+  --score-good-bg: rgba(59, 130, 246, 0.2);
+  --score-good-border: rgba(59, 130, 246, 0.4);
   --score-average: #eab308;
+  --score-average-bg: rgba(234, 179, 8, 0.2);
+  --score-average-border: rgba(234, 179, 8, 0.4);
   --score-below: #a3a3a3;
   --score-default: #ef5350;
+  --score-default-bg: rgba(239, 68, 68, 0.2);
+  --score-default-border: rgba(239, 68, 68, 0.4);
 
   --skeleton-base: #16213e;
   --skeleton-shine: #1a2744;
@@ -113,10 +121,18 @@
   --purple: #7d3c98;
 
   --score-excellent: #16a34a;
+  --score-excellent-bg: rgba(22, 163, 74, 0.15);
+  --score-excellent-border: rgba(22, 163, 74, 0.35);
   --score-good: #2563eb;
+  --score-good-bg: rgba(37, 99, 235, 0.15);
+  --score-good-border: rgba(37, 99, 235, 0.35);
   --score-average: #ca8a04;
+  --score-average-bg: rgba(202, 138, 4, 0.15);
+  --score-average-border: rgba(202, 138, 4, 0.35);
   --score-below: #737373;
   --score-default: #d44836;
+  --score-default-bg: rgba(212, 72, 54, 0.15);
+  --score-default-border: rgba(212, 72, 54, 0.35);
 
   --skeleton-base: #e8ecf1;
   --skeleton-shine: #f0f2f5;
@@ -756,27 +772,27 @@ nav {
 }
 
 .score-badge.excellent {
-  background: rgba(34, 197, 94, 0.2);
+  background: var(--score-excellent-bg);
   color: var(--score-excellent);
-  border: 1px solid rgba(34, 197, 94, 0.4);
+  border: 1px solid var(--score-excellent-border);
 }
 
 .score-badge.good {
-  background: rgba(59, 130, 246, 0.2);
+  background: var(--score-good-bg);
   color: var(--score-good);
-  border: 1px solid rgba(59, 130, 246, 0.4);
+  border: 1px solid var(--score-good-border);
 }
 
 .score-badge.moderate {
-  background: rgba(234, 179, 8, 0.2);
+  background: var(--score-average-bg);
   color: var(--score-average);
-  border: 1px solid rgba(234, 179, 8, 0.4);
+  border: 1px solid var(--score-average-border);
 }
 
 .score-badge.low {
-  background: rgba(239, 68, 68, 0.2);
+  background: var(--score-default-bg);
   color: var(--error);
-  border: 1px solid rgba(239, 68, 68, 0.4);
+  border: 1px solid var(--score-default-border);
 }
 
 .coverage-explanation {
@@ -1198,7 +1214,7 @@ tr.scs-fallback-row td {
 }
 .btn-fleet-plus:hover {
   background: var(--success-alt);
-  color: #fff;
+  color: var(--accent-on);
 }
 .btn-fleet-minus:hover {
   border-color: var(--error);
@@ -1881,7 +1897,7 @@ tr.owned-garage {
   width: 18px;
   height: 18px;
   cursor: pointer;
-  accent-color: #f39c12;
+  accent-color: var(--accent);
 }
 
 /* Floating Compare Bar */
@@ -1890,22 +1906,22 @@ tr.owned-garage {
   bottom: 1.5rem;
   left: 50%;
   transform: translateX(-50%);
-  background: #16213e;
-  border: 2px solid #f39c12;
+  background: var(--bg-secondary);
+  border: 2px solid var(--accent);
   border-radius: 8px;
   padding: 0.6rem 1rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
   z-index: 1000;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  color: #eee;
+  box-shadow: 0 4px 20px var(--shadow-color);
+  color: var(--text-primary);
   font-size: 0.95rem;
 }
 
 .compare-bar-go {
-  background: #f39c12;
-  color: #1a1a2e;
+  background: var(--accent);
+  color: var(--accent-on);
   border: none;
   padding: 0.4rem 1rem;
   border-radius: 4px;
@@ -1916,13 +1932,13 @@ tr.owned-garage {
 }
 
 .compare-bar-go:hover {
-  background: #e67e22;
+  background: var(--accent-hover);
 }
 
 .compare-bar-clear {
   background: none;
   border: none;
-  color: #9a9a9a;
+  color: var(--text-dim);
   font-size: 1.25rem;
   cursor: pointer;
   padding: 0.25rem;
@@ -1935,7 +1951,7 @@ tr.owned-garage {
 }
 
 .compare-bar-clear:hover {
-  color: #e74c3c;
+  color: var(--error);
 }
 
 /* Comparison View Grid */
@@ -1947,8 +1963,8 @@ tr.owned-garage {
 }
 
 .compare-card {
-  background: #16213e;
-  border: 1px solid #2a3a5a;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   padding: 1.25rem;
   display: flex;
@@ -1957,7 +1973,7 @@ tr.owned-garage {
 }
 
 .compare-card-header h3 {
-  color: #f39c12;
+  color: var(--accent);
   font-size: 1.15rem;
   margin-bottom: 0.25rem;
 }
@@ -1973,36 +1989,36 @@ tr.owned-garage {
 }
 
 .compare-stat {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg-overlay);
   border-radius: 6px;
   padding: 0.6rem 0.8rem;
   border-left: 3px solid transparent;
 }
 
 .compare-stat.compare-winner {
-  border-left-color: #2ecc71;
+  border-left-color: var(--success);
   background: rgba(46, 204, 113, 0.08);
 }
 
 .compare-stat-value {
   font-size: 1.25rem;
   font-weight: bold;
-  color: #f39c12;
+  color: var(--accent);
 }
 
 .compare-stat-label {
   font-size: 0.75rem;
-  color: #9a9a9a;
+  color: var(--text-dim);
   margin-top: 0.15rem;
 }
 
 .compare-fleet {
-  border-top: 1px solid #2a3a5a;
+  border-top: 1px solid var(--border-primary);
   padding-top: 0.75rem;
 }
 
 .compare-fleet h4 {
-  color: #f39c12;
+  color: var(--accent);
   font-size: 0.85rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -2015,7 +2031,7 @@ tr.owned-garage {
   align-items: center;
   padding: 0.35rem 0;
   font-size: 0.9rem;
-  border-bottom: 1px solid rgba(42, 58, 90, 0.5);
+  border-bottom: 1px solid var(--border-primary);
 }
 
 .compare-fleet-row:last-child {
@@ -2023,16 +2039,16 @@ tr.owned-garage {
 }
 
 .compare-trailer-name {
-  color: #ccc;
+  color: var(--text-secondary);
 }
 
 .compare-trailer-ev {
-  color: #f39c12;
+  color: var(--accent);
   font-weight: 600;
 }
 
 .compare-no-data {
-  color: #9a9a9a;
+  color: var(--text-dim);
   font-size: 0.85rem;
 }
 
