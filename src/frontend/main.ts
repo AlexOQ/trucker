@@ -149,6 +149,18 @@ function updateGarageCount() {
 }
 
 // ============================================
+// Results count feedback
+// ============================================
+
+function updateResultsCount(shown: number, total: number) {
+  if (shown === total || total === 0) {
+    resultsCount.textContent = '';
+  } else {
+    resultsCount.textContent = `Showing ${shown} of ${total} cities`;
+  }
+}
+
+// ============================================
 // Score tier helpers
 // ============================================
 
@@ -194,6 +206,7 @@ const cityContent = document.getElementById('city-content')!;
 const backLink = document.getElementById('back-link')!;
 const filterToggle = document.getElementById('filter-toggle')!;
 const citySearch = document.getElementById('city-search') as HTMLInputElement;
+const resultsCount = document.getElementById('results-count')!;
 const howItWorksToggle = document.getElementById('how-it-works-toggle');
 const onboardingToggle = document.getElementById('onboarding-toggle');
 const onboardingSection = document.getElementById('onboarding');
@@ -224,6 +237,7 @@ async function renderRankings() {
   if (rankings.length === 0) {
     cachedRankings = null;
     rankingsContent.innerHTML = '<div class="empty-state">No cities with data yet.</div>';
+    updateResultsCount(0, 0);
     return;
   }
 
@@ -249,6 +263,7 @@ async function renderRankings() {
         <p class="hint">Click any city row, then click the star to mark it as your garage.</p>
       </div>
     `;
+    updateResultsCount(0, rankings.length);
     return;
   }
 
@@ -284,6 +299,7 @@ async function renderRankings() {
       </div>
     `;
     updateGarageCount();
+    updateResultsCount(0, rankings.length);
     return;
   }
 
@@ -363,6 +379,7 @@ async function renderRankings() {
   });
 
   updateGarageCount();
+  updateResultsCount(displayRankings.length, rankings.length);
 }
 
 // ============================================
