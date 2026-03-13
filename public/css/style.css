@@ -307,8 +307,8 @@ nav {
   cursor: pointer;
   padding: 0.25rem;
   line-height: 1;
-  min-width: 32px;
-  min-height: 32px;
+  min-width: 44px;
+  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1633,8 +1633,14 @@ th.tooltip::before {
   user-select: none;
 }
 
-.garage-star:hover {
+.garage-star:hover,
+.garage-star:focus {
   color: #f39c12;
+}
+
+.garage-star:focus-visible {
+  outline: 2px solid #f39c12;
+  outline-offset: 2px;
 }
 
 tr.owned-garage .garage-star {

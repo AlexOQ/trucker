@@ -312,7 +312,7 @@ async function renderRankings() {
             const tier = getScoreTier(globalIndex >= 0 ? globalIndex : i, cachedRankings!.length);
             return `
             <tr class="clickable${starred ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
-              <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage' : 'Mark as garage'}">${starred ? '\u2605' : '\u2606'}</td>
+              <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage' : 'Mark as garage'}" tabindex="0" role="button" aria-label="${starred ? 'Remove garage for' : 'Toggle garage for'} ${r.name}">${starred ? '\u2605' : '\u2606'}</td>
               <td>${i + 1}</td>
               <td>${r.name}</td>
               <td class="country">${r.country}</td>
@@ -328,17 +328,27 @@ async function renderRankings() {
     </div>
   `;
 
-  // Star click toggles garage without navigating to city
+  // Star click/keyboard toggles garage without navigating to city
   rankingsContent.querySelectorAll('.garage-star').forEach((star) => {
-    star.addEventListener('click', (e) => {
+    const toggleStar = (e: Event) => {
       e.stopPropagation();
-      const cityId = (star as HTMLElement).dataset.cityId!;
+      e.preventDefault();
+      const el = star as HTMLElement;
+      const cityId = el.dataset.cityId!;
       const nowOwned = toggleOwnedGarage(cityId);
-      (star as HTMLElement).textContent = nowOwned ? '\u2605' : '\u2606';
-      (star as HTMLElement).title = nowOwned ? 'Remove garage' : 'Mark as garage';
-      const row = (star as HTMLElement).closest('tr')!;
+      el.textContent = nowOwned ? '\u2605' : '\u2606';
+      el.title = nowOwned ? 'Remove garage' : 'Mark as garage';
+      const cityName = el.closest('tr')!.querySelector('td:nth-child(3)')!.textContent!;
+      el.setAttribute('aria-label', `${nowOwned ? 'Remove garage for' : 'Toggle garage for'} ${cityName}`);
+      const row = el.closest('tr')!;
       row.classList.toggle('owned-garage', nowOwned);
       updateGarageCount();
+    };
+    star.addEventListener('click', toggleStar);
+    star.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+        toggleStar(e);
+      }
     });
   });
 
