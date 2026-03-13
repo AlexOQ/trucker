@@ -21,6 +21,7 @@ export {
 const STORAGE_KEY = 'ets2-trucker-advisor';
 const BANNER_DISMISSED_KEY = 'ets2-dlc-banner-dismissed';
 const ONBOARDING_COLLAPSED_KEY = 'ets2-onboarding-collapsed';
+const THEME_KEY = 'ets2-theme';
 
 interface Settings {
   driverCount: number;
@@ -383,4 +384,41 @@ export function isOnboardingCollapsed(): boolean {
  */
 export function setOnboardingCollapsed(collapsed: boolean): void {
   localStorage.setItem(ONBOARDING_COLLAPSED_KEY, collapsed ? 'true' : 'false');
+}
+
+// ============================================
+// Theme Management
+// ============================================
+
+export type Theme = 'dark' | 'light';
+
+/**
+ * Get the current theme preference.
+ * Priority: localStorage > prefers-color-scheme > 'dark' (default)
+ */
+export function getTheme(): Theme {
+  const stored = localStorage.getItem(THEME_KEY);
+  if (stored === 'light' || stored === 'dark') return stored;
+  if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: light)').matches) {
+    return 'light';
+  }
+  return 'dark';
+}
+
+/**
+ * Save the theme preference and apply it to the document.
+ */
+export function setTheme(theme: Theme): void {
+  localStorage.setItem(THEME_KEY, theme);
+  document.documentElement.setAttribute('data-theme', theme);
+}
+
+/**
+ * Toggle between dark and light themes. Returns the new theme.
+ */
+export function toggleTheme(): Theme {
+  const current = getTheme();
+  const next: Theme = current === 'dark' ? 'light' : 'dark';
+  setTheme(next);
+  return next;
 }

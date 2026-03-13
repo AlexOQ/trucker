@@ -5,6 +5,7 @@
  */
 
 import { loadAllData, type AllData } from './data';
+import { initThemeToggle } from './page-init';
 import {
   TRAILER_DLCS, ALL_DLC_IDS,
   CARGO_DLCS, ALL_CARGO_DLC_IDS,
@@ -266,6 +267,7 @@ async function runCalculation(): Promise<void> {
 }
 
 async function init(): Promise<void> {
+  initThemeToggle();
   try {
     rawData = await loadAllData();
     renderSettings();

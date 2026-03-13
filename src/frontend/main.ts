@@ -6,7 +6,7 @@
  * All rendering is delegated to rankings-view.ts and city-detail-view.ts.
  */
 
-import { initPageData } from './page-init.js';
+import { initPageData, initThemeToggle } from './page-init.js';
 import {
   isFirstVisit, isBannerDismissed, dismissBanner,
   isOnboardingCollapsed, setOnboardingCollapsed,
@@ -129,6 +129,7 @@ function showDLCBanner() {
 // ============================================
 
 async function init() {
+  initThemeToggle();
   showDLCBanner();
 
   // Initialize onboarding section collapsed state

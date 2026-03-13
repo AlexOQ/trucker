@@ -12,6 +12,7 @@ import { applyDLCFilter, getBlockedCities } from './dlc-filter';
 import {
   getOwnedTrailerDLCs, getOwnedCargoDLCs, getOwnedMapDLCs,
   COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP,
+  getTheme, toggleTheme,
 } from './storage';
 import type { AllData, Lookups } from './types';
 
@@ -28,6 +29,28 @@ export interface PageData {
  * 2. applyDLCFilter()    — remove content from unowned DLCs
  * 3. buildLookups()      — build efficient access maps
  */
+/**
+ * Wire up the theme toggle button (present in every page's nav).
+ * Safe to call even if the button doesn't exist.
+ */
+export function initThemeToggle(): void {
+  const btn = document.getElementById('theme-toggle') as HTMLButtonElement | null;
+  if (!btn) return;
+
+  function updateIcon() {
+    const theme = getTheme();
+    // Sun icon for dark mode (click to switch to light), moon for light mode
+    btn!.textContent = theme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+  }
+
+  updateIcon();
+
+  btn.addEventListener('click', () => {
+    toggleTheme();
+    updateIcon();
+  });
+}
+
 export async function initPageData(): Promise<PageData> {
   const ownedCargoAndMap = new Set([...getOwnedCargoDLCs(), ...getOwnedMapDLCs()]);
   const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);

@@ -3,7 +3,7 @@
  * Displays company browser with city/cargo information
  */
 
-import { initPageData } from './page-init';
+import { initPageData, initThemeToggle } from './page-init';
 import { normalize, cargoBonus, type AllData, type Lookups, type City, type Cargo } from './data';
 
 let data: AllData | null = null;
@@ -285,6 +285,7 @@ function handleHashChange(): void {
 }
 
 async function init(): Promise<void> {
+  initThemeToggle();
   // Show loading state
   content.innerHTML = '<div class="loading">Loading companies...</div>';
 
