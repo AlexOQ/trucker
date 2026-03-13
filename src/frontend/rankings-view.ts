@@ -13,6 +13,7 @@ import {
   getSelectedCountries, setSelectedCountries,
 } from './storage.js';
 import { normalize } from './data.js';
+import { escapeHtml } from './utils.js';
 import type { AllData, Lookups } from './data.js';
 
 // ============================================
@@ -311,7 +312,7 @@ export async function renderRankings(
   if (displayRankings.length === 0) {
     let message: string;
     if (searchTerm) {
-      const escaped = citySearch.value.trim().replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const escaped = escapeHtml(citySearch.value.trim());
       message = `No cities match '${escaped}'`;
     } else if (selectedCountries.length > 0) {
       message = 'No cities match your filters';
@@ -543,7 +544,7 @@ export function showError(rankingsContent: HTMLElement, errorMessage: string): v
   rankingsContent.innerHTML = `
     <div class="empty-state" role="alert" aria-live="assertive">
       <p>Failed to load data</p>
-      <p class="error-detail">${errorMessage}</p>
+      <p class="error-detail">${escapeHtml(errorMessage)}</p>
     </div>
   `;
 }

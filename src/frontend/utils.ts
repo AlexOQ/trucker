@@ -134,3 +134,15 @@ export function titleCase(gameId: string): string {
 export function getOwnableTrailers(data: { trailers: Trailer[] }): Trailer[] {
   return data.trailers.filter((t) => t.ownable);
 }
+
+/**
+ * Escape HTML special characters to prevent XSS when interpolating into innerHTML.
+ */
+export function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
