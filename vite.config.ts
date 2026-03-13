@@ -61,6 +61,7 @@ export default defineConfig({
       targets: [
         { src: 'public/data/*', dest: 'data' },
         { src: 'public/css/*', dest: 'css' },
+        { src: 'public/sw.js', dest: '.' },
       ],
     }),
     flattenHtmlOutput(),
