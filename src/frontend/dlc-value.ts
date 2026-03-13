@@ -27,15 +27,22 @@ export interface DLCMarginalValue {
   newGarageCities: Array<{ id: string; name: string; score: number }>;
 }
 
-function sumGarageScores(
+/**
+ * Compute total garage score and per-city scores for a given DLC ownership scenario.
+ * Pure computation — takes all DLC maps as parameters so it works in both
+ * the main thread and the Web Worker.
+ */
+export function sumGarageScores(
   rawData: AllData,
   ownedTrailer: string[],
   ownedCargoAndMap: Set<string>,
   ownedMap: string[],
   garageCityIds: Set<string>,
+  cityDlcMap: Record<string, string[]>,
+  combinedCargoDlcMap: Record<string, string>,
 ): { total: number; perCity: Map<string, number> } {
-  const blocked = getBlockedCities(ownedMap, CITY_DLC_MAP);
-  const filtered = applyDLCFilter(rawData, ownedTrailer, ownedCargoAndMap, COMBINED_CARGO_DLC_MAP, blocked);
+  const blocked = getBlockedCities(ownedMap, cityDlcMap);
+  const filtered = applyDLCFilter(rawData, ownedTrailer, ownedCargoAndMap, combinedCargoDlcMap, blocked);
   const lookups = buildLookups(filtered);
   clearTrailerInfoCache();
   const rankings = calculateCityRankings(filtered, lookups);
@@ -72,7 +79,7 @@ export async function computeAllDLCValues(
 
   // Baseline with current DLC ownership
   const baselineCargoSet = new Set([...ownedCargo, ...ownedMap]);
-  const baseline = sumGarageScores(rawData, ownedTrailer, baselineCargoSet, ownedMap, activeGarages);
+  const baseline = sumGarageScores(rawData, ownedTrailer, baselineCargoSet, ownedMap, activeGarages, CITY_DLC_MAP, COMBINED_CARGO_DLC_MAP);
 
   const unownedMap = ALL_MAP_DLC_IDS.filter(id => !ownedMap.includes(id));
   const unownedTrailer = ALL_DLC_IDS.filter(id => !ownedTrailer.includes(id));
@@ -107,7 +114,7 @@ export async function computeAllDLCValues(
       }
     }
 
-    const hypo = sumGarageScores(rawData, hypoTrailer, hypoCargoSet, hypoMap, hypoGarages);
+    const hypo = sumGarageScores(rawData, hypoTrailer, hypoCargoSet, hypoMap, hypoGarages, CITY_DLC_MAP, COMBINED_CARGO_DLC_MAP);
 
     // Existing garage delta = improvement at current garages only
     let existingGarageDelta = 0;

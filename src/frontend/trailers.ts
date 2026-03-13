@@ -7,7 +7,7 @@
 
 import { initPageData } from './page-init';
 import {
-  normalize, getOwnableTrailers,
+  normalize, cargoBonus, getOwnableTrailers,
   pickBestTrailer, trailerTotalHV, formatTrailerSpec,
   type AllData, type Lookups, type Cargo, type Trailer,
 } from './data';
@@ -57,7 +57,7 @@ function getCargo(cargoIds: Set<string>, trailerId: string): CargoWithUnits[] {
       const cargo = lookups!.cargoById.get(cargoId);
       if (!cargo || cargo.excluded) return null;
       const units = lookups!.cargoTrailerUnits.get(`${cargoId}:${trailerId}`) ?? 1;
-      const multiplier = 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
+      const multiplier = cargoBonus(cargo);
       const unitValue = cargo.value * multiplier;
       return { ...cargo, units, unitValue, haulValue: unitValue * units };
     })
