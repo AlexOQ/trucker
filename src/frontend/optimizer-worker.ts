@@ -13,9 +13,8 @@ import {
   computeOptimalFleet, calculateCityRankings, clearTrailerInfoCache,
   type OptimalFleet, type CityRanking,
 } from './optimizer';
-import { buildLookups, applyDLCFilter, getBlockedCities } from './data';
 import type { AllData, Lookups } from './types';
-import type { DLCMarginalValue } from './dlc-value';
+import { sumGarageScores, type DLCMarginalValue } from './dlc-value';
 
 // ============================================
 // Message types
@@ -51,32 +50,6 @@ export interface DLCConfig {
 // ============================================
 // DLC marginal value (worker-side)
 // ============================================
-
-function sumGarageScores(
-  rawData: AllData,
-  ownedTrailer: string[],
-  ownedCargoAndMap: Set<string>,
-  ownedMap: string[],
-  garageCityIds: Set<string>,
-  cityDlcMap: Record<string, string[]>,
-  combinedCargoDlcMap: Record<string, string>,
-): { total: number; perCity: Map<string, number> } {
-  const blocked = getBlockedCities(ownedMap, cityDlcMap);
-  const filtered = applyDLCFilter(rawData, ownedTrailer, ownedCargoAndMap, combinedCargoDlcMap, blocked);
-  const lookups = buildLookups(filtered);
-  clearTrailerInfoCache();
-  const rankings = calculateCityRankings(filtered, lookups);
-
-  let total = 0;
-  const perCity = new Map<string, number>();
-  for (const r of rankings) {
-    perCity.set(r.id, r.score);
-    if (garageCityIds.has(r.id)) {
-      total += r.score;
-    }
-  }
-  return { total, perCity };
-}
 
 function computeDLCValuesInWorker(
   rawData: AllData,

@@ -8,6 +8,14 @@
 import type { Trailer, Lookups } from './types';
 
 /**
+ * Cargo value bonus multiplier: +30% for fragile, +30% for high_value (stackable).
+ * Returns 1.0 (no bonus), 1.3 (one flag), or 1.6 (both flags).
+ */
+export function cargoBonus(cargo: { fragile: boolean; high_value: boolean }): number {
+  return 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
+}
+
+/**
  * Normalize text for accent-insensitive search
  * Removes diacritics and converts to lowercase
  */
@@ -81,7 +89,7 @@ export function trailerTotalHV(t: Trailer, lookups: Lookups): number {
     const cargo = lookups.cargoById.get(cargoId);
     if (!cargo || cargo.excluded) continue;
     const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
-    const bonus = 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
+    const bonus = cargoBonus(cargo);
     total += cargo.value * bonus * units;
   }
   return total;

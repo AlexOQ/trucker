@@ -13,6 +13,7 @@
 
 import {
   formatTrailerSpec,
+  cargoBonus,
 } from './data.js';
 import type { AllData, Lookups, Trailer } from './data.js';
 
@@ -127,7 +128,7 @@ export function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDe
       if (!c || c.excluded) continue;
 
       const probCoef = c.prob_coef ?? 1.0;
-      const bonus = 1 + (c.fragile ? 0.3 : 0) + (c.high_value ? 0.3 : 0);
+      const bonus = cargoBonus(c);
       const unitVal = c.value * bonus;
 
       // Find best haul value per body type from trailers available in this country
@@ -305,7 +306,7 @@ function getTrailerInfoForCountry(
       const c = lookups.cargoById.get(cargoId);
       if (!c || c.excluded) continue;
       const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
-      const bonus = 1 + (c.fragile ? 0.3 : 0) + (c.high_value ? 0.3 : 0);
+      const bonus = cargoBonus(c);
       totalHV += c.value * bonus * units;
     }
 

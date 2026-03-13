@@ -13,6 +13,7 @@ import type {
   CargoWeight, DepotProfile, CityCargoProfile,
   TrailerCityScore, CargoPoolEntry,
 } from './types';
+import { cargoBonus } from './utils';
 
 /**
  * Build earning profiles for all ownable trailer variants.
@@ -37,7 +38,7 @@ export function buildTrailerProfiles(data: AllData, lookups: Lookups): TrailerPr
       if (!c || c.excluded) continue;
 
       const units = lookups.cargoTrailerUnits.get(`${cargoId}:${trailer.id}`) ?? 1;
-      const bonus = 1 + (c.fragile ? 0.3 : 0) + (c.high_value ? 0.3 : 0);
+      const bonus = cargoBonus(c);
       const haulValue = c.value * bonus * units;
       const spawnWeight = c.prob_coef ?? 1.0;
 
@@ -81,7 +82,7 @@ export function buildDepotProfiles(data: AllData, lookups: Lookups): Map<string,
     for (const cargoId of cargoIds) {
       const c = lookups.cargoById.get(cargoId);
       if (!c || c.excluded) continue;
-      const bonus = 1 + (c.fragile ? 0.3 : 0) + (c.high_value ? 0.3 : 0);
+      const bonus = cargoBonus(c);
       const value = c.value * bonus;
       const spawnWeight = c.prob_coef ?? 1.0;
       const weightedValue = value * spawnWeight;
@@ -132,7 +133,7 @@ export function buildCityCargoProfile(
         existing.depotCount += count;
         existing.weightedValue = existing.value * existing.spawnWeight * existing.depotCount;
       } else {
-        const bonus = 1 + (c.fragile ? 0.3 : 0) + (c.high_value ? 0.3 : 0);
+        const bonus = cargoBonus(c);
         const value = c.value * bonus;
         const spawnWeight = c.prob_coef ?? 1.0;
         cargo.set(cargoId, {
@@ -331,7 +332,7 @@ export function getCityCargoPool(cityId: string, data: AllData, lookups: Lookups
     for (const cargoId of cargoIds) {
       const cargo = lookups.cargoById.get(cargoId);
       if (cargo && !cargo.excluded) {
-        const multiplier = 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
+        const multiplier = cargoBonus(cargo);
         const spawnWeight = cargo.prob_coef ?? 1.0;
         pool.push({
           companyId,

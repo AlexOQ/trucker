@@ -4,7 +4,7 @@
  */
 
 import { initPageData } from './page-init';
-import { normalize, type AllData, type Lookups, type City, type Cargo } from './data';
+import { normalize, cargoBonus, type AllData, type Lookups, type City, type Cargo } from './data';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -49,7 +49,7 @@ function getCompanyCargo(companyId: string): CargoWithSpawn[] {
       const cargo = lookups!.cargoById.get(id);
       if (!cargo) return null;
       const spawnWeight = cargo.prob_coef ?? 1.0;
-      const multiplier = 1 + (cargo.fragile ? 0.3 : 0) + (cargo.high_value ? 0.3 : 0);
+      const multiplier = cargoBonus(cargo);
       const expectedValue = cargo.value * multiplier * spawnWeight;
       return { ...cargo, spawnWeight, expectedValue };
     })

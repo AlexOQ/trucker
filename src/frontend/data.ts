@@ -48,6 +48,7 @@ export { initPageData, type PageData } from './page-init';
 
 // Utils
 export {
+  cargoBonus,
   normalize, formatTrailerSpec, trailerTotalHV, pickBestTrailer,
   titleCase, getOwnableTrailers,
 } from './utils';
