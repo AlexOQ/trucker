@@ -485,6 +485,8 @@ async function renderCity(cityId: string) {
         <h2>Recommended Fleet — ${optimal.totalTrailers} trailers</h2>
         <div class="export-buttons">
           <button class="btn copy-btn" id="copy-fleet-btn" type="button">Copy Fleet</button>
+          <button class="btn export-btn" id="export-csv-btn" type="button">Export CSV</button>
+          <button class="btn export-btn" id="export-json-btn" type="button">Export JSON</button>
         </div>
       </div>
       <table>
@@ -505,6 +507,7 @@ async function renderCity(cityId: string) {
 
   wireGarageToggle(cityId);
   wireCopyFleetButton(city.name, optimal.drivers);
+  wireExportButtons(city.name, optimal.drivers, depotCount, cargoTypes, score);
 }
 
 function wireCopyFleetButton(cityName: string, drivers: OptimalFleetEntry[]) {
@@ -518,6 +521,90 @@ function wireCopyFleetButton(cityName: string, drivers: OptimalFleetEntry[]) {
     });
     const text = `${cityName} Fleet:\n${lines.join('\n')}`;
     copyToClipboard(text, copyBtn);
+  });
+}
+
+/**
+ * Create a filesystem-safe filename from a string.
+ * Transliterates diacritics to ASCII equivalents (e.g., ö→o, é→e)
+ * and replaces only filesystem-unsafe characters.
+ */
+function sanitizeFilename(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')  // strip combining diacritics (ö→o, é→e, etc.)
+    .replace(/[/\\:*?"<>|]/g, '_')    // replace filesystem-unsafe chars
+    .replace(/_+/g, '_')              // collapse consecutive underscores
+    .replace(/^_|_$/g, '');           // trim leading/trailing underscores
+}
+
+function downloadFile(content: string, filename: string, mimeType: string): void {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function exportToCSV(cityName: string, drivers: OptimalFleetEntry[]): void {
+  const headers = ['Trailer Type', 'Count', 'EV', 'Cargo Types'];
+  const rows = drivers.map(d => [
+    `"${d.displayName}"`,
+    d.count,
+    d.ev.toFixed(2),
+    d.cargoMatched,
+  ]);
+  const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
+  const safeName = sanitizeFilename(cityName);
+  downloadFile(csv, `${safeName}_fleet.csv`, 'text/csv;charset=utf-8');
+}
+
+function exportToJSON(
+  cityName: string,
+  drivers: OptimalFleetEntry[],
+  depotCount: number,
+  cargoTypes: number,
+  score: number,
+): void {
+  const exportData = {
+    city: cityName,
+    exportedAt: new Date().toISOString(),
+    summary: {
+      depots: depotCount,
+      cargoTypes,
+      score,
+      totalTrailers: drivers.reduce((sum, d) => sum + d.count, 0),
+      trailerTypes: drivers.length,
+    },
+    fleet: drivers.map(d => ({
+      trailerType: d.displayName,
+      bodyType: d.bodyType,
+      count: d.count,
+      ev: d.ev,
+      cargoMatched: d.cargoMatched,
+    })),
+  };
+  const json = JSON.stringify(exportData, null, 2);
+  const safeName = sanitizeFilename(cityName);
+  downloadFile(json, `${safeName}_fleet.json`, 'application/json');
+}
+
+function wireExportButtons(
+  cityName: string,
+  drivers: OptimalFleetEntry[],
+  depotCount: number,
+  cargoTypes: number,
+  score: number,
+): void {
+  document.getElementById('export-csv-btn')?.addEventListener('click', () => {
+    exportToCSV(cityName, drivers);
+  });
+  document.getElementById('export-json-btn')?.addEventListener('click', () => {
+    exportToJSON(cityName, drivers, depotCount, cargoTypes, score);
   });
 }
 
