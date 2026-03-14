@@ -231,7 +231,7 @@ function renderCountryCheckboxes(data: AllData, renderRankings: () => void) {
 // Garage count badge
 // ============================================
 
-function updateGarageCount(data: AllData, lookups: Lookups, citySearch: HTMLInputElement) {
+export function updateGarageCount(data: AllData, lookups: Lookups, citySearch: HTMLInputElement) {
   const ownedGarages = getOwnedGarages();
   const searchTerm = normalize(citySearch.value);
   const selectedCountries = getSelectedCountries();
@@ -328,11 +328,11 @@ export async function renderRankings(
               <th>#</th>
               <th>City</th>
               <th>Country</th>
-              <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
-              <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
-              <th class="tooltip" data-tooltip="Sum of top 5 body type EVs \u2014 fleet earning potential">Fleet EV</th>
-              <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
-              <th class="compare-col tooltip" data-tooltip="Select cities to compare side by side">Cmp</th>
+              <th class="tooltip" tabindex="0" data-tooltip="Company facilities in this city">Depots</th>
+              <th class="tooltip" tabindex="0" data-tooltip="Distinct cargo types available">Cargo</th>
+              <th class="tooltip" tabindex="0" data-tooltip="Sum of top 5 body type EVs \u2014 fleet earning potential">Fleet EV</th>
+              <th class="tooltip" tabindex="0" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
+              <th class="compare-col tooltip" tabindex="0" data-tooltip="Select cities to compare side by side">Cmp</th>
             </tr>
           </thead>
           <tbody>
@@ -357,11 +357,11 @@ export async function renderRankings(
             <th>#</th>
             <th>City</th>
             <th>Country</th>
-            <th class="tooltip" data-tooltip="Company facilities in this city">Depots</th>
-            <th class="tooltip" data-tooltip="Distinct cargo types available">Cargo</th>
-            <th class="tooltip" data-tooltip="Sum of top 5 body type EVs \u2014 fleet earning potential">Fleet EV</th>
-            <th class="tooltip" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
-            <th class="compare-col tooltip" data-tooltip="Select cities to compare side by side">Cmp</th>
+            <th class="tooltip" tabindex="0" data-tooltip="Company facilities in this city">Depots</th>
+            <th class="tooltip" tabindex="0" data-tooltip="Distinct cargo types available">Cargo</th>
+            <th class="tooltip" tabindex="0" data-tooltip="Sum of top 5 body type EVs \u2014 fleet earning potential">Fleet EV</th>
+            <th class="tooltip" tabindex="0" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
+            <th class="compare-col tooltip" tabindex="0" data-tooltip="Select cities to compare side by side">Cmp</th>
           </tr>
         </thead>
         <tbody>
@@ -373,7 +373,7 @@ export async function renderRankings(
             const checked = comparisonSet.has(r.id);
             return `
             <tr class="clickable${starred ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
-              <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage' : 'Mark as garage'}" tabindex="0" role="button" aria-label="${starred ? 'Remove garage for' : 'Toggle garage for'} ${r.name}">${starred ? '\u2605' : '\u2606'}</td>
+              <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage for' : 'Mark as garage for'} ${r.name}" tabindex="0" role="button" aria-label="${starred ? 'Remove garage for' : 'Mark as garage for'} ${r.name}">${starred ? '\u2605' : '\u2606'}</td>
               <td>${i + 1}</td>
               <td>${r.name}</td>
               <td class="country">${r.country}</td>
@@ -399,9 +399,9 @@ export async function renderRankings(
       const cityId = el.dataset.cityId!;
       const nowOwned = toggleOwnedGarage(cityId);
       el.textContent = nowOwned ? '\u2605' : '\u2606';
-      el.title = nowOwned ? 'Remove garage' : 'Mark as garage';
       const cityName = el.closest('tr')!.querySelector('td:nth-child(3)')!.textContent!;
-      el.setAttribute('aria-label', `${nowOwned ? 'Remove garage for' : 'Toggle garage for'} ${cityName}`);
+      el.title = `${nowOwned ? 'Remove garage for' : 'Mark as garage for'} ${cityName}`;
+      el.setAttribute('aria-label', `${nowOwned ? 'Remove garage for' : 'Mark as garage for'} ${cityName}`);
       const row = el.closest('tr')!;
       row.classList.toggle('owned-garage', nowOwned);
       updateGarageCount(state.data, state.lookups, citySearch);

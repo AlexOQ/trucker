@@ -16,7 +16,7 @@ import { copyToClipboard } from './clipboard.js';
 import { normalize } from './data.js';
 import type { AllData, Lookups } from './data.js';
 import {
-  formatNumber, getScoreTier, getCityRank, formatRank,
+  formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount,
   type RankingsState, type ScoreTier,
 } from './rankings-view.js';
 
@@ -103,7 +103,7 @@ export async function renderCity(
       </div>
       <div class="empty-state">No cargo data for this city yet.</div>
     `;
-    wireGarageToggle(cityId, rankingsContent);
+    wireGarageToggle(cityId, rankingsContent, state, citySearch);
     return;
   }
 
@@ -185,7 +185,7 @@ export async function renderCity(
     </div>
   `;
 
-  wireGarageToggle(cityId, rankingsContent);
+  wireGarageToggle(cityId, rankingsContent, state, citySearch);
   wireCopyFleetButton(city.name, optimal.drivers);
   wireExportButtons(city.name, optimal.drivers, depotCount, cargoTypes, score);
 }
@@ -300,7 +300,12 @@ function wireExportButtons(
 // Garage toggle in city detail
 // ============================================
 
-function wireGarageToggle(cityId: string, rankingsContent: HTMLElement) {
+function wireGarageToggle(
+  cityId: string,
+  rankingsContent: HTMLElement,
+  state: { data: AllData; lookups: Lookups },
+  citySearch: HTMLInputElement,
+) {
   const garageToggle = document.getElementById('city-garage-toggle');
   if (garageToggle) {
     garageToggle.addEventListener('click', () => {
@@ -313,13 +318,14 @@ function wireGarageToggle(cityId: string, rankingsContent: HTMLElement) {
       const rankingStar = rankingsContent.querySelector(`.garage-star[data-city-id="${cityId}"]`) as HTMLElement | null;
       if (rankingStar) {
         rankingStar.textContent = nowOwned ? '\u2605' : '\u2606';
-        rankingStar.title = nowOwned ? 'Remove garage' : 'Mark as garage';
+        const cityName = rankingStar.closest('tr')!.querySelector('td:nth-child(3)')!.textContent!;
+        rankingStar.title = `${nowOwned ? 'Remove garage for' : 'Mark as garage for'} ${cityName}`;
+        rankingStar.setAttribute('aria-label', `${nowOwned ? 'Remove garage for' : 'Mark as garage for'} ${cityName}`);
         const row = rankingStar.closest('tr')!;
         row.classList.toggle('owned-garage', nowOwned);
       }
-      // Update garage count badge
-      document.getElementById('garage-count')!.textContent =
-        getOwnedGarages().length.toString();
+      // Update garage count badge using filtered count (consistent with rankings view)
+      updateGarageCount(state.data, state.lookups, citySearch);
     });
   }
 }
