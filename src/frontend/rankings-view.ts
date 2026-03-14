@@ -28,8 +28,8 @@ export interface ScoreTier {
 }
 
 export interface RankingsState {
-  data: AllData;
-  lookups: Lookups;
+  data: AllData | null;
+  lookups: Lookups | null;
   cachedRankings: CityRanking[] | null;
   displayedRankings: CityRanking[] | null;
 }
@@ -334,6 +334,7 @@ export async function renderRankings(
   resultsCount: HTMLElement,
   showCity: (cityId: string) => void,
 ): Promise<void> {
+  if (!state.data || !state.lookups) return;
   const rankings = state.cachedRankings ?? await computeRankingsAsync(state.data, state.lookups);
   state.cachedRankings = rankings;
 
@@ -408,7 +409,7 @@ export async function renderRankings(
       </div>
     `;
     attachSortHandlers(rankingsContent, state, rankingsContent, citySearch, resultsCount, showCity);
-    updateGarageCount(state.data, state.lookups, citySearch);
+    if (state.data && state.lookups) updateGarageCount(state.data, state.lookups, citySearch);
     updateResultsCount(resultsCount, 0, rankings.length);
     return;
   }
@@ -471,7 +472,7 @@ export async function renderRankings(
       el.setAttribute('aria-label', `${nowOwned ? 'Remove garage for' : 'Mark as garage for'} ${cityName}`);
       const row = el.closest('tr')!;
       row.classList.toggle('owned-garage', nowOwned);
-      updateGarageCount(state.data, state.lookups, citySearch);
+      if (state.data && state.lookups) updateGarageCount(state.data, state.lookups, citySearch);
     };
     star.addEventListener('click', toggleStar);
     star.addEventListener('keydown', (e) => {
@@ -515,7 +516,7 @@ export async function renderRankings(
 
   attachSortHandlers(rankingsContent, state, rankingsContent, citySearch, resultsCount, showCity);
   updateCompareBar();
-  updateGarageCount(state.data, state.lookups, citySearch);
+  if (state.data && state.lookups) updateGarageCount(state.data, state.lookups, citySearch);
   updateResultsCount(resultsCount, displayRankings.length, rankings.length);
 }
 
@@ -534,7 +535,7 @@ export function initRankingsView(
   const doRender = () => renderRankings(state, rankingsContent, citySearch, resultsCount, showCity);
 
   // Country checkboxes
-  renderCountryCheckboxes(state.data, doRender);
+  if (state.data) renderCountryCheckboxes(state.data, doRender);
   updateCountryButtonText();
 
   // Filter toggle (All / My Garages)
@@ -552,7 +553,7 @@ export function initRankingsView(
   filterToggle.querySelectorAll('.filter-btn').forEach((btn) => {
     btn.classList.toggle('active', btn.getAttribute('data-filter') === savedFilterMode);
   });
-  updateGarageCount(state.data, state.lookups, citySearch);
+  if (state.data && state.lookups) updateGarageCount(state.data, state.lookups, citySearch);
 
   // Country filter dropdown
   const countryFilterBtn = document.getElementById('country-filter-btn')!;

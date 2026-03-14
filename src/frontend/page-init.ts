@@ -22,14 +22,6 @@ export interface PageData {
 }
 
 /**
- * Load game data, apply DLC ownership filters, and build lookup maps.
- *
- * Every browser page calls this once at startup. The sequence is:
- * 1. loadAllData()       — fetch game-defs.json + observations.json
- * 2. applyDLCFilter()    — remove content from unowned DLCs
- * 3. buildLookups()      — build efficient access maps
- */
-/**
  * Wire up the theme toggle button (present in every page's nav).
  * Safe to call even if the button doesn't exist.
  */
@@ -51,6 +43,14 @@ export function initThemeToggle(): void {
   });
 }
 
+/**
+ * Load game data, apply DLC ownership filters, and build lookup maps.
+ *
+ * Every browser page calls this once at startup. The sequence is:
+ * 1. loadAllData()       — fetch game-defs.json + observations.json
+ * 2. applyDLCFilter()    — remove content from unowned DLCs
+ * 3. buildLookups()      — build efficient access maps
+ */
 export async function initPageData(): Promise<PageData> {
   const ownedCargoAndMap = new Set([...getOwnedCargoDLCs(), ...getOwnedMapDLCs()]);
   const blocked = getBlockedCities(getOwnedMapDLCs(), CITY_DLC_MAP);
