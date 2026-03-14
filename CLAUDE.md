@@ -327,15 +327,15 @@ See `docs/AGENT-WORKFLOW.md` for full details.
 
 **All agents**:
 - Check `analysis/.state.json` on startup
-- Update state on completion
-- Write structured output to `analysis/` directory
+- Return structured findings as text — coordinator writes to `analysis/` directory
+- Do NOT attempt to write files directly (agents lack Write tool access)
 
-**User Testing** (3 parallel agents, `voltagent-qa-sec:qa-expert`):
-- Target: https://alexoq.github.io/trucker
-- 1 Playwright agent (browser-based, mobile persona) + 2 code-level agents (no browser)
-- Each agent gets 5-6 randomly assigned features from recently closed PRs (no overlap)
-- Code-level agents audit HTML/CSS/JS for UX issues ~3x faster than Playwright
-- All write to `analysis/user-testing.md` with labeled sections
+**User Testing** (2 code-level agents, `voltagent-qa-sec:qa-expert`):
+- 2 code-level agents with random personas from pool of 10
+- Recently closed issues split evenly between the 2 agents (no overlap)
+- Agent A (Dana-type): a11y, keyboard, focus, responsive CSS, mobile layout, touch targets
+- Agent B (Elena-type): data accuracy, edge cases, caching, race conditions, state
+- No Playwright — code-level analysis is 3x faster with same coverage
 
 **QA** (`pr-review-toolkit:code-reviewer`):
 - Target: local dev server (`npm run dev:frontend` on http://localhost:5173)

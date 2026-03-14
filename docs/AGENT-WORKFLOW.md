@@ -7,13 +7,14 @@ Multi-agent development workflow with centralized PM coordination and phase-awar
 | Command | What It Does |
 |---------|--------------|
 | `status` | Show current phase, what's done, what's pending |
-| `run user testing` | QA personas + UX research agents test prod → `analysis/user-testing.md` |
+| `run fresh analysis` | Run ALL analysis agents in parallel → `analysis/*.md` |
+| `run user testing` | QA persona agents test prod → `analysis/user-testing.md` |
 | `perform QA work` | Review closed issues, test local dev → `analysis/qa-review.md` |
 | `run architect review` | Major codebase improvements → `analysis/arch-review.md` |
 | `audit documentation` | Scan all doc sources → `analysis/docs-review.md` |
 | `PM review` | Read analysis/, create GitHub issues, set priorities |
 | `start development` | Pull from queue, run ralph-specum flow in worktrees |
-| `merge and cleanup` | Squash-merge PRs, remove worktrees, pull main, transition to analysis |
+| `merge and cleanup` | Squash-merge PRs, remove worktrees, pull main, run smoke test, transition to analysis |
 
 ## State Machine
 
@@ -30,17 +31,18 @@ Multi-agent development workflow with centralized PM coordination and phase-awar
 │        │                                                             │            │
 │        └─────────────────────────────────────────────────────────────┘            │
 │                                                                                     │
-│   ANALYSIS PHASE:                                                                  │
-│        ├── User Testing (prod)                                                     │
-│        ├── QA Review (local dev)                                                   │
+│   ANALYSIS PHASE (4 agents in parallel):                                           │
+│        ├── User Testing x2 (code-level, prod)                                     │
+│        ├── QA Review (code review)                                                │
 │        ├── Architect Review (codebase)                                             │
-│        └── Documentation Audit (all sources)                                       │
+│        └── Documentation Audit (all sources) ← ALWAYS runs                        │
 │                                                                                     │
 │   MERGE PHASE:                                                                     │
 │        ├── Squash-merge all open PRs                                               │
 │        ├── Force-remove worktrees                                                  │
 │        ├── Delete local feature branches                                           │
 │        ├── Pull main with merged changes                                           │
+│        ├── Post-merge smoke test (build + test)                                    │
 │        ├── Move unblocked issues to queue                                          │
 │        └── Reset analysisComplete flags                                            │
 │                                                                                     │
@@ -196,8 +198,7 @@ Task(subagent_type=ralph-specum:plan-synthesizer, model=sonnet, run_in_backgroun
 |------|-------|-----------|
 | Main Session | `opus` | Coordinator - status, spawning, high-level decisions |
 | PM Agent | `opus` | Complex synthesis, prioritization decisions |
-| User Testing (Playwright) | `sonnet` | Browser-based functional testing |
-| User Testing (Code-Level) | `sonnet` x2 | UX audit via code/CSS/HTML analysis |
+| User Testing (Code-Level) | `sonnet` x2 | UX/a11y/mobile audit via code/CSS/HTML analysis |
 | QA Agent | `sonnet` | Code review, test analysis |
 | Architect Agent | `sonnet` | Pattern analysis |
 | Documentation Agent | `sonnet` | Content review |
@@ -283,114 +284,107 @@ Task tool:
 
 ### User Testing Agent Stack
 
-**Target**: Production deployment (https://alexoq.github.io/trucker)
+**Target**: Codebase at `/Users/alexander.olshanetsky/projects/stuff/trucker`
 
-**Architecture**: 3 agents run in **parallel** (all background), each assigned 5-6
-randomly selected features from the most recent development cycle's closed PRs.
+**Architecture**: 2 code-level agents run in **parallel** (background). Each assigned
+half the testable features from the most recent development cycle. No Playwright —
+code-level analysis catches the same issues ~3x faster.
 
-| Agent | Type | Persona | Method |
-|-------|------|---------|--------|
-| Playwright Agent | `voltagent-qa-sec:qa-expert` | Mobile user (390x844) | Browser automation via Playwright |
-| Code-Level Agent A | `voltagent-qa-sec:qa-expert` | Accessibility/keyboard user | Code/CSS/HTML analysis (no browser) |
-| Code-Level Agent B | `voltagent-qa-sec:qa-expert` | Power user with all DLCs | Code/CSS/HTML analysis (no browser) |
+| Agent | Type | Persona | Focus |
+|-------|------|---------|-------|
+| Code Agent A (Dana) | `voltagent-qa-sec:qa-expert` | Accessibility + mobile | ARIA, keyboard, focus, responsive CSS, touch targets, @media queries |
+| Code Agent B (Elena) | `voltagent-qa-sec:qa-expert` | Power user + correctness | Data accuracy, edge cases, race conditions, caching, state management |
 
-**Model**: `sonnet` (all three agents)
+**Model**: `sonnet` (both agents)
 
-#### Feature Assignment
+**Why no Playwright**: Browser testing added ~800s per cycle and found only findings
+that code agents also caught. Mobile layout issues are visible in CSS `@media` queries.
+Contrast issues are visible in CSS variable values. The one thing Playwright uniquely
+catches (runtime rendering bugs) hasn't surfaced in 3 cycles.
 
-The coordinator randomly distributes testable user-facing features from `completedThisCycle`
-across the 3 agents. Each agent gets 5-6 features with no overlap. Internal refactors,
-documentation-only changes, and test-only PRs are excluded from the pool.
+#### Issue Assignment
 
-Example feature pool (from a typical cycle):
-- Mobile layout fixes, touch targets
-- Accessibility/ARIA improvements
-- Score tier colors and percentiles
-- Column sorting, search feedback
-- Dark/light mode toggle
-- City comparison view
-- Service worker / offline support
-- CSV/JSON export, Copy Fleet
-- DLC banner, onboarding section
-- Garage star toggle
+The coordinator fetches all recently closed issues (`gh issue list --state closed --limit 20`),
+filters out non-testable items (documentation-only, test-only, internal refactors),
+and **splits evenly** between the 2 agents. No overlap. Each agent gets a random
+persona from the pool of 10.
 
-#### Playwright Agent
+#### Agent Prompts
 
-**Invoke**: `voltagent-qa-sec:qa-expert` + Playwright
-**Persona**: Randomly selected from persona pool (see below)
-**Scope**: 5-6 assigned features only — do NOT test the entire app
+Both agents receive:
+1. **Random persona** (selected from pool of 10 below)
+2. **Assigned issues** (half of recently closed, with titles and numbers)
+3. Instruction: analyze each issue's changes from the persona's perspective
+4. Instruction: **return findings as structured text** — do NOT write files
+5. Format: `## [Agent Label]: [Persona Name]` with per-feature Status/Findings
 
-**Workflow**:
-1. Navigate prod URL via Playwright at assigned viewport size
-2. Test each assigned feature with a focused user journey
-3. Document friction points, bugs, regressions
-4. Rate severity (P0-P3) with specific CSS/HTML/JS references
+Agent A always gets the a11y/mobile-focused analysis scope regardless of persona:
+- CSS `@media` queries for hidden interactive elements
+- Touch target sizes (`min-width`/`min-height` < 44px)
+- Responsive breakpoints and what's lost at 390px, 600px, 768px
+- Focus management, keyboard handlers, ARIA attributes
 
-#### Code-Level Agents (x2)
+Agent B always gets the correctness/edge-case scope regardless of persona:
+- Data flow, caching, race conditions, state consistency
+- Edge cases: empty states, max values, Unicode, concurrent operations
+- Error handling, fallback behavior
 
-**Invoke**: `voltagent-qa-sec:qa-expert` (NO Playwright)
-**Persona**: Randomly selected from persona pool
-**Scope**: 5-6 assigned features only
+The coordinator writes all findings to `analysis/user-testing.md` after agents complete,
+then appends a `## Cross-Agent Summary` section with deduplicated findings by severity.
 
-**Workflow**:
-1. Read the relevant source files (HTML, CSS, TypeScript) for each assigned feature
-2. Analyze from the persona's perspective: would this work for them?
-3. Check accessibility (ARIA, keyboard, contrast), responsive CSS, edge cases
-4. Cross-reference with other pages for consistency
-5. Document findings with file:line references and severity ratings
-
-**Key advantage**: ~3x faster than Playwright. Catches CSS bugs, missing ARIA,
-edge cases, and inconsistencies without browser overhead. Misses runtime/visual
-bugs — that's what the single Playwright agent covers.
-
-#### Persona Pool (randomly select 1 per agent)
+#### Persona Pool (randomly select 1 per agent, 10 available)
 
 ```yaml
-casual_trucker:
-  name: "Mike"
-  viewport: "1440x900"
-  experience: "Plays ETS2 casually, 50 hours"
-  focus: "Quick answers, obvious UI, no deep optimization"
-
-mobile_user:
-  name: "Sofia"
-  viewport: "390x844"
-  experience: "200 hours, checks on phone during breaks"
-  focus: "Touch targets, responsive layout, fast reference"
-
 accessibility_user:
   name: "Dana"
-  viewport: "1280x720"
   experience: "Relies on keyboard + screen reader"
   focus: "ARIA, keyboard nav, focus management, contrast"
 
 power_user:
   name: "Elena"
-  viewport: "1920x1080"
   experience: "500+ hours, all DLCs, 10+ garages"
   focus: "Data accuracy, export, comparison, filtering"
 
+casual_trucker:
+  name: "Mike"
+  experience: "Plays ETS2 casually, 50 hours"
+  focus: "Quick answers, obvious UI, no deep optimization"
+
+mobile_user:
+  name: "Sofia"
+  experience: "200 hours, checks on phone during breaks"
+  focus: "Touch targets, responsive layout, fast reference"
+
 new_player:
   name: "Jake"
-  viewport: "1366x768"
   experience: "Just started ETS2, 5 hours"
   focus: "Terminology confusion, onboarding, guidance"
 
 data_enthusiast:
   name: "Raj"
-  viewport: "1920x1080"
   experience: "300 hours, loves spreadsheets"
   focus: "Export data, verify calculations, inspect numbers"
+
+multiplayer_coordinator:
+  name: "Viktor"
+  experience: "400 hours, TruckersMP convoy leader"
+  focus: "Share/bookmark results, coordinate trailer choices"
+
+achievement_hunter:
+  name: "Yuki"
+  experience: "800 hours, 100% achievements"
+  focus: "Coverage gaps, cargo completeness, what's missing"
+
+dlc_collector:
+  name: "Hans"
+  experience: "600 hours, owns all map DLCs"
+  focus: "Region filtering, cross-map optimization, DLC value"
+
+returning_player:
+  name: "Carlos"
+  experience: "200 hours, 2 year break, back now"
+  focus: "What changed, onboarding for returnees, unfamiliar UI"
 ```
-
-#### Output
-
-All 3 agents write to `analysis/user-testing.md`. Each agent writes a clearly
-labeled section: `## Playwright Agent: [Persona Name]`, `## Code-Level Agent A: [Persona Name]`,
-`## Code-Level Agent B: [Persona Name]`. The coordinator merges any conflicts.
-
-At the end, include a `## Cross-Agent Summary` section with deduplicated findings
-sorted by severity.
 
 ---
 
@@ -465,29 +459,36 @@ sorted by severity.
 **Invoke**: `voltagent-dev-exp:documentation-engineer`
 **Model**: `sonnet`
 
-**Sources** (multi-location):
-- GitHub issues (descriptions, comments)
-- GitHub PRs (descriptions, review comments)
-- Code comments and docstrings
-- README and docs/ files
-- Self-documenting code patterns
+**IMPORTANT**: This agent ALWAYS runs every cycle. It was skipped in previous cycles
+because "nothing to audit" — but that's exactly when docs go stale. Every batch of
+merged PRs can invalidate CLAUDE.md project structure, algorithm descriptions,
+command documentation, and feature lists.
 
-**Output**: `analysis/docs-review.md`
+**Sources** (multi-location):
+- `CLAUDE.md` — project overview, algorithms, commands, structure
+- `docs/AGENT-WORKFLOW.md` — this workflow doc
+- `docs/ALGORITHM-NOTES.md` — algorithm analysis and game mechanics
+- GitHub issues and PRs (recent closed)
+- Code comments and docstrings
+- HTML page content (onboarding text, How It Works, tooltips)
+
+**Output**: Return findings as structured text (coordinator writes to `analysis/docs-review.md`)
 
 **Workflow**:
-1. Scan all documentation sources
-2. Check for accuracy (does doc match code?)
-3. Identify duplicates and conflicts
-4. Find gaps in documentation
-5. Verify examples still work
+1. Read `CLAUDE.md` and compare against actual codebase structure
+2. Check all documented file paths exist and descriptions match
+3. Verify algorithm descriptions match current code
+4. Check for new features not yet documented (from recent PRs)
+5. Verify command examples still work
 6. Flag stale or misleading content
+7. Check `docs/*.md` files for accuracy
 
 **Review Dimensions**:
-- Accuracy (truth)
-- Completeness (coverage)
-- Freshness (up-to-date)
-- Consistency (no conflicts)
-- Discoverability (can users find it?)
+- Accuracy (does doc match code?)
+- Completeness (are new features documented?)
+- Freshness (are old descriptions still true?)
+- Consistency (no conflicts between docs)
+- Structure (is project structure section current?)
 
 ---
 
@@ -575,10 +576,14 @@ git branch | grep "feat/" | xargs -r git branch -D
 # 6. Pull main with merged changes
 git pull origin main
 
-# 7. Clean analysis folder (keep .state.json)
+# 7. Post-merge smoke test
+npm run lint && npm run test && npm run build:frontend
+# If any fail: investigate immediately before transitioning to analysis
+
+# 8. Clean analysis folder (keep .state.json)
 rm -f analysis/*.md
 
-# 8. Update state to fresh cycle
+# 9. Update state to fresh cycle
 ```
 
 **Why this order**:
@@ -664,16 +669,12 @@ specs/
 ```
 CYCLE START
 │
-├── ANALYSIS PHASE
-│   ├── User: "run user testing"
-│   │   ├── QA: 3 persona agents test functionality
-│   │   └── UX: Design/layout analysis → analysis/user-testing.md
-│   ├── User: "perform QA work"
-│   │   └── Review code, run tests → analysis/qa-review.md
-│   ├── User: "run architect review"
-│   │   └── Analyze codebase → analysis/arch-review.md
-│   └── User: "audit documentation"
-│       └── Scan all sources → analysis/docs-review.md
+├── ANALYSIS PHASE (User: "run fresh analysis" — launches all 4 in parallel)
+│   ├── User Testing: 2 code-level agents (Dana + Elena) → analysis/user-testing.md
+│   ├── QA Review: code review agent → analysis/qa-review.md
+│   ├── Architect Review: architecture agent → analysis/arch-review.md
+│   └── Documentation Audit: doc agent → analysis/docs-review.md  ← ALWAYS runs
+│   Note: Agents return text, coordinator writes all files
 │
 ├── PM REVIEW PHASE
 │   └── User: "PM review"
@@ -696,6 +697,7 @@ CYCLE START
 │       ├── Force-remove worktrees
 │       ├── Delete feature branches
 │       ├── Pull main
+│       ├── Post-merge smoke test (lint + test + build)
 │       ├── Move unblocked issues to queue
 │       └── State: merge → analysis
 │
