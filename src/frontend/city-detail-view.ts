@@ -18,7 +18,7 @@ import { normalize } from './data.js';
 import {
   formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount,
   applyRankingsFilters,
-  isInComparison, toggleComparison, updateCompareBar, isComparisonFull, announceStatus,
+  isInComparison, toggleComparison, updateCompareBar, announceStatus,
   type RankingsState, type ScoreTier,
 } from './rankings-view.js';
 
@@ -359,9 +359,9 @@ function wireCompareToggle(cityId: string) {
     const added = toggleComparison(cityId);
     // If we tried to add but the set was full, give feedback
     if (!added && !wasInSet) {
-      announceStatus('Maximum 5 cities for comparison');
+      announceStatus('Max 5 cities for comparison');
       const originalText = btn.textContent;
-      btn.textContent = 'Max 5 reached';
+      btn.textContent = 'Max 5 cities';
       btn.classList.add('copy-fail');
       setTimeout(() => {
         btn.textContent = originalText;

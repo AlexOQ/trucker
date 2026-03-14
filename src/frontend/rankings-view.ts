@@ -83,7 +83,7 @@ export function updateCompareBar() {
   bar.innerHTML = `
     <span>Compare ${count} cities</span>
     <button class="compare-bar-go" id="compare-bar-go" type="button">Compare</button>
-    <button class="compare-bar-clear" id="compare-bar-clear" type="button">&times;</button>
+    <button class="compare-bar-clear" id="compare-bar-clear" type="button" aria-label="Clear comparison">&times;</button>
   `;
 
   document.getElementById('compare-bar-go')!.addEventListener('click', () => {
@@ -383,17 +383,18 @@ export async function renderRankings(
   const filterMode = getFilterMode();
   const sortCol = getSortColumn();
   const sortDir = getSortDirection();
+  const ownedGarages = getOwnedGarages();
   const displayRankings = applyRankingsFilters(
     rankings,
     searchTerm,
     selectedCountries,
     filterMode,
-    getOwnedGarages(),
+    ownedGarages,
     sortCol,
     sortDir,
   );
   state.displayedRankings = displayRankings;
-  const ownedSet = new Set(getOwnedGarages());
+  const ownedSet = new Set(ownedGarages);
 
   if (filterMode === 'owned' && displayRankings.length === 0) {
     rankingsContent.innerHTML = `
