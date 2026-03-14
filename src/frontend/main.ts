@@ -99,7 +99,10 @@ function ensureCompareView() {
   cityView.parentNode!.insertBefore(compareView, cityView.nextSibling);
 }
 
+let lastViewedCityId: string | null = null;
+
 async function showCity(cityId: string) {
+  lastViewedCityId = cityId;
   currentCityId = cityId;
   rankingsView.style.display = 'none';
   cityView.style.display = 'block';
@@ -125,12 +128,17 @@ async function showComparison() {
 }
 
 function showRankings() {
+  const restoreCityId = lastViewedCityId;
   currentCityId = null;
   cityView.style.display = 'none';
   if (compareView) compareView.style.display = 'none';
   rankingsView.style.display = 'block';
   window.location.hash = '';
   renderRankings(state, rankingsContent, citySearch, resultsCount, showCity);
+  if (restoreCityId) {
+    const row = rankingsContent.querySelector(`tr[data-city-id="${restoreCityId}"]`) as HTMLElement | null;
+    if (row) row.focus();
+  }
 }
 
 function handleHashNavigation(): boolean {

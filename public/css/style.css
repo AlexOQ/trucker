@@ -93,14 +93,14 @@
   --text-secondary: #333;
   --text-muted: #555;
   --text-dim: #666;
-  --text-faint: #777;
-  --text-disabled: #888;
+  --text-faint: #6b6b6b;
+  --text-disabled: #767676;
   --text-strong: #222;
   --text-placeholder: #999;
 
-  --accent: #d4850a;
-  --accent-hover: #c07008;
-  --accent-light: #e6960e;
+  --accent: #a86200;
+  --accent-hover: #8f5300;
+  --accent-light: #c07008;
   --accent-on: #fff;
 
   --border-primary: #d0d5dd;
@@ -126,9 +126,9 @@
   --score-good: #2563eb;
   --score-good-bg: rgba(37, 99, 235, 0.15);
   --score-good-border: rgba(37, 99, 235, 0.35);
-  --score-average: #ca8a04;
-  --score-average-bg: rgba(202, 138, 4, 0.15);
-  --score-average-border: rgba(202, 138, 4, 0.35);
+  --score-average: #9c6800;
+  --score-average-bg: rgba(156, 104, 0, 0.15);
+  --score-average-border: rgba(156, 104, 0, 0.35);
   --score-below: #737373;
   --score-default: #d44836;
   --score-default-bg: rgba(212, 72, 54, 0.15);
@@ -140,20 +140,20 @@
   --skeleton-cell-shine: #e8ecf1;
 
   --shadow-color: rgba(0, 0, 0, 0.1);
-  --accent-overlay: rgba(212, 133, 10, 0.08);
-  --accent-subtle: rgba(212, 133, 10, 0.04);
-  --accent-border-subtle: rgba(212, 133, 10, 0.25);
+  --accent-overlay: rgba(168, 98, 0, 0.08);
+  --accent-subtle: rgba(168, 98, 0, 0.04);
+  --accent-border-subtle: rgba(168, 98, 0, 0.25);
   --badge-bg: rgba(0, 0, 0, 0.08);
 
   --onboarding-bg: linear-gradient(135deg, #ffffff 0%, #f0f2f5 100%);
   --banner-bg: linear-gradient(135deg, #f0f2f5 0%, #ffffff 100%);
   --how-it-works-bg: linear-gradient(135deg, #f8f9fb 0%, #ffffff 100%);
-  --high-value-card-bg: linear-gradient(90deg, rgba(212, 133, 10, 0.06) 0%, transparent 30%);
+  --high-value-card-bg: linear-gradient(90deg, rgba(168, 98, 0, 0.06) 0%, transparent 30%);
 
   --table-scroll-fade: #ffffff;
-  --table-scroll-indicator: rgba(212, 133, 10, 0.2);
+  --table-scroll-indicator: rgba(168, 98, 0, 0.2);
 
-  --star-inactive: #b0b0b0;
+  --star-inactive: #767676;
 
   color-scheme: light;
 }
@@ -1825,7 +1825,8 @@ th.tooltip::before {
 .garage-star {
   cursor: pointer;
   font-size: 1.2rem;
-  width: 2rem;
+  min-width: 44px;
+  min-height: 44px;
   text-align: center;
   color: var(--star-inactive);
   user-select: none;
