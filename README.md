@@ -1,188 +1,112 @@
 # ETS2 Trucker Advisor
 
-Optimize your AI driver garages in Euro Truck Simulator 2. This tool recommends the best trailer sets for each city based on available cargo and depot types.
+Optimize your AI driver garages in Euro Truck Simulator 2. This tool analyzes every cargo job available in each city and recommends which trailers to buy to maximize your fleet's income.
 
-## Live Site
+**[Try it now](https://alexoq.github.io/trucker)**
 
-Visit the live tool at: **[alexoq.github.io/trucker](https://alexoq.github.io/trucker)**
+![Rankings view - dark mode](docs/screenshots/theme-dark.png)
+
+## What It Does
+
+You have garages across Europe. Each garage can hold up to 5 AI drivers. Each driver needs a trailer. But which trailer type earns the most at each location?
+
+ETS2 Trucker Advisor answers that by:
+
+- Analyzing **all cargo jobs** available at every company depot in each city
+- Running a **Monte Carlo simulation** (20,000 rounds) to find the best fleet composition
+- Ranking **all garage cities** by earning potential so you know where to expand next
+- Accounting for **DLC content** — toggle which DLCs you own for accurate results
 
 ## Features
 
-- **City Rankings**: See which cities offer the best opportunities for AI drivers
-- **Trailer Optimization**: Get recommended trailer sets for any city garage
-- **Configurable Algorithm**: Adjust parameters to match your play style
-- **Export Options**: Download recommendations as CSV, JSON, or copy to clipboard
-- **Reference Pages**: Browse cities, companies, and cargo types
+- **City Rankings** — all garage cities ranked by fleet earning potential, sortable by any column
+- **Fleet Recommendations** — optimal trailer set for each city with expected value per driver
+- **City Comparison** — compare up to 5 cities side-by-side ([shareable via URL](https://alexoq.github.io/trucker#compare=rotterdam,duisburg,hamburg))
+- **DLC Marginal Value** — see which unowned DLC would improve your fleet the most
+- **Dark/Light Mode** — theme toggle with system preference detection
+- **Offline Support** — works offline after first visit
+- **Data Export** — CSV, JSON, and clipboard export from any city detail view
+- **Keyboard Accessible** — full keyboard navigation, screen reader support, WCAG AA compliant
+- **Fully Client-Side** — no backend, no account, no tracking. Runs entirely in your browser.
+
+## Screenshots
+
+<details>
+<summary>Light mode - rankings</summary>
+
+![Light mode](docs/screenshots/theme-light-initial.png)
+</details>
+
+<details>
+<summary>Dark mode - city browser</summary>
+
+![Dark mode cities](docs/screenshots/theme-dark-cities.png)
+</details>
+
+<details>
+<summary>City comparison</summary>
+
+![Comparison view](docs/screenshots/comparison-view.png)
+</details>
+
+<details>
+<summary>DLC settings</summary>
+
+![DLC settings](docs/screenshots/theme-light-dlcs.png)
+</details>
+
+## Getting Started
+
+Just visit **[alexoq.github.io/trucker](https://alexoq.github.io/trucker)** and:
+
+1. Set up your owned DLCs on the [DLCs page](https://alexoq.github.io/trucker/dlcs.html)
+2. Browse city rankings on the main page
+3. Click any city for fleet recommendations
+4. Star your owned garages to filter the view
 
 ## How It Works
 
-AI drivers in ETS2 can only take jobs if they have a compatible trailer. This tool analyzes:
+Each city has company depots that spawn random cargo jobs. Each cargo type has a spawn probability and is compatible with specific trailer body types. The advisor:
 
-1. Which depot types exist in each city
-2. What cargo each depot exports
-3. Which trailers can haul each cargo type
+1. **Builds a cargo profile** for every depot in every city
+2. **Eliminates dominated trailer types** — if trailer A can haul everything trailer B can (and more), B is dropped
+3. **Simulates 20,000 job boards** per city using Monte Carlo methods
+4. **Greedily selects drivers** — each round picks the trailer type that adds the most marginal expected value
+5. **Ranks cities** using an analytical formula for speed (no simulation needed per city)
 
-Then it uses a greedy optimization algorithm to recommend the best mix of trailers for your garage slots.
+For more detail on the algorithm and game mechanics, see [docs/ALGORITHM-NOTES.md](docs/ALGORITHM-NOTES.md).
 
-### Algorithm Controls
+## Data Source
 
-- **Scoring Balance**: Trade off between high-value cargo and broad coverage
-- **Garage Size**: Number of trailer slots (1-20)
-- **Diversity Pressure**: How strongly to avoid duplicate trailers
+Game data is extracted directly from ETS2 game definition files using the included parser (`scripts/parse-game-defs.ts`). The parser reads cargo definitions, trailer specs, company mappings, economy constants, and DLC registries from the `def/` folder extracted from game `.scs` archives. Data is updated when new game patches or DLCs are released.
 
-See [ALGORITHM.md](ALGORITHM.md) for the full technical explanation.
-
-## Data
-
-All data is stored in JSON files for easy contribution. See [DATA.md](DATA.md) for:
-
-- Data sources and verification
-- File format conventions
-- How to add new cities, companies, or cargo
-
-## Contributing
-
-We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for:
-
-- How to report data errors
-- How to add new content
-- Code contribution guidelines
-
-### Quick Data Fix
-
-Found incorrect data? The easiest way to help:
-
-1. Open an issue describing the error
-2. Or edit the JSON file directly and submit a PR
-
-## Local Development
+## Development
 
 ```bash
-# Clone the repository
-git clone https://github.com/AlexOQ/trucker.git
-cd trucker
-
-# Install dependencies
-npm install
-
-# Start Vite dev server with hot reload
-npm run dev:frontend
-
-# Open http://localhost:5173
-```
-
-### Other Commands
-
-```bash
+npm install              # Install dependencies
+npm run dev:frontend     # Start dev server (http://localhost:5173)
 npm run build:frontend   # Build for production
-npm run preview          # Preview production build
-npm run test             # Run test suite
+npm run test             # Run tests (265 tests)
 npm run lint             # TypeScript type checking
 ```
 
-### With Database (for data export)
+## Tech Stack
 
-If you need to regenerate JSON data from the source database:
+- **TypeScript + Vite** — build and bundling
+- **Web Workers** — non-blocking Monte Carlo simulation
+- **Service Worker** — offline caching (network-first for data, cache-first for assets)
+- **GitHub Pages** — hosting
+- No frameworks, no backend, no runtime dependencies
 
-```bash
-# Start PostgreSQL
-docker compose up -d
+## Contributing
 
-# Run export script
-npm run export        # Cities, companies, relationships only
-npm run export -- --all  # Include cargo and trailers
-```
-
-## Project Structure
-
-```
-/
-├── src/frontend/           # TypeScript source
-│   ├── main.ts             # Main application
-│   ├── data.ts             # Data loading
-│   ├── optimizer.ts        # Optimization algorithm
-│   └── storage.ts          # localStorage wrapper
-├── public/                 # Static assets
-│   ├── index.html          # Main rankings page
-│   ├── cities.html         # Cities reference
-│   ├── companies.html      # Companies reference
-│   ├── cargo.html          # Cargo reference
-│   ├── css/style.css       # Shared styles
-│   ├── data/               # JSON data files
-│   └── dist/               # Production build output (generated by Vite)
-├── vite.config.ts          # Vite build configuration
-├── ALGORITHM.md            # Algorithm documentation
-├── DATA.md                 # Data documentation
-└── CONTRIBUTING.md         # Contribution guide
-```
+See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on reporting issues, fixing data, and contributing code.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
-
-## Accessibility
-
-This tool is designed to be accessible to all users, including those using assistive technologies.
-
-### WCAG Compliance
-
-**Level AA Compliance**: The application meets WCAG 2.1 Level AA standards:
-
-- ✅ Semantic HTML structure with proper heading hierarchy
-- ✅ ARIA labels and attributes for enhanced screen reader support
-- ✅ Full keyboard navigation support
-- ✅ Sufficient color contrast ratios
-- ✅ Touch targets meet minimum 44x44px size requirements
-- ✅ Focus indicators on all interactive elements
-
-### Keyboard Navigation
-
-All functionality is accessible via keyboard:
-
-| Action | Keys |
-|--------|------|
-| Navigate between elements | `Tab` / `Shift+Tab` |
-| Activate buttons and links | `Enter` / `Space` |
-| Select city from rankings | `Enter` / `Space` on focused row |
-| Toggle settings panel | `Enter` / `Space` on "Advanced Settings" |
-| Toggle garage star | `Enter` / `Space` on star button |
-| Navigate dropdown options | `↑` / `↓` arrow keys |
-| Close dropdown | `Esc` |
-| Check/uncheck country filter | `Space` when focused |
-
-### Screen Reader Support
-
-- **ARIA Labels**: All interactive elements include descriptive labels
-- **ARIA Expanded**: Collapsible sections announce their state
-- **ARIA Pressed**: Toggle buttons indicate their current state
-- **Live Regions**: Dynamic content updates are announced
-- **Role Attributes**: Custom controls use proper ARIA roles (`listbox`, `option`)
-- **Tooltips**: Help text accessible via focus with `tabindex="0"`
-
-### Visual Accessibility
-
-- **Focus Indicators**: 2px solid orange outline on all focusable elements
-- **Color Contrast**: All text meets WCAG AA contrast ratios (4.5:1 for normal text)
-- **Touch Targets**: All interactive elements are minimum 44x44px
-- **Slider Thumbs**: Enlarged to 44x44px for easier interaction
-- **Hover States**: Visual feedback on all interactive elements
-
-### Known Limitations
-
-- **Mobile Table Layout**: Some columns are hidden on mobile for readability
-- **Tooltip Positioning**: Tooltips may overflow viewport edges on small screens
-- **Dropdown Scrolling**: Country filter dropdown has max-height with scroll
-
-### Testing
-
-Accessibility features have been tested with:
-- VoiceOver (macOS)
-- Keyboard-only navigation
-- Color contrast analyzers
-- Touch target size verification
+[MIT](LICENSE)
 
 ## Acknowledgments
 
-- Data sourced from Euro Truck Simulator 2 by SCS Software
-- Inspired by [MerchantGameDB](https://benzeliden.github.io/MerchantGameDB/)
-- Community contributors who help maintain accuracy
+- Game data from Euro Truck Simulator 2 by [SCS Software](https://www.scssoft.com/)
+- Community contributors who help maintain data accuracy
