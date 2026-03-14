@@ -18,6 +18,7 @@ describe('storage', () => {
   beforeEach(() => {
     localStorageMock.clear();
     vi.clearAllMocks();
+    storage._resetStateCache();
   });
 
   describe('loadState', () => {

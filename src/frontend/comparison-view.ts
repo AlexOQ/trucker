@@ -50,25 +50,28 @@ export async function renderComparison(
 
   container.innerHTML = '<div class="empty-state">Loading comparison...</div>';
 
-  // Gather data for each city
-  const cities: CityComparisonData[] = [];
-  for (const cityId of cityIds) {
-    const ranking = state.cachedRankings?.find(r => r.id === cityId);
-    if (!ranking) continue;
+  // Gather data for each city — fleet computations run in parallel
+  const cities: CityComparisonData[] = (
+    await Promise.all(
+      cityIds.map(async (cityId) => {
+        const ranking = state.cachedRankings?.find(r => r.id === cityId);
+        if (!ranking) return null;
 
-    const fleet = await computeFleetAsync(cityId, state.data, state.lookups);
+        const fleet = await computeFleetAsync(cityId, state.data, state.lookups);
 
-    const globalIndex = state.cachedRankings!.findIndex(r => r.id === cityId);
-    const tier = getScoreTier(globalIndex >= 0 ? globalIndex : 0, state.cachedRankings!.length);
+        const globalIndex = state.cachedRankings!.findIndex(r => r.id === cityId);
+        const tier = getScoreTier(globalIndex >= 0 ? globalIndex : 0, state.cachedRankings!.length);
 
-    cities.push({
-      ranking,
-      fleet,
-      depotCount: ranking.depotCount,
-      tierLabel: tier.label ? tier.label.split(' \u2014 ')[0] : '',
-      tierClass: tier.className,
-    });
-  }
+        return {
+          ranking,
+          fleet,
+          depotCount: ranking.depotCount,
+          tierLabel: tier.label ? tier.label.split(' \u2014 ')[0] : '',
+          tierClass: tier.className,
+        } satisfies CityComparisonData;
+      }),
+    )
+  ).filter((c): c is CityComparisonData => c !== null);
 
   if (cities.length < 2) {
     container.innerHTML = '<div class="empty-state">Could not load data for selected cities.</div>';

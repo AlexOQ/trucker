@@ -40,6 +40,15 @@ interface AppState {
 
 const LEGACY_COUNTRIES_KEY = 'ets2-selected-countries';
 
+// Module-level cache — avoids repeated JSON.parse on every loadState() call.
+// Invalidated by saveState(). Exported for test reset only.
+let _cachedState: AppState | null = null;
+
+/** @internal — reset in-memory cache; for use in tests only */
+export function _resetStateCache(): void {
+  _cachedState = null;
+}
+
 const defaultState: AppState = {
   settings: {
     driverCount: 5,
@@ -54,9 +63,11 @@ const defaultState: AppState = {
 };
 
 /**
- * Load state from localStorage
+ * Load state from localStorage.
+ * Result is cached in-memory; cache is invalidated by saveState().
  */
 export function loadState(): AppState {
+  if (_cachedState !== null) return _cachedState;
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
@@ -86,18 +97,22 @@ export function loadState(): AppState {
           saveState(state);
         }
       }
+      _cachedState = state;
       return state;
     }
   } catch (e) {
     console.warn('Failed to load state from localStorage:', e);
   }
-  return { ...defaultState };
+  const fallback = { ...defaultState };
+  _cachedState = fallback;
+  return fallback;
 }
 
 /**
- * Save state to localStorage
+ * Save state to localStorage and invalidate the in-memory cache.
  */
 export function saveState(state: AppState): void {
+  _cachedState = state;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (e) {

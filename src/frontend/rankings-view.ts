@@ -273,7 +273,7 @@ export async function renderRankings(
   resultsCount: HTMLElement,
   showCity: (cityId: string) => void,
 ): Promise<void> {
-  const rankings = await computeRankingsAsync(state.data, state.lookups);
+  const rankings = state.cachedRankings ?? await computeRankingsAsync(state.data, state.lookups);
   state.cachedRankings = rankings;
 
   if (rankings.length === 0) {
