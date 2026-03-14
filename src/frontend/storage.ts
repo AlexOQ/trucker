@@ -1,6 +1,6 @@
 /**
  * LocalStorage wrapper for ETS2 Trucker Advisor
- * Persists user settings, garage state, and per-city trailer sets.
+ * Persists garage state, filter/sort preferences, and DLC ownership.
  *
  * DLC registries and maps live in dlc-data.ts (loaded from game-defs.json).
  * This module re-exports them for backward compatibility.
@@ -23,19 +23,13 @@ const BANNER_DISMISSED_KEY = 'ets2-dlc-banner-dismissed';
 const ONBOARDING_COLLAPSED_KEY = 'ets2-onboarding-collapsed';
 const THEME_KEY = 'ets2-theme';
 
-interface Settings {
-  driverCount: number;
-}
-
 export type SortColumn = 'name' | 'country' | 'depotCount' | 'cargoTypes' | 'score';
 export type SortDirection = 'asc' | 'desc';
 
 interface AppState {
-  settings: Settings;
   ownedGarages: string[];
   garageFilterMode: string;
   selectedCountries: string[];
-  cityTrailers: Record<string, string[]>;  // cityId -> array of body type IDs
   ownedTrailerDLCs: string[];              // DLC brand IDs the user owns
   ownedCargoDLCs: string[];               // Cargo DLC pack IDs the user owns
   ownedMapDLCs: string[];                 // Map expansion DLC IDs the user owns
@@ -55,13 +49,9 @@ export function _resetStateCache(): void {
 }
 
 const defaultState: AppState = {
-  settings: {
-    driverCount: 5,
-  },
   ownedGarages: [],
   garageFilterMode: 'all',
   selectedCountries: [],
-  cityTrailers: {},
   ownedTrailerDLCs: [],  // none owned by default — first-time visitors configure on DLC page
   ownedCargoDLCs: [],   // none owned by default
   ownedMapDLCs: [],     // none owned by default
@@ -82,21 +72,12 @@ export function loadState(): AppState {
       const state: AppState = {
         ...defaultState,
         ...parsed,
-        settings: {
-          ...defaultState.settings,
-          ...parsed.settings,
-        },
-        cityTrailers: parsed.cityTrailers ?? {},
         ownedTrailerDLCs: parsed.ownedTrailerDLCs ?? [...ALL_DLC_IDS],
         ownedCargoDLCs: parsed.ownedCargoDLCs ?? [...ALL_CARGO_DLC_IDS],
         ownedMapDLCs: parsed.ownedMapDLCs ?? [...ALL_MAP_DLC_IDS],
         sortColumn: parsed.sortColumn ?? defaultState.sortColumn,
         sortDirection: parsed.sortDirection ?? defaultState.sortDirection,
       };
-      // Migrate legacy settings
-      if (parsed.settings?.maxTrailers && !parsed.settings?.driverCount) {
-        state.settings.driverCount = defaultState.settings.driverCount;
-      }
       // Migrate legacy country filter key into unified state
       if (!parsed.selectedCountries) {
         const legacy = localStorage.getItem(LEGACY_COUNTRIES_KEY);
@@ -127,34 +108,6 @@ export function saveState(state: AppState): void {
   } catch (e) {
     console.warn('Failed to save state to localStorage:', e);
   }
-}
-
-/**
- * Update settings and save
- */
-export function updateSettings(settings: Partial<Settings>): Settings {
-  const state = loadState();
-  state.settings = { ...state.settings, ...settings };
-  saveState(state);
-  return state.settings;
-}
-
-/**
- * Get current settings
- */
-export function getSettings(): Settings {
-  return loadState().settings;
-}
-
-/**
- * Reset to defaults
- */
-export function resetToDefaults(): Settings {
-  const state = loadState();
-  state.settings = { ...defaultState.settings };
-  state.selectedCountries = [];
-  saveState(state);
-  return defaultState.settings;
 }
 
 // ============================================
@@ -223,61 +176,6 @@ export function getSelectedCountries(): string[] {
 export function setSelectedCountries(countries: string[]): void {
   const state = loadState();
   state.selectedCountries = countries;
-  saveState(state);
-}
-
-// ============================================
-// Per-City Trailer Management
-// ============================================
-
-/**
- * Get trailer set (body type IDs) for a city
- */
-export function getCityTrailers(cityId: string): string[] {
-  return loadState().cityTrailers[cityId] || [];
-}
-
-/**
- * Add a trailer (body type) to a city's set
- */
-export function addCityTrailer(cityId: string, bodyType: string): string[] {
-  const state = loadState();
-  if (!state.cityTrailers[cityId]) {
-    state.cityTrailers[cityId] = [];
-  }
-  state.cityTrailers[cityId].push(bodyType);
-  // Auto-add to owned garages
-  if (!state.ownedGarages.includes(cityId)) {
-    state.ownedGarages = [...state.ownedGarages, cityId];
-  }
-  saveState(state);
-  return state.cityTrailers[cityId];
-}
-
-/**
- * Remove a trailer at index from a city's set
- */
-export function removeCityTrailer(cityId: string, index: number): string[] {
-  const state = loadState();
-  const trailers = state.cityTrailers[cityId] || [];
-  if (index >= 0 && index < trailers.length) {
-    trailers.splice(index, 1);
-    state.cityTrailers[cityId] = trailers;
-    // Auto-remove from owned garages if no trailers left
-    if (trailers.length === 0) {
-      state.ownedGarages = state.ownedGarages.filter((id) => id !== cityId);
-    }
-    saveState(state);
-  }
-  return state.cityTrailers[cityId] || [];
-}
-
-/**
- * Set entire trailer set for a city
- */
-export function setCityTrailers(cityId: string, trailers: string[]): void {
-  const state = loadState();
-  state.cityTrailers[cityId] = trailers;
   saveState(state);
 }
 

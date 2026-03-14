@@ -14,9 +14,9 @@ import {
 import {
   renderRankings, initRankingsView,
   showLoading, showError,
-  getComparisonCityIds,
   type RankingsState,
 } from './rankings-view.js';
+import { getComparisonCityIds } from './comparison-state.js';
 import { renderCity } from './city-detail-view.js';
 import { renderComparison } from './comparison-view.js';
 

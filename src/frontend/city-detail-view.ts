@@ -18,9 +18,11 @@ import { normalize } from './data.js';
 import {
   formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount,
   applyRankingsFilters,
-  isInComparison, toggleComparison, updateCompareBar, announceStatus,
   type RankingsState, type ScoreTier,
 } from './rankings-view.js';
+import {
+  isInComparison, toggleComparison, updateCompareBar, announceStatus,
+} from './comparison-state.js';
 
 // ============================================
 // Ensure rankings are cached
