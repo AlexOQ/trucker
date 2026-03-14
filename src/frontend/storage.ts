@@ -27,6 +27,9 @@ interface Settings {
   driverCount: number;
 }
 
+export type SortColumn = 'name' | 'country' | 'depotCount' | 'cargoTypes' | 'score';
+export type SortDirection = 'asc' | 'desc';
+
 interface AppState {
   settings: Settings;
   ownedGarages: string[];
@@ -36,6 +39,8 @@ interface AppState {
   ownedTrailerDLCs: string[];              // DLC brand IDs the user owns
   ownedCargoDLCs: string[];               // Cargo DLC pack IDs the user owns
   ownedMapDLCs: string[];                 // Map expansion DLC IDs the user owns
+  sortColumn: SortColumn;
+  sortDirection: SortDirection;
 }
 
 const LEGACY_COUNTRIES_KEY = 'ets2-selected-countries';
@@ -60,6 +65,8 @@ const defaultState: AppState = {
   ownedTrailerDLCs: [],  // none owned by default — first-time visitors configure on DLC page
   ownedCargoDLCs: [],   // none owned by default
   ownedMapDLCs: [],     // none owned by default
+  sortColumn: 'score',
+  sortDirection: 'desc',
 };
 
 /**
@@ -83,6 +90,8 @@ export function loadState(): AppState {
         ownedTrailerDLCs: parsed.ownedTrailerDLCs ?? [...ALL_DLC_IDS],
         ownedCargoDLCs: parsed.ownedCargoDLCs ?? [...ALL_CARGO_DLC_IDS],
         ownedMapDLCs: parsed.ownedMapDLCs ?? [...ALL_MAP_DLC_IDS],
+        sortColumn: parsed.sortColumn ?? defaultState.sortColumn,
+        sortDirection: parsed.sortDirection ?? defaultState.sortDirection,
       };
       // Migrate legacy settings
       if (parsed.settings?.maxTrailers && !parsed.settings?.driverCount) {
@@ -352,6 +361,25 @@ export function toggleMapDLC(dlcId: string): boolean {
   }
   saveState(state);
   return idx < 0;
+}
+
+// ============================================
+// Sort Preference Management
+// ============================================
+
+export function getSortColumn(): SortColumn {
+  return loadState().sortColumn ?? 'score';
+}
+
+export function getSortDirection(): SortDirection {
+  return loadState().sortDirection ?? 'desc';
+}
+
+export function setSortPreference(column: SortColumn, direction: SortDirection): void {
+  const state = loadState();
+  state.sortColumn = column;
+  state.sortDirection = direction;
+  saveState(state);
 }
 
 // ============================================
