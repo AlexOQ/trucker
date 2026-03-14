@@ -475,17 +475,14 @@ export function computeOptimalFleet(
 
     // Pre-compute base fleet simulation on each board
     const baseRemainders: DepotCargoItem[][] = [];
-    let baseEVSum = 0;
 
     for (const board of boards) {
       const remaining = [...board];
-      let total = 0;
       for (const bt of fleet) {
         const { hv, idx } = bestJob(remaining, bt);
-        if (hv > 0 && idx >= 0) { total += hv; remaining.splice(idx, 1); }
+        if (hv > 0 && idx >= 0) { remaining.splice(idx, 1); }
       }
       baseRemainders.push(remaining);
-      baseEVSum += total;
     }
 
     // Evaluate each candidate body type's marginal contribution
