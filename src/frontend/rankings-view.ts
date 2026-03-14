@@ -45,10 +45,6 @@ export function getComparisonCityIds(): string[] {
   return Array.from(comparisonSet);
 }
 
-export function clearComparison(): void {
-  comparisonSet.clear();
-}
-
 function toggleComparison(cityId: string): boolean {
   if (comparisonSet.has(cityId)) {
     comparisonSet.delete(cityId);
@@ -280,7 +276,7 @@ const SORTABLE_COLUMNS: { col: SortColumn; label: string; tooltip?: string }[] =
   { col: 'score', label: 'Fleet EV', tooltip: 'Sum of top 5 body type EVs \u2014 fleet earning potential' },
 ];
 
-function sortRankings(rankings: CityRanking[], col: SortColumn, dir: SortDirection): CityRanking[] {
+export function sortRankings(rankings: CityRanking[], col: SortColumn, dir: SortDirection): CityRanking[] {
   return [...rankings].sort((a, b) => {
     let cmp: number;
     if (col === 'name' || col === 'country') {
@@ -302,14 +298,13 @@ function buildSortableHeader(col: SortColumn, activeSortCol: SortColumn, activeS
 }
 
 function attachSortHandlers(
-  container: HTMLElement,
   state: RankingsState,
   rankingsContent: HTMLElement,
   citySearch: HTMLInputElement,
   resultsCount: HTMLElement,
   showCity: (cityId: string) => void,
 ): void {
-  container.querySelectorAll('th.sortable').forEach((th) => {
+  rankingsContent.querySelectorAll('th.sortable').forEach((th) => {
     th.addEventListener('click', () => {
       const col = (th as HTMLElement).dataset.sortCol as SortColumn;
       const currentCol = getSortColumn();
@@ -408,7 +403,7 @@ export async function renderRankings(
         </table>
       </div>
     `;
-    attachSortHandlers(rankingsContent, state, rankingsContent, citySearch, resultsCount, showCity);
+    attachSortHandlers(state, rankingsContent, citySearch, resultsCount, showCity);
     if (state.data && state.lookups) updateGarageCount(state.data, state.lookups, citySearch);
     updateResultsCount(resultsCount, 0, rankings.length);
     return;
@@ -514,7 +509,7 @@ export async function renderRankings(
     });
   });
 
-  attachSortHandlers(rankingsContent, state, rankingsContent, citySearch, resultsCount, showCity);
+  attachSortHandlers(state, rankingsContent, citySearch, resultsCount, showCity);
   updateCompareBar();
   if (state.data && state.lookups) updateGarageCount(state.data, state.lookups, citySearch);
   updateResultsCount(resultsCount, displayRankings.length, rankings.length);

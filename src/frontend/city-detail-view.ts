@@ -11,11 +11,12 @@ import {
   getOwnedGarages, toggleOwnedGarage, isOwnedGarage,
   getFilterMode,
   getSelectedCountries,
+  getSortColumn, getSortDirection,
 } from './storage.js';
 import { copyToClipboard } from './clipboard.js';
 import { normalize } from './data.js';
 import {
-  formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount,
+  formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount, sortRankings,
   type RankingsState, type ScoreTier,
 } from './rankings-view.js';
 
@@ -42,7 +43,8 @@ async function ensureRankingsCached(
     }
     const filterMode = getFilterMode();
     const ownedSet = new Set(getOwnedGarages());
-    state.displayedRankings = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
+    const filteredByMode = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
+    state.displayedRankings = sortRankings(filteredByMode, getSortColumn(), getSortDirection());
   }
 }
 
