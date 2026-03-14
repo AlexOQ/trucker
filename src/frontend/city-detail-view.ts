@@ -18,7 +18,7 @@ import { normalize } from './data.js';
 import {
   formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount,
   applyRankingsFilters,
-  isInComparison, toggleComparison, updateCompareBar,
+  isInComparison, toggleComparison, updateCompareBar, isComparisonFull, announceStatus,
   type RankingsState, type ScoreTier,
 } from './rankings-view.js';
 
@@ -355,7 +355,20 @@ function wireCompareToggle(cityId: string) {
   const btn = document.getElementById('city-compare-toggle') as HTMLButtonElement | null;
   if (!btn) return;
   btn.addEventListener('click', () => {
+    const wasInSet = isInComparison(cityId);
     const added = toggleComparison(cityId);
+    // If we tried to add but the set was full, give feedback
+    if (!added && !wasInSet) {
+      announceStatus('Maximum 5 cities for comparison');
+      const originalText = btn.textContent;
+      btn.textContent = 'Max 5 reached';
+      btn.classList.add('copy-fail');
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.classList.remove('copy-fail');
+      }, 2000);
+      return;
+    }
     btn.textContent = added ? '\u2713 In Compare' : '+ Compare';
     btn.setAttribute('aria-pressed', String(added));
     // Sync the rankings table checkbox if visible

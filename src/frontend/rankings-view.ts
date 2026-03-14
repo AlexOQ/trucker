@@ -49,12 +49,16 @@ export function isInComparison(cityId: string): boolean {
   return comparisonSet.has(cityId);
 }
 
+export function isComparisonFull(): boolean {
+  return comparisonSet.size >= MAX_COMPARE;
+}
+
 export function toggleComparison(cityId: string): boolean {
   if (comparisonSet.has(cityId)) {
     comparisonSet.delete(cityId);
     return false;
   }
-  if (comparisonSet.size >= MAX_COMPARE) return false; // silently reject
+  if (comparisonSet.size >= MAX_COMPARE) return false; // reject — caller handles feedback
   comparisonSet.add(cityId);
   return true;
 }
@@ -531,10 +535,12 @@ export async function renderRankings(
     cb.addEventListener('change', (e) => {
       const el = e.target as HTMLInputElement;
       const cityId = el.dataset.cityId!;
+      const wasChecked = el.checked;
       const added = toggleComparison(cityId);
-      // If we tried to add but the set was full, uncheck
-      if (el.checked && !added && !comparisonSet.has(cityId)) {
+      // If we tried to add but the set was full, uncheck and announce
+      if (wasChecked && !added && !comparisonSet.has(cityId)) {
         el.checked = false;
+        announceStatus('Maximum 5 cities for comparison');
       }
       updateCompareBar();
     });
@@ -633,6 +639,27 @@ export function showLoading(rankingsContent: HTMLElement): void {
       <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
     </div>
   `;
+}
+
+// ============================================
+// Status announcements (aria-live + visual)
+// ============================================
+
+/**
+ * Announces a transient status message to screen readers via an aria-live region,
+ * and briefly shows it as visible text. Clears after 3 seconds.
+ */
+export function announceStatus(message: string): void {
+  let region = document.getElementById('status-announce');
+  if (!region) {
+    region = document.createElement('span');
+    region.id = 'status-announce';
+    region.className = 'sr-only';
+    region.setAttribute('aria-live', 'polite');
+    document.body.appendChild(region);
+  }
+  region.textContent = message;
+  setTimeout(() => { region!.textContent = ''; }, 3000);
 }
 
 export function showError(rankingsContent: HTMLElement, errorMessage: string): void {
