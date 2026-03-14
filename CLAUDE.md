@@ -29,7 +29,7 @@ Euro Truck Simulator 2 trucking company analyzer - optimizes trailer sets per ci
 - **Theming**: Dark/light mode toggle with CSS custom properties, persisted in localStorage, no FOUC via inline script
 - **Offline**: Service worker (`sw.js`) with network-first for HTML and JSON data, cache-first for CSS/JS, stale Vite bundle eviction on SW activation
 - **Export**: CSV, JSON, and clipboard export from city detail view
-- **Comparison**: Side-by-side city comparison (up to 5 cities) with winner highlighting
+- **Comparison**: Side-by-side city comparison (up to 5 cities) with winner highlighting, URL-addressable via `#compare=id1,id2,...` (shareable, refresh-safe)
 
 **Development**:
 - **Frontend**: Vite dev server with hot reload
