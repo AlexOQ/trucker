@@ -196,8 +196,8 @@ Task(subagent_type=ralph-specum:plan-synthesizer, model=sonnet, run_in_backgroun
 |------|-------|-----------|
 | Main Session | `opus` | Coordinator - status, spawning, high-level decisions |
 | PM Agent | `opus` | Complex synthesis, prioritization decisions |
-| User Testing (QA) | `sonnet` | Structured testing workflows |
-| User Testing (UX) | `sonnet` | Design analysis, UX patterns |
+| User Testing (Playwright) | `sonnet` | Browser-based functional testing |
+| User Testing (Code-Level) | `sonnet` x2 | UX audit via code/CSS/HTML analysis |
 | QA Agent | `sonnet` | Code review, test analysis |
 | Architect Agent | `sonnet` | Pattern analysis |
 | Documentation Agent | `sonnet` | Content review |
@@ -285,131 +285,112 @@ Task tool:
 
 **Target**: Production deployment (https://alexoq.github.io/trucker)
 
-**Agent Stack** (run sequentially, foreground):
+**Architecture**: 3 agents run in **parallel** (all background), each assigned 5-6
+randomly selected features from the most recent development cycle's closed PRs.
 
-| Agent | Type | Focus | Output |
-|-------|------|-------|--------|
-| QA Personas | `voltagent-qa-sec:qa-expert` | Functional testing, bugs, friction | Usability issues |
-| UX Research | `voltagent-biz:ux-researcher` | Design, layout, visual hierarchy, UX patterns | Design improvements |
+| Agent | Type | Persona | Method |
+|-------|------|---------|--------|
+| Playwright Agent | `voltagent-qa-sec:qa-expert` | Mobile user (390x844) | Browser automation via Playwright |
+| Code-Level Agent A | `voltagent-qa-sec:qa-expert` | Accessibility/keyboard user | Code/CSS/HTML analysis (no browser) |
+| Code-Level Agent B | `voltagent-qa-sec:qa-expert` | Power user with all DLCs | Code/CSS/HTML analysis (no browser) |
 
-**Model**: `sonnet` (both agents)
+**Model**: `sonnet` (all three agents)
 
-#### QA Persona Agent
+#### Feature Assignment
+
+The coordinator randomly distributes testable user-facing features from `completedThisCycle`
+across the 3 agents. Each agent gets 5-6 features with no overlap. Internal refactors,
+documentation-only changes, and test-only PRs are excluded from the pool.
+
+Example feature pool (from a typical cycle):
+- Mobile layout fixes, touch targets
+- Accessibility/ARIA improvements
+- Score tier colors and percentiles
+- Column sorting, search feedback
+- Dark/light mode toggle
+- City comparison view
+- Service worker / offline support
+- CSV/JSON export, Copy Fleet
+- DLC banner, onboarding section
+- Garage star toggle
+
+#### Playwright Agent
 
 **Invoke**: `voltagent-qa-sec:qa-expert` + Playwright
-**Spawns**: 3 personas from pool (randomized)
+**Persona**: Randomly selected from persona pool (see below)
+**Scope**: 5-6 assigned features only — do NOT test the entire app
 
-**Persona Pool** (randomly select 3):
+**Workflow**:
+1. Navigate prod URL via Playwright at assigned viewport size
+2. Test each assigned feature with a focused user journey
+3. Document friction points, bugs, regressions
+4. Rate severity (P0-P3) with specific CSS/HTML/JS references
+
+#### Code-Level Agents (x2)
+
+**Invoke**: `voltagent-qa-sec:qa-expert` (NO Playwright)
+**Persona**: Randomly selected from persona pool
+**Scope**: 5-6 assigned features only
+
+**Workflow**:
+1. Read the relevant source files (HTML, CSS, TypeScript) for each assigned feature
+2. Analyze from the persona's perspective: would this work for them?
+3. Check accessibility (ARIA, keyboard, contrast), responsive CSS, edge cases
+4. Cross-reference with other pages for consistency
+5. Document findings with file:line references and severity ratings
+
+**Key advantage**: ~3x faster than Playwright. Catches CSS bugs, missing ARIA,
+edge cases, and inconsistencies without browser overhead. Misses runtime/visual
+bugs — that's what the single Playwright agent covers.
+
+#### Persona Pool (randomly select 1 per agent)
+
 ```yaml
 casual_trucker:
   name: "Mike"
+  viewport: "1440x900"
   experience: "Plays ETS2 casually, 50 hours"
-  goals: "Quick answers, no deep optimization"
-  behavior: "Skims UI, clicks obvious buttons first"
-  frustration_triggers: "Too much data, slow loads"
-
-hardcore_optimizer:
-  name: "Elena"
-  experience: "500+ hours, runs virtual trucking company"
-  goals: "Maximize profit per km, perfect trailer sets"
-  behavior: "Explores every option, compares numbers"
-  frustration_triggers: "Missing data, incorrect calculations"
-
-new_player:
-  name: "Jake"
-  experience: "Just started ETS2, 5 hours"
-  goals: "Understand what trailers even do"
-  behavior: "Confused by terminology, needs guidance"
-  frustration_triggers: "Jargon, assumes prior knowledge"
+  focus: "Quick answers, obvious UI, no deep optimization"
 
 mobile_user:
   name: "Sofia"
-  experience: "200 hours, checks app on phone during breaks"
-  goals: "Quick reference while playing"
-  behavior: "Taps, expects responsive design"
-  frustration_triggers: "Desktop-only UI, tiny buttons"
+  viewport: "390x844"
+  experience: "200 hours, checks on phone during breaks"
+  focus: "Touch targets, responsive layout, fast reference"
+
+accessibility_user:
+  name: "Dana"
+  viewport: "1280x720"
+  experience: "Relies on keyboard + screen reader"
+  focus: "ARIA, keyboard nav, focus management, contrast"
+
+power_user:
+  name: "Elena"
+  viewport: "1920x1080"
+  experience: "500+ hours, all DLCs, 10+ garages"
+  focus: "Data accuracy, export, comparison, filtering"
+
+new_player:
+  name: "Jake"
+  viewport: "1366x768"
+  experience: "Just started ETS2, 5 hours"
+  focus: "Terminology confusion, onboarding, guidance"
 
 data_enthusiast:
   name: "Raj"
+  viewport: "1920x1080"
   experience: "300 hours, loves spreadsheets"
-  goals: "Export data, verify calculations"
-  behavior: "Inspects network requests, checks numbers"
-  frustration_triggers: "No export, opaque algorithms"
-
-multiplayer_coordinator:
-  name: "Viktor"
-  experience: "400 hours, TruckersMP convoy leader"
-  goals: "Coordinate trailer choices for group"
-  behavior: "Shares links, screenshots results"
-  frustration_triggers: "Can't share/bookmark, no URL params"
-
-achievement_hunter:
-  name: "Yuki"
-  experience: "800 hours, 100% achievements"
-  goals: "Cover all cargo types, complete collection"
-  behavior: "Checks coverage gaps, wants completeness"
-  frustration_triggers: "No 'what am I missing' view"
-
-dlc_collector:
-  name: "Hans"
-  experience: "600 hours, owns all map DLCs"
-  goals: "Optimize routes across all regions"
-  behavior: "Filters by country, compares regions"
-  frustration_triggers: "No region filtering, mixed results"
-
-returning_player:
-  name: "Carlos"
-  experience: "200 hours, 2 year break, back now"
-  goals: "Catch up on what changed"
-  behavior: "Remembers old UI, confused by new"
-  frustration_triggers: "No changelog, different workflow"
-
-streamer:
-  name: "Twitch_TruckerTom"
-  experience: "1000+ hours, content creator"
-  goals: "Show off tool to audience"
-  behavior: "Needs visual clarity, talks through actions"
-  frustration_triggers: "Ugly UI, confusing to explain"
-
-impatient_gamer:
-  name: "Zoe"
-  experience: "100 hours, plays many games"
-  goals: "Get answer in 10 seconds, back to game"
-  behavior: "Types fast, expects instant results"
-  frustration_triggers: "Any friction, any loading"
+  focus: "Export data, verify calculations, inspect numbers"
 ```
 
-**QA Workflow**:
-1. Read `.state.json` to understand current focus
-2. Navigate prod URL via Playwright
-3. Each persona performs typical user journeys
-4. Document friction points, confusion, bugs
-5. Rate severity and provide recommendations
+#### Output
 
-#### UX Research Agent
+All 3 agents write to `analysis/user-testing.md`. Each agent writes a clearly
+labeled section: `## Playwright Agent: [Persona Name]`, `## Code-Level Agent A: [Persona Name]`,
+`## Code-Level Agent B: [Persona Name]`. The coordinator merges any conflicts.
 
-**Invoke**: `voltagent-biz:ux-researcher` + Playwright
-**Focus**: Design quality, visual hierarchy, UX patterns, accessibility
-
-**Analysis Dimensions**:
-- **Visual Hierarchy**: Is important info prominent? Clear call-to-actions?
-- **Layout & Spacing**: Proper use of whitespace? Consistent alignment?
-- **Color & Contrast**: Readable text? Accessible color combinations?
-- **Information Architecture**: Logical grouping? Easy to scan?
-- **Interaction Patterns**: Standard UI patterns? Predictable behavior?
-- **Responsive Design**: Works across viewport sizes? Touch-friendly?
-- **Onboarding**: Clear first-time experience? Progressive disclosure?
-- **Feedback & States**: Loading, error, empty states handled?
-
-**UX Workflow**:
-1. Capture full-page screenshots at multiple viewport sizes
-2. Analyze visual design against modern UX principles
-3. Check accessibility (contrast, focus states, semantic markup)
-4. Identify design inconsistencies and improvement opportunities
-5. Provide specific, actionable design recommendations
-6. Reference industry examples where applicable
-
-**Output**: Appends to `analysis/user-testing.md` under "## UX Research Findings"
+At the end, include a `## Cross-Agent Summary` section with deduplicated findings
+sorted by severity.
 
 ---
 

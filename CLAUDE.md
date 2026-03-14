@@ -330,10 +330,12 @@ See `docs/AGENT-WORKFLOW.md` for full details.
 - Update state on completion
 - Write structured output to `analysis/` directory
 
-**User Testing** (`voltagent-qa-sec:qa-expert` + Playwright):
+**User Testing** (3 parallel agents, `voltagent-qa-sec:qa-expert`):
 - Target: https://alexoq.github.io/trucker
-- Spawns 3 agents with randomized personas from pool
-- Tests real user journeys, documents friction
+- 1 Playwright agent (browser-based, mobile persona) + 2 code-level agents (no browser)
+- Each agent gets 5-6 randomly assigned features from recently closed PRs (no overlap)
+- Code-level agents audit HTML/CSS/JS for UX issues ~3x faster than Playwright
+- All write to `analysis/user-testing.md` with labeled sections
 
 **QA** (`pr-review-toolkit:code-reviewer`):
 - Target: local dev server (`npm run dev:frontend` on http://localhost:5173)
