@@ -271,15 +271,15 @@ function mcPick(depot: CityDepotData): DepotCargoItem {
   return depot.cargo[lo];
 }
 
-/** Generate a random job board: JOBS_PER_DEPOT jobs from each depot */
-function generateBoard(depots: CityDepotData[]): DepotCargoItem[] {
-  const board: DepotCargoItem[] = [];
+/** Fill a pre-allocated board buffer in-place. Returns number of slots filled. */
+function fillBoard(buffer: DepotCargoItem[], depots: CityDepotData[]): number {
+  let idx = 0;
   for (const depot of depots) {
     for (let j = 0; j < JOBS_PER_DEPOT; j++) {
-      board.push(mcPick(depot));
+      buffer[idx++] = mcPick(depot);
     }
   }
-  return board;
+  return idx;
 }
 
 /** Find best job on board for a body type. Returns hv and index (for removal). */
@@ -466,21 +466,34 @@ export function computeOptimalFleet(
   const viableBodyTypes = bodyTypeEVs.slice(0, 15).map((e) => e.bt);
   if (viableBodyTypes.length === 0) return null;
 
+  // Pre-allocate board buffer (reused across all MC simulations)
+  const totalSlots = depots.length * JOBS_PER_DEPOT;
+  const boardBuffer: DepotCargoItem[] = new Array(totalSlots);
+
   // Phase 1: Greedy driver selection
   const fleet: string[] = [];
 
+  console.time('computeOptimalFleet');
+
   for (let pick = 0; pick < MAX_DRIVERS; pick++) {
-    // Generate shared boards for this round
-    const boards = Array.from({ length: MC_SIMS }, () => generateBoard(depots));
+    // Generate shared boards for this round — store raw generated boards
+    const rawBoards: DepotCargoItem[][] = [];
+    for (let s = 0; s < MC_SIMS; s++) {
+      const len = fillBoard(boardBuffer, depots);
+      rawBoards.push(boardBuffer.slice(0, len));
+    }
 
     // Pre-compute base fleet simulation on each board
     const baseRemainders: DepotCargoItem[][] = [];
 
-    for (const board of boards) {
-      const remaining = [...board];
+    for (const board of rawBoards) {
+      const remaining = board.slice();
       for (const bt of fleet) {
         const { hv, idx } = bestJob(remaining, bt);
-        if (hv > 0 && idx >= 0) { remaining.splice(idx, 1); }
+        if (hv > 0 && idx >= 0) {
+          remaining[idx] = remaining[remaining.length - 1];
+          remaining.pop();
+        }
       }
       baseRemainders.push(remaining);
     }
@@ -502,19 +515,22 @@ export function computeOptimalFleet(
     fleet.push(bestBT);
   }
 
+  console.timeEnd('computeOptimalFleet');
+
   if (fleet.length === 0) return null;
 
   // Phase 2: Compute per-driver EVs with final fleet
   const driverEVs = new Array(fleet.length).fill(0);
 
   for (let s = 0; s < MC_SIMS; s++) {
-    const board = generateBoard(depots);
-    const remaining = [...board];
+    const len = fillBoard(boardBuffer, depots);
+    const remaining = boardBuffer.slice(0, len);
     for (let d = 0; d < fleet.length; d++) {
       const { hv, idx } = bestJob(remaining, fleet[d]);
       if (hv > 0 && idx >= 0) {
         driverEVs[d] += hv;
-        remaining.splice(idx, 1);
+        remaining[idx] = remaining[remaining.length - 1];
+        remaining.pop();
       }
     }
   }
