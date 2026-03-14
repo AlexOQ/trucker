@@ -176,6 +176,29 @@ export function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDe
 // ============================================
 
 /**
+ * Per-depot pre-built items for `analyticalFirstPickEV`.
+ * Each entry is one cargo slot: bodyHV carries all body-type HV values,
+ * p is the normalised spawn probability (probCoef / totalProbCoef).
+ *
+ * Build once per city with `buildDepotItemsCache`, then pass to every
+ * `analyticalFirstPickEV` call for that city to avoid redundant allocation.
+ */
+export type DepotItemsCache = Array<Array<{ bodyHV: Record<string, number>; p: number }>>;
+
+/**
+ * Precompute per-depot cargo items (bodyHV + normalised probability).
+ * Call once per city; pass the result to every `analyticalFirstPickEV` call.
+ */
+export function buildDepotItemsCache(depots: CityDepotData[]): DepotItemsCache {
+  return depots.map((depot) =>
+    depot.cargo.map((c) => ({
+      bodyHV: c.bodyHV,
+      p: c.probCoef / depot.totalProbCoef,
+    }))
+  );
+}
+
+/**
  * Analytical E[max of N draws] for a body type across all depots.
  *
  * Multi-depot formula:
@@ -184,13 +207,24 @@ export function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDe
  * and K = JOBS_PER_DEPOT.
  *
  * Then E[max] = Σ_i hv_i × [P(max ≤ hv_i) - P(max ≤ hv_{i-1})]
+ *
+ * Pass a pre-built `cache` from `buildDepotItemsCache` to avoid rebuilding
+ * depot data on every body-type evaluation for the same city.
  */
-export function analyticalFirstPickEV(depots: CityDepotData[], bodyType: string): number {
+export function analyticalFirstPickEV(
+  depots: CityDepotData[],
+  bodyType: string,
+  cache?: DepotItemsCache,
+): number {
+  // Use the pre-built cache when available, otherwise build inline (for callers
+  // that only need a single evaluation, e.g. tests).
+  const depotItems: DepotItemsCache = cache ?? buildDepotItemsCache(depots);
+
   // Collect all unique HV values across all depots for this body type
   const hvSet = new Set<number>([0]);
-  for (const depot of depots) {
-    for (const c of depot.cargo) {
-      const hv = c.bodyHV[bodyType] || 0;
+  for (const items of depotItems) {
+    for (const item of items) {
+      const hv = item.bodyHV[bodyType] || 0;
       if (hv > 0) hvSet.add(hv);
     }
   }
@@ -198,21 +232,13 @@ export function analyticalFirstPickEV(depots: CityDepotData[], bodyType: string)
   const hvValues = [...hvSet].sort((a, b) => a - b);
   if (hvValues.length <= 1) return 0; // only hv=0, no compatible cargo
 
-  // Precompute per-depot items: (hv, probability) for this body type
-  const depotItems: Array<Array<{ hv: number; p: number }>> = depots.map((depot) =>
-    depot.cargo.map((c) => ({
-      hv: c.bodyHV[bodyType] || 0,
-      p: c.probCoef / depot.totalProbCoef,
-    }))
-  );
-
   // P(max across all depots ≤ H) = Π_d CDF_d(H)^K
   function totalCDF(H: number): number {
     let result = 1;
     for (const items of depotItems) {
       let cdf = 0;
       for (const item of items) {
-        if (item.hv <= H) cdf += item.p;
+        if ((item.bodyHV[bodyType] || 0) <= H) cdf += item.p;
       }
       result *= Math.pow(cdf, JOBS_PER_DEPOT);
     }
@@ -426,9 +452,12 @@ export function computeOptimalFleet(
   const dominated = findDominatedBodyTypes(depots, allBodyTypes);
   for (const bt of dominated) allBodyTypes.delete(bt);
 
+  // Build depot items cache once; reused for every body type evaluation below.
+  const depotItemsCache = buildDepotItemsCache(depots);
+
   const bodyTypeEVs: Array<{ bt: string; ev: number }> = [];
   for (const bt of allBodyTypes) {
-    const ev = analyticalFirstPickEV(depots, bt);
+    const ev = analyticalFirstPickEV(depots, bt, depotItemsCache);
     if (ev > 0) bodyTypeEVs.push({ bt, ev });
   }
   bodyTypeEVs.sort((a, b) => b.ev - a.ev);
@@ -561,10 +590,13 @@ export function calculateCityRankings(
     const dominated = findDominatedBodyTypes(depots, allBodyTypes);
     for (const bt of dominated) allBodyTypes.delete(bt);
 
+    // Build depot items cache once; reused for every body type evaluation below.
+    const depotItemsCache = buildDepotItemsCache(depots);
+
     // Compute analytical first-pick EV per body type
     const bodyTypeEVs: Array<{ bt: string; ev: number }> = [];
     for (const bt of allBodyTypes) {
-      const ev = analyticalFirstPickEV(depots, bt);
+      const ev = analyticalFirstPickEV(depots, bt, depotItemsCache);
       if (ev > 0) bodyTypeEVs.push({ bt, ev });
     }
     bodyTypeEVs.sort((a, b) => b.ev - a.ev);
