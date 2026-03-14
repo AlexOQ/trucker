@@ -17,6 +17,15 @@ import {
 import { normalize } from './data.js';
 import { escapeHtml } from './utils.js';
 import type { AllData, Lookups } from './data.js';
+import {
+  isInComparison, toggleComparison, updateCompareBar, announceStatus,
+} from './comparison-state.js';
+
+// Re-export comparison state functions for consumers that import them from here
+export {
+  getComparisonCityIds, isInComparison, isComparisonFull, toggleComparison,
+  updateCompareBar, announceStatus,
+} from './comparison-state.js';
 
 // ============================================
 // Types
@@ -32,72 +41,6 @@ export interface RankingsState {
   lookups: Lookups | null;
   cachedRankings: CityRanking[] | null;
   displayedRankings: CityRanking[] | null;
-}
-
-// ============================================
-// Comparison selection state (session only)
-// ============================================
-
-const MAX_COMPARE = 5;
-const comparisonSet = new Set<string>();
-
-export function getComparisonCityIds(): string[] {
-  return Array.from(comparisonSet);
-}
-
-export function isInComparison(cityId: string): boolean {
-  return comparisonSet.has(cityId);
-}
-
-export function isComparisonFull(): boolean {
-  return comparisonSet.size >= MAX_COMPARE;
-}
-
-export function toggleComparison(cityId: string): boolean {
-  if (comparisonSet.has(cityId)) {
-    comparisonSet.delete(cityId);
-    return false;
-  }
-  if (comparisonSet.size >= MAX_COMPARE) return false; // reject — caller handles feedback
-  comparisonSet.add(cityId);
-  return true;
-}
-
-export function updateCompareBar() {
-  let bar = document.getElementById('compare-bar');
-  const count = comparisonSet.size;
-
-  if (count < 2) {
-    if (bar) bar.style.display = 'none';
-    return;
-  }
-
-  if (!bar) {
-    bar = document.createElement('div');
-    bar.id = 'compare-bar';
-    bar.className = 'compare-bar';
-    document.body.appendChild(bar);
-  }
-
-  bar.style.display = 'flex';
-  bar.innerHTML = `
-    <span>Compare ${count} cities</span>
-    <button class="compare-bar-go" id="compare-bar-go" type="button">Compare</button>
-    <button class="compare-bar-clear" id="compare-bar-clear" type="button" aria-label="Clear comparison">&times;</button>
-  `;
-
-  document.getElementById('compare-bar-go')!.addEventListener('click', () => {
-    window.location.hash = 'compare';
-  });
-
-  document.getElementById('compare-bar-clear')!.addEventListener('click', () => {
-    comparisonSet.clear();
-    updateCompareBar();
-    // Uncheck all checkboxes
-    document.querySelectorAll('.compare-check').forEach(cb => {
-      (cb as HTMLInputElement).checked = false;
-    });
-  });
 }
 
 // ============================================
@@ -469,7 +412,7 @@ export async function renderRankings(
             const starred = ownedSet.has(r.id);
             const globalIndex = state.cachedRankings!.findIndex(cr => cr.id === r.id);
             const tier = getScoreTier(globalIndex >= 0 ? globalIndex : i, state.cachedRankings!.length);
-            const checked = comparisonSet.has(r.id);
+            const checked = isInComparison(r.id);
             return `
             <tr class="clickable${starred ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
               <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage for' : 'Mark as garage for'} ${r.name}" tabindex="0" role="button" aria-label="${starred ? 'Remove garage for' : 'Mark as garage for'} ${r.name}">${starred ? '\u2605' : '\u2606'}</td>
@@ -539,7 +482,7 @@ export async function renderRankings(
       const wasChecked = el.checked;
       const added = toggleComparison(cityId);
       // If we tried to add but the set was full, uncheck and announce
-      if (wasChecked && !added && !comparisonSet.has(cityId)) {
+      if (wasChecked && !added && !isInComparison(cityId)) {
         el.checked = false;
         announceStatus('Maximum 5 cities for comparison');
       }
@@ -640,27 +583,6 @@ export function showLoading(rankingsContent: HTMLElement): void {
       <div class="skeleton-row"><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell medium"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell narrow"></div><div class="skeleton-cell medium"></div></div>
     </div>
   `;
-}
-
-// ============================================
-// Status announcements (aria-live + visual)
-// ============================================
-
-/**
- * Announces a transient status message to screen readers via an aria-live region,
- * and briefly shows it as visible text. Clears after 3 seconds.
- */
-export function announceStatus(message: string): void {
-  let region = document.getElementById('status-announce');
-  if (!region) {
-    region = document.createElement('span');
-    region.id = 'status-announce';
-    region.className = 'sr-only';
-    region.setAttribute('aria-live', 'polite');
-    document.body.appendChild(region);
-  }
-  region.textContent = message;
-  setTimeout(() => { region!.textContent = ''; }, 3000);
 }
 
 export function showError(rankingsContent: HTMLElement, errorMessage: string): void {

@@ -26,11 +26,9 @@ describe('storage', () => {
       const state = storage.loadState();
 
       expect(state).toEqual({
-        settings: { driverCount: 5 },
         ownedGarages: [],
         garageFilterMode: 'all',
         selectedCountries: [],
-        cityTrailers: {},
         ownedTrailerDLCs: [],
         ownedCargoDLCs: [],
         ownedMapDLCs: [],
@@ -43,73 +41,41 @@ describe('storage', () => {
       localStorageMock.setItem(
         'ets2-trucker-advisor',
         JSON.stringify({
-          settings: { driverCount: 3 },
           ownedGarages: ['berlin', 'paris'],
         }),
       );
 
       const state = storage.loadState();
 
-      expect(state.settings.driverCount).toBe(3);
       expect(state.ownedGarages).toEqual(['berlin', 'paris']);
       expect(state.garageFilterMode).toBe('all');
-      expect(state.cityTrailers).toEqual({});
     });
 
     it('returns defaults on invalid JSON', () => {
       localStorageMock.setItem('ets2-trucker-advisor', 'not valid json');
       const state = storage.loadState();
-      expect(state.settings.driverCount).toBe(5);
+      expect(state.garageFilterMode).toBe('all');
     });
   });
 
   describe('saveState/loadState round-trip', () => {
     it('persists and retrieves state correctly', () => {
       const testState = {
-        settings: { driverCount: 3 },
         ownedGarages: ['berlin', 'paris', 'london'],
         garageFilterMode: 'owned',
         selectedCountries: ['Germany'],
-        cityTrailers: { berlin: ['curtainside', 'dryvan'] },
+        ownedTrailerDLCs: [],
+        ownedCargoDLCs: [],
+        ownedMapDLCs: [],
+        sortColumn: 'score' as const,
+        sortDirection: 'desc' as const,
       };
 
       storage.saveState(testState);
       const loaded = storage.loadState();
 
-      expect(loaded.settings).toEqual(testState.settings);
       expect(loaded.ownedGarages).toEqual(testState.ownedGarages);
       expect(loaded.garageFilterMode).toBe(testState.garageFilterMode);
-      expect(loaded.cityTrailers).toEqual(testState.cityTrailers);
-    });
-  });
-
-  describe('resetToDefaults', () => {
-    it('preserves owned garages when resetting settings', () => {
-      storage.saveState({
-        settings: { driverCount: 3 },
-        ownedGarages: ['berlin', 'paris'],
-        garageFilterMode: 'owned',
-        selectedCountries: ['Germany'],
-        cityTrailers: { berlin: ['curtainside'] },
-      });
-
-      const resetSettings = storage.resetToDefaults();
-      expect(resetSettings.driverCount).toBe(5);
-
-      const state = storage.loadState();
-      expect(state.ownedGarages).toEqual(['berlin', 'paris']);
-    });
-
-    it('returns default settings values', () => {
-      const settings = storage.resetToDefaults();
-      expect(settings.driverCount).toBe(5);
-    });
-  });
-
-  describe('updateSettings', () => {
-    it('updates specific settings while preserving others', () => {
-      const updated = storage.updateSettings({ driverCount: 3 });
-      expect(updated.driverCount).toBe(3);
     });
   });
 
@@ -171,22 +137,6 @@ describe('storage', () => {
     it('remembers banner dismissal', () => {
       storage.dismissBanner();
       expect(storage.isBannerDismissed()).toBe(true);
-    });
-  });
-
-  describe('city trailers', () => {
-    it('manages per-city trailer sets', () => {
-      expect(storage.getCityTrailers('berlin')).toEqual([]);
-
-      storage.addCityTrailer('berlin', 'curtainside');
-      storage.addCityTrailer('berlin', 'dryvan');
-      expect(storage.getCityTrailers('berlin')).toEqual(['curtainside', 'dryvan']);
-
-      storage.removeCityTrailer('berlin', 0);
-      expect(storage.getCityTrailers('berlin')).toEqual(['dryvan']);
-
-      storage.setCityTrailers('berlin', ['flatbed', 'lowbed']);
-      expect(storage.getCityTrailers('berlin')).toEqual(['flatbed', 'lowbed']);
     });
   });
 });
