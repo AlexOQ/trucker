@@ -26,7 +26,7 @@ interface CityComparisonData {
 // Rendering
 // ============================================
 
-function bestIndex(values: number[]): number {
+export function bestIndex(values: number[]): number {
   let best = 0;
   for (let i = 1; i < values.length; i++) {
     if (values[i] > values[best]) best = i;

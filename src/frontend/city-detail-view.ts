@@ -221,7 +221,7 @@ function wireCopyFleetButton(cityName: string, drivers: OptimalFleetEntry[]) {
  * Transliterates diacritics to ASCII equivalents (e.g., o\u0308->o, e\u0301->e)
  * and replaces only filesystem-unsafe characters.
  */
-function sanitizeFilename(name: string): string {
+export function sanitizeFilename(name: string): string {
   return name
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')  // strip combining diacritics
