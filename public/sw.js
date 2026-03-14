@@ -31,17 +31,30 @@ self.addEventListener('install', (event) => {
 });
 
 self.addEventListener('activate', (event) => {
-  // Remove old cache versions
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-      )
-    )
+    (async () => {
+      // Remove old cache versions
+      const keys = await caches.keys();
+      await Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)));
+
+      // Evict stale Vite JS bundles from the current cache.
+      // Vite outputs content-hashed filenames (e.g. main-Ab3Cd4Ef.js), so each
+      // deploy produces new URLs. Without cleanup the cache grows unboundedly with
+      // bundles from previous deploys that will never be requested again.
+      // HTML is served network-first, so on next load the page references new hashed
+      // filenames; evicting all hashed JS here ensures those new filenames are fetched
+      // fresh rather than hitting a mis-matched stale entry.
+      const cache = await caches.open(CACHE_NAME);
+      const requests = await cache.keys();
+      await Promise.all(
+        requests
+          .filter((req) => new URL(req.url).pathname.match(/\/assets\/.*-[a-zA-Z0-9]{8,}\.js$/))
+          .map((req) => cache.delete(req))
+      );
+
+      await self.clients.claim();
+    })()
   );
-  self.clients.claim();
 });
 
 self.addEventListener('fetch', (event) => {
