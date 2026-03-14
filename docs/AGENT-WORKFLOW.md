@@ -8,7 +8,7 @@ Multi-agent development workflow with centralized PM coordination and phase-awar
 |---------|--------------|
 | `status` | Show current phase, what's done, what's pending |
 | `run fresh analysis` | Run ALL analysis agents in parallel → `analysis/*.md` |
-| `run user testing` | QA persona agents test prod → `analysis/user-testing.md` |
+| `run user testing` | 2 code-level agents analyze codebase → `analysis/user-testing.md` |
 | `perform QA work` | Review closed issues, test local dev → `analysis/qa-review.md` |
 | `run architect review` | Major codebase improvements → `analysis/arch-review.md` |
 | `audit documentation` | Scan all doc sources → `analysis/docs-review.md` |

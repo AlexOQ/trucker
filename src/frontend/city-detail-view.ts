@@ -22,6 +22,7 @@ import {
 } from './rankings-view.js';
 import {
   isInComparison, toggleComparison, updateCompareBar, announceStatus,
+  COMPARE_FULL_MESSAGE,
 } from './comparison-state.js';
 
 // ============================================
@@ -361,9 +362,9 @@ function wireCompareToggle(cityId: string) {
     const added = toggleComparison(cityId);
     // If we tried to add but the set was full, give feedback
     if (!added && !wasInSet) {
-      announceStatus('Max 5 cities for comparison');
+      announceStatus(COMPARE_FULL_MESSAGE);
       const originalText = btn.textContent;
-      btn.textContent = 'Max 5 cities';
+      btn.textContent = 'Max 5';
       btn.classList.add('copy-fail');
       setTimeout(() => {
         btn.textContent = originalText;

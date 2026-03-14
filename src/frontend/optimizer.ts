@@ -473,8 +473,6 @@ export function computeOptimalFleet(
   // Phase 1: Greedy driver selection
   const fleet: string[] = [];
 
-  console.time('computeOptimalFleet');
-
   for (let pick = 0; pick < MAX_DRIVERS; pick++) {
     // Generate shared boards for this round — store raw generated boards
     const rawBoards: DepotCargoItem[][] = [];
@@ -514,8 +512,6 @@ export function computeOptimalFleet(
     if (bestMarginal <= 0) break;
     fleet.push(bestBT);
   }
-
-  console.timeEnd('computeOptimalFleet');
 
   if (fleet.length === 0) return null;
 
