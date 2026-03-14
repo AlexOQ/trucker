@@ -19,13 +19,9 @@ import { escapeHtml } from './utils.js';
 import type { AllData, Lookups } from './data.js';
 import {
   isInComparison, toggleComparison, updateCompareBar, announceStatus,
+  COMPARE_FULL_MESSAGE,
 } from './comparison-state.js';
 
-// Re-export comparison state functions for consumers that import them from here
-export {
-  getComparisonCityIds, isInComparison, isComparisonFull, toggleComparison,
-  updateCompareBar, announceStatus,
-} from './comparison-state.js';
 
 // ============================================
 // Types
@@ -484,7 +480,7 @@ export async function renderRankings(
       // If we tried to add but the set was full, uncheck and announce
       if (wasChecked && !added && !isInComparison(cityId)) {
         el.checked = false;
-        announceStatus('Maximum 5 cities for comparison');
+        announceStatus(COMPARE_FULL_MESSAGE);
       }
       updateCompareBar();
     });

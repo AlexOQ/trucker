@@ -16,7 +16,9 @@ import {
   showLoading, showError,
   type RankingsState,
 } from './rankings-view.js';
-import { getComparisonCityIds } from './comparison-state.js';
+import {
+  getComparisonCityIds, setComparisonCities, parseCompareHash, buildCompareHash,
+} from './comparison-state.js';
 import { renderCity } from './city-detail-view.js';
 import { renderComparison } from './comparison-view.js';
 
@@ -122,8 +124,9 @@ async function showComparison() {
   rankingsView.style.display = 'none';
   cityView.style.display = 'none';
   compareView!.style.display = 'block';
-  if (window.location.hash !== '#compare') {
-    window.location.hash = 'compare';
+  const compareHash = buildCompareHash();
+  if (window.location.hash !== compareHash) {
+    window.location.hash = compareHash.slice(1); // remove leading #
   }
   await renderComparison(getComparisonCityIds(), state, compareContent!);
   window.scrollTo(0, 0);
@@ -145,7 +148,12 @@ async function showRankings() {
 
 function handleHashNavigation(): boolean {
   const hash = window.location.hash;
-  if (hash === '#compare') {
+  if (hash.startsWith('#compare')) {
+    // Try to restore cities from URL: #compare=id1,id2,...
+    const urlIds = parseCompareHash(hash);
+    if (urlIds.length > 0 && state.lookups) {
+      setComparisonCities(urlIds, new Set(state.lookups.citiesById.keys()));
+    }
     const ids = getComparisonCityIds();
     if (ids.length >= 2) {
       showComparison();
