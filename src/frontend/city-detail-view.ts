@@ -14,7 +14,6 @@ import {
 } from './storage.js';
 import { copyToClipboard } from './clipboard.js';
 import { normalize } from './data.js';
-import type { AllData, Lookups } from './data.js';
 import {
   formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount,
   type RankingsState, type ScoreTier,
@@ -78,6 +77,11 @@ export async function renderCity(
   citySearch: HTMLInputElement,
 ): Promise<void> {
   await ensureRankingsCached(state, citySearch);
+
+  if (!state.lookups || !state.data) {
+    cityContent.innerHTML = '<div class="empty-state">Data not yet loaded.</div>';
+    return;
+  }
 
   const city = state.lookups.citiesById.get(cityId);
   if (!city) {
@@ -303,7 +307,7 @@ function wireExportButtons(
 function wireGarageToggle(
   cityId: string,
   rankingsContent: HTMLElement,
-  state: { data: AllData; lookups: Lookups },
+  state: RankingsState,
   citySearch: HTMLInputElement,
 ) {
   const garageToggle = document.getElementById('city-garage-toggle');
@@ -325,7 +329,7 @@ function wireGarageToggle(
         row.classList.toggle('owned-garage', nowOwned);
       }
       // Update garage count badge using filtered count (consistent with rankings view)
-      updateGarageCount(state.data, state.lookups, citySearch);
+      if (state.data && state.lookups) updateGarageCount(state.data, state.lookups, citySearch);
     });
   }
 }

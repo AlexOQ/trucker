@@ -11,12 +11,10 @@ import {
   isFirstVisit, isBannerDismissed, dismissBanner,
   isOnboardingCollapsed, setOnboardingCollapsed,
 } from './storage.js';
-import type { AllData, Lookups } from './data.js';
-import type { CityRanking } from './optimizer.js';
 import {
   renderRankings, initRankingsView,
   showLoading, showError,
-  getComparisonCityIds, clearComparison,
+  getComparisonCityIds,
   type RankingsState,
 } from './rankings-view.js';
 import { renderCity } from './city-detail-view.js';
@@ -27,10 +25,10 @@ import { renderComparison } from './comparison-view.js';
 // ============================================
 
 const state: RankingsState = {
-  data: null as unknown as AllData,
-  lookups: null as unknown as Lookups,
-  cachedRankings: null as CityRanking[] | null,
-  displayedRankings: null as CityRanking[] | null,
+  data: null,
+  lookups: null,
+  cachedRankings: null,
+  displayedRankings: null,
 };
 
 let currentCityId: string | null = null;

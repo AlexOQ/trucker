@@ -48,7 +48,14 @@ export async function renderComparison(
     return;
   }
 
+  if (!state.data || !state.lookups) {
+    container.innerHTML = '<div class="empty-state">Data not yet loaded.</div>';
+    return;
+  }
+
   container.innerHTML = '<div class="empty-state">Loading comparison...</div>';
+
+  const { data, lookups } = state;
 
   // Gather data for each city — fleet computations run in parallel
   const cities: CityComparisonData[] = (
@@ -57,7 +64,7 @@ export async function renderComparison(
         const ranking = state.cachedRankings?.find(r => r.id === cityId);
         if (!ranking) return null;
 
-        const fleet = await computeFleetAsync(cityId, state.data, state.lookups);
+        const fleet = await computeFleetAsync(cityId, data, lookups);
 
         const globalIndex = state.cachedRankings!.findIndex(r => r.id === cityId);
         const tier = getScoreTier(globalIndex >= 0 ? globalIndex : 0, state.cachedRankings!.length);

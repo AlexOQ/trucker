@@ -314,11 +314,17 @@ export interface DlcSection {
   garage_cities: string[];
 }
 
+let _dlcInitialized = false;
+
 /**
  * Override fallback DLC data with live data from game-defs.json.
  * Called by loadAllData() when the dlc section exists.
+ * Idempotent — subsequent calls are ignored to prevent accidental re-initialization.
  */
 export function initDlcData(dlc: DlcSection): void {
+  if (_dlcInitialized) return;
+  _dlcInitialized = true;
+
   TRAILER_DLCS = dlc.trailer_dlcs;
   ALL_DLC_IDS = Object.keys(TRAILER_DLCS);
 
