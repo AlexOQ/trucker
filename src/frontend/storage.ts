@@ -121,7 +121,7 @@ export function loadState(): AppState {
  * Save state to localStorage and invalidate the in-memory cache.
  */
 export function saveState(state: AppState): void {
-  _cachedState = state;
+  _cachedState = { ...state };
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch (e) {
