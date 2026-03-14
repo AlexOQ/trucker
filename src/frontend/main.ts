@@ -110,6 +110,10 @@ async function showCity(cityId: string) {
   }
   await renderCity(cityId, state, cityContent, rankingsContent, citySearch);
   window.scrollTo(0, 0);
+  // Move focus into city view for keyboard users
+  const focusTarget = cityContent.querySelector('button, [tabindex]') as HTMLElement | null;
+  if (focusTarget) focusTarget.focus();
+  else cityContent.focus();
 }
 
 async function showComparison() {
