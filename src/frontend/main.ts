@@ -149,9 +149,10 @@ async function showRankings() {
 function handleHashNavigation(): boolean {
   const hash = window.location.hash;
   if (hash.startsWith('#compare')) {
-    // Try to restore cities from URL: #compare=id1,id2,...
+    // Restore cities from URL: #compare=id1,id2,...
+    // Bare #compare (no =) clears any stale in-memory state
     const urlIds = parseCompareHash(hash);
-    if (urlIds.length > 0 && state.lookups) {
+    if (state.lookups) {
       setComparisonCities(urlIds, new Set(state.lookups.citiesById.keys()));
     }
     const ids = getComparisonCityIds();

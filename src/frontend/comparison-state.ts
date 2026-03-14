@@ -22,10 +22,6 @@ export function isInComparison(cityId: string): boolean {
   return comparisonSet.has(cityId);
 }
 
-export function isComparisonFull(): boolean {
-  return comparisonSet.size >= MAX_COMPARE;
-}
-
 export function toggleComparison(cityId: string): boolean {
   if (comparisonSet.has(cityId)) {
     comparisonSet.delete(cityId);
@@ -103,6 +99,8 @@ export function updateCompareBar() {
     document.querySelectorAll('.compare-check').forEach(cb => {
       (cb as HTMLInputElement).checked = false;
     });
+    // Clear URL hash so browser Back doesn't re-enter stale comparison
+    history.replaceState(null, '', window.location.pathname);
   });
 }
 
