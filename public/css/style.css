@@ -129,7 +129,7 @@
   --score-average: #9c6800;
   --score-average-bg: rgba(156, 104, 0, 0.15);
   --score-average-border: rgba(156, 104, 0, 0.35);
-  --score-below: #737373;
+  --score-below: #666666;
   --score-default: #d44836;
   --score-default-bg: rgba(212, 72, 54, 0.15);
   --score-default-border: rgba(212, 72, 54, 0.35);
@@ -1267,7 +1267,6 @@ tr.scs-fallback-row td {
   display: block;
   font-size: 0.7rem;
   font-weight: normal;
-  opacity: 0.85;
 }
 
 /* Rank Display */
