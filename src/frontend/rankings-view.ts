@@ -298,7 +298,10 @@ function buildSortableHeader(col: SortColumn, activeSortCol: SortColumn, activeS
   const indicator = isActive ? (activeSortDir === 'asc' ? ' \u25b2' : ' \u25bc') : '';
   const tooltipClass = meta.tooltip ? ' tooltip' : '';
   const tooltipAttr = meta.tooltip ? ` data-tooltip="${meta.tooltip}"` : '';
-  return `<th class="sortable${tooltipClass}${isActive ? ' sort-active' : ''}" tabindex="0" data-sort-col="${col}"${tooltipAttr}>${meta.label}${indicator}</th>`;
+  const ariaSortAttr = isActive
+    ? ` aria-sort="${activeSortDir === 'asc' ? 'ascending' : 'descending'}"`
+    : ' aria-sort="none"';
+  return `<th class="sortable${tooltipClass}${isActive ? ' sort-active' : ''}" tabindex="0" data-sort-col="${col}"${ariaSortAttr}${tooltipAttr}>${meta.label}${indicator}</th>`;
 }
 
 function attachSortHandlers(
@@ -323,6 +326,12 @@ function attachSortHandlers(
       }
       setSortPreference(col, newDir);
       renderRankings(state, rankingsContent, citySearch, resultsCount, showCity);
+    });
+    th.addEventListener('keydown', (e) => {
+      if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
+        e.preventDefault();
+        (th as HTMLElement).click();
+      }
     });
   });
 }
