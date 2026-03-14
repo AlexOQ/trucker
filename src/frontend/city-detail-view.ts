@@ -16,7 +16,8 @@ import {
 import { copyToClipboard } from './clipboard.js';
 import { normalize } from './data.js';
 import {
-  formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount, sortRankings,
+  formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount,
+  applyRankingsFilters,
   isInComparison, toggleComparison, updateCompareBar,
   type RankingsState, type ScoreTier,
 } from './rankings-view.js';
@@ -34,18 +35,15 @@ async function ensureRankingsCached(
   }
   if (state.displayedRankings === null && state.cachedRankings) {
     // Apply current filters to build displayed rankings
-    const searchTerm = normalize(citySearch.value);
-    let filtered = state.cachedRankings.filter(
-      (r) => normalize(r.name).includes(searchTerm) || normalize(r.country).includes(searchTerm)
+    state.displayedRankings = applyRankingsFilters(
+      state.cachedRankings,
+      normalize(citySearch.value),
+      getSelectedCountries(),
+      getFilterMode(),
+      getOwnedGarages(),
+      getSortColumn(),
+      getSortDirection(),
     );
-    const selectedCountries = getSelectedCountries();
-    if (selectedCountries.length > 0) {
-      filtered = filtered.filter((r) => selectedCountries.includes(r.country));
-    }
-    const filterMode = getFilterMode();
-    const ownedSet = new Set(getOwnedGarages());
-    const filteredByMode = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
-    state.displayedRankings = sortRankings(filteredByMode, getSortColumn(), getSortDirection());
   }
 }
 
