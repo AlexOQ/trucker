@@ -1460,6 +1460,7 @@ a.link:hover {
   margin-bottom: 1rem;
   display: inline-block;
   text-decoration: none;
+  min-height: 44px;
 }
 
 .back-link:hover {

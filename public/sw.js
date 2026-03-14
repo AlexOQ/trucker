@@ -48,7 +48,7 @@ self.addEventListener('activate', (event) => {
       const requests = await cache.keys();
       await Promise.all(
         requests
-          .filter((req) => new URL(req.url).pathname.match(/\/assets\/.*-[a-zA-Z0-9]{8,}\.js$/))
+          .filter((req) => new URL(req.url).pathname.match(/\/assets\/.*-[a-zA-Z0-9]{8,}\.(js|css)$/))
           .map((req) => cache.delete(req))
       );
 
