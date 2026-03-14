@@ -179,8 +179,8 @@ export async function renderCity(
         <thead>
           <tr>
             <th>Trailer Type</th>
-            <th class="tooltip" data-tooltip="Expected value per job cycle">EV</th>
-            <th class="tooltip" data-tooltip="Cargo types this trailer can haul">Cargo</th>
+            <th class="tooltip" tabindex="0" data-tooltip="Expected value per job cycle" aria-label="EV \u2014 Expected value per job cycle">EV</th>
+            <th class="tooltip" tabindex="0" data-tooltip="Cargo types this trailer can haul" aria-label="Cargo \u2014 Cargo types this trailer can haul">Cargo</th>
           </tr>
         </thead>
         <tbody>

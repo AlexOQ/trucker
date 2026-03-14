@@ -294,10 +294,11 @@ function buildSortableHeader(col: SortColumn, activeSortCol: SortColumn, activeS
   const indicator = isActive ? (activeSortDir === 'asc' ? ' \u25b2' : ' \u25bc') : '';
   const tooltipClass = meta.tooltip ? ' tooltip' : '';
   const tooltipAttr = meta.tooltip ? ` data-tooltip="${meta.tooltip}"` : '';
+  const ariaLabel = meta.tooltip ? ` aria-label="${meta.label} \u2014 ${meta.tooltip}"` : '';
   const ariaSortAttr = isActive
     ? ` aria-sort="${activeSortDir === 'asc' ? 'ascending' : 'descending'}"`
     : ' aria-sort="none"';
-  return `<th class="sortable${tooltipClass}${isActive ? ' sort-active' : ''}" tabindex="0" data-sort-col="${col}"${ariaSortAttr}${tooltipAttr}>${meta.label}${indicator}</th>`;
+  return `<th class="sortable${tooltipClass}${isActive ? ' sort-active' : ''}" tabindex="0" data-sort-col="${col}"${ariaSortAttr}${tooltipAttr}${ariaLabel}>${meta.label}${indicator}</th>`;
 }
 
 function attachSortHandlers(
@@ -402,8 +403,8 @@ export async function renderRankings(
               ${buildSortableHeader('depotCount', sortCol, sortDir)}
               ${buildSortableHeader('cargoTypes', sortCol, sortDir)}
               ${buildSortableHeader('score', sortCol, sortDir)}
-              <th class="tooltip" tabindex="0" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
-              <th class="compare-col tooltip" tabindex="0" data-tooltip="Select cities to compare side by side">Cmp</th>
+              <th class="tooltip" tabindex="0" data-tooltip="Top earning trailer types for this city" aria-label="Best Trailers \u2014 Top earning trailer types for this city">Best Trailers</th>
+              <th class="compare-col tooltip" tabindex="0" data-tooltip="Select cities to compare side by side" aria-label="Compare \u2014 Select cities to compare side by side">Cmp</th>
             </tr>
           </thead>
           <tbody>
@@ -432,8 +433,8 @@ export async function renderRankings(
             ${buildSortableHeader('depotCount', sortCol, sortDir)}
             ${buildSortableHeader('cargoTypes', sortCol, sortDir)}
             ${buildSortableHeader('score', sortCol, sortDir)}
-            <th class="tooltip" tabindex="0" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
-            <th class="compare-col tooltip" tabindex="0" data-tooltip="Select cities to compare side by side">Cmp</th>
+            <th class="tooltip" tabindex="0" data-tooltip="Top earning trailer types for this city" aria-label="Best Trailers \u2014 Top earning trailer types for this city">Best Trailers</th>
+            <th class="compare-col tooltip" tabindex="0" data-tooltip="Select cities to compare side by side" aria-label="Compare \u2014 Select cities to compare side by side">Cmp</th>
           </tr>
         </thead>
         <tbody>
