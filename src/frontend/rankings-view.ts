@@ -292,6 +292,26 @@ export function sortRankings(rankings: CityRanking[], col: SortColumn, dir: Sort
   });
 }
 
+export function applyRankingsFilters(
+  rankings: CityRanking[],
+  searchTerm: string,
+  selectedCountries: string[],
+  filterMode: string,
+  ownedGarages: string[],
+  sortCol: SortColumn,
+  sortDir: SortDirection,
+): CityRanking[] {
+  let filtered = rankings.filter(
+    (r) => normalize(r.name).includes(searchTerm) || normalize(r.country).includes(searchTerm)
+  );
+  if (selectedCountries.length > 0) {
+    filtered = filtered.filter((r) => selectedCountries.includes(r.country));
+  }
+  const ownedSet = new Set(ownedGarages);
+  const displayRankings = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
+  return sortRankings(displayRankings, sortCol, sortDir);
+}
+
 function buildSortableHeader(col: SortColumn, activeSortCol: SortColumn, activeSortDir: SortDirection): string {
   const meta = SORTABLE_COLUMNS.find(c => c.col === col)!;
   const isActive = activeSortCol === col;
@@ -355,24 +375,21 @@ export async function renderRankings(
   }
 
   const searchTerm = normalize(citySearch.value);
-  let filtered = rankings.filter(
-    (r) => normalize(r.name).includes(searchTerm) || normalize(r.country).includes(searchTerm)
-  );
-
   const selectedCountries = getSelectedCountries();
-  if (selectedCountries.length > 0) {
-    filtered = filtered.filter((r) => selectedCountries.includes(r.country));
-  }
-
   const filterMode = getFilterMode();
-  const ownedSet = new Set(getOwnedGarages());
-  const filteredByMode = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
-
-  // Apply sort after filtering
   const sortCol = getSortColumn();
   const sortDir = getSortDirection();
-  const displayRankings = sortRankings(filteredByMode, sortCol, sortDir);
+  const displayRankings = applyRankingsFilters(
+    rankings,
+    searchTerm,
+    selectedCountries,
+    filterMode,
+    getOwnedGarages(),
+    sortCol,
+    sortDir,
+  );
   state.displayedRankings = displayRankings;
+  const ownedSet = new Set(getOwnedGarages());
 
   if (filterMode === 'owned' && displayRankings.length === 0) {
     rankingsContent.innerHTML = `
