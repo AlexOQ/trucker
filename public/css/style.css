@@ -1443,6 +1443,11 @@ a.link:hover {
   text-decoration: underline;
 }
 
+.back-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .detail-header {
   margin-bottom: 1.5rem;
 }
