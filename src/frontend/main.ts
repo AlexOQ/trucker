@@ -125,14 +125,14 @@ async function showComparison() {
   window.scrollTo(0, 0);
 }
 
-function showRankings() {
+async function showRankings() {
   const restoreCityId = lastViewedCityId;
   currentCityId = null;
   cityView.style.display = 'none';
   if (compareView) compareView.style.display = 'none';
   rankingsView.style.display = 'block';
   window.location.hash = '';
-  renderRankings(state, rankingsContent, citySearch, resultsCount, showCity);
+  await renderRankings(state, rankingsContent, citySearch, resultsCount, showCity);
   if (restoreCityId) {
     const row = rankingsContent.querySelector(`tr[data-city-id="${restoreCityId}"]`) as HTMLElement | null;
     if (row) row.focus();
