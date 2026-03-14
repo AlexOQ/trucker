@@ -34,6 +34,8 @@ describe('storage', () => {
         ownedTrailerDLCs: [],
         ownedCargoDLCs: [],
         ownedMapDLCs: [],
+        sortColumn: 'score',
+        sortDirection: 'desc',
       });
     });
 

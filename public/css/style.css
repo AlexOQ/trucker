@@ -1114,6 +1114,26 @@ tr:last-child td {
   border-bottom: none;
 }
 
+/* Sortable column headers */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Sortable tooltips override the default cursor:help on .tooltip */
+th.sortable.tooltip {
+  cursor: pointer;
+}
+
+th.sortable:hover {
+  background: var(--accent-overlay);
+  color: var(--accent);
+}
+
+th.sort-active {
+  color: var(--accent);
+}
+
 tr.clickable {
   cursor: pointer;
   transition: background-color 0.15s ease;

@@ -11,6 +11,8 @@ import {
   getOwnedGarages, toggleOwnedGarage,
   getFilterMode, setFilterMode,
   getSelectedCountries, setSelectedCountries,
+  getSortColumn, getSortDirection, setSortPreference,
+  type SortColumn, type SortDirection,
 } from './storage.js';
 import { normalize } from './data.js';
 import { escapeHtml } from './utils.js';
@@ -266,6 +268,65 @@ function summarizeTrailers(fleet: FleetEntry[]): string {
   return fleet.map(e => e.displayName).join(', ');
 }
 
+// ============================================
+// Sorting
+// ============================================
+
+const SORTABLE_COLUMNS: { col: SortColumn; label: string; tooltip?: string }[] = [
+  { col: 'name', label: 'City' },
+  { col: 'country', label: 'Country' },
+  { col: 'depotCount', label: 'Depots', tooltip: 'Company facilities in this city' },
+  { col: 'cargoTypes', label: 'Cargo', tooltip: 'Distinct cargo types available' },
+  { col: 'score', label: 'Fleet EV', tooltip: 'Sum of top 5 body type EVs \u2014 fleet earning potential' },
+];
+
+function sortRankings(rankings: CityRanking[], col: SortColumn, dir: SortDirection): CityRanking[] {
+  return [...rankings].sort((a, b) => {
+    let cmp: number;
+    if (col === 'name' || col === 'country') {
+      cmp = a[col].localeCompare(b[col]);
+    } else {
+      cmp = a[col] - b[col];
+    }
+    return dir === 'asc' ? cmp : -cmp;
+  });
+}
+
+function buildSortableHeader(col: SortColumn, activeSortCol: SortColumn, activeSortDir: SortDirection): string {
+  const meta = SORTABLE_COLUMNS.find(c => c.col === col)!;
+  const isActive = activeSortCol === col;
+  const indicator = isActive ? (activeSortDir === 'asc' ? ' \u25b2' : ' \u25bc') : '';
+  const tooltipClass = meta.tooltip ? ' tooltip' : '';
+  const tooltipAttr = meta.tooltip ? ` data-tooltip="${meta.tooltip}"` : '';
+  return `<th class="sortable${tooltipClass}${isActive ? ' sort-active' : ''}" tabindex="0" data-sort-col="${col}"${tooltipAttr}>${meta.label}${indicator}</th>`;
+}
+
+function attachSortHandlers(
+  container: HTMLElement,
+  state: RankingsState,
+  rankingsContent: HTMLElement,
+  citySearch: HTMLInputElement,
+  resultsCount: HTMLElement,
+  showCity: (cityId: string) => void,
+): void {
+  container.querySelectorAll('th.sortable').forEach((th) => {
+    th.addEventListener('click', () => {
+      const col = (th as HTMLElement).dataset.sortCol as SortColumn;
+      const currentCol = getSortColumn();
+      const currentDir = getSortDirection();
+      let newDir: SortDirection;
+      if (col === currentCol) {
+        newDir = currentDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        // Numeric columns default desc, alpha columns default asc
+        newDir = (col === 'name' || col === 'country') ? 'asc' : 'desc';
+      }
+      setSortPreference(col, newDir);
+      renderRankings(state, rankingsContent, citySearch, resultsCount, showCity);
+    });
+  });
+}
+
 export async function renderRankings(
   state: RankingsState,
   rankingsContent: HTMLElement,
@@ -295,7 +356,12 @@ export async function renderRankings(
 
   const filterMode = getFilterMode();
   const ownedSet = new Set(getOwnedGarages());
-  const displayRankings = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
+  const filteredByMode = filterMode === 'owned' ? filtered.filter((r) => ownedSet.has(r.id)) : filtered;
+
+  // Apply sort after filtering
+  const sortCol = getSortColumn();
+  const sortDir = getSortDirection();
+  const displayRankings = sortRankings(filteredByMode, sortCol, sortDir);
   state.displayedRankings = displayRankings;
 
   if (filterMode === 'owned' && displayRankings.length === 0) {
@@ -326,11 +392,11 @@ export async function renderRankings(
             <tr>
               <th></th>
               <th>#</th>
-              <th>City</th>
-              <th>Country</th>
-              <th class="tooltip" tabindex="0" data-tooltip="Company facilities in this city">Depots</th>
-              <th class="tooltip" tabindex="0" data-tooltip="Distinct cargo types available">Cargo</th>
-              <th class="tooltip" tabindex="0" data-tooltip="Sum of top 5 body type EVs \u2014 fleet earning potential">Fleet EV</th>
+              ${buildSortableHeader('name', sortCol, sortDir)}
+              ${buildSortableHeader('country', sortCol, sortDir)}
+              ${buildSortableHeader('depotCount', sortCol, sortDir)}
+              ${buildSortableHeader('cargoTypes', sortCol, sortDir)}
+              ${buildSortableHeader('score', sortCol, sortDir)}
               <th class="tooltip" tabindex="0" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
               <th class="compare-col tooltip" tabindex="0" data-tooltip="Select cities to compare side by side">Cmp</th>
             </tr>
@@ -341,6 +407,7 @@ export async function renderRankings(
         </table>
       </div>
     `;
+    attachSortHandlers(rankingsContent, state, rankingsContent, citySearch, resultsCount, showCity);
     updateGarageCount(state.data, state.lookups, citySearch);
     updateResultsCount(resultsCount, 0, rankings.length);
     return;
@@ -355,11 +422,11 @@ export async function renderRankings(
           <tr>
             <th></th>
             <th>#</th>
-            <th>City</th>
-            <th>Country</th>
-            <th class="tooltip" tabindex="0" data-tooltip="Company facilities in this city">Depots</th>
-            <th class="tooltip" tabindex="0" data-tooltip="Distinct cargo types available">Cargo</th>
-            <th class="tooltip" tabindex="0" data-tooltip="Sum of top 5 body type EVs \u2014 fleet earning potential">Fleet EV</th>
+            ${buildSortableHeader('name', sortCol, sortDir)}
+            ${buildSortableHeader('country', sortCol, sortDir)}
+            ${buildSortableHeader('depotCount', sortCol, sortDir)}
+            ${buildSortableHeader('cargoTypes', sortCol, sortDir)}
+            ${buildSortableHeader('score', sortCol, sortDir)}
             <th class="tooltip" tabindex="0" data-tooltip="Top earning trailer types for this city">Best Trailers</th>
             <th class="compare-col tooltip" tabindex="0" data-tooltip="Select cities to compare side by side">Cmp</th>
           </tr>
@@ -446,6 +513,7 @@ export async function renderRankings(
     });
   });
 
+  attachSortHandlers(rankingsContent, state, rankingsContent, citySearch, resultsCount, showCity);
   updateCompareBar();
   updateGarageCount(state.data, state.lookups, citySearch);
   updateResultsCount(resultsCount, displayRankings.length, rankings.length);
