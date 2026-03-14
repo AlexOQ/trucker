@@ -45,7 +45,11 @@ export function getComparisonCityIds(): string[] {
   return Array.from(comparisonSet);
 }
 
-function toggleComparison(cityId: string): boolean {
+export function isInComparison(cityId: string): boolean {
+  return comparisonSet.has(cityId);
+}
+
+export function toggleComparison(cityId: string): boolean {
   if (comparisonSet.has(cityId)) {
     comparisonSet.delete(cityId);
     return false;
@@ -55,7 +59,7 @@ function toggleComparison(cityId: string): boolean {
   return true;
 }
 
-function updateCompareBar() {
+export function updateCompareBar() {
   let bar = document.getElementById('compare-bar');
   const count = comparisonSet.size;
 

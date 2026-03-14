@@ -17,6 +17,7 @@ import { copyToClipboard } from './clipboard.js';
 import { normalize } from './data.js';
 import {
   formatNumber, getScoreTier, getCityRank, formatRank, updateGarageCount, sortRankings,
+  isInComparison, toggleComparison, updateCompareBar,
   type RankingsState, type ScoreTier,
 } from './rankings-view.js';
 
@@ -101,15 +102,21 @@ export async function renderCity(
             <h2>${city.name}</h2>
             <span class="country">${city.country}</span>
           </div>
-          <button class="garage-toggle" id="city-garage-toggle"
-            aria-pressed="${emptyOwned}" aria-label="${emptyOwned ? 'Remove garage' : 'Mark as garage'}"
-            title="${emptyOwned ? 'Remove garage' : 'Mark as garage'}"
-            data-city-id="${cityId}">${emptyOwned ? '\u2605' : '\u2606'}</button>
+          <div class="city-header-actions">
+            <button class="btn btn-sm compare-toggle" id="city-compare-toggle"
+              aria-pressed="${isInComparison(cityId)}"
+              data-city-id="${cityId}">${isInComparison(cityId) ? '\u2713 In Compare' : '+ Compare'}</button>
+            <button class="garage-toggle" id="city-garage-toggle"
+              aria-pressed="${emptyOwned}" aria-label="${emptyOwned ? 'Remove garage' : 'Mark as garage'}"
+              title="${emptyOwned ? 'Remove garage' : 'Mark as garage'}"
+              data-city-id="${cityId}">${emptyOwned ? '\u2605' : '\u2606'}</button>
+          </div>
         </div>
       </div>
       <div class="empty-state">No cargo data for this city yet.</div>
     `;
     wireGarageToggle(cityId, rankingsContent, state, citySearch);
+    wireCompareToggle(cityId);
     return;
   }
 
@@ -140,10 +147,15 @@ export async function renderCity(
           <h2>${city.name}</h2>
           <span class="country">${city.country}</span>
         </div>
-        <button class="garage-toggle" id="city-garage-toggle"
-          aria-pressed="${owned}" aria-label="${owned ? 'Remove garage' : 'Mark as garage'}"
-          title="${owned ? 'Remove garage' : 'Mark as garage'}"
-          data-city-id="${cityId}">${owned ? '\u2605' : '\u2606'}</button>
+        <div class="city-header-actions">
+          <button class="btn btn-sm compare-toggle" id="city-compare-toggle"
+            aria-pressed="${isInComparison(cityId)}"
+            data-city-id="${cityId}">${isInComparison(cityId) ? '\u2713 In Compare' : '+ Compare'}</button>
+          <button class="garage-toggle" id="city-garage-toggle"
+            aria-pressed="${owned}" aria-label="${owned ? 'Remove garage' : 'Mark as garage'}"
+            title="${owned ? 'Remove garage' : 'Mark as garage'}"
+            data-city-id="${cityId}">${owned ? '\u2605' : '\u2606'}</button>
+        </div>
       </div>
     </div>
 
@@ -192,6 +204,7 @@ export async function renderCity(
   `;
 
   wireGarageToggle(cityId, rankingsContent, state, citySearch);
+  wireCompareToggle(cityId);
   wireCopyFleetButton(city.name, optimal.drivers);
   wireExportButtons(city.name, optimal.drivers, depotCount, cargoTypes, score);
 }
@@ -334,4 +347,22 @@ function wireGarageToggle(
       if (state.data && state.lookups) updateGarageCount(state.data, state.lookups, citySearch);
     });
   }
+}
+
+// ============================================
+// Compare toggle in city detail
+// ============================================
+
+function wireCompareToggle(cityId: string) {
+  const btn = document.getElementById('city-compare-toggle') as HTMLButtonElement | null;
+  if (!btn) return;
+  btn.addEventListener('click', () => {
+    const added = toggleComparison(cityId);
+    btn.textContent = added ? '\u2713 In Compare' : '+ Compare';
+    btn.setAttribute('aria-pressed', String(added));
+    // Sync the rankings table checkbox if visible
+    const checkbox = document.querySelector(`.compare-check[data-city-id="${cityId}"]`) as HTMLInputElement | null;
+    if (checkbox) checkbox.checked = added;
+    updateCompareBar();
+  });
 }
