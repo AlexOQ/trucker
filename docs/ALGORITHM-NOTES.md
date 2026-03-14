@@ -233,9 +233,9 @@ Source: [SCS Modding Wiki: cargo_data](https://modding.scssoft.com/wiki/Document
 
 1. Driver at home garage city, jobs generated at city's depots
 2. Filtered by driver skills:
-   - Long Distance skill sets max distance (250-1500km by level, unlimited at 6)
+   - Long Distance skill sets max distance (400-4000km by level, unlimited at 6)
    - ADR skill gates hazardous cargo
-   - `driver_skilled_job_prob` (0.85) = probability job matches a specialized skill
+   - `driver_skilled_job_prob` (0.8) = probability job matches a specialized skill
 3. Selection among qualified jobs: **community evidence suggests preference for longest/most profitable route**, not random. Forum: *"drivers currently seem to prefer the longest possible route available."*
 4. Revenue calculated at `driver_revenue_coef_per_km` (0.67x base rate)
 
@@ -364,7 +364,7 @@ The blast radius is **narrow but severe**: 27 Finnish/Swedish cities have HCT av
 
 ### Open Questions
 
-1. ~~**How does the game select job destinations for AI drivers?**~~ **ANSWERED**: Destinations are selected **randomly** among valid receiving companies within the driver's distance range. No supply/demand weighting. The Stockholm 650km cap was a **skill cap** (long_dist=2 → 550km), not geographic.
+1. ~~**How does the game select job destinations for AI drivers?**~~ **ANSWERED**: Destinations are selected **randomly** among valid receiving companies within the driver's distance range. No supply/demand weighting. The Stockholm 650km cap is a **geographic/country_validity constraint**, not a skill cap. With corrected distances (long_dist=2 → 1,000km), skill allows 1,000km but geographic boundary limits to ~650km.
 
 2. ~~**Do doubles from Hamburg reach further than doubles from Stockholm?**~~ **ANSWERED**: Yes, position-dependent. The distance analysis shows doubles from Hamburg have near-parity with standard (100%), while Lisboa doubles are 79% of standard distance. But since throughput cancels distance, this doesn't affect fleet recommendations.
 
