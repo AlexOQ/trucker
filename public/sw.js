@@ -1,10 +1,17 @@
 // Service worker for ETS2 Trucker Advisor — offline caching
-// Cache-first for static assets (CSS, JS, JSON), network-first for HTML
+// Strategy summary:
+//   HTML          → network-first (users always get fresh pages)
+//   JSON data     → network-first (game-defs.json / observations.json update with game patches)
+//   CSS / images  → cache-first  (truly static, versioned by filename)
+//   JS bundles    → cache-first  (Vite outputs content-hashed filenames; precaching would
+//                                 require vite-plugin-pwa to track the manifest — out of scope)
 
-const CACHE_NAME = 'trucker-cache-v1';
+const CACHE_NAME = 'trucker-cache-v2';
 const BASE = '/trucker/';
 
-// Assets to pre-cache on install
+// Pre-cache only truly static assets whose URLs never change between deploys.
+// JSON data files are intentionally excluded — they use network-first so returning
+// users always receive fresh data after a game update.
 const PRECACHE_URLS = [
   BASE,
   BASE + 'index.html',
@@ -14,8 +21,6 @@ const PRECACHE_URLS = [
   BASE + 'trailers.html',
   BASE + 'dlcs.html',
   BASE + 'css/style.css',
-  BASE + 'data/game-defs.json',
-  BASE + 'data/observations.json',
 ];
 
 self.addEventListener('install', (event) => {
@@ -61,7 +66,24 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for static assets (CSS, JS, JSON, images)
+  // Network-first for JSON data files — these change whenever game data is updated,
+  // so returning users must receive the latest version rather than a stale cache.
+  if (url.pathname.endsWith('.json')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok && event.request.method === 'GET') {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache-first for static assets (CSS, JS, images)
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) {
