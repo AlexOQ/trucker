@@ -238,6 +238,7 @@ const MAP_DLCS: Record<string, string> = {
   iberia: 'Iberia',
   west_balkans: 'West Balkans',
   greece: 'Greece',
+  nordic_horizons: 'Nordic Horizons',
 };
 
 /** Map DLC → cities that require it (wiki-verified) */
@@ -296,6 +297,13 @@ const CITY_DLC_MAP: Record<string, string[]> = {
   greece: [
     'argostoli','athens','chania','chios','heraklion','ioannina','kalamata','kavala',
     'lamia','larissa','mitilini','patras','rhodes','thessaloniki','trikala',
+  ],
+  nordic_horizons: [
+    'alesund','alta','andenes','arvidsjaur','bodo','borlange','dombas','falun','gavle',
+    'hamar','haparanda','honningsvag','ivalo','joensuu','jyvaskyla','kajaani','karesuando',
+    'kiruna','kokkola','kristiansund','kuopio','kuusamo','lappeenranta','lillehammer',
+    'lulea','mikkeli','mo_i_rana','narvik','ornskoldsvik','ostersund','oulu','rovaniemi',
+    'skelleftea','steinkjer','sundsvall','svolvaer','tornio','tromso','trondheim','umea','vaasa',
   ],
 };
 
@@ -384,8 +392,8 @@ const GARAGE_CITIES: ReadonlySet<string> = new Set([
   'brno','ostrava','prague',
   // Denmark (4)
   'aalborg','aarhus','kobenhavn','odense',
-  // Finland (7)
-  'helsinki','kotka','kouvola','lahti','pori','tampere','turku',
+  // Finland (11)
+  'helsinki','jyvaskyla','kotka','kouvola','kuopio','lahti','oulu','pori','rovaniemi','tampere','turku',
   // France (24)
   'ajaccio','bastia','bordeaux','brest','calais','calvi','clermont','dijon',
   'larochelle','lehavre','lemans','lille','limoges','lyon','marseille','metz',
@@ -416,8 +424,8 @@ const GARAGE_CITIES: ReadonlySet<string> = new Set([
   'amsterdam','groningen','rotterdam',
   // North Macedonia (1)
   'skopje',
-  // Norway (4)
-  'bergen','kristiansand','oslo','stavanger',
+  // Norway (8)
+  'alesund','bergen','bodo','kristiansand','oslo','stavanger','tromso','trondheim',
   // Poland (11)
   'bialystok','gdansk','katowice','krakow','lodz','lublin','olsztyn','poznan',
   'szczecin','warszawa','wroclaw',
@@ -438,9 +446,9 @@ const GARAGE_CITIES: ReadonlySet<string> = new Set([
   'a_coruna','albacete','algeciras','almeria','barcelona','bilbao','burgos',
   'cordoba','madrid','malaga','murcia','salamanca','sevilla','valencia',
   'valladolid','vigo','zaragoza',
-  // Sweden (13)
+  // Sweden (16)
   'goteborg','helsingborg','jonkoping','kalmar','karlskrona','karlstad',
-  'linkoping','malmo','orebro','stockholm','uppsala','vasteraas','vaxjo',
+  'linkoping','lulea','malmo','orebro','ostersund','stockholm','umea','uppsala','vasteraas','vaxjo',
   // Switzerland (3)
   'bern','geneve','zurich',
   // Turkey (3)
