@@ -258,12 +258,39 @@ export function analyticalFirstPickEV(
 }
 
 // ============================================
+// Seeded PRNG for deterministic MC results
+// ============================================
+
+/** mulberry32 — fast 32-bit seeded PRNG, returns [0, 1) */
+function mulberry32(seed: number): () => number {
+  let s = seed | 0;
+  return () => {
+    s = (s + 0x6D2B79F5) | 0;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/** Simple string hash for seeding PRNG from city ID */
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (Math.imul(31, h) + s.charCodeAt(i)) | 0;
+  }
+  return h;
+}
+
+// Module-level RNG, initialized per computeOptimalFleet call
+let rng: () => number = Math.random;
+
+// ============================================
 // Monte Carlo simulation helpers
 // ============================================
 
 /** Fast binary-search pick from a depot's cargo CDF */
 function mcPick(depot: CityDepotData): DepotCargoItem {
-  const r = Math.random();
+  const r = rng();
   let lo = 0, hi = depot.cumProbs.length - 1;
   while (lo < hi) {
     const mid = (lo + hi) >> 1;
@@ -436,6 +463,9 @@ function countCityCargoForBodyType(depots: CityDepotData[], bodyType: string): n
 export function computeOptimalFleet(
   cityId: string, data: AllData, lookups: Lookups,
 ): OptimalFleet | null {
+  // Seed PRNG from city ID for deterministic results
+  rng = mulberry32(hashString(cityId));
+
   const depots = buildCityDepotProfiles(cityId, lookups);
   if (!depots) return null;
 
