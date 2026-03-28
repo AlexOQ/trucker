@@ -33,7 +33,7 @@ function getCompanyCities(companyId: string): CityWithDepotCount[] {
       }
     }
   }
-  return cities.sort((a, b) => a.name.localeCompare(b.name));
+  return cities.sort((a, b) => a.displayName.localeCompare(b.displayName));
 }
 
 interface CargoWithSpawn extends Cargo {
@@ -164,7 +164,7 @@ function showCompanyDetail(companyId: string): void {
   // Group cities by country
   const citiesByCountry = new Map<string, CityWithDepotCount[]>();
   for (const city of cities) {
-    const country = city.country || 'Unknown';
+    const country = city.countryName || city.country || 'Unknown';
     if (!citiesByCountry.has(country)) {
       citiesByCountry.set(country, []);
     }
@@ -213,8 +213,8 @@ function showCompanyDetail(companyId: string): void {
                 .map(
                   (city) => `
                     <tr>
-                      <td><a href="cities.html#city-${city.id}" class="link">${city.name}</a></td>
-                      <td class="country-name">${city.country || ''}</td>
+                      <td><a href="cities.html#city-${city.id}" class="link">${city.displayName}</a></td>
+                      <td class="country-name">${city.countryName || ''}</td>
                       <td class="amount">${city.depotCount}</td>
                     </tr>
                   `

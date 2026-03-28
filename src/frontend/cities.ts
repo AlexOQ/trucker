@@ -47,13 +47,15 @@ function toggleCountry(country: string): boolean {
 interface CityWithCountry {
   id: string;
   name: string;
+  displayName: string;
   country: string;
+  countryName: string;
 }
 
 function groupByCountry(cities: CityWithCountry[]): [string, CityWithCountry[]][] {
   const groups = new Map<string, CityWithCountry[]>();
   for (const city of cities) {
-    const country = city.country || 'Unknown';
+    const country = city.countryName || city.country || 'Unknown';
     if (!groups.has(country)) {
       groups.set(country, []);
     }
@@ -62,7 +64,7 @@ function groupByCountry(cities: CityWithCountry[]): [string, CityWithCountry[]][
   // Sort countries and cities within
   const sorted = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0]));
   for (const [, citiesList] of sorted) {
-    citiesList.sort((a, b) => a.name.localeCompare(b.name));
+    citiesList.sort((a, b) => a.displayName.localeCompare(b.displayName));
   }
   return sorted;
 }
@@ -114,7 +116,7 @@ function renderCityList(filter = ''): void {
 
   const filterNorm = normalize(filter);
   const filtered = data.cities.filter(
-    (c) => normalize(c.name).includes(filterNorm) || normalize(c.country).includes(filterNorm)
+    (c) => normalize(c.displayName).includes(filterNorm) || normalize(c.name).includes(filterNorm) || normalize(c.countryName).includes(filterNorm)
   );
 
   const grouped = groupByCountry(filtered);
@@ -146,7 +148,7 @@ function renderCityList(filter = ''): void {
                     <a href="#city-${city.id}" class="card-link" data-city-id="${city.id}">
                       <div class="card">
                         ${isOwnedGarage(city.id) ? '<span class="card-garage-badge">★</span>' : ''}
-                        <div class="card-title">${city.name}</div>
+                        <div class="card-title">${city.displayName}${city.displayName !== city.name ? ` <span class="native-name">(${city.name})</span>` : ''}</div>
                         <div class="card-subtitle">
                           ${stats.companyCount} companies · ${stats.depotCount} depots
                         </div>
@@ -196,8 +198,8 @@ function showCityDetail(cityId: string): void {
 
   detailContent.innerHTML = `
     <div class="detail-header">
-      <h2>${city.name}</h2>
-      <div class="subtitle">${city.country || ''}</div>
+      <h2>${city.displayName}${city.displayName !== city.name ? ` <span class="native-name">(${city.name})</span>` : ''}</h2>
+      <div class="subtitle">${city.countryName || ''}</div>
     </div>
 
     <div class="stats">
@@ -216,7 +218,7 @@ function showCityDetail(cityId: string): void {
     </div>
 
     <div class="table-section">
-      <h2>Companies in ${city.name}</h2>
+      <h2>Companies in ${city.displayName}</h2>
       <table>
         <thead>
           <tr>

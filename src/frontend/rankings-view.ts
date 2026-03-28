@@ -16,6 +16,7 @@ import {
 } from './storage.js';
 import { normalize } from './data.js';
 import { escapeHtml } from './utils.js';
+import { COUNTRY_DISPLAY_NAMES } from './display-names.js';
 import type { AllData, Lookups } from './data.js';
 import {
   isInComparison, toggleComparison, updateCompareBar, announceStatus,
@@ -140,9 +141,9 @@ function renderCountryCheckboxes(data: AllData, renderRankings: () => void) {
       <label class="country-option" role="option">
         <input type="checkbox" value="${country}"
           aria-checked="${selected.includes(country) ? 'true' : 'false'}"
-          aria-label="${country}"
+          aria-label="${COUNTRY_DISPLAY_NAMES[country] ?? country}"
           ${selected.includes(country) ? 'checked' : ''}>
-        <span>${country}</span>
+        <span>${COUNTRY_DISPLAY_NAMES[country] ?? country}</span>
       </label>
     `).join('')}
   `;
@@ -184,7 +185,7 @@ export function updateGarageCount(data: AllData, lookups: Lookups, citySearch: H
   for (const cityIdStr of ownedGarages) {
     const city = lookups.citiesById.get(cityIdStr);
     if (!city) continue;
-    if (searchTerm && !normalize(city.name).includes(searchTerm) && !normalize(city.country).includes(searchTerm)) continue;
+    if (searchTerm && !normalize(city.displayName).includes(searchTerm) && !normalize(city.name).includes(searchTerm) && !normalize(city.countryName).includes(searchTerm)) continue;
     if (selectedCountries.length > 0 && !selectedCountries.includes(city.country)) continue;
     count++;
   }
@@ -245,7 +246,7 @@ export function applyRankingsFilters(
   sortDir: SortDirection,
 ): CityRanking[] {
   let filtered = rankings.filter(
-    (r) => normalize(r.name).includes(searchTerm) || normalize(r.country).includes(searchTerm)
+    (r) => normalize(r.displayName).includes(searchTerm) || normalize(r.name).includes(searchTerm) || normalize(r.countryName).includes(searchTerm)
   );
   if (selectedCountries.length > 0) {
     filtered = filtered.filter((r) => selectedCountries.includes(r.country));
@@ -411,15 +412,15 @@ export async function renderRankings(
             const checked = isInComparison(r.id);
             return `
             <tr class="clickable${starred ? ' owned-garage' : ''}" data-city-id="${r.id}" tabindex="0">
-              <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage for' : 'Mark as garage for'} ${r.name}" tabindex="0" role="button" aria-label="${starred ? 'Remove garage for' : 'Mark as garage for'} ${r.name}">${starred ? '\u2605' : '\u2606'}</td>
+              <td class="garage-star" data-city-id="${r.id}" title="${starred ? 'Remove garage for' : 'Mark as garage for'} ${r.displayName}" tabindex="0" role="button" aria-label="${starred ? 'Remove garage for' : 'Mark as garage for'} ${r.displayName}">${starred ? '\u2605' : '\u2606'}</td>
               <td>${i + 1}</td>
-              <td>${r.name}</td>
-              <td class="country">${r.country}</td>
+              <td>${r.displayName}${r.displayName !== r.name ? ` <span class="native-name">(${r.name})</span>` : ''}</td>
+              <td class="country">${r.countryName}</td>
               <td>${r.depotCount}</td>
               <td class="amount">${r.cargoTypes}</td>
               <td class="score ${tier.className}" title="${tier.label}">${formatNumber(r.score)}${tier.label ? `<span class="score-tier-label">${tier.label.split(' \u2014 ')[0]}</span>` : ''}</td>
               <td class="trailer-summary">${trailerSummary}</td>
-              <td class="compare-col"><input type="checkbox" class="compare-check" data-city-id="${r.id}" ${checked ? 'checked' : ''} aria-label="Compare ${r.name}" title="Compare ${r.name}"></td>
+              <td class="compare-col"><input type="checkbox" class="compare-check" data-city-id="${r.id}" ${checked ? 'checked' : ''} aria-label="Compare ${r.displayName}" title="Compare ${r.displayName}"></td>
             </tr>
           `;
           }).join('')}

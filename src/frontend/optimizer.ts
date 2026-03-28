@@ -66,8 +66,10 @@ export interface OptimalFleet {
 
 export interface CityRanking {
   id: string;
-  name: string;
-  country: string;
+  name: string;           // native name for search matching
+  displayName: string;    // English name for display
+  country: string;        // country ID for filtering
+  countryName: string;    // English country name for display
   hasGarage: boolean;
   depotCount: number;
   cargoTypes: number;
@@ -642,7 +644,9 @@ export function calculateCityRankings(
     rankings.push({
       id: city.id,
       name: city.name,
+      displayName: city.displayName,
       country: city.country,
+      countryName: city.countryName,
       hasGarage: city.hasGarage,
       depotCount,
       cargoTypes: cargoIds.size,

@@ -100,8 +100,8 @@ export async function renderCity(
       <div class="city-header">
         <div class="city-header-row">
           <div>
-            <h2>${city.name}</h2>
-            <span class="country">${city.country}</span>
+            <h2>${city.displayName}${city.displayName !== city.name ? ` <span class="native-name">(${city.name})</span>` : ''}</h2>
+            <span class="country">${city.countryName}</span>
           </div>
           <div class="city-header-actions">
             <button class="btn btn-sm compare-toggle" id="city-compare-toggle"
@@ -145,8 +145,8 @@ export async function renderCity(
     <div class="city-header">
       <div class="city-header-row">
         <div>
-          <h2>${city.name}</h2>
-          <span class="country">${city.country}</span>
+          <h2>${city.displayName}${city.displayName !== city.name ? ` <span class="native-name">(${city.name})</span>` : ''}</h2>
+          <span class="country">${city.countryName}</span>
         </div>
         <div class="city-header-actions">
           <button class="btn btn-sm compare-toggle" id="city-compare-toggle"
@@ -206,8 +206,8 @@ export async function renderCity(
 
   wireGarageToggle(cityId, rankingsContent, state, citySearch);
   wireCompareToggle(cityId);
-  wireCopyFleetButton(city.name, optimal.drivers);
-  wireExportButtons(city.name, optimal.drivers, depotCount, cargoTypes, score);
+  wireCopyFleetButton(city.displayName, optimal.drivers);
+  wireExportButtons(city.displayName, optimal.drivers, depotCount, cargoTypes, score);
 }
 
 // ============================================

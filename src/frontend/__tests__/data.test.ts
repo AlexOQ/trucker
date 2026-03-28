@@ -118,7 +118,7 @@ describe('data.ts', () => {
       expect(result.observations).toEqual(sampleObservations);
       expect(result.gameDefs).toBeNull();
       expect(result.cities).toHaveLength(2);
-      expect(result.cities[0]).toEqual({ id: 'berlin', name: 'Berlin', country: '', hasGarage: true });
+      expect(result.cities[0]).toEqual({ id: 'berlin', name: 'Berlin', displayName: 'Berlin', country: '', countryName: '', hasGarage: true });
       expect(result.companies).toHaveLength(2);
       expect(result.cargo).toHaveLength(4);
       expect(result.trailers).toHaveLength(3);
