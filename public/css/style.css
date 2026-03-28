@@ -1311,6 +1311,12 @@ tr.scs-fallback-row td {
   color: var(--text-dim);
 }
 
+.native-name {
+  color: var(--text-dim);
+  font-weight: normal;
+  font-size: 0.85em;
+}
+
 /* Trailer Breakdown */
 .trailer-name {
   font-weight: 600;

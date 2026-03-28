@@ -12,6 +12,7 @@
  */
 
 import { initDlcData, GARAGE_CITIES } from './dlc-data';
+import { CITY_DISPLAY_NAMES, COUNTRY_DISPLAY_NAMES } from './display-names';
 import { titleCase } from './utils';
 import type {
   City, Company, Cargo, Trailer,
@@ -69,12 +70,17 @@ function buildCities(defs: GameDefs | null, obs: Observations | null): City[] {
     return Object.entries(defs.cities).map(([id, city]) => ({
       id,
       name: city.name,
+      displayName: CITY_DISPLAY_NAMES[id] ?? city.name,
       country: city.country,
+      countryName: COUNTRY_DISPLAY_NAMES[city.country] ?? city.country,
       hasGarage: city.has_garage ?? GARAGE_CITIES.has(id),
     }));
   }
   if (obs) {
-    return obs.cities.map((id) => ({ id, name: titleCase(id), country: '', hasGarage: GARAGE_CITIES.has(id) }));
+    return obs.cities.map((id) => ({
+      id, name: titleCase(id), displayName: CITY_DISPLAY_NAMES[id] ?? titleCase(id),
+      country: '', countryName: '', hasGarage: GARAGE_CITIES.has(id),
+    }));
   }
   return [];
 }

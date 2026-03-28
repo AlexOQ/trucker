@@ -98,8 +98,8 @@ export async function renderComparison(
       ${cities.map((city, i) => `
         <div class="compare-card">
           <div class="compare-card-header">
-            <h3>${city.ranking.name}</h3>
-            <span class="country">${city.ranking.country}</span>
+            <h3>${city.ranking.displayName}${city.ranking.displayName !== city.ranking.name ? ` <span class="native-name">(${city.ranking.name})</span>` : ''}</h3>
+            <span class="country">${city.ranking.countryName}</span>
           </div>
 
           <div class="compare-stats">

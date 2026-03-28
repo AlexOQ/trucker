@@ -8,8 +8,10 @@ import type { DlcSection } from './dlc-data';
 
 export interface City {
   id: string;
-  name: string;
-  country: string;
+  name: string;           // native/game name (e.g. "København", "Αθήνα")
+  displayName: string;    // English name (e.g. "Copenhagen", "Athens")
+  country: string;        // country ID (e.g. "denmark")
+  countryName: string;    // English country name (e.g. "Denmark")
   hasGarage: boolean;
 }
 

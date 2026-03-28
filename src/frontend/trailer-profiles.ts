@@ -148,7 +148,7 @@ export function buildCityCargoProfile(
   for (const entry of cargo.values()) totalWeightedValue += entry.weightedValue;
 
   return {
-    cityId, cityName: city.name, country: city.country,
+    cityId, cityName: city.displayName, country: city.country,
     depotCount: totalDepots, companyCount,
     cargo, totalWeightedValue,
   };

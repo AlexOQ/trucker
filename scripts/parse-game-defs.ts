@@ -392,6 +392,8 @@ const GARAGE_CITIES: ReadonlySet<string> = new Set([
   'brno','ostrava','prague',
   // Denmark (4)
   'aalborg','aarhus','kobenhavn','odense',
+  // Estonia (3)
+  'parnu','tallinn','tartu',
   // Finland (11)
   'helsinki','jyvaskyla','kotka','kouvola','kuopio','lahti','oulu','pori','rovaniemi','tampere','turku',
   // France (24)
@@ -713,7 +715,7 @@ function extractCities(): CityData[] {
     cities.push({
       id,
       name: rawName,
-      country: String(unit.props.country || 'unknown'),
+      country: String(unit.props.country || 'unknown').toLowerCase(),
       population: typeof unit.props.population === 'number' ? unit.props.population : 0,
     });
   }
