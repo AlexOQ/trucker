@@ -134,7 +134,7 @@ export async function computeAllDLCValues(
           newCityPotential += score;
           newGarageCities.push({
             id: cityId,
-            name: rawData.cities.find(c => c.id === cityId)?.name ?? cityId,
+            name: rawData.cities.find(c => c.id === cityId)?.displayName ?? cityId,
             score,
           });
         }

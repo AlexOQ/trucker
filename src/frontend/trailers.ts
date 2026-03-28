@@ -12,6 +12,7 @@ import {
   type AllData, type Lookups, type Cargo, type Trailer,
 } from './data';
 import { escapeHtml } from './utils';
+import { COUNTRY_DISPLAY_NAMES } from './display-names';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -82,7 +83,7 @@ function tierCountries(trailers: Trailer[]): string {
       for (const c of t.country_validity) countrySet.add(c);
     }
   }
-  return allCountries ? 'All' : [...countrySet].sort().join(', ');
+  return allCountries ? 'All' : [...countrySet].sort().map(c => COUNTRY_DISPLAY_NAMES[c] ?? c).join(', ');
 }
 
 function buildBodyTypes(): BodyTypeSummary[] {
@@ -343,7 +344,7 @@ function bestPerZone(variants: Trailer[]): ZoneRecommendation[] {
   const zones = new Map<string, Trailer[]>();
   for (const t of variants) {
     const zone = (!t.country_validity || t.country_validity.length === 0)
-      ? 'All' : [...t.country_validity].sort().join(', ');
+      ? 'All' : [...t.country_validity].sort().map(c => COUNTRY_DISPLAY_NAMES[c] ?? c).join(', ');
     if (!zones.has(zone)) zones.set(zone, []);
     zones.get(zone)!.push(t);
   }
