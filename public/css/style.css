@@ -286,6 +286,42 @@ nav a:focus {
 }
 
 /* Theme Toggle */
+.game-selector {
+  display: inline-flex;
+  gap: 0;
+  border: 1px solid var(--border-btn);
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.game-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+  min-height: 44px;
+}
+
+.game-btn:hover {
+  color: var(--accent);
+  background: var(--bg-card);
+}
+
+.game-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.game-btn + .game-btn {
+  border-left: 1px solid var(--border-btn);
+}
+
 .theme-toggle {
   background: transparent;
   border: 1px solid var(--border-btn);

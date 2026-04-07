@@ -18,10 +18,22 @@ export {
   CARGO_DLC_MAP, MAP_DLC_CARGO, COMBINED_CARGO_DLC_MAP,
 } from './dlc-data';
 
-const STORAGE_KEY = 'ets2-trucker-advisor';
-const BANNER_DISMISSED_KEY = 'ets2-dlc-banner-dismissed';
-const ONBOARDING_COLLAPSED_KEY = 'ets2-onboarding-collapsed';
-const THEME_KEY = 'ets2-theme';
+import { getActiveGame } from './game';
+
+function gameKey(suffix: string): string {
+  try {
+    return `${getActiveGame()}-${suffix}`;
+  } catch {
+    return `ets2-${suffix}`;
+  }
+}
+
+// Game-specific keys (garages, DLCs, etc. differ per game)
+const STORAGE_KEY = () => gameKey('trucker-advisor');
+const BANNER_DISMISSED_KEY = () => gameKey('dlc-banner-dismissed');
+const ONBOARDING_COLLAPSED_KEY = () => gameKey('onboarding-collapsed');
+// Theme is shared across games
+const THEME_KEY = 'trucker-theme';
 
 export type SortColumn = 'name' | 'country' | 'depotCount' | 'cargoTypes' | 'score';
 export type SortDirection = 'asc' | 'desc';
@@ -66,7 +78,7 @@ const defaultState: AppState = {
 export function loadState(): AppState {
   if (_cachedState !== null) return _cachedState;
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(STORAGE_KEY());
     if (stored) {
       const parsed = JSON.parse(stored);
       const state: AppState = {
@@ -104,7 +116,7 @@ export function loadState(): AppState {
 export function saveState(state: AppState): void {
   _cachedState = structuredClone(state);
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEY(), JSON.stringify(state));
   } catch (e) {
     console.warn('Failed to save state to localStorage:', e);
   }
@@ -240,7 +252,12 @@ export function toggleCargoDLC(dlcId: string): boolean {
 // ============================================
 
 export function getOwnedMapDLCs(): string[] {
-  return loadState().ownedMapDLCs;
+  const dlcs = loadState().ownedMapDLCs;
+  // base_game is always owned (ATS base CA/NV/AZ)
+  if (!dlcs.includes('base_game') && ALL_MAP_DLC_IDS.includes('base_game')) {
+    dlcs.push('base_game');
+  }
+  return dlcs;
 }
 
 export function setOwnedMapDLCs(dlcs: string[]): void {
@@ -288,21 +305,21 @@ export function setSortPreference(column: SortColumn, direction: SortDirection):
  * Returns true if the user has never saved any state (first visit).
  */
 export function isFirstVisit(): boolean {
-  return localStorage.getItem(STORAGE_KEY) === null;
+  return localStorage.getItem(STORAGE_KEY()) === null;
 }
 
 /**
  * Returns true if the DLC configuration banner has been dismissed.
  */
 export function isBannerDismissed(): boolean {
-  return localStorage.getItem(BANNER_DISMISSED_KEY) === 'true';
+  return localStorage.getItem(BANNER_DISMISSED_KEY()) === 'true';
 }
 
 /**
  * Mark the DLC configuration banner as dismissed.
  */
 export function dismissBanner(): void {
-  localStorage.setItem(BANNER_DISMISSED_KEY, 'true');
+  localStorage.setItem(BANNER_DISMISSED_KEY(), 'true');
 }
 
 // ============================================
@@ -314,7 +331,7 @@ export function dismissBanner(): void {
  * Defaults to expanded for first-time visitors, collapsed for returning visitors.
  */
 export function isOnboardingCollapsed(): boolean {
-  const stored = localStorage.getItem(ONBOARDING_COLLAPSED_KEY);
+  const stored = localStorage.getItem(ONBOARDING_COLLAPSED_KEY());
   if (stored !== null) return stored === 'true';
   // First-time visitors see it expanded; returning visitors (who have state) see it collapsed
   return !isFirstVisit();
@@ -324,7 +341,7 @@ export function isOnboardingCollapsed(): boolean {
  * Save the onboarding collapsed state.
  */
 export function setOnboardingCollapsed(collapsed: boolean): void {
-  localStorage.setItem(ONBOARDING_COLLAPSED_KEY, collapsed ? 'true' : 'false');
+  localStorage.setItem(ONBOARDING_COLLAPSED_KEY(), collapsed ? 'true' : 'false');
 }
 
 // ============================================
@@ -338,7 +355,8 @@ export type Theme = 'dark' | 'light';
  * Priority: localStorage > prefers-color-scheme > 'dark' (default)
  */
 export function getTheme(): Theme {
-  const stored = localStorage.getItem(THEME_KEY);
+  const stored = localStorage.getItem(THEME_KEY)
+    ?? localStorage.getItem('ets2-theme');  // migrate legacy key
   if (stored === 'light' || stored === 'dark') return stored;
   if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: light)').matches) {
     return 'light';

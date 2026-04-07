@@ -3,11 +3,15 @@
  *
  * Only entries where the English name differs from the native/game name.
  * Cities not listed here use their native name as-is.
+ *
+ * ATS uses English names natively, so its maps are empty.
  */
 
-// ─── City Display Names ─────────────────────────────────────────────
+import type { GameId } from './game';
 
-export const CITY_DISPLAY_NAMES: Record<string, string> = {
+// ─── ETS2 City Display Names ────────────────────────────────────────
+
+const ETS2_CITY_DISPLAY_NAMES: Record<string, string> = {
   // Albania
   tirana: 'Tirana',          // Tiranë
   durres: 'Durrës',          // same but normalize
@@ -125,9 +129,9 @@ export const CITY_DISPLAY_NAMES: Record<string, string> = {
   zurich: 'Zurich',          // Zürich
 };
 
-// ─── Country Display Names ──────────────────────────────────────────
+// ─── ETS2 Country Display Names ─────────────────────────────────────
 
-export const COUNTRY_DISPLAY_NAMES: Record<string, string> = {
+const ETS2_COUNTRY_DISPLAY_NAMES: Record<string, string> = {
   albania: 'Albania',            // Shqipëria
   austria: 'Austria',            // Österreich
   belgium: 'Belgium',            // België
@@ -165,3 +169,47 @@ export const COUNTRY_DISPLAY_NAMES: Record<string, string> = {
   turkey: 'Turkey',              // Türkiye
   uk: 'United Kingdom',          // United Kingdom (same)
 };
+
+// ─── ATS Display Names (stubs — ATS uses English natively) ──────────
+
+const ATS_CITY_DISPLAY_NAMES: Record<string, string> = {};
+
+const ATS_COUNTRY_DISPLAY_NAMES: Record<string, string> = {
+  // ATS uses US states as "countries" — display names if needed
+};
+
+// ─── Game-Aware Exports ─────────────────────────────────────────────
+
+const CITY_NAMES: Record<GameId, Record<string, string>> = {
+  ets2: ETS2_CITY_DISPLAY_NAMES,
+  ats: ATS_CITY_DISPLAY_NAMES,
+};
+
+const COUNTRY_NAMES: Record<GameId, Record<string, string>> = {
+  ets2: ETS2_COUNTRY_DISPLAY_NAMES,
+  ats: ATS_COUNTRY_DISPLAY_NAMES,
+};
+
+/** Get city display names for a specific game (or active game). */
+export function getCityDisplayNames(gameId: GameId): Record<string, string> {
+  return CITY_NAMES[gameId] ?? {};
+}
+
+/** Get country display names for a specific game (or active game). */
+export function getCountryDisplayNames(gameId: GameId): Record<string, string> {
+  return COUNTRY_NAMES[gameId] ?? {};
+}
+
+// Backward-compatible direct exports (resolved at import time via active game)
+// Used by loader.ts and rankings-view.ts
+import { getActiveGame } from './game';
+
+export const CITY_DISPLAY_NAMES = new Proxy({} as Record<string, string>, {
+  get: (_target, prop: string) => getCityDisplayNames(getActiveGame())[prop],
+  has: (_target, prop: string) => prop in getCityDisplayNames(getActiveGame()),
+});
+
+export const COUNTRY_DISPLAY_NAMES = new Proxy({} as Record<string, string>, {
+  get: (_target, prop: string) => getCountryDisplayNames(getActiveGame())[prop],
+  has: (_target, prop: string) => prop in getCountryDisplayNames(getActiveGame()),
+});

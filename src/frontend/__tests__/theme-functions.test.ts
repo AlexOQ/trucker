@@ -29,7 +29,7 @@ vi.stubGlobal('document', {
 // Dynamic import after stubbing globals
 const storage = await import('../storage.ts');
 
-const THEME_KEY = 'ets2-theme';
+const THEME_KEY = 'trucker-theme';
 
 describe('getTheme', () => {
   beforeEach(() => {

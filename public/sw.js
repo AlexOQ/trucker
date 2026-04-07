@@ -6,7 +6,7 @@
 //   JS bundles    → cache-first  (Vite outputs content-hashed filenames; precaching would
 //                                 require vite-plugin-pwa to track the manifest — out of scope)
 
-const CACHE_NAME = 'trucker-cache-v2';
+const CACHE_NAME = 'trucker-cache-v3';
 const BASE = '/trucker/';
 
 // Pre-cache only truly static assets whose URLs never change between deploys.

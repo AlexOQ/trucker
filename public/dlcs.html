@@ -6,17 +6,21 @@
   <title>DLCs - ETS2 Trucker Advisor</title>
   <link rel="stylesheet" href="css/style.css">
   <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/trucker/sw.js');</script>
-  <script>(function(){var t=localStorage.getItem('ets2-theme');if(!t)t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.setAttribute('data-theme',t)})()</script>
+  <script>(function(){var t=localStorage.getItem('trucker-theme')||localStorage.getItem('ets2-theme');if(!t)t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.setAttribute('data-theme',t)})()</script>
 </head>
 <body>
   <a href="#main-content" class="skip-link">Skip to main content</a>
   <div class="container">
     <header>
       <div class="header-title">
-        <h1>ETS2 Trucker Advisor</h1>
-        <p class="subtitle">Optimize your trailer fleet for each garage</p>
+        <h1 id="page-title">Trucker Advisor</h1>
+        <p class="subtitle" id="page-subtitle"></p>
       </div>
       <nav>
+        <div class="game-selector" id="game-selector">
+          <button class="game-btn" data-game="ets2">ETS2</button>
+          <button class="game-btn" data-game="ats">ATS</button>
+        </div>
         <a href="index.html">Rankings</a>
         <a href="cities.html">Cities</a>
         <a href="companies.html">Companies</a>

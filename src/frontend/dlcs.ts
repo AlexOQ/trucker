@@ -5,7 +5,7 @@
  */
 
 import { loadAllData, type AllData } from './data';
-import { initThemeToggle } from './page-init';
+import { initThemeToggle, initGameSelector } from './page-init';
 import {
   TRAILER_DLCS, ALL_DLC_IDS,
   CARGO_DLCS, ALL_CARGO_DLC_IDS,
@@ -38,13 +38,22 @@ function renderSettings(): void {
   const ownedCargo = getOwnedCargoDLCs();
 
   const mapRows = sortedEntries(MAP_DLCS).map(([id, name]) => {
-    const checked = ownedMap.includes(id) ? 'checked' : '';
-    return `<label class="dlc-row"><input type="checkbox" data-map-dlc="${id}" ${checked}> ${name}</label>`;
+    const isBase = id === 'base_game';
+    const checked = isBase || ownedMap.includes(id) ? 'checked' : '';
+    const disabled = isBase ? 'disabled' : '';
+    return `<label class="dlc-row"><input type="checkbox" data-map-dlc="${id}" ${checked} ${disabled}> ${name}</label>`;
   }).join('');
 
-  const trailerRows = sortedEntries(TRAILER_DLCS).map(([id, name]) => {
-    const checked = ownedTrailer.includes(id) ? 'checked' : '';
-    return `<label class="dlc-row"><input type="checkbox" data-trailer-dlc="${id}" ${checked}> ${name}</label>`;
+  // Group trailer DLC entries by display name (e.g. lodeking+prestige → one row)
+  const trailerGroups = new Map<string, string[]>();
+  for (const [id, name] of sortedEntries(TRAILER_DLCS)) {
+    if (!trailerGroups.has(name)) trailerGroups.set(name, []);
+    trailerGroups.get(name)!.push(id);
+  }
+  const trailerRows = [...trailerGroups.entries()].map(([name, ids]) => {
+    const allOwned = ids.every(id => ownedTrailer.includes(id));
+    const checked = allOwned ? 'checked' : '';
+    return `<label class="dlc-row"><input type="checkbox" data-trailer-dlc="${ids.join(',')}" ${checked}> ${name}</label>`;
   }).join('');
 
   const cargoRows = sortedEntries(CARGO_DLCS).map(([id, name]) => {
@@ -104,7 +113,9 @@ function wireCheckboxes(): void {
   });
   settingsEl.querySelectorAll<HTMLInputElement>('input[data-trailer-dlc]').forEach(cb => {
     cb.addEventListener('change', () => {
-      toggleTrailerDLC(cb.dataset.trailerDlc!);
+      // Support comma-separated IDs for grouped DLC brands (e.g. lodeking,prestige)
+      const ids = cb.dataset.trailerDlc!.split(',');
+      for (const id of ids) toggleTrailerDLC(id);
       renderSettings();
       invalidateResults();
     });
@@ -268,6 +279,7 @@ async function runCalculation(): Promise<void> {
 
 async function init(): Promise<void> {
   initThemeToggle();
+  initGameSelector();
   try {
     rawData = await loadAllData();
     renderSettings();

@@ -3,7 +3,7 @@
  * Displays city browser with company/depot information
  */
 
-import { initPageData, initThemeToggle } from './page-init';
+import { initPageData, initThemeToggle, initGameSelector } from './page-init';
 import { normalize, type AllData, type Lookups, type Company } from './data';
 import { isOwnedGarage } from './storage';
 import { escapeHtml } from './utils';
@@ -18,7 +18,8 @@ const searchInput = document.getElementById('search') as HTMLInputElement;
 const backLink = document.getElementById('back-link') as HTMLElement;
 
 // Collapse state persistence
-const COLLAPSE_KEY = 'ets2-cities-collapsed';
+import { getActiveGame } from './game';
+const COLLAPSE_KEY = `${getActiveGame()}-cities-collapsed`;
 
 function getCollapsedCountries(): string[] {
   try {
@@ -269,6 +270,7 @@ function handleHashChange(): void {
 
 async function init(): Promise<void> {
   initThemeToggle();
+  initGameSelector();
   // Show loading state
   content.innerHTML = '<div class="loading">Loading cities...</div>';
 

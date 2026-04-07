@@ -11,8 +11,9 @@
  * Observations fill gaps and cross-validate.
  */
 
+import { getActiveGame } from './game';
 import { initDlcData, GARAGE_CITIES } from './dlc-data';
-import { CITY_DISPLAY_NAMES, COUNTRY_DISPLAY_NAMES } from './display-names';
+import { getCityDisplayNames, getCountryDisplayNames } from './display-names';
 import { titleCase } from './utils';
 import type {
   City, Company, Cargo, Trailer,
@@ -21,30 +22,33 @@ import type {
 
 const dataCache: Record<string, unknown> = {};
 
-async function loadJson<T>(filename: string): Promise<T | null> {
-  if (filename in dataCache) {
-    return dataCache[filename] as T | null;
+async function loadJson<T>(path: string): Promise<T | null> {
+  if (path in dataCache) {
+    return dataCache[path] as T | null;
   }
   try {
-    const response = await fetch(`data/${filename}`);
+    const response = await fetch(path);
     if (!response.ok) {
-      dataCache[filename] = null;
+      dataCache[path] = null;
       return null;
     }
     const data = await response.json();
-    dataCache[filename] = data;
+    dataCache[path] = data;
     return data as T;
   } catch {
-    dataCache[filename] = null;
+    dataCache[path] = null;
     return null;
   }
 }
 
 export async function loadAllData(): Promise<AllData> {
+  const gameId = getActiveGame();
+  const dataDir = `data/${gameId}`;
+
   // Load both sources in parallel
   const [gameDefs, observations] = await Promise.all([
-    loadJson<GameDefs>('game-defs.json'),
-    loadJson<Observations>('observations.json'),
+    loadJson<GameDefs>(`${dataDir}/game-defs.json`),
+    loadJson<Observations>(`${dataDir}/observations.json`),
   ]);
 
   if (!gameDefs && !observations) {
@@ -66,19 +70,23 @@ export async function loadAllData(): Promise<AllData> {
 }
 
 function buildCities(defs: GameDefs | null, obs: Observations | null): City[] {
+  const gameId = getActiveGame();
+  const cityNames = getCityDisplayNames(gameId);
+  const countryNames = getCountryDisplayNames(gameId);
+
   if (defs) {
     return Object.entries(defs.cities).map(([id, city]) => ({
       id,
       name: city.name,
-      displayName: CITY_DISPLAY_NAMES[id] ?? city.name,
+      displayName: cityNames[id] ?? city.name,
       country: city.country,
-      countryName: COUNTRY_DISPLAY_NAMES[city.country] ?? city.country,
+      countryName: countryNames[city.country] ?? city.country,
       hasGarage: city.has_garage ?? GARAGE_CITIES.has(id),
     }));
   }
   if (obs) {
     return obs.cities.map((id) => ({
-      id, name: titleCase(id), displayName: CITY_DISPLAY_NAMES[id] ?? titleCase(id),
+      id, name: titleCase(id), displayName: cityNames[id] ?? titleCase(id),
       country: '', countryName: '', hasGarage: GARAGE_CITIES.has(id),
     }));
   }
