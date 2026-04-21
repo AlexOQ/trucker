@@ -1,23 +1,31 @@
-// ETS2 Game Definition Parser
-// Parses extracted SII/SUI files from ETS2 game archives and generates
+// ETS2 / ATS Game Definition Parser
+// Parses extracted SII/SUI files from SCS game archives and generates
 // JSON data files for the Trucker Advisor frontend.
 //
 // Usage:
-//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder>          # Parse and write
-//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --diff   # Diff against existing, don't write
+//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--game ets2|ats]          # Parse and write
+//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --diff [--game ets2|ats]   # Diff against existing, don't write
 
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, mkdirSync } from 'fs';
 import { join, basename, dirname } from 'path';
 
 const args = process.argv.slice(2);
 const diffMode = args.includes('--diff');
-const defsPath = args.find(a => !a.startsWith('--'));
-if (!defsPath || !existsSync(defsPath)) {
-  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff]');
-  console.error('  --diff  Compare against existing game-defs.json without writing');
-  console.error('Example: npx tsx scripts/parse-game-defs.ts /tmp/ets2-defs/def');
+const gameFlagIdx = args.indexOf('--game');
+const game = gameFlagIdx >= 0 ? args[gameFlagIdx + 1] : 'ets2';
+if (game !== 'ets2' && game !== 'ats') {
+  console.error(`Unknown --game value: ${game}. Must be 'ets2' or 'ats'.`);
   process.exit(1);
 }
+const defsPath = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--game');
+if (!defsPath || !existsSync(defsPath)) {
+  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff] [--game ets2|ats]');
+  console.error('  --diff        Compare against existing game-defs.json without writing');
+  console.error('  --game <id>   Target game (default: ets2). Routes I/O to public/data/<id>/game-defs.json');
+  console.error('Example: npx tsx scripts/parse-game-defs.ts /tmp/ats-dlc-defs --game ats --diff');
+  process.exit(1);
+}
+const gameDefsPath = join(process.cwd(), 'public', 'data', game, 'game-defs.json');
 
 // ─── SII/SUI Parser ────────────────────────────────────────────────────
 
@@ -1227,7 +1235,8 @@ function writeOutput(
 
   // Frontend game-defs.json
   console.log('\nGenerating frontend data file...');
-  const frontendPath = join(process.cwd(), 'public', 'data', 'game-defs.json');
+  const frontendPath = gameDefsPath;
+  mkdirSync(dirname(frontendPath), { recursive: true });
   writeFileSync(frontendPath, JSON.stringify(frontendData));
   const sizeMB = (Buffer.byteLength(JSON.stringify(frontendData)) / 1024 / 1024).toFixed(1);
   console.log(`  Wrote ${frontendPath} (${sizeMB}MB)`);
@@ -1269,7 +1278,7 @@ interface DiffChange {
 }
 
 function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
-  const existingPath = join(process.cwd(), 'public', 'data', 'game-defs.json');
+  const existingPath = gameDefsPath;
   if (!existsSync(existingPath)) {
     console.log('No existing game-defs.json found — nothing to diff against.');
     console.log('Run without --diff to generate initial file.');
