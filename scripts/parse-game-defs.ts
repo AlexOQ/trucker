@@ -174,7 +174,7 @@ interface CargoData {
 
 // Cargo DLC mapping — verified against trucksimulator.wiki.gg/wiki/Cargo_types
 // Source: https://trucksimulator.wiki.gg/wiki/Cargo_types/Euro_Truck_Simulator_2
-const CARGO_DLC_MAP: Record<string, string> = {
+const ETS2_CARGO_DLC_MAP: Record<string, string> = {
   // High Power Cargo Pack (8 cargo types)
   aircond: 'high_power', hvac: 'high_power', crawler: 'high_power', driller: 'high_power',
   tube: 'high_power', helicopter: 'high_power', roller: 'high_power', tracks: 'high_power', yacht: 'high_power',
@@ -210,8 +210,8 @@ const CARGO_DLC_MAP: Record<string, string> = {
 
 // ─── DLC Registries (display names for the frontend DLC section) ─────
 
-/** Trailer DLC packs — brand prefix → display name */
-const TRAILER_DLCS: Record<string, string> = {
+/** Trailer DLC packs — brand prefix → display name (ETS2) */
+const ETS2_TRAILER_DLCS: Record<string, string> = {
   feldbinder: 'Feldbinder',
   kassbohrer: 'Kassbohrer',
   kogel: 'Kögel',
@@ -222,8 +222,8 @@ const TRAILER_DLCS: Record<string, string> = {
   wielton: 'Wielton',
 };
 
-/** Cargo DLC packs — pack ID → display name */
-const CARGO_DLCS: Record<string, string> = {
+/** Cargo DLC packs — pack ID → display name (ETS2) */
+const ETS2_CARGO_DLCS: Record<string, string> = {
   high_power: 'High Power Cargo',
   heavy_cargo: 'Heavy Cargo',
   special_transport: 'Special Transport',
@@ -235,8 +235,8 @@ const CARGO_DLCS: Record<string, string> = {
   forest_machinery: 'Forest Machinery',
 };
 
-/** Map expansion DLCs — DLC ID → display name */
-const MAP_DLCS: Record<string, string> = {
+/** Map expansion DLCs — DLC ID → display name (ETS2) */
+const ETS2_MAP_DLCS: Record<string, string> = {
   going_east: 'Going East!',
   scandinavia: 'Scandinavia',
   vive_la_france: 'Vive la France!',
@@ -249,8 +249,8 @@ const MAP_DLCS: Record<string, string> = {
   nordic_horizons: 'Nordic Horizons',
 };
 
-/** Map DLC → cities that require it (wiki-verified) */
-const CITY_DLC_MAP: Record<string, string[]> = {
+/** Map DLC → cities that require it (wiki-verified, ETS2) */
+const ETS2_CITY_DLC_MAP: Record<string, string[]> = {
   going_east: [
     'bialystok','bratislava','brno','budapest','bystrica','debrecen','gdansk','gdyne',
     'katowice','kosice','krakow','lodz','lublin','olsztyn','ostrava','pecs','poznan',
@@ -320,7 +320,7 @@ const CITY_DLC_MAP: Record<string, string[]> = {
  * Same filtering mechanism as cargo pack DLCs, toggled by map DLC ownership.
  * Cargo packs trump map DLCs for dual-tagged cargo (those stay in CARGO_DLC_MAP only).
  */
-const MAP_DLC_CARGO: Record<string, string> = {
+const ETS2_MAP_DLC_CARGO: Record<string, string> = {
   // Beyond the Baltic Sea (6)
   concr_cent: 'beyond_the_baltic_sea', concr_stair: 'beyond_the_baltic_sea',
   metal_beams: 'beyond_the_baltic_sea', re_bars: 'beyond_the_baltic_sea',
@@ -379,11 +379,132 @@ const MAP_DLC_CARGO: Record<string, string> = {
   alu_ingot: 'west_balkans', alu_profile: 'west_balkans',
 };
 
+// ─── ATS DLC Registries ──────────────────────────────────────────────
+// Sources:
+//   https://trucksimulator.wiki.gg/wiki/American_Truck_Simulator (state DLC list)
+//   https://store.steampowered.com/dlc/270880/American_Truck_Simulator/ (cargo + trailer packs)
+//   https://store.steampowered.com/app/1967690/American_Truck_Simulator__Lode_King__Prestige_Trailers_Pack/
+
+/** ATS state country → state DLC ID (null = base game / free DLC, no purchase required). */
+const ATS_STATE_TO_DLC: Record<string, string | null> = {
+  arizona: null,        // free DLC since June 2016, treated as base
+  california: null,     // base game
+  nevada: null,         // base game
+  new_mexico: 'new_mexico',
+  oregon: 'oregon',
+  washington: 'washington',
+  utah: 'utah',
+  idaho: 'idaho',
+  colorado: 'colorado',
+  wyoming: 'wyoming',
+  montana: 'montana',
+  texas: 'texas',
+  oklahoma: 'oklahoma',
+  kansas: 'kansas',
+  nebraska: 'nebraska',
+  arkansas: 'arkansas',
+  iowa: 'iowa',
+  louisiana: 'louisiana',
+  missouri: 'missouri',
+};
+
+/** Trailer DLC packs (ATS) — brand prefix → display name. Both `lodeking.*`
+ * and `prestige.*` trailers ship in the same DLC; mapping both to the same
+ * display name causes the frontend DLC page to render them as a single row. */
+const ATS_TRAILER_DLCS: Record<string, string> = {
+  lodeking: 'Lode King & Prestige Trailers Pack',
+  prestige: 'Lode King & Prestige Trailers Pack',
+};
+
+/** Cargo DLC packs (ATS) — pack ID → display name. */
+const ATS_CARGO_DLCS: Record<string, string> = {
+  bobcat: 'Bobcat Cargo Pack',
+  jcb: 'JCB Equipment Pack',
+  heavy_cargo: 'Heavy Cargo Pack',
+  krone_agri: 'KRONE Agriculture Equipment',
+  farm_machinery: 'Farm Machinery',
+  volvo_ce: 'Volvo Construction Equipment',
+  special_transport: 'Special Transport',
+  forest_machinery: 'Forest Machinery',
+};
+
+/** State map expansion DLCs (ATS) — DLC ID → display name. Released states only. */
+const ATS_MAP_DLCS: Record<string, string> = {
+  new_mexico: 'New Mexico',
+  oregon: 'Oregon',
+  washington: 'Washington',
+  utah: 'Utah',
+  idaho: 'Idaho',
+  colorado: 'Colorado',
+  wyoming: 'Wyoming',
+  montana: 'Montana',
+  texas: 'Texas',
+  oklahoma: 'Oklahoma',
+  kansas: 'Kansas',
+  nebraska: 'Nebraska',
+  arkansas: 'Arkansas',
+  iowa: 'Iowa',
+  louisiana: 'Louisiana',
+  missouri: 'Missouri',
+};
+
+/** Cargo → DLC pack mapping (ATS).
+ *
+ * NOT YET POPULATED — populating per-cargo DLC pack assignments for ATS
+ * requires per-pack wiki research (which cargo IDs ship in which pack).
+ * Until populated, ATS cargo will report no DLC pack on the marginal-value
+ * calculator. Tracked as a follow-up. */
+const ATS_CARGO_DLC_MAP: Record<string, string> = {};
+
+/** Cargo only available with a specific map expansion (ATS).
+ *
+ * NOT YET POPULATED — same reason as ATS_CARGO_DLC_MAP. */
+const ATS_MAP_DLC_CARGO: Record<string, string> = {};
+
+// ─── Game-aware aliases ─────────────────────────────────────────────
+// Every site below references the unprefixed name. These switches pick
+// the right list based on the active --game flag.
+
+const TRAILER_DLCS: Record<string, string> =
+  game === 'ats' ? ATS_TRAILER_DLCS : ETS2_TRAILER_DLCS;
+
+const CARGO_DLCS: Record<string, string> =
+  game === 'ats' ? ATS_CARGO_DLCS : ETS2_CARGO_DLCS;
+
+const MAP_DLCS: Record<string, string> =
+  game === 'ats' ? ATS_MAP_DLCS : ETS2_MAP_DLCS;
+
+const CARGO_DLC_MAP: Record<string, string> =
+  game === 'ats' ? ATS_CARGO_DLC_MAP : ETS2_CARGO_DLC_MAP;
+
+const MAP_DLC_CARGO: Record<string, string> =
+  game === 'ats' ? ATS_MAP_DLC_CARGO : ETS2_MAP_DLC_CARGO;
+
+/** Cities by DLC. For ATS this is computed by grouping each city by its
+ * country (state) and routing through ATS_STATE_TO_DLC. The set of cities
+ * is not yet known here (cities are extracted later); we expose a builder
+ * the city extractor calls once it has the data. */
+function buildAtsCityDlcMap(cityIds: Array<{ id: string; country: string }>): Record<string, string[]> {
+  const byDlc: Record<string, string[]> = {};
+  for (const c of cityIds) {
+    const dlc = ATS_STATE_TO_DLC[c.country];
+    if (!dlc) continue; // base / free state, no DLC required
+    if (!byDlc[dlc]) byDlc[dlc] = [];
+    byDlc[dlc].push(c.id);
+  }
+  for (const dlc of Object.keys(byDlc)) byDlc[dlc].sort();
+  return byDlc;
+}
+
+// CITY_DLC_MAP is populated below for the ETS2 path; for ATS it is built
+// dynamically once cities are extracted (see emitDlcSection() callsite).
+let CITY_DLC_MAP: Record<string, string[]> = ETS2_CITY_DLC_MAP;
+
 /**
- * Cities that have a garage available in-game (wiki-verified).
+ * Cities that have a garage available in ETS2 (wiki-verified).
  * Source: https://trucksimulator.wiki.gg/wiki/Garages/Euro_Truck_Simulator_2
  */
-const GARAGE_CITIES: ReadonlySet<string> = new Set([
+const ETS2_GARAGE_CITIES: ReadonlySet<string> = new Set([
   // Austria (6)
   'graz','innsbruck','klagenfurt','linz','salzburg','wien',
   // Albania (1)
@@ -468,6 +589,61 @@ const GARAGE_CITIES: ReadonlySet<string> = new Set([
   'felixstowe','glasgow','grimsby','liverpool','london','manchester','newcastle',
   'plymouth','sheffield','southampton','swansea',
 ]);
+
+/**
+ * Cities that have a garage available in ATS (wiki-verified).
+ * Source: https://trucksimulator.wiki.gg/wiki/Garages/American_Truck_Simulator
+ *
+ * IDs are SCS internal city identifiers (12-char truncated form, as found
+ * in `city_data : city.<id>` inside each .sui file). The wiki lists display
+ * names (e.g. "Oklahoma City") which map to truncated internal IDs
+ * (`oklahoma_cit`). Always use the truncated form so this set matches the
+ * `city.id` keys produced by the parser.
+ */
+const ATS_GARAGE_CITIES: ReadonlySet<string> = new Set([
+  // Arizona (4)
+  'flagstaff','phoenix','tucson','yuma',
+  // Arkansas (7)
+  'el_dorado','fayetteville','fort_smith','jonesboro','little_rock','pine_bluff','texarkana_ar',
+  // California (7)
+  'bakersfield','fresno','los_angeles','redding','sacramento','san_diego','san_francisc',
+  // Colorado (8)
+  'alamosa','colorado_spr','denver','fort_collins','lamar','montrose','steamboat_sp','sterling',
+  // Idaho (5)
+  'boise','coeur_dalene','idaho_falls','salmon','twin_falls',
+  // Iowa (5)
+  'council_bluf','des_moines','iowa_city','mason_city','sioux_city',
+  // Kansas (6)
+  'garden_city','hays','kansas_ci_ks','salina','topeka','wichita',
+  // Louisiana (6)
+  'alexandria','baton_rouge','lake_charles','monroe','new_orleans','shreveport',
+  // Missouri (6)
+  'cape_girarde','jefferson_ci','kansas_ci_mo','kirksville','springfield','st_louis',
+  // Montana (6)
+  'billings','great_falls','helena','kalispell','miles_city','missoula',
+  // Nebraska (5)
+  'grand_island','lincoln','north_platte','omaha','scottsbluff',
+  // Nevada (4)
+  'carson_city','elko','las_vegas','reno',
+  // New Mexico (5)
+  'albuquerque','farmington','las_cruces','roswell','santa_fe',
+  // Oklahoma (5)
+  'lawton','mcalester','oklahoma_cit','tulsa','woodward',
+  // Oregon (6)
+  'bend','eugene','medford','ontario','portland','salem',
+  // Texas (16)
+  'abilene','amarillo','austin','beaumont','corpus_chris','dallas','del_rio','el_paso',
+  'fort_stockto','houston','laredo','lufkin','mcallen','odessa','san_antonio','texarkana',
+  // Utah (5)
+  'moab','price','salt_lake','st_george','vernal',
+  // Washington (5)
+  'kennewick','olympia','seattle','spokane','wenatchee',
+  // Wyoming (5)
+  'casper','cheyenne','evanston','gillette','jackson',
+]);
+
+/** Garage cities for the active --game target. */
+const GARAGE_CITIES: ReadonlySet<string> = game === 'ats' ? ATS_GARAGE_CITIES : ETS2_GARAGE_CITIES;
 
 function extractCargo(): CargoData[] {
   const cargoDir = join(defsPath, 'cargo');
@@ -1119,6 +1295,11 @@ function buildFrontendData(
   cities: CityData[], countries: CountryData[], matches: CargoTrailerMatch[],
   cityCompanyMap: CityCompanyEntry[], economy: EconomyData, trucks: TruckData[],
 ) {
+  // For ATS, derive city → state DLC mapping from the extracted cities. The
+  // ETS2 path keeps the hardcoded ETS2_CITY_DLC_MAP assigned at module scope.
+  if (game === 'ats') {
+    CITY_DLC_MAP = buildAtsCityDlcMap(cities.map(c => ({ id: c.id, country: c.country })));
+  }
   return {
     cargo: Object.fromEntries(cargo.map(c => [c.id, {
       name: c.name,
@@ -1237,8 +1418,9 @@ function writeOutput(
   console.log('\nGenerating frontend data file...');
   const frontendPath = gameDefsPath;
   mkdirSync(dirname(frontendPath), { recursive: true });
-  writeFileSync(frontendPath, JSON.stringify(frontendData));
-  const sizeMB = (Buffer.byteLength(JSON.stringify(frontendData)) / 1024 / 1024).toFixed(1);
+  const json = JSON.stringify(frontendData, null, 2);
+  writeFileSync(frontendPath, json);
+  const sizeMB = (Buffer.byteLength(json) / 1024 / 1024).toFixed(1);
   console.log(`  Wrote ${frontendPath} (${sizeMB}MB)`);
 }
 
