@@ -599,6 +599,20 @@ const ETS2_GARAGE_CITIES: ReadonlySet<string> = new Set([
  * names (e.g. "Oklahoma City") which map to truncated internal IDs
  * (`oklahoma_cit`). Always use the truncated form so this set matches the
  * `city.id` keys produced by the parser.
+ *
+ * NOTE: The 12-char truncation rule is what SCS *usually* does, but they make
+ * per-city exceptions:
+ *   - Salt Lake City -> 'salt_lake' (literal short form, not 'salt_lake_ci')
+ *   - Texarkana TX/AR is asymmetric: TX side is 'texarkana', AR side is 'texarkana_ar'
+ *     (compare with Kansas City, where both halves get a state suffix:
+ *      'kansas_ci_ks' / 'kansas_ci_mo')
+ * If you "normalize" these to fit the truncation rule the corresponding
+ * `has_garage` flag will silently fail.
+ * To verify a city.id, check the regenerated public/data/ats/game-defs.json
+ * (`jq '.cities | keys[]' public/data/ats/game-defs.json`).
+ *
+ * See also: the GARAGE_CITIES ⊆ cities[].id consistency assertion at the
+ * tail of buildFrontendData() — drift in this set is now caught at parse time.
  */
 const ATS_GARAGE_CITIES: ReadonlySet<string> = new Set([
   // Arizona (4)
