@@ -30,4 +30,22 @@ export default [
       'no-unsanitized/property': 'warn',
     },
   },
+  {
+    files: ['scripts/**/*.ts'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        Buffer: 'readonly',
+        setTimeout: 'readonly',
+        __dirname: 'readonly',
+        __filename: 'readonly',
+        Map: 'readonly',
+        Set: 'readonly',
+        Promise: 'readonly',
+      },
+    },
+  },
 ];

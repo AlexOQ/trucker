@@ -12,19 +12,25 @@ import { join, basename, dirname } from 'path';
 const args = process.argv.slice(2);
 const diffMode = args.includes('--diff');
 const gameFlagIdx = args.indexOf('--game');
-const game = gameFlagIdx >= 0 ? args[gameFlagIdx + 1] : 'ets2';
-if (game !== 'ets2' && game !== 'ats') {
-  console.error(`Unknown --game value: ${game}. Must be 'ets2' or 'ats'.`);
+const rawGame = gameFlagIdx >= 0 ? args[gameFlagIdx + 1] : 'ets2';
+if (!process.env.VITEST && rawGame !== 'ets2' && rawGame !== 'ats') {
+  console.error(`Unknown --game value: ${rawGame}. Must be 'ets2' or 'ats'.`);
   process.exit(1);
 }
-const defsPath = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--game');
-if (!defsPath || !existsSync(defsPath)) {
+// Cast: under VITEST the value is whatever vitest passed; the parser's runtime
+// codepaths (main, runDiff) never execute under VITEST so the cast is safe.
+const game = (rawGame === 'ats' ? 'ats' : 'ets2') as 'ets2' | 'ats';
+const rawDefsPath = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--game');
+if (!process.env.VITEST && (!rawDefsPath || !existsSync(rawDefsPath))) {
   console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff] [--game ets2|ats]');
   console.error('  --diff        Compare against existing game-defs.json without writing');
   console.error('  --game <id>   Target game (default: ets2). Routes I/O to public/data/<id>/game-defs.json');
   console.error('Example: npx tsx scripts/parse-game-defs.ts /tmp/ats-dlc-defs --game ats --diff');
   process.exit(1);
 }
+// Same VITEST safety: defsPath is only consumed inside main()/runDiff which
+// are gated; cast to string for the file-reading helpers.
+const defsPath: string = rawDefsPath ?? '';
 const gameDefsPath = join(process.cwd(), 'public', 'data', game, 'game-defs.json');
 
 // ─── SII/SUI Parser ────────────────────────────────────────────────────
@@ -1680,4 +1686,4 @@ function diffSection(
   }
 }
 
-main();
+if (!process.env.VITEST) main();
