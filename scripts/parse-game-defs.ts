@@ -484,7 +484,7 @@ const MAP_DLC_CARGO: Record<string, string> =
  * country (state) and routing through ATS_STATE_TO_DLC. The set of cities
  * is not yet known here (cities are extracted later); we expose a builder
  * the city extractor calls once it has the data. */
-function buildAtsCityDlcMap(cityIds: Array<{ id: string; country: string }>): Record<string, string[]> {
+export function buildAtsCityDlcMap(cityIds: Array<{ id: string; country: string }>): Record<string, string[]> {
   const byDlc: Record<string, string[]> = {};
   for (const c of cityIds) {
     const dlc = ATS_STATE_TO_DLC[c.country];
@@ -496,9 +496,13 @@ function buildAtsCityDlcMap(cityIds: Array<{ id: string; country: string }>): Re
   return byDlc;
 }
 
-// CITY_DLC_MAP is populated below for the ETS2 path; for ATS it is built
-// dynamically once cities are extracted (see emitDlcSection() callsite).
-let CITY_DLC_MAP: Record<string, string[]> = ETS2_CITY_DLC_MAP;
+/** Game-aware city → DLCs map factory. Pure: no I/O, no module-scope state. */
+function getCityDlcMap(
+  game: 'ets2' | 'ats',
+  cities: Array<{ id: string; country: string }>,
+): Record<string, string[]> {
+  return game === 'ats' ? buildAtsCityDlcMap(cities) : ETS2_CITY_DLC_MAP;
+}
 
 /**
  * Cities that have a garage available in ETS2 (wiki-verified).
@@ -1309,11 +1313,8 @@ function buildFrontendData(
   cities: CityData[], countries: CountryData[], matches: CargoTrailerMatch[],
   cityCompanyMap: CityCompanyEntry[], economy: EconomyData, trucks: TruckData[],
 ) {
-  // For ATS, derive city → state DLC mapping from the extracted cities. The
-  // ETS2 path keeps the hardcoded ETS2_CITY_DLC_MAP assigned at module scope.
-  if (game === 'ats') {
-    CITY_DLC_MAP = buildAtsCityDlcMap(cities.map(c => ({ id: c.id, country: c.country })));
-  }
+  // Game-aware city → DLCs map. Pure helper, no module-scope state.
+  const cityDlcMap = getCityDlcMap(game, cities.map(c => ({ id: c.id, country: c.country })));
   return {
     cargo: Object.fromEntries(cargo.map(c => [c.id, {
       name: c.name,
@@ -1391,7 +1392,7 @@ function buildFrontendData(
       trailer_dlcs: TRAILER_DLCS,
       cargo_dlcs: CARGO_DLCS,
       map_dlcs: MAP_DLCS,
-      city_dlc_map: CITY_DLC_MAP,
+      city_dlc_map: cityDlcMap,
       cargo_dlc_map: CARGO_DLC_MAP,
       map_dlc_cargo: MAP_DLC_CARGO,
       garage_cities: [...GARAGE_CITIES].sort(),
@@ -1555,7 +1556,7 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
     if (!GARAGE_CITIES.has(id)) {
       return 'needs_input'; // garage status unknown
     }
-    const hasDlcMapping = Object.values(CITY_DLC_MAP).some(cities => cities.includes(id));
+    const hasDlcMapping = Object.values(newData.dlc.city_dlc_map).some(cs => cs.includes(id));
     return hasDlcMapping ? 'clean' : 'needs_input';
   });
 
