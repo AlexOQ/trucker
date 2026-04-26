@@ -9,3 +9,4 @@ analysis/
 saves/
 coverage/
 test-results/
+.local-data/

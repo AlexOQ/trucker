@@ -324,17 +324,15 @@ export interface DlcSection {
   garage_cities: string[];
 }
 
-let _dlcInitialized = false;
-
 /**
  * Override fallback DLC data with live data from game-defs.json.
- * Called by loadAllData() when the dlc section exists.
- * Idempotent — subsequent calls are ignored to prevent accidental re-initialization.
+ * Called by loadAllData() each time data is loaded — including after a
+ * game switch (ETS2 ↔ ATS), which is why this is not guarded against
+ * repeat calls. The assignments below are idempotent for the same input,
+ * and must overwrite when the input differs (e.g. ATS ships a different
+ * MAP_DLCS list than ETS2).
  */
 export function initDlcData(dlc: DlcSection): void {
-  if (_dlcInitialized) return;
-  _dlcInitialized = true;
-
   TRAILER_DLCS = dlc.trailer_dlcs;
   ALL_DLC_IDS = Object.keys(TRAILER_DLCS);
 

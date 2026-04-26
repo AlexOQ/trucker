@@ -14,8 +14,8 @@
     "export": "tsx scripts/export-data.ts",
     "test": "vitest run",
     "parse-saves": "node scripts/parse-saves.cjs",
-    "lint": "tsc --noEmit",
-    "lint:fix": "tsc --noEmit",
+    "lint": "tsc --noEmit -p tsconfig.lint.json",
+    "lint:fix": "tsc --noEmit -p tsconfig.lint.json",
     "format": "prettier --write src/frontend/"
   },
   "devDependencies": {
