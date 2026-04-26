@@ -78,7 +78,7 @@ For more detail on the algorithm and game mechanics, see [docs/ALGORITHM-NOTES.m
 
 ## Data Source
 
-Game data is extracted directly from ETS2 game definition files using the included parser (`scripts/parse-game-defs.ts`). The parser reads cargo definitions, trailer specs, company mappings, economy constants, and DLC registries from the `def/` folder extracted from game `.scs` archives. Data is updated when new game patches or DLCs are released.
+Game data is extracted directly from game definition files for both Euro Truck Simulator 2 and American Truck Simulator using the included parser (`scripts/parse-game-defs.ts /path/to/def --game <ets2|ats>`). The parser reads cargo definitions, trailer specs, company mappings, economy constants, and DLC registries from the `def/` folder extracted from each game's `.scs` archives, and writes per-game JSON to `public/data/<game>/game-defs.json`. Data is updated when new game patches or DLCs are released.
 
 ## Development
 
