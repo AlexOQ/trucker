@@ -1315,6 +1315,18 @@ function buildFrontendData(
 ) {
   // Game-aware city → DLCs map. Pure helper, no module-scope state.
   const cityDlcMap = getCityDlcMap(game, cities.map(c => ({ id: c.id, country: c.country })));
+
+  // Consistency check: every GARAGE_CITIES entry must exist in the extracted
+  // cities[]. Catches silent has_garage:false regressions when a hand-curated
+  // ID drifts from SCS's actual city.id (the Salt Lake City class of bug).
+  const cityIdSet = new Set(cities.map(c => c.id));
+  const missingGarageCities = [...GARAGE_CITIES].filter(id => !cityIdSet.has(id));
+  if (missingGarageCities.length > 0) {
+    console.error(`[ERR] GARAGE_CITIES drift: ${missingGarageCities.length} id(s) not found in extracted cities[] for game=${game}:`);
+    for (const id of missingGarageCities) console.error(`  - ${id}`);
+    process.exit(1);
+  }
+
   return {
     cargo: Object.fromEntries(cargo.map(c => [c.id, {
       name: c.name,
