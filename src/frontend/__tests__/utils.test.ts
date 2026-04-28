@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { normalize, titleCase, trailerTotalHV, formatTrailerSpec, escapeHtml } from '../utils';
+import {
+  normalize,
+  titleCase,
+  trailerTotalHV,
+  formatTrailerSpec,
+  escapeHtml,
+  tierFromChainType,
+  CHAIN_LABELS,
+  TIER_BY_CHAIN_TYPE,
+} from '../utils';
 import type { Trailer, Lookups, Cargo } from '../types';
 
 describe('normalize', () => {
@@ -283,6 +292,38 @@ describe('formatTrailerSpec', () => {
     expect(spec).toContain('2+2-axle');
   });
 
+  it('labels ATS bdouble (no underscore) chain type', () => {
+    const spec = formatTrailerSpec(makeTrailer({
+      id: 'scs.box.bdouble_2_2.dryvan',
+      chain_type: 'bdouble',
+    }));
+    expect(spec).toContain('B-double');
+  });
+
+  it('labels ATS turnpike-double chain type', () => {
+    const spec = formatTrailerSpec(makeTrailer({
+      id: 'scs.box.tp_double_1.dryvan',
+      chain_type: 'tpdouble',
+    }));
+    expect(spec).toContain('Turnpike-double');
+  });
+
+  it('labels ATS rocky-mountain double chain type', () => {
+    const spec = formatTrailerSpec(makeTrailer({
+      id: 'scs.box.rm_double_p.dryvan',
+      chain_type: 'rmdouble',
+    }));
+    expect(spec).toContain('RM-double');
+  });
+
+  it('labels ATS triple chain type', () => {
+    const spec = formatTrailerSpec(makeTrailer({
+      id: 'scs.box.triple_p.dryvan',
+      chain_type: 'triple',
+    }));
+    expect(spec).toContain('Triple');
+  });
+
   it('formats weight in tonnes', () => {
     const spec = formatTrailerSpec(makeTrailer({ gross_weight_limit: 60000 }));
     expect(spec).toContain('60t');
@@ -291,6 +332,35 @@ describe('formatTrailerSpec', () => {
   it('includes length in meters', () => {
     const spec = formatTrailerSpec(makeTrailer({ length: 15.0 }));
     expect(spec).toContain('15m');
+  });
+});
+
+describe('tierFromChainType', () => {
+  it('buckets ETS2 chain types', () => {
+    expect(tierFromChainType('single')).toBe('Standard');
+    expect(tierFromChainType('double')).toBe('Double');
+    expect(tierFromChainType('b_double')).toBe('Double');
+    expect(tierFromChainType('hct')).toBe('HCT');
+  });
+
+  it('buckets ATS chain types', () => {
+    expect(tierFromChainType('bdouble')).toBe('Double');
+    expect(tierFromChainType('tpdouble')).toBe('Double');
+    expect(tierFromChainType('rmdouble')).toBe('Double');
+    expect(tierFromChainType('triple')).toBe('HCT');
+  });
+
+  it('treats unknown / undefined chain types as Standard', () => {
+    expect(tierFromChainType(undefined)).toBe('Standard');
+    expect(tierFromChainType('')).toBe('Standard');
+    expect(tierFromChainType('mystery')).toBe('Standard');
+  });
+
+  it('CHAIN_LABELS and TIER_BY_CHAIN_TYPE cover the same chain types', () => {
+    // Drift guard: a new ATS/ETS2 chain type added to one map but not the other
+    // would silently produce a label without a tier (or vice versa). This test
+    // fails on any divergence so the second map gets updated alongside.
+    expect(Object.keys(CHAIN_LABELS).sort()).toEqual(Object.keys(TIER_BY_CHAIN_TYPE).sort());
   });
 });
 

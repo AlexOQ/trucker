@@ -52,7 +52,7 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 **Body Types**:
 - 15-17 body types cover all ~359 cargo types in the game
 - All trailers within a body type haul the SAME cargo set — difference is only volume/units
-- Trailer tiers: Standard, Double, HCT (identified by trailer ID keywords)
+- Trailer tiers: Standard, Double, HCT. `trailers.ts` derives the tier from the `chain_type` field via `tierFromChainType()` (ETS2: `single`/`double`/`b_double`/`hct`; ATS: `single`/`double`/`bdouble`/`rmdouble`/`tpdouble`/`triple`). `body-types.ts` still uses ID-keyword heuristics for the `hasDoubles`/`hasBDoubles`/`hasHCT` profile flags (known gap, tracked in #250)
 - Body type profiles are built dynamically from game-defs.json via `getBodyTypeProfiles()`
 - Optimizer works at body-type level, not individual trailer level
 
@@ -96,7 +96,7 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 2. For each body type, collect union of all compatible cargo IDs (via `trailerCargoMap`)
 3. All trailers within a body type haul the SAME cargo set — difference is only volume/capacity
 4. Pick best trailer per body type by total haul value across all compatible cargo
-5. Detect doubles/HCT availability by scanning trailer IDs for `double`/`bdouble`/`hct` keywords
+5. Detect doubles/HCT availability: `body-types.ts` still uses ID-keyword scanning (`double`/`bdouble`/`hct`) to populate `hasDoubles`/`hasBDoubles`/`hasHCT` (known gap — misses ATS `triple`/`rmdouble`/`tpdouble`, tracked in #250). For tier grouping in `trailers.ts`, use `tierFromChainType(chain_type)` instead.
 6. Result: ~15-17 body types covering all ~359 cargo types
 
 ### Dominated Body Type Elimination (`findDominatedBodyTypes()`)

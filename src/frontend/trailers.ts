@@ -11,7 +11,7 @@ import {
   pickBestTrailer, trailerTotalHV, formatTrailerSpec,
   type AllData, type Lookups, type Cargo, type Trailer,
 } from './data';
-import { escapeHtml } from './utils';
+import { escapeHtml, tierFromChainType } from './utils';
 import { COUNTRY_DISPLAY_NAMES } from './display-names';
 
 let data: AllData | null = null;
@@ -67,12 +67,6 @@ function getCargo(cargoIds: Set<string>, trailerId: string): CargoWithUnits[] {
     .sort((a, b) => b.haulValue - a.haulValue);
 }
 
-function tierFromId(id: string): string {
-  if (id.includes('hct')) return 'HCT';
-  if (id.includes('double') || id.includes('bdouble')) return 'Double';
-  return 'Standard';
-}
-
 function tierCountries(trailers: Trailer[]): string {
   const countrySet = new Set<string>();
   let allCountries = false;
@@ -111,7 +105,7 @@ function buildBodyTypes(): BodyTypeSummary[] {
     // Group by tier
     const tierMap = new Map<string, Trailer[]>();
     for (const t of trailers) {
-      const tier = tierFromId(t.id);
+      const tier = tierFromChainType(t.chain_type);
       if (!tierMap.has(tier)) tierMap.set(tier, []);
       tierMap.get(tier)!.push(t);
     }

@@ -23,17 +23,26 @@ export function normalize(str: string): string {
   return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
+// Chain type label for non-single trailers.
+// ETS2 emits b_double / hct; ATS emits bdouble, rmdouble, tpdouble, triple, double.
+// Keep keys in sync with TIER_BY_CHAIN_TYPE; utils.test.ts asserts both maps cover the same set.
+export const CHAIN_LABELS: Record<string, string> = {
+  hct: 'HCT',
+  b_double: 'B-double',
+  bdouble: 'B-double',
+  rmdouble: 'RM-double',
+  tpdouble: 'Turnpike-double',
+  triple: 'Triple',
+  double: 'Double',
+};
+
 /** Build a human-readable spec string from trailer properties, e.g. "Kassbohrer 3-axle 79t 16.4m" */
 export function formatTrailerSpec(t: Trailer): string {
   const idParts = t.id.split('.');
   const brandRaw = idParts[0];
   const brand = brandRaw.charAt(0).toUpperCase() + brandRaw.slice(1);
 
-  // Chain type label for non-single trailers
-  let chainLabel = '';
-  if (t.chain_type === 'hct') chainLabel = 'HCT';
-  else if (t.chain_type === 'b_double') chainLabel = 'B-double';
-  else if (t.chain_type === 'double') chainLabel = 'Double';
+  const chainLabel = CHAIN_LABELS[t.chain_type] ?? '';
 
   // Extract axle count from ID
   let axleStr = '';
@@ -120,6 +129,25 @@ export function pickBestTrailer(candidates: Trailer[], fallback: Trailer, lookup
     }
   }
   return bestTrailer;
+}
+
+// ATS `triple` rides in the HCT bucket until the "configurations not tiers"
+// rework replaces this 3-tier scheme; HCT and triple are distinct real
+// configurations, but both live in the heaviest bucket for now.
+// Keep keys in sync with CHAIN_LABELS; utils.test.ts asserts both maps cover the same set.
+export const TIER_BY_CHAIN_TYPE: Record<string, string> = {
+  hct: 'HCT',
+  triple: 'HCT',
+  double: 'Double',
+  b_double: 'Double',
+  bdouble: 'Double',
+  tpdouble: 'Double',
+  rmdouble: 'Double',
+};
+
+export function tierFromChainType(chainType: string | undefined): string {
+  if (!chainType) return 'Standard';
+  return TIER_BY_CHAIN_TYPE[chainType] ?? 'Standard';
 }
 
 /** Convert game ID to display name: "apples_c" -> "Apples C" */

@@ -86,7 +86,7 @@ Game data is extracted directly from game definition files for both Euro Truck S
 npm install              # Install dependencies
 npm run dev:frontend     # Start dev server (http://localhost:5173)
 npm run build:frontend   # Build for production
-npm run test             # Run tests (265 tests)
+npm run test             # Run test suite
 npm run lint             # TypeScript type checking
 ```
 
