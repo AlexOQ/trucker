@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { normalize, titleCase, trailerTotalHV, formatTrailerSpec, escapeHtml, tierFromChainType } from '../utils';
+import {
+  normalize,
+  titleCase,
+  trailerTotalHV,
+  formatTrailerSpec,
+  escapeHtml,
+  tierFromChainType,
+  CHAIN_LABELS,
+  TIER_BY_CHAIN_TYPE,
+} from '../utils';
 import type { Trailer, Lookups, Cargo } from '../types';
 
 describe('normalize', () => {
@@ -345,6 +354,13 @@ describe('tierFromChainType', () => {
     expect(tierFromChainType(undefined)).toBe('Standard');
     expect(tierFromChainType('')).toBe('Standard');
     expect(tierFromChainType('mystery')).toBe('Standard');
+  });
+
+  it('CHAIN_LABELS and TIER_BY_CHAIN_TYPE cover the same chain types', () => {
+    // Drift guard: a new ATS/ETS2 chain type added to one map but not the other
+    // would silently produce a label without a tier (or vice versa). This test
+    // fails on any divergence so the second map gets updated alongside.
+    expect(Object.keys(CHAIN_LABELS).sort()).toEqual(Object.keys(TIER_BY_CHAIN_TYPE).sort());
   });
 });
 
