@@ -151,8 +151,6 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
       bestTotalHV: bestHV,
       bestChainType: best.chain_type || 'single',
       bestCountries: best.country_validity ?? [],
-      bestPrice: best.price ?? 0,
-      bestXpFloor: best.xp_floor ?? 0,
       hasDoubles: doublesSet.size > 0,
       hasBDoubles: bdoublesSet.size > 0,
       hasHCT: hctSet.size > 0,

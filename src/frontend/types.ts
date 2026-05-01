@@ -199,8 +199,6 @@ export interface BodyTypeProfile {
   bestTotalHV: number;       // sum of haulValue across all cargo for the best trailer
   bestChainType: string;     // chain_type of the best trailer
   bestCountries: string[];   // country_validity of the best trailer (empty = all)
-  bestPrice: number;         // purchase price of the best trailer (0 if no dealer data)
-  bestXpFloor: number;       // XP floor (max accessory unlock) of the best trailer
   hasDoubles: boolean;
   hasBDoubles: boolean;
   hasHCT: boolean;
