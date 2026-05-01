@@ -57,11 +57,19 @@ export interface OptimalFleetEntry {
   ev: number;
   cargoMatched: number;
   count: number;           // 1-5 for drivers (collapsed by body type)
+  /** Per-trailer purchase price (rounded to nearest 1000); 0 if no dealer data. */
+  estimatedPrice: number;
+  /** XP level at which this trailer becomes available (max accessory unlock); 0 if no dealer data. */
+  xpFloor: number;
 }
 
 export interface OptimalFleet {
   drivers: OptimalFleetEntry[];
   totalTrailers: number;
+  /** Sum of `estimatedPrice × count` across all drivers; 0 when no dealer data is present. */
+  totalEstimatedPrice: number;
+  /** Highest XP floor across all recommended drivers — when the full fleet becomes ownable. */
+  fleetXpFloor: number;
 }
 
 export interface CityRanking {
@@ -325,8 +333,15 @@ function bestJob(board: DepotCargoItem[], bodyType: string): { hv: number; idx: 
 // Body type display info (country-aware)
 // ============================================
 
+interface TrailerInfo {
+  trailerId: string;
+  trailerSpec: string;
+  estimatedPrice: number;
+  xpFloor: number;
+}
+
 /** Cache: country → bodyType → best trailer info */
-const trailerInfoCache = new Map<string, Map<string, { trailerId: string; trailerSpec: string }>>();
+const trailerInfoCache = new Map<string, Map<string, TrailerInfo>>();
 
 /** Clear trailer info cache — needed when DLC filter state changes between optimizer runs */
 export function clearTrailerInfoCache(): void {
@@ -340,11 +355,11 @@ export function clearTrailerInfoCache(): void {
  */
 function getTrailerInfoForCountry(
   country: string, data: AllData, lookups: Lookups,
-): Map<string, { trailerId: string; trailerSpec: string }> {
+): Map<string, TrailerInfo> {
   const cached = trailerInfoCache.get(country);
   if (cached) return cached;
 
-  const info = new Map<string, { trailerId: string; trailerSpec: string }>();
+  const info = new Map<string, TrailerInfo>();
   const bestByBT = new Map<string, { trailer: Trailer; totalHV: number }>();
 
   for (const t of data.trailers) {
@@ -375,6 +390,8 @@ function getTrailerInfoForCountry(
     info.set(bt, {
       trailerId: trailer.id,
       trailerSpec: formatTrailerSpec(trailer),
+      estimatedPrice: trailer.price ?? 0,
+      xpFloor: trailer.xp_floor ?? 0,
     });
   }
 
@@ -587,12 +604,16 @@ export function computeOptimalFleet(
       ev,
       cargoMatched: countCityCargoForBodyType(depots, bt),
       count,
+      estimatedPrice: info?.estimatedPrice ?? 0,
+      xpFloor: info?.xpFloor ?? 0,
     };
   });
 
   const totalTrailers = drivers.reduce((s, d) => s + d.count, 0);
+  const totalEstimatedPrice = drivers.reduce((s, d) => s + d.estimatedPrice * d.count, 0);
+  const fleetXpFloor = drivers.reduce((m, d) => Math.max(m, d.xpFloor), 0);
 
-  return { drivers, totalTrailers };
+  return { drivers, totalTrailers, totalEstimatedPrice, fleetXpFloor };
 }
 
 // ============================================

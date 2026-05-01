@@ -48,6 +48,10 @@ export interface Trailer {
   chain_type: string;
   country_validity?: string[];
   ownable: boolean;
+  /** Total purchase price across all accessories, rounded UP to nearest 1000. 0 if no dealer data. */
+  price: number;
+  /** Max accessory unlock level — XP floor at which the trailer becomes available. 0 if no dealer data. */
+  xp_floor: number;
 }
 
 export interface GameDefs {
@@ -76,6 +80,8 @@ export interface GameDefs {
     chain_type: string;
     country_validity?: string[];
     ownable: boolean;
+    price: number;
+    xp_floor: number;
   }>;
   cities: Record<string, {
     name: string;
@@ -193,6 +199,8 @@ export interface BodyTypeProfile {
   bestTotalHV: number;       // sum of haulValue across all cargo for the best trailer
   bestChainType: string;     // chain_type of the best trailer
   bestCountries: string[];   // country_validity of the best trailer (empty = all)
+  bestPrice: number;         // purchase price of the best trailer (0 if no dealer data)
+  bestXpFloor: number;       // XP floor (max accessory unlock) of the best trailer
   hasDoubles: boolean;
   hasBDoubles: boolean;
   hasHCT: boolean;

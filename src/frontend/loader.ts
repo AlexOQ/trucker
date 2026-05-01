@@ -158,6 +158,8 @@ function buildTrailers(defs: GameDefs | null, obs: Observations | null): Trailer
       chain_type: t.chain_type,
       country_validity: t.country_validity,
       ownable: t.ownable,
+      price: t.price ?? 0,
+      xp_floor: t.xp_floor ?? 0,
     }));
   }
   if (obs) {
@@ -172,6 +174,8 @@ function buildTrailers(defs: GameDefs | null, obs: Observations | null): Trailer
       length: 0,
       chain_type: 'single',
       ownable: true,
+      price: 0,
+      xp_floor: 0,
     }));
   }
   return [];
