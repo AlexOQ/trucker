@@ -760,37 +760,20 @@ interface TrailerPricing {
   xp_floor: number;
 }
 
-/**
- * Round a raw accessory-summed price UP to the nearest 1000 per the issue #251
- * spec. Exact multiples of 1000 stay put; 1001 → 2000.
- */
+/** Round up to nearest 1000 per #251 spec. */
 export function roundPriceUpToThousand(total: number): number {
   return Math.ceil(total / 1000) * 1000;
 }
 
-/**
- * Strip the `trailer_def.` prefix from a `trailer_definition:` value to produce
- * the trailer key used everywhere else in the pipeline. Anchored — only the
- * leading prefix is removed.
- */
+/** Strip leading `trailer_def.` prefix; anchored — never strips mid-name. */
 export function deriveTrailerIdFromDefName(name: string): string {
   return name.replace(/^trailer_def\./, '');
 }
 
 /**
- * Walk every `def/vehicle/trailer_dealer/*.sii` file recursively, parse the
- * accessory chains, follow `data_path` references to per-accessory definitions,
- * and aggregate `price = sum(accessory.price)` (rounded UP to nearest 1000) +
- * `xp_floor = max(accessory.unlock)`.
- *
- * One dealer file maps to one `trailer_def` via the `trailer_definition:` prop
- * on its first `trailer : .X` block. The file may contain multiple `trailer`
- * blocks (parent + slave_trailer chain for double / b_double / triple setups);
- * accessories are summed across ALL trailer blocks in the file because they're
- * physically the same purchasable unit.
- *
- * Mirrors the truck-pricing pattern in `extractTrucks()` (engines + transmissions
- * + chassis each carry their own `price` / `unlock`; same `data_path` shape).
+ * Aggregate per-trailer dealer pricing. One dealer .sii file → one trailer_def;
+ * accessories sum across all trailer blocks (parent + slave chains for
+ * double/b_double/triple). Same shape as extractTrucks().
  */
 function extractTrailerPricing(): Map<string, TrailerPricing> {
   const pricing = new Map<string, TrailerPricing>();
