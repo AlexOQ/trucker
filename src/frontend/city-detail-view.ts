@@ -58,7 +58,7 @@ function renderFleetRow(entry: OptimalFleetEntry): string {
   const countLabel = entry.count > 1 ? ` \u00d7${entry.count}` : '';
   const trailerLink = `trailers.html#body-${entry.bodyType}`;
   const priceCell = entry.estimatedPrice > 0 ? formatNumber(entry.estimatedPrice) : '\u2014';
-  const xpCell = entry.levelFloor > 0 ? String(entry.levelFloor) : '\u2014';
+  const levelCell = entry.levelFloor > 0 ? String(entry.levelFloor) : '\u2014';
   return `
     <tr>
       <td>
@@ -68,7 +68,7 @@ function renderFleetRow(entry: OptimalFleetEntry): string {
       <td class="amount">${formatNumber(entry.ev)}</td>
       <td class="amount">${entry.cargoMatched}</td>
       <td class="amount">${priceCell}</td>
-      <td class="amount">${xpCell}</td>
+      <td class="amount">${levelCell}</td>
     </tr>
   `;
 }
@@ -228,13 +228,13 @@ function wireCopyFleetButton(cityName: string, drivers: OptimalFleetEntry[]) {
     const lines = drivers.map(d => {
       const countLabel = d.count > 1 ? ` x${d.count}` : '';
       const priceTag = d.estimatedPrice > 0 ? `, ${formatNumber(d.estimatedPrice)} ea` : '';
-      const xpTag = d.levelFloor > 0 ? `, level ${d.levelFloor}` : '';
-      return `${d.displayName}${countLabel} (EV: ${formatNumber(d.ev)}, ${d.cargoMatched} cargo${priceTag}${xpTag})`;
+      const levelTag = d.levelFloor > 0 ? `, level ${d.levelFloor}` : '';
+      return `${d.displayName}${countLabel} (EV: ${formatNumber(d.ev)}, ${d.cargoMatched} cargo${priceTag}${levelTag})`;
     });
     const totalPrice = drivers.reduce((s, d) => s + d.estimatedPrice * d.count, 0);
-    const fleetXp = drivers.reduce((m, d) => Math.max(m, d.levelFloor), 0);
-    const totalLine = totalPrice > 0 || fleetXp > 0
-      ? `\nTotal: ${totalPrice > 0 ? formatNumber(totalPrice) : '—'} · level ${fleetXp > 0 ? fleetXp : '—'}`
+    const fleetLevel = drivers.reduce((m, d) => Math.max(m, d.levelFloor), 0);
+    const totalLine = totalPrice > 0 || fleetLevel > 0
+      ? `\nTotal: ${totalPrice > 0 ? formatNumber(totalPrice) : '—'} · level ${fleetLevel > 0 ? fleetLevel : '—'}`
       : '';
     const text = `${cityName} Fleet:\n${lines.join('\n')}${totalLine}`;
     copyToClipboard(text, copyBtn);
