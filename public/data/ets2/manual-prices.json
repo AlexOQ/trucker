@@ -28,6 +28,18 @@
       },
       "formula": "price = 24425 + 32000 + 8000 + paintjob_default(38410) = 102835 (stock-offer level). Cheapest with min-paint 5200 = 69625.",
       "_note": "Decomposed 2026-05-09 from cheapest-variant 69625 EUR observation + 102835 stock-offer cross-check. Body fee 8k vs single's 5k (larger body); paintjob default 38410 vs single's 17000 (more paintable surface). Only one chassis variant (double_3_2) ships for S.CS double per game data."
+    },
+    "schmitz_scs_hct": {
+      "components": {
+        "chain_base": 34615,
+        "chassis_hct_3_2_3": 44000,
+        "body_any_variant": 10000,
+        "paintjob_default": 69625,
+        "paintjob_range": [7800, 84000],
+        "cheapest_config": 96415
+      },
+      "formula": "price = 34615 + 44000 + 10000 + paintjob_default(69625) = 158240 (stock-offer level). Cheapest with min-paint 7800 = 96415.",
+      "_note": "Decomposed 2026-05-09 from cheapest 96415 + 158240 stock cross-check. Body fee 10k vs double's 8k vs single's 5k. Paintjob default 69625 sits at 81% of range — higher than single's 60% or double's 65%; plausibly SCS-default fanciness on premium config. Only one chassis variant (hct_3_2_3) ships."
     }
   },
   "prices": {
@@ -103,11 +115,17 @@
       "last_verified_game_version": "1.59",
       "notes": "Stock offer (S.CS Universal Double). Same as curtain (cosmetic body variant, no price delta)."
     },
+    "schmitz.scs.hct_3_2_3.curtain": {
+      "price": 158240,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Build-up: 34615 chain_hct_base + 44000 chassis_hct_3_2_3 + 10000 body + 69625 paintjob_default. Same price as curtainp."
+    },
     "schmitz.scs.hct_3_2_3.curtainp": {
       "price": 158240,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.CS Universal HCT). Decomposition not walked."
+      "notes": "Stock offer (S.CS Universal HCT). Same as curtain."
     },
     "schmitz.sbo.single_3.dryvan": {
       "price": 83785,
