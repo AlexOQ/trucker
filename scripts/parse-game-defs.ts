@@ -1657,6 +1657,16 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
       diffs.push(`gross_weight_limit: ${oldVal.gross_weight_limit} → ${newVal.gross_weight_limit}`);
     if (JSON.stringify(oldVal.country_validity) !== JSON.stringify(newVal.country_validity))
       diffs.push(`country_validity changed`);
+    // Pricing tracked for re-walk advisory: any non-zero ↔ zero transition or
+    // delta on a priced trailer signals a likely dealer-side rework, which
+    // means hand-walked HCT/customization-screen equivalents for the same
+    // brand+body_type should be re-verified.
+    const oldPrice = oldVal.price ?? 0;
+    const newPrice = newVal.price ?? 0;
+    if (oldPrice !== newPrice) diffs.push(`price: ${oldPrice} → ${newPrice}`);
+    const oldXp = oldVal.xp_floor ?? 0;
+    const newXp = newVal.xp_floor ?? 0;
+    if (oldXp !== newXp) diffs.push(`xp_floor: ${oldXp} → ${newXp}`);
     return diffs.length > 0 ? diffs.join(', ') : null;
   }, (id) => {
     // New trailer: clean if brand is known, needs_input for new brands
@@ -1754,6 +1764,23 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
     console.log(`--- REMOVED (${removed.length}) — content no longer in defs ---`);
     for (const c of removed) {
       console.log(`  - [${c.section}] ${c.id}: ${c.detail}`);
+    }
+    console.log('');
+  }
+
+  // Pricing-rework advisory: dealer-side price/xp shifts hint that customization-
+  // screen prices for related HCT/double variants of the same brand+body_type may
+  // also have changed. Surface these separately so the user knows which manual
+  // re-walks are warranted.
+  const pricingChanges = changes.filter(c =>
+    c.section === 'trailers' && c.type === 'changed'
+    && /(?:^|, )(price|xp_floor):/.test(c.detail));
+  if (pricingChanges.length > 0) {
+    console.log(`--- PRICING CHANGES (${pricingChanges.length}) — re-walk advisory ---`);
+    console.log('Dealer pricing shifted on the trailers below. If you maintain hand-walked');
+    console.log('HCT/customization prices for the same brand+body_type, re-verify them.');
+    for (const c of pricingChanges) {
+      console.log(`  ~ [trailers] ${c.id}: ${c.detail}`);
     }
     console.log('');
   }
