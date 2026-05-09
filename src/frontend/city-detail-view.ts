@@ -278,8 +278,8 @@ function exportToCSV(cityName: string, drivers: OptimalFleetEntry[]): void {
     d.count,
     d.ev.toFixed(2),
     d.cargoMatched,
-    d.estimatedPrice,
-    d.xpFloor,
+    d.estimatedPrice > 0 ? d.estimatedPrice : '',
+    d.xpFloor > 0 ? d.xpFloor : '',
   ]);
   const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
   const safeName = sanitizeFilename(cityName);
@@ -313,8 +313,8 @@ function exportToJSON(
       count: d.count,
       ev: d.ev,
       cargoMatched: d.cargoMatched,
-      estimatedPrice: d.estimatedPrice,
-      xpFloor: d.xpFloor,
+      estimatedPrice: d.estimatedPrice > 0 ? d.estimatedPrice : null,
+      xpFloor: d.xpFloor > 0 ? d.xpFloor : null,
     })),
   };
   const json = JSON.stringify(exportData, null, 2);
