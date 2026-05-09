@@ -1,0 +1,81 @@
+{
+  "game": "ets2",
+  "schema_version": 1,
+  "_doc": "Manually-walked trailer prices for entries the static def parser sees as price=0. See AlexOQ/trucker#254. Populate via in-game dealer/configurator walk; merger lives at scripts/merge-manual-prices.ts.",
+  "_build_up_reference": {
+    "schmitz_scs_single": {
+      "components": {
+        "chain_base": 16785,
+        "chassis_single_3": 20000,
+        "body_universal": 5000,
+        "body_ecofix": 5000,
+        "paintjob_default": 17000
+      },
+      "_note": "Derived 2026-05-09 from S.CS Universal stock offer (58,785 EUR). Other chassis variants (single_2, single_3sp, single_3_15) and chain bases (double, hct) not yet decomposed."
+    }
+  },
+  "prices": {
+    "schmitz.scs.single_3.curtain": {
+      "price": 41785,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Build-up: 16785 chain + 20000 chassis_single_3 + 5000 body_universal (no paint). Dealer stock offer with default paint = 58,785."
+    },
+    "schmitz.scs.single_3.curtainp": {
+      "price": 58785,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Stock offer. Build-up: 16785 + 20000 + 5000 + 17000 paint. Universal painted variant."
+    },
+    "schmitz.scs.single_3.curtain_ef": {
+      "price": 41785,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Build-up: 16785 + 20000 + 5000 ecofix body (no paint). Ecofix unpainted."
+    },
+    "schmitz.scs.single_3.curtain_efp": {
+      "price": 58785,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Stock offer. Build-up: 16785 + 20000 + 5000 ecofix + 17000 paint. Matches universal-paint price (5000 body fee identical for both bodies)."
+    },
+    "schmitz.scs.double_3_2.curtainp": {
+      "price": 102835,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Stock offer (S.CS Universal Double). Decomposition not walked — chain_double base + chassis_double_3_2 unknown. Override 'curtainp' since stock includes paint."
+    },
+    "schmitz.scs.hct_3_2_3.curtainp": {
+      "price": 158240,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Stock offer (S.CS Universal HCT). Decomposition not walked."
+    },
+    "schmitz.sbo.single_3.dryvan": {
+      "price": 83785,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Stock offer (S.BO Express). Assumed 3-axle 13.7m default; confirm if stock offer references a different chassis. Conflicts with parser=50000 — parser likely missed accessories."
+    },
+    "schmitz.sko.single_3.reefer": {
+      "price": 143685,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Stock offer (S.KO cool). Conflicts with parser=80000. S.KO city variant (137,050) has NO matching parser id — see followup issue."
+    },
+    "schmitz.sko.double_3_2.reefer": {
+      "price": 241435,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Stock offer (S.KO cool double). Conflicts with parser=132000."
+    }
+  },
+  "_pending_chassis_disambiguation": {
+    "_note": "Stock offers awaiting chassis-axle clarification before id mapping",
+    "ski_solid_24_77_2_sr_66725": "S.KI solid 24/77.2 sr — need axle/length decode (24=volume m³? 77.2 unclear)",
+    "ski_light_33_9_6_ak_sliding_cover_78725": "S.KI light 33/9.6 ak sliding cover — likely ch_3_33_*.light_sc (alu vs steel legs unclear)"
+  },
+  "_known_parser_gaps": {
+    "schmitz_sko_city_vs_cool": "Stock offers show distinct prices: city=137050, cool=143685. Parser merges both under single 'reefer' body. Tracked at AlexOQ/trucker#256."
+  }
+}

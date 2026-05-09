@@ -8,6 +8,7 @@
 
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, mkdirSync } from 'fs';
 import { join, basename, dirname } from 'path';
+import { mergeManualPrices } from './merge-manual-prices';
 
 const args = process.argv.slice(2);
 const diffMode = args.includes('--diff');
@@ -32,6 +33,7 @@ if (!process.env.VITEST && (!rawDefsPath || !existsSync(rawDefsPath))) {
 // are gated; cast to string for the file-reading helpers.
 const defsPath: string = rawDefsPath ?? '';
 const gameDefsPath = join(process.cwd(), 'public', 'data', game, 'game-defs.json');
+const manualPricesPath = join(process.cwd(), 'public', 'data', game, 'manual-prices.json');
 
 // ─── SII/SUI Parser ────────────────────────────────────────────────────
 
@@ -1391,8 +1393,24 @@ function main() {
   console.log(`  Found ${cargo.length} cargo types`);
 
   console.log('Extracting trailers...');
-  const trailers = extractTrailers();
-  console.log(`  Found ${trailers.length} trailer definitions`);
+  const parsedTrailers = extractTrailers();
+  console.log(`  Found ${parsedTrailers.length} trailer definitions`);
+
+  const manualMerge = mergeManualPrices(parsedTrailers, manualPricesPath, game);
+  const trailers = manualMerge.trailers;
+  if (manualMerge.applied > 0) {
+    console.log(`  Applied ${manualMerge.applied} manual price overrides from ${basename(manualPricesPath)}`);
+  }
+  if (manualMerge.unknownIds.length > 0) {
+    console.warn(`  ${manualMerge.unknownIds.length} manual price entries reference unknown trailer ids:`);
+    for (const id of manualMerge.unknownIds) console.warn(`    - ${id}`);
+  }
+  if (manualMerge.overrides.length > 0) {
+    console.log(`  ${manualMerge.overrides.length} manual price entries override parser-derived prices (manual wins — dealer stock):`);
+    for (const c of manualMerge.overrides) {
+      console.log(`    - ${c.id}: parser=${c.parserPrice} → manual=${c.manualPrice}`);
+    }
+  }
 
   console.log('Extracting companies...');
   const companies = extractCompanies();
