@@ -761,6 +761,23 @@ interface TrailerPricing {
 }
 
 /**
+ * Round a raw accessory-summed price UP to the nearest 1000 per the issue #251
+ * spec. Exact multiples of 1000 stay put; 1001 → 2000.
+ */
+export function roundPriceUpToThousand(total: number): number {
+  return Math.ceil(total / 1000) * 1000;
+}
+
+/**
+ * Strip the `trailer_def.` prefix from a `trailer_definition:` value to produce
+ * the trailer key used everywhere else in the pipeline. Anchored — only the
+ * leading prefix is removed.
+ */
+export function deriveTrailerIdFromDefName(name: string): string {
+  return name.replace(/^trailer_def\./, '');
+}
+
+/**
  * Walk every `def/vehicle/trailer_dealer/*.sii` file recursively, parse the
  * accessory chains, follow `data_path` references to per-accessory definitions,
  * and aggregate `price = sum(accessory.price)` (rounded UP to nearest 1000) +
@@ -834,7 +851,7 @@ function extractTrailerPricing(): Map<string, TrailerPricing> {
     }
 
     if (!trailerDefName || accessoryRefs.size === 0) continue;
-    const trailerId = trailerDefName.replace(/^trailer_def\./, '');
+    const trailerId = deriveTrailerIdFromDefName(trailerDefName);
 
     // Second pass: resolve each ref to a vehicle_accessory's data_path, load
     // that accessory's .sii file, and pull `price` + `unlock` from any unit
@@ -862,10 +879,7 @@ function extractTrailerPricing(): Map<string, TrailerPricing> {
 
     if (totalPrice === 0 && maxUnlock === 0) continue;
 
-    // Round price UP to the nearest 1000 per the issue spec — buyers think in
-    // round figures and dealer UIs display estimates this way.
-    const rounded = Math.ceil(totalPrice / 1000) * 1000;
-    pricing.set(trailerId, { price: rounded, xp_floor: maxUnlock });
+    pricing.set(trailerId, { price: roundPriceUpToThousand(totalPrice), xp_floor: maxUnlock });
   }
 
   return pricing;
