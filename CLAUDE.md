@@ -40,7 +40,7 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 ## Data Model
 
 **JSON Data Sources** (in `/public/data/`):
-- `game-defs.json`: Authoritative game data extracted from ETS2 game files — cargo definitions (value, volume, mass, fragility, prob_coef, body_types, groups), trailer specs (body_type, volume, gross_weight_limit, chain_type, country_validity, ownable, price, xp_floor), company mappings (cargo_out/in, cities), city/country data, cargo-trailer unit counts, economy constants, truck specs, and DLC registry
+- `game-defs.json`: Authoritative game data extracted from ETS2 game files — cargo definitions (value, volume, mass, fragility, prob_coef, body_types, groups), trailer specs (body_type, volume, gross_weight_limit, chain_type, country_validity, ownable, price, level_floor), company mappings (cargo_out/in, cities), city/country data, cargo-trailer unit counts, economy constants, truck specs, and DLC registry
 - `observations.json`: Observed data from save game parsing — city-company mappings, cargo-trailer compatibility, cargo spawn frequencies, unit counts per trailer. Supplements and validates game defs but does NOT override authoritative values
 
 **Data Loading** (`loadAllData()` in `loader.ts`):

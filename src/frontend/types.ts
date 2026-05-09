@@ -50,8 +50,8 @@ export interface Trailer {
   ownable: boolean;
   /** Total purchase price across all accessories, rounded UP to nearest 1000. 0 if no dealer data. */
   price: number;
-  /** Max accessory unlock level — XP floor at which the trailer becomes available. 0 if no dealer data. */
-  xp_floor: number;
+  /** Max accessory unlock level — level at which the trailer becomes available. 0 if no dealer data. */
+  level_floor: number;
 }
 
 export interface GameDefs {
@@ -81,7 +81,7 @@ export interface GameDefs {
     country_validity?: string[];
     ownable: boolean;
     price: number;
-    xp_floor: number;
+    level_floor: number;
   }>;
   cities: Record<string, {
     name: string;

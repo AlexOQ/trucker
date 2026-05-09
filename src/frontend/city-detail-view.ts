@@ -58,7 +58,7 @@ function renderFleetRow(entry: OptimalFleetEntry): string {
   const countLabel = entry.count > 1 ? ` \u00d7${entry.count}` : '';
   const trailerLink = `trailers.html#body-${entry.bodyType}`;
   const priceCell = entry.estimatedPrice > 0 ? formatNumber(entry.estimatedPrice) : '\u2014';
-  const xpCell = entry.xpFloor > 0 ? String(entry.xpFloor) : '\u2014';
+  const xpCell = entry.levelFloor > 0 ? String(entry.levelFloor) : '\u2014';
   return `
     <tr>
       <td>
@@ -185,7 +185,7 @@ export async function renderCity(
 
     <div class="table-section">
       <div class="section-header">
-        <h2>Recommended Fleet \u2014 ${optimal.totalTrailers} trailers${optimal.totalEstimatedPrice > 0 ? ` \u00b7 est. ${formatNumber(optimal.totalEstimatedPrice)} to assemble` : ''}${optimal.fleetXpFloor > 0 ? ` \u00b7 XP ${optimal.fleetXpFloor} to unlock all` : ''}</h2>
+        <h2>Recommended Fleet \u2014 ${optimal.totalTrailers} trailers${optimal.totalEstimatedPrice > 0 ? ` \u00b7 est. ${formatNumber(optimal.totalEstimatedPrice)} to assemble` : ''}${optimal.fleetLevelFloor > 0 ? ` \u00b7 level ${optimal.fleetLevelFloor} to unlock all` : ''}</h2>
         <div class="export-buttons">
           <button class="btn copy-btn" id="copy-fleet-btn" type="button">Copy Fleet</button>
           <button class="btn export-btn" id="export-csv-btn" type="button">Export CSV</button>
@@ -199,7 +199,7 @@ export async function renderCity(
             <th class="tooltip" tabindex="0" data-tooltip="Expected value per job cycle" aria-label="EV \u2014 Expected value per job cycle">EV</th>
             <th class="tooltip" tabindex="0" data-tooltip="Cargo types this trailer can haul" aria-label="Cargo \u2014 Cargo types this trailer can haul">Cargo</th>
             <th class="tooltip" tabindex="0" data-tooltip="Estimated purchase price (per trailer, rounded to nearest 1000)" aria-label="Price \u2014 Estimated purchase price per trailer">Price</th>
-            <th class="tooltip" tabindex="0" data-tooltip="Minimum XP level at which this trailer becomes available" aria-label="XP \u2014 Minimum XP level to unlock">XP</th>
+            <th class="tooltip" tabindex="0" data-tooltip="Minimum level at which this trailer becomes available" aria-label="Level \u2014 Minimum level to unlock">Level</th>
           </tr>
         </thead>
         <tbody>
@@ -228,13 +228,13 @@ function wireCopyFleetButton(cityName: string, drivers: OptimalFleetEntry[]) {
     const lines = drivers.map(d => {
       const countLabel = d.count > 1 ? ` x${d.count}` : '';
       const priceTag = d.estimatedPrice > 0 ? `, ${formatNumber(d.estimatedPrice)} ea` : '';
-      const xpTag = d.xpFloor > 0 ? `, XP ${d.xpFloor}` : '';
+      const xpTag = d.levelFloor > 0 ? `, level ${d.levelFloor}` : '';
       return `${d.displayName}${countLabel} (EV: ${formatNumber(d.ev)}, ${d.cargoMatched} cargo${priceTag}${xpTag})`;
     });
     const totalPrice = drivers.reduce((s, d) => s + d.estimatedPrice * d.count, 0);
-    const fleetXp = drivers.reduce((m, d) => Math.max(m, d.xpFloor), 0);
+    const fleetXp = drivers.reduce((m, d) => Math.max(m, d.levelFloor), 0);
     const totalLine = totalPrice > 0 || fleetXp > 0
-      ? `\nTotal: ${totalPrice > 0 ? formatNumber(totalPrice) : '—'} · XP ${fleetXp > 0 ? fleetXp : '—'}`
+      ? `\nTotal: ${totalPrice > 0 ? formatNumber(totalPrice) : '—'} · level ${fleetXp > 0 ? fleetXp : '—'}`
       : '';
     const text = `${cityName} Fleet:\n${lines.join('\n')}${totalLine}`;
     copyToClipboard(text, copyBtn);
@@ -272,14 +272,14 @@ function downloadFile(content: string, filename: string, mimeType: string): void
 }
 
 function exportToCSV(cityName: string, drivers: OptimalFleetEntry[]): void {
-  const headers = ['Trailer Type', 'Count', 'EV', 'Cargo Types', 'Est. Price', 'XP Floor'];
+  const headers = ['Trailer Type', 'Count', 'EV', 'Cargo Types', 'Est. Price', 'Level Floor'];
   const rows = drivers.map(d => [
     `"${d.displayName}"`,
     d.count,
     d.ev.toFixed(2),
     d.cargoMatched,
     d.estimatedPrice > 0 ? d.estimatedPrice : '',
-    d.xpFloor > 0 ? d.xpFloor : '',
+    d.levelFloor > 0 ? d.levelFloor : '',
   ]);
   const csv = [headers.join(','), ...rows.map(row => row.join(','))].join('\n');
   const safeName = sanitizeFilename(cityName);
@@ -294,7 +294,7 @@ function exportToJSON(
   score: number,
 ): void {
   const totalEstimatedPrice = drivers.reduce((s, d) => s + d.estimatedPrice * d.count, 0);
-  const fleetXpFloor = drivers.reduce((m, d) => Math.max(m, d.xpFloor), 0);
+  const fleetLevelFloor = drivers.reduce((m, d) => Math.max(m, d.levelFloor), 0);
   const exportData = {
     city: cityName,
     exportedAt: new Date().toISOString(),
@@ -305,7 +305,7 @@ function exportToJSON(
       totalTrailers: drivers.reduce((sum, d) => sum + d.count, 0),
       trailerTypes: drivers.length,
       totalEstimatedPrice,
-      fleetXpFloor,
+      fleetLevelFloor,
     },
     fleet: drivers.map(d => ({
       trailerType: d.displayName,
@@ -314,7 +314,7 @@ function exportToJSON(
       ev: d.ev,
       cargoMatched: d.cargoMatched,
       estimatedPrice: d.estimatedPrice > 0 ? d.estimatedPrice : null,
-      xpFloor: d.xpFloor > 0 ? d.xpFloor : null,
+      levelFloor: d.levelFloor > 0 ? d.levelFloor : null,
     })),
   };
   const json = JSON.stringify(exportData, null, 2);

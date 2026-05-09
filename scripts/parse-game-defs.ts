@@ -751,13 +751,13 @@ interface TrailerData {
   ownable: boolean;
   /** Total purchase price across all accessories, rounded UP to nearest 1000. 0 if no dealer data found. */
   price: number;
-  /** Max accessory unlock level — XP floor at which the trailer becomes available. 0 if no dealer data found. */
-  xp_floor: number;
+  /** Max accessory unlock level — level at which the trailer becomes available. 0 if no dealer data found. */
+  level_floor: number;
 }
 
 interface TrailerPricing {
   price: number;
-  xp_floor: number;
+  level_floor: number;
 }
 
 /** Round up to nearest 1000 per #251 spec. */
@@ -862,7 +862,7 @@ function extractTrailerPricing(): Map<string, TrailerPricing> {
 
     if (totalPrice === 0 && maxUnlock === 0) continue;
 
-    pricing.set(trailerId, { price: roundPriceUpToThousand(totalPrice), xp_floor: maxUnlock });
+    pricing.set(trailerId, { price: roundPriceUpToThousand(totalPrice), level_floor: maxUnlock });
   }
 
   return pricing;
@@ -901,7 +901,7 @@ function extractTrailers(): TrailerData[] {
       country_validity: countryValidity,
       ownable: true, // trailer_defs are generally ownable; non-ownable are in trailer/ dir
       price: p?.price ?? 0,
-      xp_floor: p?.xp_floor ?? 0,
+      level_floor: p?.level_floor ?? 0,
     });
   }
 
@@ -1482,7 +1482,7 @@ function buildFrontendData(
       country_validity: t.country_validity.length > 0 ? t.country_validity : undefined,
       ownable: t.ownable,
       price: t.price,
-      xp_floor: t.xp_floor,
+      level_floor: t.level_floor,
     }])),
     companies: Object.fromEntries(companies.map(co => [co.id, {
       name: co.name,
@@ -1664,9 +1664,9 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
     const oldPrice = oldVal.price ?? 0;
     const newPrice = newVal.price ?? 0;
     if (oldPrice !== newPrice) diffs.push(`price: ${oldPrice} → ${newPrice}`);
-    const oldXp = oldVal.xp_floor ?? 0;
-    const newXp = newVal.xp_floor ?? 0;
-    if (oldXp !== newXp) diffs.push(`xp_floor: ${oldXp} → ${newXp}`);
+    const oldXp = oldVal.level_floor ?? 0;
+    const newXp = newVal.level_floor ?? 0;
+    if (oldXp !== newXp) diffs.push(`level_floor: ${oldXp} → ${newXp}`);
     return diffs.length > 0 ? diffs.join(', ') : null;
   }, (id) => {
     // New trailer: clean if brand is known, needs_input for new brands
@@ -1774,7 +1774,7 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
   // re-walks are warranted.
   const pricingChanges = changes.filter(c =>
     c.section === 'trailers' && c.type === 'changed'
-    && /(?:^|, )(price|xp_floor):/.test(c.detail));
+    && /(?:^|, )(price|level_floor):/.test(c.detail));
   if (pricingChanges.length > 0) {
     console.log(`--- PRICING CHANGES (${pricingChanges.length}) — re-walk advisory ---`);
     console.log('Dealer pricing shifted on the trailers below. If you maintain hand-walked');

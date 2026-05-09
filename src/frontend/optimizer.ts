@@ -59,8 +59,8 @@ export interface OptimalFleetEntry {
   count: number;           // 1-5 for drivers (collapsed by body type)
   /** Per-trailer purchase price (rounded to nearest 1000); 0 if no dealer data. */
   estimatedPrice: number;
-  /** XP level at which this trailer becomes available (max accessory unlock); 0 if no dealer data. */
-  xpFloor: number;
+  /** Level at which this trailer becomes available (max accessory unlock); 0 if no dealer data. */
+  levelFloor: number;
 }
 
 export interface OptimalFleet {
@@ -68,8 +68,8 @@ export interface OptimalFleet {
   totalTrailers: number;
   /** Sum of `estimatedPrice × count` across all drivers; 0 when no dealer data is present. */
   totalEstimatedPrice: number;
-  /** Highest XP floor across all recommended drivers — when the full fleet becomes ownable. */
-  fleetXpFloor: number;
+  /** Highest level floor across all recommended drivers — when the full fleet becomes ownable. */
+  fleetLevelFloor: number;
 }
 
 export interface CityRanking {
@@ -337,7 +337,7 @@ interface TrailerInfo {
   trailerId: string;
   trailerSpec: string;
   estimatedPrice: number;
-  xpFloor: number;
+  levelFloor: number;
 }
 
 /** Cache: country → bodyType → best trailer info */
@@ -361,7 +361,7 @@ function getTrailerInfoForCountry(
 
   const info = new Map<string, TrailerInfo>();
   // Best-EV trailer per body type, restricted to dealer-priced ownable
-  // trailers — keeps spec/EV/price/XP consistent. HCT/double chains that
+  // trailers — keeps spec/EV/price/level consistent. HCT/double chains that
   // aren't sold via dealer (player assembles them through the customization
   // system, not a flat dealer file) are excluded; the recommendation reflects
   // what the player can actually purchase. Once the player unlocks chain
@@ -398,7 +398,7 @@ function getTrailerInfoForCountry(
       trailerId: trailer.id,
       trailerSpec: formatTrailerSpec(trailer),
       estimatedPrice: trailer.price,
-      xpFloor: trailer.xp_floor,
+      levelFloor: trailer.level_floor,
     });
   }
 
@@ -612,15 +612,15 @@ export function computeOptimalFleet(
       cargoMatched: countCityCargoForBodyType(depots, bt),
       count,
       estimatedPrice: info?.estimatedPrice ?? 0,
-      xpFloor: info?.xpFloor ?? 0,
+      levelFloor: info?.levelFloor ?? 0,
     };
   });
 
   const totalTrailers = drivers.reduce((s, d) => s + d.count, 0);
   const totalEstimatedPrice = drivers.reduce((s, d) => s + d.estimatedPrice * d.count, 0);
-  const fleetXpFloor = drivers.reduce((m, d) => Math.max(m, d.xpFloor), 0);
+  const fleetLevelFloor = drivers.reduce((m, d) => Math.max(m, d.levelFloor), 0);
 
-  return { drivers, totalTrailers, totalEstimatedPrice, fleetXpFloor };
+  return { drivers, totalTrailers, totalEstimatedPrice, fleetLevelFloor };
 }
 
 // ============================================
