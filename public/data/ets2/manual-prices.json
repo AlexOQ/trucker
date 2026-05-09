@@ -1,7 +1,12 @@
 {
   "game": "ets2",
   "schema_version": 1,
-  "_doc": "Manually-walked trailer prices for entries the static def parser sees as price=0. See AlexOQ/trucker#254. Populate via in-game dealer/configurator walk; merger lives at scripts/merge-manual-prices.ts.",
+  "_doc": "Manually-walked trailer prices for entries the static def parser sees as price=0 (and overrides for parser-incomplete entries). See AlexOQ/trucker#254. POLICY: prices reflect MINIMUM-money-to-outfit configuration — cheapest paintjob (min of paintjob_range) for budget/optimizer-friendly representation, not dealer-stock-default which bundles mid/premium paint. Decomposed via in-game customization screen.",
+  "_pricing_policy": {
+    "paint": "minimum (cheapest paintjob in dealer's range, typically 2.6k single / 5.2k double / 7.8k HCT)",
+    "rationale": "Optimizer's primary use case is min-cost garage outfitting. Stock-offer prices include cosmetic paint that the budget-conscious player would skip. Manual-prices.json represents the floor a player must pay for a working trailer.",
+    "consequence": "Override deltas vs parser-derived prices reflect parser-missed accessory chains (chassis, body, base), NOT the cosmetic-paint addition."
+  },
   "_build_up_reference": {
     "schmitz_scs_single": {
       "components": {
@@ -11,35 +16,30 @@
         "chassis_single_3sp": 20000,
         "chassis_single_3_15": 25000,
         "body_any_variant": 5000,
-        "paintjob_default": 17000,
+        "paintjob_min": 2600,
         "paintjob_range": [2600, 28000]
       },
-      "formula": "price = chain_base + chassis + body (5000 for any of 4 universal/ecofix/_p variants) + paintjob_default. The `_p` body suffix indicates more paintable surface, NOT 'paint applied' — paint cost is identical across all body variants and is included in dealer stock pricing.",
-      "_note": "Decomposition walked 2026-05-09 from in-game customization screen. Ecofix bodies only available on chassis_single_3 per game data. Paintjob range observed at dealer; 17000 is the mid-tier default used in stock offers. All ids on a given chassis price identically when configured with default paint."
+      "formula": "price = chain_base + chassis + body (5000 for any of universal/ecofix/_p variants) + paintjob_min (2600)"
     },
     "schmitz_scs_double": {
       "components": {
         "chain_base": 24425,
         "chassis_double_3_2": 32000,
         "body_any_variant": 8000,
-        "paintjob_default": 38410,
-        "paintjob_range": [5200, 56000],
-        "cheapest_config": 69625
+        "paintjob_min": 5200,
+        "paintjob_range": [5200, 56000]
       },
-      "formula": "price = 24425 + 32000 + 8000 + paintjob_default(38410) = 102835 (stock-offer level). Cheapest with min-paint 5200 = 69625.",
-      "_note": "Decomposed 2026-05-09 from cheapest-variant 69625 EUR observation + 102835 stock-offer cross-check. Body fee 8k vs single's 5k (larger body); paintjob default 38410 vs single's 17000 (more paintable surface). Only one chassis variant (double_3_2) ships for S.CS double per game data."
+      "formula": "price = 24425 + 32000 + 8000 + 5200 = 69625"
     },
     "schmitz_scs_hct": {
       "components": {
         "chain_base": 34615,
         "chassis_hct_3_2_3": 44000,
         "body_any_variant": 10000,
-        "paintjob_default": 69625,
-        "paintjob_range": [7800, 84000],
-        "cheapest_config": 96415
+        "paintjob_min": 7800,
+        "paintjob_range": [7800, 84000]
       },
-      "formula": "price = 34615 + 44000 + 10000 + paintjob_default(69625) = 158240 (stock-offer level). Cheapest with min-paint 7800 = 96415.",
-      "_note": "Decomposed 2026-05-09 from cheapest 96415 + 158240 stock cross-check. Body fee 10k vs double's 8k vs single's 5k. Paintjob default 69625 sits at 81% of range — higher than single's 60% or double's 65%; plausibly SCS-default fanciness on premium config. Only one chassis variant (hct_3_2_3) ships."
+      "formula": "price = 34615 + 44000 + 10000 + 7800 = 96415"
     },
     "schmitz_sbo_single": {
       "components": {
@@ -48,300 +48,107 @@
         "chassis_single_3": 20000,
         "chassis_single_3_15": 25000,
         "body_express": 30000,
-        "paintjob_default": 23335,
-        "paintjob_range": [2600, 28000],
-        "cheapest_config": 60050
+        "paintjob_min": 2600,
+        "paintjob_range": [2600, 28000]
       },
-      "formula": "price = 10450 + chassis + 30000 body_express + paintjob_default(23335). Cheapest with min-paint 2600 + smallest chassis 17000 = 60050.",
-      "_note": "Decomposed 2026-05-09. S.BO Express has only one body (vs S.CS's 4 cosmetic variants), but body fee 30k is 6× S.CS single's 5k — premium dryvan-class. Chassis prices match S.CS single (17k/20k/25k). Paintjob default 23335 derived from 83785 stock cross-check (assumed 3-axle); 83% of range."
+      "formula": "price = 10450 + chassis + 30000 + 2600"
     },
     "schmitz_ski_single": {
       "components": {
         "chain_base": 9310,
-        "chassis_2ax_steel_ch_2_dsl": 16000,
-        "chassis_2ax_alu_ch_2_dal": 16000,
-        "chassis_3ax_short_steel_ch_3_dsl": 20000,
-        "chassis_3ax_short_alu_ch_3_dal": 20000,
-        "chassis_3ax_long_steel_ch_3_33_dsl": 20000,
-        "chassis_3ax_long_alu_ch_3_33_dal": 20000,
+        "chassis_2ax_steel_or_alu": 16000,
+        "chassis_3ax_short_steel_or_alu": 20000,
+        "chassis_3ax_long_steel_or_alu": 20000,
         "body_solid": 15000,
         "body_solid_sc": 16000,
         "body_light": 20000,
         "body_light_sc": 22000,
-        "paintjob_default_approx": 27000,
-        "paintjob_default_observed_range": [26415, 27415],
-        "paintjob_range": [2600, 27000],
-        "cheapest_config": 42910
+        "paintjob_min": 2600,
+        "paintjob_range": [2600, 27000]
       },
-      "formula": "price ≈ 9310 + chassis + body + 27000 paintjob_default. Cheapest = 9310 + 16000 (2ax) + 15000 (solid) + 2600 (min paint) = 42910.",
-      "_note": "Decomposed 2026-05-09 from cheapest 42910 + two stock cross-checks (66725 ch_2_dsl.solid, 78725 ch_3_33_dal.light_sc). 6 chassis stems — 3-axle comes in two lengths (8.5m short = ch_3_*; 9.6m long = ch_3_33_*) at identical chassis fee but different trailer volume. Paintjob default observed at 26415-27415 across stock offers (~1k variance, possibly scales with body surface); used 27000 average for entries. _sc body suffix = sliding cover (1-2k premium over non-sc)."
+      "formula": "price = 9310 + chassis + body + 2600. 6 chassis stems share fee (alu vs steel legs same; 8.5m vs 9.6m chassis same fee, only volume differs)."
+    },
+    "schmitz_sko_single": {
+      "components": {
+        "chain_base": 42050,
+        "chassis_single_2": 17000,
+        "chassis_single_2sa": 18000,
+        "chassis_single_3": 20000,
+        "chassis_single_3sa": 22000,
+        "chassis_single_3_15": 25000,
+        "body_city_or_cool": 60000,
+        "paintjob_min": 2600,
+        "paintjob_range": [2600, "unknown"]
+      },
+      "formula": "price = 42050 + chassis + 60000 + 2600. Note: city + cool both 60k body fee but distinct trailer_def — see _known_parser_gaps."
+    },
+    "schmitz_sko_double": {
+      "components": {
+        "chain_base": 69420,
+        "chassis_double_3_2": 32000,
+        "body_cool": 100000,
+        "paintjob_min": 5200
+      },
+      "formula": "price = 69420 + 32000 + 100000 + 5200 = 206620"
     }
   },
   "prices": {
-    "schmitz.scs.single_2.curtain": {
-      "price": 55785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 17000 chassis_single_2 + 5000 body + 17000 paint. Same price as curtainp (body variant is cosmetic — paintable-surface delta, not pricing delta)."
-    },
-    "schmitz.scs.single_2.curtainp": {
-      "price": 55785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Same as curtain at this chassis — `_p` body variant has more paintable surface, no price delta."
-    },
-    "schmitz.scs.single_3.curtain": {
-      "price": 58785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.CS universal). Build-up: 16785 + 20000 chassis_single_3 + 5000 body + 17000 paint."
-    },
-    "schmitz.scs.single_3.curtainp": {
-      "price": 58785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Same as curtain at this chassis."
-    },
-    "schmitz.scs.single_3.curtain_ef": {
-      "price": 58785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.CS ecofix). Same chassis price as universal."
-    },
-    "schmitz.scs.single_3.curtain_efp": {
-      "price": 58785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Same as curtain_ef."
-    },
-    "schmitz.scs.single_3sp.curtain": {
-      "price": 58785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 20000 chassis_single_3sp + 5000 body + 17000 paint. Steerable-spread chassis prices same as single_3."
-    },
-    "schmitz.scs.single_3sp.curtainp": {
-      "price": 58785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Same as single_3sp.curtain."
-    },
-    "schmitz.scs.single_3_15.curtain": {
-      "price": 63785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 25000 chassis_single_3_15 (3 axles long, 15m) + 5000 body + 17000 paint."
-    },
-    "schmitz.scs.single_3_15.curtainp": {
-      "price": 63785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Same as single_3_15.curtain."
-    },
-    "schmitz.scs.double_3_2.curtain": {
-      "price": 102835,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 24425 chain_double_base + 32000 chassis_double_3_2 + 8000 body + 38410 paintjob_default. Same price as curtainp."
-    },
-    "schmitz.scs.double_3_2.curtainp": {
-      "price": 102835,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.CS Universal Double). Same as curtain (cosmetic body variant, no price delta)."
-    },
-    "schmitz.scs.hct_3_2_3.curtain": {
-      "price": 158240,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 34615 chain_hct_base + 44000 chassis_hct_3_2_3 + 10000 body + 69625 paintjob_default. Same price as curtainp."
-    },
-    "schmitz.scs.hct_3_2_3.curtainp": {
-      "price": 158240,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.CS Universal HCT). Same as curtain."
-    },
-    "schmitz.sbo.single_2.dryvan": {
-      "price": 80785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 10450 chain + 17000 chassis_single_2 + 30000 body_express + 23335 paintjob_default."
-    },
-    "schmitz.sbo.single_3.dryvan": {
-      "price": 83785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.BO Express). Build-up: 10450 + 20000 chassis_single_3 + 30000 body_express + 23335 paintjob_default."
-    },
-    "schmitz.sbo.single_3_15.dryvan": {
-      "price": 88785,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 10450 + 25000 chassis_single_3_15 + 30000 body_express + 23335 paintjob_default."
-    },
-    "schmitz.ski.ch_2_dsl.solid": {
-      "price": 67310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 16000 ch_2_dsl + 15000 body_solid + 27000 paintjob_default. Stock cross-check: 66725 (paint 26415, ~1k below 27000 average)."
-    },
-    "schmitz.ski.ch_2_dsl.solid_sc": {
-      "price": 68310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 16000 + 16000 body_solid_sc + 27000."
-    },
-    "schmitz.ski.ch_2_dsl.light": {
-      "price": 72310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 16000 + 20000 body_light + 27000."
-    },
-    "schmitz.ski.ch_2_dsl.light_sc": {
-      "price": 74310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 16000 + 22000 body_light_sc + 27000."
-    },
-    "schmitz.ski.ch_2_dal.solid": {
-      "price": 67310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 16000 ch_2_dal (alu legs, same fee as steel) + 15000 + 27000."
-    },
-    "schmitz.ski.ch_2_dal.solid_sc": {
-      "price": 68310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 16000 + 16000 + 27000."
-    },
-    "schmitz.ski.ch_2_dal.light": {
-      "price": 72310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 16000 + 20000 + 27000."
-    },
-    "schmitz.ski.ch_2_dal.light_sc": {
-      "price": 74310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 16000 + 22000 + 27000."
-    },
-    "schmitz.ski.ch_3_dsl.solid": {
-      "price": 71310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 ch_3_dsl (3ax short steel) + 15000 + 27000."
-    },
-    "schmitz.ski.ch_3_dsl.solid_sc": {
-      "price": 72310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 16000 + 27000."
-    },
-    "schmitz.ski.ch_3_dsl.light": {
-      "price": 76310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 20000 + 27000."
-    },
-    "schmitz.ski.ch_3_dsl.light_sc": {
-      "price": 78310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 22000 + 27000."
-    },
-    "schmitz.ski.ch_3_dal.solid": {
-      "price": 71310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 ch_3_dal (3ax short alu) + 15000 + 27000. Overrides parser=35000."
-    },
-    "schmitz.ski.ch_3_dal.solid_sc": {
-      "price": 72310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 16000 + 27000."
-    },
-    "schmitz.ski.ch_3_dal.light": {
-      "price": 76310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 20000 + 27000."
-    },
-    "schmitz.ski.ch_3_dal.light_sc": {
-      "price": 78310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 22000 + 27000."
-    },
-    "schmitz.ski.ch_3_33_dsl.solid": {
-      "price": 71310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 ch_3_33_dsl (3ax long steel, 9.6m) + 15000 + 27000."
-    },
-    "schmitz.ski.ch_3_33_dsl.solid_sc": {
-      "price": 72310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 16000 + 27000."
-    },
-    "schmitz.ski.ch_3_33_dsl.light": {
-      "price": 76310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 20000 + 27000."
-    },
-    "schmitz.ski.ch_3_33_dsl.light_sc": {
-      "price": 78310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 22000 + 27000."
-    },
-    "schmitz.ski.ch_3_33_dal.solid": {
-      "price": 71310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 ch_3_33_dal (3ax long alu, 9.6m) + 15000 + 27000."
-    },
-    "schmitz.ski.ch_3_33_dal.solid_sc": {
-      "price": 72310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 16000 + 27000."
-    },
-    "schmitz.ski.ch_3_33_dal.light": {
-      "price": 76310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 20000 + 27000."
-    },
-    "schmitz.ski.ch_3_33_dal.light_sc": {
-      "price": 78310,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Build-up: 9310 + 20000 + 22000 + 27000. Overrides parser=47000. Stock cross-check (s.ki light 33/9.6 ak sliding cover): 78725 (paint 27415, ~415 above 27000 average)."
-    },
-    "schmitz.sko.single_3.reefer": {
-      "price": 143685,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.KO cool). Conflicts with parser=80000. S.KO city variant (137,050) has NO matching parser id — see followup issue."
-    },
-    "schmitz.sko.double_3_2.reefer": {
-      "price": 241435,
-      "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.KO cool double). Conflicts with parser=132000."
-    }
+    "schmitz.scs.single_2.curtain":     { "price": 41385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "16785 + 17000 + 5000 + 2600 (min paint)." },
+    "schmitz.scs.single_2.curtainp":    { "price": 41385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as curtain (cosmetic body variant)." },
+    "schmitz.scs.single_3.curtain":     { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "16785 + 20000 + 5000 + 2600. Overrides parser=25000." },
+    "schmitz.scs.single_3.curtainp":    { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same chassis price as curtain." },
+    "schmitz.scs.single_3.curtain_ef":  { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same chassis price (ecofix body, also 5k). Overrides parser=25000." },
+    "schmitz.scs.single_3.curtain_efp": { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as curtain_ef." },
+    "schmitz.scs.single_3sp.curtain":   { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "16785 + 20000 (steerable spread, same fee as single_3) + 5000 + 2600." },
+    "schmitz.scs.single_3sp.curtainp":  { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as single_3sp.curtain." },
+    "schmitz.scs.single_3_15.curtain":  { "price": 49385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "16785 + 25000 (3 axles long, 15m) + 5000 + 2600." },
+    "schmitz.scs.single_3_15.curtainp": { "price": 49385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as single_3_15.curtain." },
+    "schmitz.scs.double_3_2.curtain":   { "price": 69625, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "24425 + 32000 + 8000 + 5200 (min paint). Overrides parser=40000." },
+    "schmitz.scs.double_3_2.curtainp":  { "price": 69625, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as curtain." },
+    "schmitz.scs.hct_3_2_3.curtain":    { "price": 96415, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "34615 + 44000 + 10000 + 7800 (min paint). Overrides parser=54000." },
+    "schmitz.scs.hct_3_2_3.curtainp":   { "price": 96415, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as curtain." },
+
+    "schmitz.sbo.single_2.dryvan":      { "price": 60050, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "10450 + 17000 + 30000 + 2600 (min paint)." },
+    "schmitz.sbo.single_3.dryvan":      { "price": 63050, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "10450 + 20000 + 30000 + 2600. Overrides parser=50000." },
+    "schmitz.sbo.single_3_15.dryvan":   { "price": 68050, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "10450 + 25000 + 30000 + 2600." },
+
+    "schmitz.ski.ch_2_dsl.solid":      { "price": 42910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 16000 + 15000 + 2600 (min paint). Cheapest S.KI single config = anchor." },
+    "schmitz.ski.ch_2_dsl.solid_sc":   { "price": 43910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 16000 + 16000 + 2600." },
+    "schmitz.ski.ch_2_dsl.light":      { "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 16000 + 20000 + 2600." },
+    "schmitz.ski.ch_2_dsl.light_sc":   { "price": 49910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 16000 + 22000 + 2600." },
+    "schmitz.ski.ch_2_dal.solid":      { "price": 42910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_2_dsl.solid (alu vs steel legs same chassis fee)." },
+    "schmitz.ski.ch_2_dal.solid_sc":   { "price": 43910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_2_dsl.solid_sc." },
+    "schmitz.ski.ch_2_dal.light":      { "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_2_dsl.light." },
+    "schmitz.ski.ch_2_dal.light_sc":   { "price": 49910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_2_dsl.light_sc." },
+    "schmitz.ski.ch_3_dsl.solid":      { "price": 46910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 20000 + 15000 + 2600." },
+    "schmitz.ski.ch_3_dsl.solid_sc":   { "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 20000 + 16000 + 2600." },
+    "schmitz.ski.ch_3_dsl.light":      { "price": 51910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 20000 + 20000 + 2600." },
+    "schmitz.ski.ch_3_dsl.light_sc":   { "price": 53910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 20000 + 22000 + 2600." },
+    "schmitz.ski.ch_3_dal.solid":      { "price": 46910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_3_dsl.solid. Overrides parser=35000." },
+    "schmitz.ski.ch_3_dal.solid_sc":   { "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_3_dsl.solid_sc." },
+    "schmitz.ski.ch_3_dal.light":      { "price": 51910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_3_dsl.light." },
+    "schmitz.ski.ch_3_dal.light_sc":   { "price": 53910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_3_dsl.light_sc." },
+    "schmitz.ski.ch_3_33_dsl.solid":   { "price": 46910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long chassis, same chassis fee as 8.5m short, larger volume (31m³ vs 24m³)." },
+    "schmitz.ski.ch_3_33_dsl.solid_sc":{ "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long, solid_sc body." },
+    "schmitz.ski.ch_3_33_dsl.light":   { "price": 51910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long, light body. 33m³ volume." },
+    "schmitz.ski.ch_3_33_dsl.light_sc":{ "price": 53910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long, light_sc body." },
+    "schmitz.ski.ch_3_33_dal.solid":   { "price": 46910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long alu, solid body." },
+    "schmitz.ski.ch_3_33_dal.solid_sc":{ "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long alu, solid_sc body." },
+    "schmitz.ski.ch_3_33_dal.light":   { "price": 51910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long alu, light body." },
+    "schmitz.ski.ch_3_33_dal.light_sc":{ "price": 53910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long alu, light_sc body. Overrides parser=47000." },
+
+    "schmitz.sko.single_2.reefer":     { "price": 121650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 17000 + 60000 + 2600 (min paint). Cheapest S.KO single = anchor." },
+    "schmitz.sko.single_2sa.reefer":   { "price": 122650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 18000 (steerable spread) + 60000 + 2600. Overrides parser=78000." },
+    "schmitz.sko.single_3.reefer":     { "price": 124650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 20000 + 60000 + 2600. Overrides parser=80000." },
+    "schmitz.sko.single_3sa.reefer":   { "price": 126650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 22000 (3-ax steerable spread) + 60000 + 2600." },
+    "schmitz.sko.single_3_15.reefer":  { "price": 129650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 25000 (3-ax long, 15m) + 60000 + 2600." },
+    "schmitz.sko.double_3_2.reefer":   { "price": 206620, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "69420 + 32000 + 100000 + 5200 (min paint). Overrides parser=132000. S.KO Cool double anchor; city variant has different (cheaper) chassis defaults — see _known_parser_gaps." }
   },
   "_resolved_stock_offers_decode": {
-    "ski_solid_24_77_2_sr_66725": "Decoded 2026-05-09: S.KI solid 24/77.2 sr = ch_2_dsl.solid (2-axle steel, 8.5m). Build-up math fits.",
-    "ski_light_33_9_6_ak_sliding_cover_78725": "Decoded: S.KI light 33/9.6 ak sliding cover = ch_3_33_dal.light_sc (3-axle long alu, 9.6m, sliding cover). 'ak' likely shorthand for aluminium-K(ommode/legs)."
+    "ski_solid_24_77_2_sr_66725": "S.KI solid 24/77.2 sr stock = ch_2_dsl.solid (2-axle steel, 8.5m). Stock paint ~26415; manual-prices uses min-paint 2600 instead per pricing policy.",
+    "ski_light_33_9_6_ak_sliding_cover_78725": "S.KI light 33/9.6 ak sliding cover stock = ch_3_33_dal.light_sc (3-ax long alu). Stock paint ~27415; manual-prices uses min-paint."
   },
   "_known_parser_gaps": {
-    "schmitz_sko_city_vs_cool": "Stock offers show distinct prices: city=137050, cool=143685. Parser merges both under single 'reefer' body. Tracked at AlexOQ/trucker#256."
+    "schmitz_sko_city_vs_cool": "Stock offers show distinct prices: city=137050, cool=143685. Both have 60k body fee per dealer customization screen, but city uses cheaper 17-18k chassis (likely 2-axle) while cool uses 20k+ (3-axle+). Parser merges both under single 'reefer' body, so manual-prices.json can only key by parser id (single_*). Tracked at AlexOQ/trucker#256."
   }
 }
