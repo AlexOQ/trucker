@@ -360,17 +360,21 @@ function getTrailerInfoForCountry(
   if (cached) return cached;
 
   const info = new Map<string, TrailerInfo>();
-  // Best-EV trailer per body type, restricted to dealer-priced ownable
-  // trailers — keeps spec/EV/price/level consistent. HCT/double chains that
-  // aren't sold via dealer (player assembles them through the customization
-  // system, not a flat dealer file) are excluded; the recommendation reflects
-  // what the player can actually purchase. Once the player unlocks chain
-  // upgrades, the in-game customization replaces the single trailer.
+  // Best-EV trailer per body type, regardless of dealer-price availability.
+  // HCT / double / b-double chains the parser couldn't price (assembled in-game
+  // via the customization screen, not a flat dealer file) used to be excluded
+  // by a `price > 0` filter — but the MC simulation in `buildCityDepots` does
+  // NOT share that filter, so excluding them here caused the displayed
+  // representative to disagree with the bodyHV the optimizer scored against
+  // (player saw the cheap-single representative while the fleet's predicted EV
+  // was computed from the larger multi-chain capacity). Display now matches the
+  // MC math; trailers with missing price render as `—` in the fleet table per
+  // city-detail-view's existing fallback. `manual-prices.json` overrides are
+  // the way to fill those gaps (see AlexOQ/trucker#254).
   const bestByBT = new Map<string, { trailer: Trailer; totalHV: number }>();
 
   for (const t of data.trailers) {
     if (!t.ownable) continue;
-    if ((t.price ?? 0) <= 0) continue;
     if (t.country_validity && t.country_validity.length > 0
       && !t.country_validity.includes(country)) continue;
 
