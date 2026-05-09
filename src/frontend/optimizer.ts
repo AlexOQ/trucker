@@ -360,10 +360,17 @@ function getTrailerInfoForCountry(
   if (cached) return cached;
 
   const info = new Map<string, TrailerInfo>();
+  // Best-EV trailer per body type, restricted to dealer-priced ownable
+  // trailers — keeps spec/EV/price/XP consistent. HCT/double chains that
+  // aren't sold via dealer (player assembles them through the customization
+  // system, not a flat dealer file) are excluded; the recommendation reflects
+  // what the player can actually purchase. Once the player unlocks chain
+  // upgrades, the in-game customization replaces the single trailer.
   const bestByBT = new Map<string, { trailer: Trailer; totalHV: number }>();
 
   for (const t of data.trailers) {
     if (!t.ownable) continue;
+    if ((t.price ?? 0) <= 0) continue;
     if (t.country_validity && t.country_validity.length > 0
       && !t.country_validity.includes(country)) continue;
 
@@ -390,8 +397,8 @@ function getTrailerInfoForCountry(
     info.set(bt, {
       trailerId: trailer.id,
       trailerSpec: formatTrailerSpec(trailer),
-      estimatedPrice: trailer.price ?? 0,
-      xpFloor: trailer.xp_floor ?? 0,
+      estimatedPrice: trailer.price,
+      xpFloor: trailer.xp_floor,
     });
   }
 
