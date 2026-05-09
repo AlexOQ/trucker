@@ -16,6 +16,18 @@
       },
       "formula": "price = chain_base + chassis + body (5000 for any of 4 universal/ecofix/_p variants) + paintjob_default. The `_p` body suffix indicates more paintable surface, NOT 'paint applied' — paint cost is identical across all body variants and is included in dealer stock pricing.",
       "_note": "Decomposition walked 2026-05-09 from in-game customization screen. Ecofix bodies only available on chassis_single_3 per game data. Paintjob range observed at dealer; 17000 is the mid-tier default used in stock offers. All ids on a given chassis price identically when configured with default paint."
+    },
+    "schmitz_scs_double": {
+      "components": {
+        "chain_base": 24425,
+        "chassis_double_3_2": 32000,
+        "body_any_variant": 8000,
+        "paintjob_default": 38410,
+        "paintjob_range": [5200, 56000],
+        "cheapest_config": 69625
+      },
+      "formula": "price = 24425 + 32000 + 8000 + paintjob_default(38410) = 102835 (stock-offer level). Cheapest with min-paint 5200 = 69625.",
+      "_note": "Decomposed 2026-05-09 from cheapest-variant 69625 EUR observation + 102835 stock-offer cross-check. Body fee 8k vs single's 5k (larger body); paintjob default 38410 vs single's 17000 (more paintable surface). Only one chassis variant (double_3_2) ships for S.CS double per game data."
     }
   },
   "prices": {
@@ -79,11 +91,17 @@
       "last_verified_game_version": "1.59",
       "notes": "Same as single_3_15.curtain."
     },
+    "schmitz.scs.double_3_2.curtain": {
+      "price": 102835,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Build-up: 24425 chain_double_base + 32000 chassis_double_3_2 + 8000 body + 38410 paintjob_default. Same price as curtainp."
+    },
     "schmitz.scs.double_3_2.curtainp": {
       "price": 102835,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.CS Universal Double). Decomposition not walked — chain_double base + chassis_double_3_2 unknown. Override 'curtainp' since stock includes paint."
+      "notes": "Stock offer (S.CS Universal Double). Same as curtain (cosmetic body variant, no price delta)."
     },
     "schmitz.scs.hct_3_2_3.curtainp": {
       "price": 158240,
