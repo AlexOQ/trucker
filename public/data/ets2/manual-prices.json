@@ -40,6 +40,20 @@
       },
       "formula": "price = 34615 + 44000 + 10000 + paintjob_default(69625) = 158240 (stock-offer level). Cheapest with min-paint 7800 = 96415.",
       "_note": "Decomposed 2026-05-09 from cheapest 96415 + 158240 stock cross-check. Body fee 10k vs double's 8k vs single's 5k. Paintjob default 69625 sits at 81% of range — higher than single's 60% or double's 65%; plausibly SCS-default fanciness on premium config. Only one chassis variant (hct_3_2_3) ships."
+    },
+    "schmitz_sbo_single": {
+      "components": {
+        "chain_base": 10450,
+        "chassis_single_2": 17000,
+        "chassis_single_3": 20000,
+        "chassis_single_3_15": 25000,
+        "body_express": 30000,
+        "paintjob_default": 23335,
+        "paintjob_range": [2600, 28000],
+        "cheapest_config": 60050
+      },
+      "formula": "price = 10450 + chassis + 30000 body_express + paintjob_default(23335). Cheapest with min-paint 2600 + smallest chassis 17000 = 60050.",
+      "_note": "Decomposed 2026-05-09. S.BO Express has only one body (vs S.CS's 4 cosmetic variants), but body fee 30k is 6× S.CS single's 5k — premium dryvan-class. Chassis prices match S.CS single (17k/20k/25k). Paintjob default 23335 derived from 83785 stock cross-check (assumed 3-axle); 83% of range."
     }
   },
   "prices": {
@@ -127,11 +141,23 @@
       "last_verified_game_version": "1.59",
       "notes": "Stock offer (S.CS Universal HCT). Same as curtain."
     },
+    "schmitz.sbo.single_2.dryvan": {
+      "price": 80785,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Build-up: 10450 chain + 17000 chassis_single_2 + 30000 body_express + 23335 paintjob_default."
+    },
     "schmitz.sbo.single_3.dryvan": {
       "price": 83785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.BO Express). Assumed 3-axle 13.7m default; confirm if stock offer references a different chassis. Conflicts with parser=50000 — parser likely missed accessories."
+      "notes": "Stock offer (S.BO Express). Build-up: 10450 + 20000 chassis_single_3 + 30000 body_express + 23335 paintjob_default."
+    },
+    "schmitz.sbo.single_3_15.dryvan": {
+      "price": 88785,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59",
+      "notes": "Build-up: 10450 + 25000 chassis_single_3_15 + 30000 body_express + 23335 paintjob_default."
     },
     "schmitz.sko.single_3.reefer": {
       "price": 143685,
