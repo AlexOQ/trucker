@@ -10,77 +10,74 @@
         "chassis_single_3": 20000,
         "chassis_single_3sp": 20000,
         "chassis_single_3_15": 25000,
-        "body_universal": 5000,
-        "body_universal_paint": 5000,
-        "body_ecofix": 5000,
-        "body_ecofix_paint": 5000,
+        "body_any_variant": 5000,
         "paintjob_default": 17000,
         "paintjob_range": [2600, 28000]
       },
-      "formula": "price = chain_base + chassis + body + (paintjob_default if id ends in `_p` after body suffix else 0)",
-      "_note": "Decomposition walked 2026-05-09 from in-game customization screen. Ecofix bodies only available on chassis_single_3 per game data. Paintjob range observed at dealer; 17000 is the mid-tier default used in stock offers."
+      "formula": "price = chain_base + chassis + body (5000 for any of 4 universal/ecofix/_p variants) + paintjob_default. The `_p` body suffix indicates more paintable surface, NOT 'paint applied' — paint cost is identical across all body variants and is included in dealer stock pricing.",
+      "_note": "Decomposition walked 2026-05-09 from in-game customization screen. Ecofix bodies only available on chassis_single_3 per game data. Paintjob range observed at dealer; 17000 is the mid-tier default used in stock offers. All ids on a given chassis price identically when configured with default paint."
     }
   },
   "prices": {
     "schmitz.scs.single_2.curtain": {
-      "price": 38785,
+      "price": 55785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 17000 chassis_single_2 + 5000 body_universal (no paint)."
+      "notes": "Build-up: 16785 + 17000 chassis_single_2 + 5000 body + 17000 paint. Same price as curtainp (body variant is cosmetic — paintable-surface delta, not pricing delta)."
     },
     "schmitz.scs.single_2.curtainp": {
       "price": 55785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 17000 + 5000 + 17000 paint."
+      "notes": "Same as curtain at this chassis — `_p` body variant has more paintable surface, no price delta."
     },
     "schmitz.scs.single_3.curtain": {
-      "price": 41785,
+      "price": 58785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 20000 chassis_single_3 + 5000 body_universal (no paint)."
+      "notes": "Stock offer (S.CS universal). Build-up: 16785 + 20000 chassis_single_3 + 5000 body + 17000 paint."
     },
     "schmitz.scs.single_3.curtainp": {
       "price": 58785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.CS universal). Build-up: 16785 + 20000 + 5000 + 17000 paint."
+      "notes": "Same as curtain at this chassis."
     },
     "schmitz.scs.single_3.curtain_ef": {
-      "price": 41785,
+      "price": 58785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 20000 + 5000 ecofix body (no paint)."
+      "notes": "Stock offer (S.CS ecofix). Same chassis price as universal."
     },
     "schmitz.scs.single_3.curtain_efp": {
       "price": 58785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Stock offer (S.CS ecofix). Build-up: 16785 + 20000 + 5000 ecofix + 17000 paint. Matches universal-paint price."
+      "notes": "Same as curtain_ef."
     },
     "schmitz.scs.single_3sp.curtain": {
-      "price": 41785,
+      "price": 58785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 20000 chassis_single_3sp (steerable spread, same price as single_3) + 5000 body_universal (no paint)."
+      "notes": "Build-up: 16785 + 20000 chassis_single_3sp + 5000 body + 17000 paint. Steerable-spread chassis prices same as single_3."
     },
     "schmitz.scs.single_3sp.curtainp": {
       "price": 58785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 20000 + 5000 + 17000 paint."
+      "notes": "Same as single_3sp.curtain."
     },
     "schmitz.scs.single_3_15.curtain": {
-      "price": 46785,
+      "price": 63785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 25000 chassis_single_3_15 (3 axles long, 15m) + 5000 body_universal (no paint)."
+      "notes": "Build-up: 16785 + 25000 chassis_single_3_15 (3 axles long, 15m) + 5000 body + 17000 paint."
     },
     "schmitz.scs.single_3_15.curtainp": {
       "price": 63785,
       "source_pack": "schmitz_cargobull",
       "last_verified_game_version": "1.59",
-      "notes": "Build-up: 16785 + 25000 + 5000 + 17000 paint."
+      "notes": "Same as single_3_15.curtain."
     },
     "schmitz.scs.double_3_2.curtainp": {
       "price": 102835,
