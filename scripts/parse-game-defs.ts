@@ -879,7 +879,7 @@ function extractTrailers(): TrailerData[] {
   for (const unit of units) {
     if (unit.type !== 'trailer_def') continue;
 
-    const fullName = unit.name.replace('trailer_def.', '');
+    const fullName = deriveTrailerIdFromDefName(unit.name);
     if (seenIds.has(fullName)) continue;
     seenIds.add(fullName);
 
