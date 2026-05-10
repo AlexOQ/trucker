@@ -73,17 +73,20 @@ export function buildLookups(data: AllData): Lookups {
 
   // Multi-body fan-out: for trailers with extra_body_types (set by loader from
   // multi-body-overrides.json), register them as compatible with cargo of any
-  // matching body type they weren't already in. Units computed inline using the
-  // same volume/weight formula as the parser (scripts/parse-game-defs.ts:1260).
+  // matching body type they weren't already in. Iterate the FULL augmented set
+  // [primary, ...extras] — the override can change body_type away from the
+  // parser's original, leaving the new primary unregistered. Units computed
+  // inline using the same volume/weight formula as the parser
+  // (scripts/parse-game-defs.ts:1260).
   for (const trailer of data.trailers) {
     if (!trailer.extra_body_types || trailer.extra_body_types.length === 0) continue;
+    const augmentedBodyTypes = [trailer.body_type, ...trailer.extra_body_types];
     for (const cargo of data.cargo) {
       if (cargo.excluded) continue;
-      // Skip if cargo's body_types don't overlap any of trailer's extra types
-      const overlaps = trailer.extra_body_types.some((bt) => cargo.body_types.includes(bt));
+      // Skip if cargo's body_types don't overlap any of trailer's body types
+      const overlaps = augmentedBodyTypes.some((bt) => cargo.body_types.includes(bt));
       if (!overlaps) continue;
-      // Skip if already compatible (parser already registered the trailer for this cargo
-      // — happens when the primary body_type override doesn't change which cargo applies)
+      // Skip if already compatible (parser registered, or earlier fan-out pass)
       const existingTrailers = cargoTrailerMap.get(cargo.id);
       if (existingTrailers?.has(trailer.id)) continue;
 
