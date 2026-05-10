@@ -156,9 +156,18 @@ export function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDe
         const units = lookups.cargoTrailerUnits.get(`${cargoId}:${trailerId}`) ?? 1;
         if (units <= 0) continue;
 
-        const bt = trailer.body_type;
         const hv = unitVal * units;
-        if (!bodyHV[bt] || hv > bodyHV[bt]) bodyHV[bt] = hv;
+        // Trailer contributes its HV to every body-type bucket it can serve that
+        // also matches this cargo. Multi-body trailers (extra_body_types set via
+        // multi-body-overrides.json) thus compete in multiple body slots from one
+        // physical SKU. Falls back to single-bucket behavior when extras unset.
+        const trailerBodyTypes = trailer.extra_body_types
+          ? [trailer.body_type, ...trailer.extra_body_types]
+          : [trailer.body_type];
+        for (const bt of trailerBodyTypes) {
+          if (!c.body_types.includes(bt)) continue;
+          if (!bodyHV[bt] || hv > bodyHV[bt]) bodyHV[bt] = hv;
+        }
       }
 
       if (Object.keys(bodyHV).length === 0) continue;
@@ -353,7 +362,7 @@ export function clearTrailerInfoCache(): void {
  * Picks the ownable trailer valid in this country with highest total haul value,
  * so HCT/double/b_double variants win when available (they have more capacity).
  */
-function getTrailerInfoForCountry(
+export function getTrailerInfoForCountry(
   country: string, data: AllData, lookups: Lookups,
 ): Map<string, TrailerInfo> {
   const cached = trailerInfoCache.get(country);
@@ -378,22 +387,39 @@ function getTrailerInfoForCountry(
     if (t.country_validity && t.country_validity.length > 0
       && !t.country_validity.includes(country)) continue;
 
-    const bt = t.body_type;
     const cargoSet = lookups.trailerCargoMap.get(t.id);
     if (!cargoSet) continue;
 
-    let totalHV = 0;
-    for (const cargoId of cargoSet) {
-      const c = lookups.cargoById.get(cargoId);
-      if (!c || c.excluded) continue;
-      const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
-      const bonus = cargoBonus(c);
-      totalHV += c.value * bonus * units;
-    }
+    // Multi-body trailers compete in every body slot they can serve. Score per
+    // slot is restricted to cargo whose body_types include that slot.
+    const slotBodyTypes = [t.body_type, ...(t.extra_body_types ?? [])];
 
-    const existing = bestByBT.get(bt);
-    if (!existing || totalHV > existing.totalHV) {
-      bestByBT.set(bt, { trailer: t, totalHV });
+    for (const bt of slotBodyTypes) {
+      let totalHV = 0;
+      for (const cargoId of cargoSet) {
+        const c = lookups.cargoById.get(cargoId);
+        if (!c || c.excluded) continue;
+        if (!c.body_types.includes(bt)) continue;
+        const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
+        const bonus = cargoBonus(c);
+        totalHV += c.value * bonus * units;
+      }
+      if (totalHV === 0) continue;
+
+      const existing = bestByBT.get(bt);
+      if (!existing || totalHV > existing.totalHV) {
+        bestByBT.set(bt, { trailer: t, totalHV });
+      } else if (totalHV === existing.totalHV) {
+        // Tiebreaker: prefer a trailer with a known dealer price (price > 0) over
+        // a price=0 entry, and among priced ties prefer the lowest. Eliminates
+        // alphabetical-iteration luck and avoids walking redundant prices when an
+        // identically-capable sibling variant is already priced.
+        const curPriced = existing.trailer.price > 0;
+        const newPriced = t.price > 0;
+        if (newPriced && (!curPriced || t.price < existing.trailer.price)) {
+          bestByBT.set(bt, { trailer: t, totalHV });
+        }
+      }
     }
   }
 

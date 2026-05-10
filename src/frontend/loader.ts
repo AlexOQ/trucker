@@ -17,7 +17,7 @@ import { getCityDisplayNames, getCountryDisplayNames } from './display-names';
 import { titleCase } from './utils';
 import type {
   City, Company, Cargo, Trailer,
-  GameDefs, Observations, AllData,
+  GameDefs, Observations, AllData, MultiBodyOverrides,
 } from './types';
 
 const dataCache: Record<string, unknown> = {};
@@ -45,10 +45,13 @@ export async function loadAllData(): Promise<AllData> {
   const gameId = getActiveGame();
   const dataDir = `data/${gameId}`;
 
-  // Load both sources in parallel
-  const [gameDefs, observations] = await Promise.all([
+  // Load both sources in parallel. multi-body-overrides.json is optional —
+  // when present, applied to trailers as `extra_body_types` so they compete
+  // for multiple body_type slots in the optimizer.
+  const [gameDefs, observations, multiBody] = await Promise.all([
     loadJson<GameDefs>(`${dataDir}/game-defs.json`),
     loadJson<Observations>(`${dataDir}/observations.json`),
+    loadJson<MultiBodyOverrides>(`${dataDir}/multi-body-overrides.json`),
   ]);
 
   if (!gameDefs && !observations) {
@@ -64,7 +67,7 @@ export async function loadAllData(): Promise<AllData> {
   const cities = buildCities(gameDefs, observations);
   const companies = buildCompanies(gameDefs, observations);
   const cargo = buildCargo(gameDefs, observations);
-  const trailers = buildTrailers(gameDefs, observations);
+  const trailers = buildTrailers(gameDefs, observations, multiBody);
 
   return { gameDefs, observations, cities, companies, cargo, trailers };
 }
@@ -144,23 +147,34 @@ function buildCargo(defs: GameDefs | null, obs: Observations | null): Cargo[] {
   return [];
 }
 
-function buildTrailers(defs: GameDefs | null, obs: Observations | null): Trailer[] {
+function buildTrailers(
+  defs: GameDefs | null,
+  obs: Observations | null,
+  multiBody: MultiBodyOverrides | null,
+): Trailer[] {
+  const overrides = multiBody?.overrides ?? {};
   if (defs) {
-    return Object.entries(defs.trailers).map(([id, t]) => ({
-      id,
-      name: t.name,
-      body_type: t.body_type,
-      volume: t.volume,
-      chassis_mass: t.chassis_mass,
-      body_mass: t.body_mass,
-      gross_weight_limit: t.gross_weight_limit,
-      length: t.length,
-      chain_type: t.chain_type,
-      country_validity: t.country_validity,
-      ownable: t.ownable,
-      price: t.price ?? 0,
-      level_floor: t.level_floor ?? 0,
-    }));
+    return Object.entries(defs.trailers).map(([id, t]) => {
+      const bodyTypes = overrides[id];
+      const primary = bodyTypes && bodyTypes.length > 0 ? bodyTypes[0] : t.body_type;
+      const extras = bodyTypes && bodyTypes.length > 1 ? bodyTypes.slice(1) : undefined;
+      return {
+        id,
+        name: t.name,
+        body_type: primary,
+        extra_body_types: extras,
+        volume: t.volume,
+        chassis_mass: t.chassis_mass,
+        body_mass: t.body_mass,
+        gross_weight_limit: t.gross_weight_limit,
+        length: t.length,
+        chain_type: t.chain_type,
+        country_validity: t.country_validity,
+        ownable: t.ownable,
+        price: t.price ?? 0,
+        level_floor: t.level_floor ?? 0,
+      };
+    });
   }
   if (obs) {
     return obs.trailers.map((id) => ({

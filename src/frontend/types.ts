@@ -40,6 +40,13 @@ export interface Trailer {
   id: string;
   name: string;
   body_type: string;
+  /**
+   * Additional body types this trailer can physically haul beyond `body_type`.
+   * Populated from `multi-body-overrides.json`. Example: a flatbed-with-container-pins
+   * (body_type=container) can also serve as a regular flatbed when pins are unused,
+   * so its `extra_body_types` is `['flatbed']`. Empty / unset for single-body trailers.
+   */
+  extra_body_types?: string[];
   volume: number;
   chassis_mass: number;
   body_mass: number;
@@ -166,6 +173,14 @@ export interface Observations {
   company_zone_body_type_frequency?: Record<string, Record<string, Record<string, number>>>;
   company_job_count?: Record<string, number>;
   company_body_type_avg_value?: Record<string, Record<string, number>>;
+}
+
+/** Multi-body trailer overrides — see public/data/<game>/multi-body-overrides.json. */
+export interface MultiBodyOverrides {
+  game: 'ets2' | 'ats';
+  schema_version: 1;
+  /** trailerId -> additional body types it can serve beyond trailer.body_type */
+  overrides: Record<string, string[]>;
 }
 
 export interface AllData {
