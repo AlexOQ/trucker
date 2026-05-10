@@ -90,6 +90,119 @@
         "paintjob_min": 5200
       },
       "formula": "price = 69420 + 32000 + 100000 + 5200 = 206620"
+    },
+    "kassbohrer_shg_single": {
+      "components": {
+        "chain_base": 42365,
+        "chassis_3e_20": 25000,
+        "chassis_3e_220": 25000,
+        "chassis_3e_40": 25000,
+        "body_container_carrier": 200,
+        "paintjob_min": 2600
+      },
+      "formula": "price = 42365 + 25000 + 200 + 2600 = 70165 (uniform across all 3 chassis variants — extendable 20ft / 2x20ft / 40ft share fee). Container carrier body is twist-lock hardware only, hence the very low 200 body fee vs enclosed bodies."
+    },
+    "kassbohrer_sll_single": {
+      "components": {
+        "chain_base": 51700,
+        "chassis_single_2_ln": 22000,
+        "chassis_single_2_sh": 22000,
+        "chassis_single_3_ln": 24000,
+        "chassis_single_3_sh": 24000,
+        "body_low_loader": 20000,
+        "body_container_carrier": 21000,
+        "body_wooden_low_loader": 22000,
+        "paintjob_min": 2600
+      },
+      "formula": "price = 51700 + chassis + body + 2600. 2-axle chassis (long/short) share 22k fee; 3-axle (long/short) share 24k. Bodies span 20k–22k."
+    },
+    "scs_fdt_single": {
+      "components": {
+        "chain_base": 51100,
+        "chassis_single_2": 17000,
+        "chassis_single_3": 20000,
+        "body_paint": 20000,
+        "body_chrome": 25000,
+        "paintjob_min": 2600
+      },
+      "formula": "price = 51100 + chassis + body + 2600. SCS base foodtank — 2 chassis × 2 bodies = 4 variants. Parser had only single_3.chrome=0 (and presumably the rest). Confirms parser-prices-unreliable hypothesis: scs.gastank/fueltank parser=50000 likely the analogous chain_base for those tanker subtypes."
+    },
+    "scs_gst_single": {
+      "components": {
+        "chain_base": 48940,
+        "chassis_single_2": 17000,
+        "chassis_single_3": 20000,
+        "body_gastank": 30000,
+        "paintjob_min": 2600
+      },
+      "formula": "price = 48940 + chassis + 30000 + 2600. SCS base gastank — 2 chassis × 1 body = 2 variants. Parser=50000 for single_3 closely matches chain_base=48940 — confirms parser is reading a chain_base-adjacent field, not full configured cost."
+    },
+    "scs_fueltank_single": {
+      "components": {
+        "chain_base": 49940,
+        "chassis_single_2": 17000,
+        "chassis_single_3": 20000,
+        "body_fueltank": 30000,
+        "paintjob_min": 2600
+      },
+      "formula": "price = 49940 + chassis + 30000 + 2600. SCS base fueltank — 2 chassis × 1 body = 2 variants. Parser=50000 for single_3 vs chain_base=49940 — within 60 of the chain_base, confirming parser reads a chain_base-adjacent field. Sibling pattern to scs_gst_single (gastank chain_base=48940)."
+    },
+    "scs_lst_single": {
+      "components": {
+        "chain_base": 15970,
+        "chassis_single_3s": 22000,
+        "chassis_single_3b": 24000,
+        "body_str_paint_or_steel": 35000,
+        "body_belly_paint_or_steel": 45000,
+        "paintjob_min": 2600
+      },
+      "formula": "price = 15970 + chassis + body + 2600. SCS base livestock — pairing constraint: 3s chassis pairs only with str (non-belly) body; 3b chassis pairs only with belly body. Cheapest config: 3s+str+paint=75570. Belly config: 3b+belly+paint=87570. chain_base derived from user-supplied cheapest config price 75570."
+    },
+    "scs_lowbed_single": {
+      "components": {
+        "chain_base": 8960,
+        "chassis_single_2s": 18000,
+        "chassis_single_3": 20000,
+        "chassis_single_3s": 21000,
+        "chassis_single_4_lnsh": 27000,
+        "chassis_single_41_lnsh": 29000,
+        "chassis_single_5_lnsh": 29000,
+        "body_lowbed": 20000,
+        "paintjob_min": 2600
+      },
+      "formula": "price = 8960 + chassis + 20000 + 2600. SCS base lowbed — 1 body × 9 chassis variants. Cheapest config: 2-ax spread = 49560. chain_base derived from user-supplied cheapest config price. 4/41/5-axle long vs short share chassis fee — only volume/length differs."
+    },
+    "scs_lowloader_single": {
+      "components": {
+        "chain_base": 8900,
+        "chassis_single_2_lnsh": 22000,
+        "chassis_single_3_lnsh": 24000,
+        "chassis_single_3_1": 26000,
+        "chassis_single_4_lnsh": 27000,
+        "chassis_single_4_1": 28000,
+        "body_lowloader": 20000,
+        "paintjob_min": 2600
+      },
+      "formula": "price = 8900 + chassis + 20000 + 2600. SCS base lowloader (lowboy body) — 1 body × 8 chassis variants. Cheapest config: 2-ax extendable = 53500. chain_base derived from user-supplied cheapest. _1 suffix = +1 lead axle (3_1 = 1+3 = 26k, 4_1 = 1+4 = 28k). 2/3/4-axle long vs short share chassis fee per axle count."
+    },
+    "scs_flatbed_single": {
+      "components": {
+        "chain_base": 9100,
+        "chassis_single_2": 17000,
+        "chassis_single_2a": 18000,
+        "chassis_single_3": 20000,
+        "chassis_single_3s": 22000,
+        "chassis_single_3sa": 22000,
+        "chassis_single_3s2": 24000,
+        "chassis_single_4": 27000,
+        "body_flatbed_w_wooden": 2000,
+        "body_flatbed_s_steel": 7000,
+        "body_brick_dropside": 8000,
+        "body_container_pins": 10000,
+        "body_brick_crane_dropside_with_crane": 12000,
+        "paintjob_min": 2600
+      },
+      "formula": "price = 9100 + chassis + body + 2600. SCS base flatbed — 7 chassis × 5 bodies = 35 variants. Cheapest config: 2-ax + wooden floor = 30700. 3s (steerable spread) and 3sa (steerable spread rear) share 22k chassis fee. The .container body (floor with container pins) maps to body_type=container in game-defs; .brick and .brick_crane both map to flatbed_brck."
     }
   },
   "prices": {
@@ -142,7 +255,95 @@
     "schmitz.sko.single_3.reefer":     { "price": 124650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 20000 + 60000 + 2600. Overrides parser=80000." },
     "schmitz.sko.single_3sa.reefer":   { "price": 126650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 22000 (3-ax steerable spread) + 60000 + 2600." },
     "schmitz.sko.single_3_15.reefer":  { "price": 129650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 25000 (3-ax long, 15m) + 60000 + 2600." },
-    "schmitz.sko.double_3_2.reefer":   { "price": 206620, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "69420 + 32000 + 100000 + 5200 (min paint). Overrides parser=132000. S.KO Cool double anchor; city variant has different (cheaper) chassis defaults — see _known_parser_gaps." }
+    "schmitz.sko.double_3_2.reefer":   { "price": 206620, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "69420 + 32000 + 100000 + 5200 (min paint). Overrides parser=132000. S.KO Cool double anchor; city variant has different (cheaper) chassis defaults — see _known_parser_gaps." },
+
+    "kassbohrer.shg.singl_3e_20.container":  { "price": 70165, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "42365 + 25000 (3-ax extendable, 20ft) + 200 (container carrier body) + 2600 (min paint)." },
+    "kassbohrer.shg.singl_3e_220.container": { "price": 70165, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "42365 + 25000 (3-ax extendable, 2x20ft) + 200 + 2600." },
+    "kassbohrer.shg.singl_3e_40.container":  { "price": 70165, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "42365 + 25000 (3-ax extendable, 40ft) + 200 + 2600." },
+
+    "kassbohrer.sll.single_2_ln.cont":      { "price": 97300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 (2-ax long) + 21000 (container carrier) + 2600." },
+    "kassbohrer.sll.single_2_ln.low":       { "price": 96300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 + 20000 (low loader) + 2600." },
+    "kassbohrer.sll.single_2_ln.low_wood":  { "price": 98300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 + 22000 (wooden low loader) + 2600." },
+    "kassbohrer.sll.single_2_sh.cont":      { "price": 97300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 (2-ax short, same fee as long) + 21000 + 2600." },
+    "kassbohrer.sll.single_2_sh.low":       { "price": 96300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 + 20000 + 2600." },
+    "kassbohrer.sll.single_2_sh.low_wood":  { "price": 98300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 + 22000 + 2600." },
+    "kassbohrer.sll.single_3_ln.cont":      { "price": 99300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 (3-ax long) + 21000 + 2600." },
+    "kassbohrer.sll.single_3_ln.low":       { "price": 98300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 + 20000 + 2600." },
+    "kassbohrer.sll.single_3_ln.low_wood":  { "price": 100300, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 + 22000 + 2600." },
+    "kassbohrer.sll.single_3_sh.cont":      { "price": 99300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 (3-ax short, same fee as long) + 21000 + 2600." },
+    "kassbohrer.sll.single_3_sh.low":       { "price": 98300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 + 20000 + 2600." },
+    "kassbohrer.sll.single_3_sh.low_wood":  { "price": 100300, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 + 22000 + 2600." },
+
+    "scs.foodtank.single_2.paint":   { "price": 90700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "51100 + 17000 (2-ax) + 20000 (paint body) + 2600." },
+    "scs.foodtank.single_2.chrome":  { "price": 95700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "51100 + 17000 + 25000 (chrome body) + 2600." },
+    "scs.foodtank.single_3.paint":   { "price": 93700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "51100 + 20000 (3-ax) + 20000 + 2600." },
+    "scs.foodtank.single_3.chrome":  { "price": 98700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "51100 + 20000 + 25000 + 2600." },
+
+    "scs.gastank.single_2.gastank":  { "price": 98540,  "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "48940 + 17000 (2-ax) + 30000 (gas tank body) + 2600." },
+    "scs.gastank.single_3.gastank":  { "price": 101540, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "48940 + 20000 (3-ax) + 30000 + 2600. Overrides parser=50000 (chain_base only)." },
+
+    "scs.fueltank.single_2.fueltank": { "price": 99540,  "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "49940 + 17000 (2-ax) + 30000 (fuel tank body) + 2600." },
+    "scs.fueltank.single_3.fueltank": { "price": 102540, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "49940 + 20000 (3-ax) + 30000 + 2600. Overrides parser=50000 (chain_base only)." },
+
+    "scs.livestock.single_3s.str_pnt":   { "price": 75570, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "15970 + 22000 (3-ax non-belly) + 35000 (str body, paint or steel) + 2600. Cheapest LST config." },
+    "scs.livestock.single_3s.str_stl":   { "price": 75570, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "Same as str_pnt (str body fee identical for paint and steel finish). Overrides parser=57000 (chain_base-adjacent only)." },
+    "scs.livestock.single_3b.belly_pnt": { "price": 87570, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "15970 + 24000 (3-ax belly chassis) + 45000 (belly body) + 2600. Pairing: 3b chassis only valid with belly body." },
+    "scs.livestock.single_3b.belly_stl": { "price": 87570, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "Same as belly_pnt (belly body fee identical for paint and steel finish)." },
+
+    "scs.lowbed.single_2s.short":   { "price": 49560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 18000 (2-ax spread) + 20000 (lowbed body) + 2600. Cheapest LB config." },
+    "scs.lowbed.single_3.short":    { "price": 51560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 20000 (3-ax) + 20000 + 2600. Overrides parser=40000 (chain_base-adjacent)." },
+    "scs.lowbed.single_3s.short":   { "price": 52560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 21000 (3-ax spread) + 20000 + 2600." },
+    "scs.lowbed.single_4_ln.long":  { "price": 58560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 27000 (4-ax extendable, long) + 20000 + 2600." },
+    "scs.lowbed.single_4_sh.short": { "price": 58560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 27000 (4-ax extendable, short, same chassis fee as long) + 20000 + 2600." },
+    "scs.lowbed.single_41_ln.long": { "price": 60560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 29000 (1+4 ax extendable, long) + 20000 + 2600." },
+    "scs.lowbed.single_41_sh.short":{ "price": 60560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 29000 (1+4 ax extendable, short) + 20000 + 2600." },
+    "scs.lowbed.single_5_ln.long":  { "price": 60560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 29000 (5-ax extendable, long) + 20000 + 2600." },
+    "scs.lowbed.single_5_sh.short": { "price": 60560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 29000 (5-ax extendable, short) + 20000 + 2600." },
+
+    "scs.lowloader.single_2_ln.long":  { "price": 53500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 22000 (2-ax extendable, long) + 20000 (lowloader body) + 2600. Cheapest LLD config." },
+    "scs.lowloader.single_2_sh.short": { "price": 53500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 22000 (2-ax extendable, short, same chassis fee as long) + 20000 + 2600." },
+    "scs.lowloader.single_3_ln.long":  { "price": 55500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 24000 (3-ax extendable, long) + 20000 + 2600." },
+    "scs.lowloader.single_3_sh.short": { "price": 55500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 24000 (3-ax extendable, short) + 20000 + 2600. Overrides parser=44000 (chain_base-adjacent)." },
+    "scs.lowloader.single_3_1.short":  { "price": 57500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 26000 (1+3 axles) + 20000 + 2600." },
+    "scs.lowloader.single_4_ln.long":  { "price": 58500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 27000 (4-ax extendable, long) + 20000 + 2600." },
+    "scs.lowloader.single_4_sh.short": { "price": 58500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 27000 (4-ax extendable, short) + 20000 + 2600." },
+    "scs.lowloader.single_4_1.short":  { "price": 59500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 28000 (1+4 axles) + 20000 + 2600." },
+
+    "scs.flatbed.single_2.flatbed_w":     { "price": 30700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 (2-ax) + 2000 (wooden floor) + 2600. Cheapest SCS flatbed config. Overrides parser=19000." },
+    "scs.flatbed.single_2.flatbed_s":     { "price": 35700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 + 7000 (steel floor) + 2600." },
+    "scs.flatbed.single_2.brick":         { "price": 36700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 + 8000 (drop side) + 2600." },
+    "scs.flatbed.single_2.container":     { "price": 38700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 + 10000 (floor with container pins) + 2600." },
+    "scs.flatbed.single_2.brick_crane":   { "price": 40700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 + 12000 (drop side w/ crane) + 2600." },
+    "scs.flatbed.single_2a.flatbed_w":    { "price": 31700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 (2-ax spread) + 2000 + 2600." },
+    "scs.flatbed.single_2a.flatbed_s":    { "price": 36700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 + 7000 + 2600." },
+    "scs.flatbed.single_2a.brick":        { "price": 37700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 + 8000 + 2600." },
+    "scs.flatbed.single_2a.container":    { "price": 39700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 + 10000 + 2600." },
+    "scs.flatbed.single_2a.brick_crane":  { "price": 41700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 + 12000 + 2600." },
+    "scs.flatbed.single_3.flatbed_w":     { "price": 33700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 (3-ax) + 2000 + 2600." },
+    "scs.flatbed.single_3.flatbed_s":     { "price": 38700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 + 7000 + 2600." },
+    "scs.flatbed.single_3.brick":         { "price": 39700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 + 8000 + 2600." },
+    "scs.flatbed.single_3.container":     { "price": 41700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 + 10000 + 2600." },
+    "scs.flatbed.single_3.brick_crane":   { "price": 43700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 + 12000 + 2600." },
+    "scs.flatbed.single_3s.flatbed_w":    { "price": 35700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 (3-ax steerable spread) + 2000 + 2600." },
+    "scs.flatbed.single_3s.flatbed_s":    { "price": 40700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 7000 + 2600." },
+    "scs.flatbed.single_3s.brick":        { "price": 41700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 8000 + 2600." },
+    "scs.flatbed.single_3s.container":    { "price": 43700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 10000 + 2600." },
+    "scs.flatbed.single_3s.brick_crane":  { "price": 45700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 12000 + 2600." },
+    "scs.flatbed.single_3sa.flatbed_w":   { "price": 35700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 (3-ax steerable spread rear, same fee as 3s) + 2000 + 2600." },
+    "scs.flatbed.single_3sa.flatbed_s":   { "price": 40700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 7000 + 2600." },
+    "scs.flatbed.single_3sa.brick":       { "price": 41700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 8000 + 2600." },
+    "scs.flatbed.single_3sa.container":   { "price": 43700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 10000 + 2600." },
+    "scs.flatbed.single_3sa.brick_crane": { "price": 45700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 12000 + 2600." },
+    "scs.flatbed.single_3s2.flatbed_w":   { "price": 37700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 (3-ax 2 steerable) + 2000 + 2600." },
+    "scs.flatbed.single_3s2.flatbed_s":   { "price": 42700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 + 7000 + 2600. Overrides parser=31000." },
+    "scs.flatbed.single_3s2.brick":       { "price": 43700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 + 8000 + 2600." },
+    "scs.flatbed.single_3s2.container":   { "price": 45700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 + 10000 + 2600." },
+    "scs.flatbed.single_3s2.brick_crane": { "price": 47700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 + 12000 + 2600." },
+    "scs.flatbed.single_4.flatbed_w":     { "price": 40700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 (4-ax steerable) + 2000 + 2600." },
+    "scs.flatbed.single_4.flatbed_s":     { "price": 45700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 + 7000 + 2600." },
+    "scs.flatbed.single_4.brick":         { "price": 46700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 + 8000 + 2600." },
+    "scs.flatbed.single_4.container":     { "price": 48700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 + 10000 + 2600." },
+    "scs.flatbed.single_4.brick_crane":   { "price": 50700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 + 12000 + 2600." }
   },
   "_resolved_stock_offers_decode": {
     "ski_solid_24_77_2_sr_66725": "S.KI solid 24/77.2 sr stock = ch_2_dsl.solid (2-axle steel, 8.5m). Stock paint ~26415; manual-prices uses min-paint 2600 instead per pricing policy.",
