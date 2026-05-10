@@ -410,14 +410,22 @@ export function getTrailerInfoForCountry(
       if (!existing || totalHV > existing.totalHV) {
         bestByBT.set(bt, { trailer: t, totalHV });
       } else if (totalHV === existing.totalHV) {
-        // Tiebreaker: prefer a trailer with a known dealer price (price > 0) over
-        // a price=0 entry, and among priced ties prefer the lowest. Eliminates
-        // alphabetical-iteration luck and avoids walking redundant prices when an
-        // identically-capable sibling variant is already priced.
+        // Tiebreaker priority:
+        //   (a) walked > parser-only > unpriced (parser prices unreliable —
+        //       see feedback_trucker_parser_prices_unreliable memory)
+        //   (b) within same tier, lowest price wins
+        // Avoids alphabetical-iteration luck and avoids surfacing parser-priced
+        // entries (≈ chain_base only) when a hand-walked sibling exists.
+        const curWalked = existing.trailer.priceWalked === true;
+        const newWalked = t.priceWalked === true;
         const curPriced = existing.trailer.price > 0;
         const newPriced = t.price > 0;
-        if (newPriced && (!curPriced || t.price < existing.trailer.price)) {
+        if (newWalked && !curWalked) {
           bestByBT.set(bt, { trailer: t, totalHV });
+        } else if (newWalked === curWalked) {
+          if (newPriced && (!curPriced || t.price < existing.trailer.price)) {
+            bestByBT.set(bt, { trailer: t, totalHV });
+          }
         }
       }
     }

@@ -140,6 +140,7 @@ describe('data.ts', () => {
       fetchMock
         .mockResolvedValueOnce(createFetchResponse(null, false, 404))
         .mockResolvedValueOnce(createFetchResponse(sampleObservations))
+        .mockResolvedValueOnce(createFetchResponse(null, false, 404))
         .mockResolvedValueOnce(createFetchResponse(null, false, 404));
 
       vi.resetModules();
@@ -147,11 +148,11 @@ describe('data.ts', () => {
       const freshData = await import('../data.ts');
 
       await freshData.loadAllData();
-      expect(fetchMock).toHaveBeenCalledTimes(3); // game-defs + observations + multi-body-overrides
+      expect(fetchMock).toHaveBeenCalledTimes(4); // game-defs + observations + multi-body-overrides + manual-prices
 
       // Second call should use cache
       await freshData.loadAllData();
-      expect(fetchMock).toHaveBeenCalledTimes(3); // No additional calls
+      expect(fetchMock).toHaveBeenCalledTimes(4); // No additional calls
     });
 
     it('all cargo gets default value 1.0 and no flags (observations only)', async () => {

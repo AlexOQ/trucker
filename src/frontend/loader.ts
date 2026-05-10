@@ -17,7 +17,7 @@ import { getCityDisplayNames, getCountryDisplayNames } from './display-names';
 import { titleCase } from './utils';
 import type {
   City, Company, Cargo, Trailer,
-  GameDefs, Observations, AllData, MultiBodyOverrides,
+  GameDefs, Observations, AllData, MultiBodyOverrides, ManualPricesFile,
 } from './types';
 
 const dataCache: Record<string, unknown> = {};
@@ -45,13 +45,16 @@ export async function loadAllData(): Promise<AllData> {
   const gameId = getActiveGame();
   const dataDir = `data/${gameId}`;
 
-  // Load both sources in parallel. multi-body-overrides.json is optional —
-  // when present, applied to trailers as `extra_body_types` so they compete
-  // for multiple body_type slots in the optimizer.
-  const [gameDefs, observations, multiBody] = await Promise.all([
+  // Load all sources in parallel. multi-body-overrides.json is optional — when
+  // present, applied to trailers as `extra_body_types` so they compete for
+  // multiple body_type slots in the optimizer. manual-prices.json is also
+  // optional — when present, hand-walked prices override parser values at load
+  // time so walks show up immediately without re-running the parser.
+  const [gameDefs, observations, multiBody, manualPrices] = await Promise.all([
     loadJson<GameDefs>(`${dataDir}/game-defs.json`),
     loadJson<Observations>(`${dataDir}/observations.json`),
     loadJson<MultiBodyOverrides>(`${dataDir}/multi-body-overrides.json`),
+    loadJson<ManualPricesFile>(`${dataDir}/manual-prices.json`),
   ]);
 
   if (!gameDefs && !observations) {
@@ -67,7 +70,7 @@ export async function loadAllData(): Promise<AllData> {
   const cities = buildCities(gameDefs, observations);
   const companies = buildCompanies(gameDefs, observations);
   const cargo = buildCargo(gameDefs, observations);
-  const trailers = buildTrailers(gameDefs, observations, multiBody);
+  const trailers = buildTrailers(gameDefs, observations, multiBody, manualPrices);
 
   return { gameDefs, observations, cities, companies, cargo, trailers };
 }
@@ -151,13 +154,20 @@ function buildTrailers(
   defs: GameDefs | null,
   obs: Observations | null,
   multiBody: MultiBodyOverrides | null,
+  manualPrices: ManualPricesFile | null,
 ): Trailer[] {
   const overrides = multiBody?.overrides ?? {};
+  const walked = manualPrices?.prices ?? {};
   if (defs) {
     return Object.entries(defs.trailers).map(([id, t]) => {
       const bodyTypes = overrides[id];
       const primary = bodyTypes && bodyTypes.length > 0 ? bodyTypes[0] : t.body_type;
       const extras = bodyTypes && bodyTypes.length > 1 ? bodyTypes.slice(1) : undefined;
+      const walkedEntry = walked[id];
+      // Manual-walked price overrides parser unconditionally (parser is
+      // unreliable per feedback_trucker_parser_prices_unreliable memory).
+      const price = walkedEntry ? walkedEntry.price : (t.price ?? 0);
+      const priceWalked = walkedEntry !== undefined;
       return {
         id,
         name: t.name,
@@ -171,7 +181,8 @@ function buildTrailers(
         chain_type: t.chain_type,
         country_validity: t.country_validity,
         ownable: t.ownable,
-        price: t.price ?? 0,
+        price,
+        priceWalked,
         level_floor: t.level_floor ?? 0,
       };
     });

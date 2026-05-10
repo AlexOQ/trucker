@@ -457,6 +457,21 @@ describe('optimizer', () => {
       expect(info.get('dryvan')?.trailerId).toBe('box_c');
     });
 
+    it('prefers a walked-priced trailer over a cheaper parser-priced one on tie', () => {
+      clearTrailerInfoCache();
+      // Both same totalHV. parser-priced=21000, walked=70165 — walked wins
+      // despite higher nominal price (parser prices unreliable).
+      const data = buildTiedFixture({ box_a: 21000, box_b: 70165, box_c: 0 });
+      // box_b is the walked one; box_a is parser-only.
+      const aTrailer = data.trailers.find((t) => t.id === 'box_a')!;
+      const bTrailer = data.trailers.find((t) => t.id === 'box_b')!;
+      aTrailer.priceWalked = false;
+      bTrailer.priceWalked = true;
+      const lookups = buildLookups(data);
+      const info = getTrailerInfoForCountry('germany', data, lookups);
+      expect(info.get('dryvan')?.trailerId).toBe('box_b');
+    });
+
     it('higher totalHV still wins over a cheaper but lower-HV trailer', () => {
       clearTrailerInfoCache();
       // box_a: tied baseline. high_cap: same body type but volume=180 ⇒ double the units ⇒ double the HV.
