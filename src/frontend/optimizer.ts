@@ -109,10 +109,6 @@ function profileKey(bodyTypes: Iterable<string>): string {
   return [...new Set(bodyTypes)].sort().join('|');
 }
 
-/** Reverse of profileKey — decode the canonical key back into a sorted body-type array. */
-function decodeProfileKey(key: string): string[] {
-  return key.split('|');
-}
 
 // ============================================
 // Depot cargo model
@@ -482,17 +478,18 @@ function getProfileTrailerInfoForCountry(
     const cargoSet = lookups.trailerCargoMap.get(t.id);
     if (!cargoSet) continue;
 
+    // Profile *key* is canonical (sorted) so cache lookups dedupe, but the
+    // bodyTypes array we expose retains chassis-natural order — primary first,
+    // then declared extras — so OptimalFleetEntry.bodyType (= bodyTypes[0]) is
+    // the trailer's true primary, not the alphabetically-first body type.
     const bodyTypes = [t.body_type, ...(t.extra_body_types ?? [])];
     const key = profileKey(bodyTypes);
-    const sortedBodyTypes = decodeProfileKey(key);
 
-    // Sum HV across all body slots this trailer can serve (multi-body trailers
-    // see the union as their realized capacity for ranking purposes).
     let totalHV = 0;
     for (const cargoId of cargoSet) {
       const c = lookups.cargoById.get(cargoId);
       if (!c || c.excluded) continue;
-      const matches = c.body_types.some((bt) => sortedBodyTypes.includes(bt));
+      const matches = c.body_types.some((bt) => bodyTypes.includes(bt));
       if (!matches) continue;
       const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
       const bonus = cargoBonus(c);
@@ -502,25 +499,25 @@ function getProfileTrailerInfoForCountry(
 
     const existing = bestByProfile.get(key);
     if (!existing) {
-      bestByProfile.set(key, { trailer: t, bodyTypes: sortedBodyTypes, totalHV });
+      bestByProfile.set(key, { trailer: t, bodyTypes, totalHV });
       continue;
     }
     if (totalHV > existing.totalHV) {
-      bestByProfile.set(key, { trailer: t, bodyTypes: sortedBodyTypes, totalHV });
+      bestByProfile.set(key, { trailer: t, bodyTypes, totalHV });
       continue;
     }
     if (totalHV === existing.totalHV) {
-      // Same tiebreaker as getTrailerInfoForCountry: walked > parser > unpriced;
-      // within tier, lowest price wins.
+      // Tiebreaker: walked > parser > unpriced, then lowest price within tier.
+      // Parser prices are chain_base only and unreliable, so any walked sibling beats them.
       const curWalked = existing.trailer.priceWalked === true;
       const newWalked = t.priceWalked === true;
       const curPriced = existing.trailer.price > 0;
       const newPriced = t.price > 0;
       if (newWalked && !curWalked) {
-        bestByProfile.set(key, { trailer: t, bodyTypes: sortedBodyTypes, totalHV });
+        bestByProfile.set(key, { trailer: t, bodyTypes, totalHV });
       } else if (newWalked === curWalked) {
         if (newPriced && (!curPriced || t.price < existing.trailer.price)) {
-          bestByProfile.set(key, { trailer: t, bodyTypes: sortedBodyTypes, totalHV });
+          bestByProfile.set(key, { trailer: t, bodyTypes, totalHV });
         }
       }
     }

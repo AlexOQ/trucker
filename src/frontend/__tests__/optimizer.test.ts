@@ -508,6 +508,42 @@ describe('optimizer', () => {
       expect(driver.displayName).toContain('+');
     });
 
+    it('preserves chassis-natural bodyTypes order when extras precede primary alphabetically', () => {
+      // Regression: profileKey canonicalizes via alphabetical sort, but the exposed
+      // bodyTypes array must retain `[primary, ...extras]` so the displayed primary
+      // and `trailers.html#body-{bodyType}` route point at the trailer's loader-declared
+      // body_type. Here `body_type='flatbed', extra_body_types=['dryvan']` — an
+      // alphabetical pass would yield `[dryvan, flatbed]` → wrong primary.
+      clearTrailerInfoCache();
+      const data = createMockData();
+      const trailerSpec = {
+        chassis_mass: 5000, body_mass: 3000,
+        gross_weight_limit: 40000, length: 13.6, chain_type: 'single' as const,
+        ownable: true, level_floor: 0,
+      };
+      data.gameDefs.trailers = {
+        combo: { name: 'Combo', body_type: 'flatbed', volume: 90, ...trailerSpec, extra_body_types: ['dryvan'] },
+      };
+      data.trailers = [
+        { id: 'combo', name: 'Combo', body_type: 'flatbed', volume: 90, ...trailerSpec, extra_body_types: ['dryvan'] },
+      ];
+      data.gameDefs.cargo_trailers = {
+        electronics: ['combo'],
+        machinery: ['combo'],
+      };
+      data.gameDefs.cargo_trailer_units = {
+        electronics: { combo: 90 },
+        machinery: { combo: 1 },
+      };
+      const lookups = buildLookups(data);
+      const fleet = computeOptimalFleet('berlin', data, lookups);
+      expect(fleet).not.toBeNull();
+      const driver = fleet!.drivers[0];
+      expect(driver.bodyTypes).toEqual(['flatbed', 'dryvan']);
+      expect(driver.bodyType).toBe('flatbed');
+      expect(driver.displayName).toBe('Flatbed + Dryvan');
+    });
+
     it('higher totalHV still wins over a cheaper but lower-HV trailer', () => {
       clearTrailerInfoCache();
       // box_a: tied baseline. high_cap: same body type but volume=180 ⇒ double the units ⇒ double the HV.
