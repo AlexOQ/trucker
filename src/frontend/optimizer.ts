@@ -38,7 +38,10 @@ const RANKING_DRIVERS = 5;
 
 export interface FleetEntry {
   trailerId: string;
+  /** Primary body type — for routes like `trailers.html#body-{bodyType}` and backwards compat. */
   bodyType: string;
+  /** Full body-type set the recommended trailer can serve. Size 1 for single-body. */
+  bodyTypes: string[];
   chainType: string;
   countryValidity: string[];
   displayName: string;
@@ -51,12 +54,15 @@ export interface FleetEntry {
 
 export interface OptimalFleetEntry {
   displayName: string;
+  /** Primary body type — for routes like `trailers.html#body-{bodyType}` and backwards compat. */
   bodyType: string;
+  /** Full body-type set the recommended trailer can serve. Size 1 for single-body; >1 for multi-body trailers (extra_body_types). */
+  bodyTypes: string[];
   trailerId: string;
   trailerSpec: string;
   ev: number;
   cargoMatched: number;
-  count: number;           // 1-5 for drivers (collapsed by body type)
+  count: number;           // 1-5 for drivers (collapsed by profile)
   /** Per-trailer purchase price (rounded to nearest 1000); 0 if no dealer data. */
   estimatedPrice: number;
   /** Level at which this trailer becomes available (max accessory unlock); 0 if no dealer data. */
@@ -91,6 +97,21 @@ export interface CityRanking {
 
 function bodyTypeDisplayName(bodyType: string): string {
   return bodyType.charAt(0).toUpperCase() + bodyType.slice(1).replace(/_/g, ' ');
+}
+
+/** Display name for a profile (set of body types). Joins multi-body sets with " + ". */
+function profileDisplayName(bodyTypes: string[]): string {
+  return bodyTypes.map(bodyTypeDisplayName).join(' + ');
+}
+
+/** Canonical key for a body-type set: sorted, pipe-joined. */
+function profileKey(bodyTypes: Iterable<string>): string {
+  return [...new Set(bodyTypes)].sort().join('|');
+}
+
+/** Reverse of profileKey — decode the canonical key back into a sorted body-type array. */
+function decodeProfileKey(key: string): string[] {
+  return key.split('|');
 }
 
 // ============================================
@@ -274,6 +295,61 @@ export function analyticalFirstPickEV(
   return ev;
 }
 
+/**
+ * Analytical first-pick EV for a multi-body profile. Same as
+ * `analyticalFirstPickEV` but `hv` per cargo item is the max bodyHV across all
+ * body types in the profile — so a multi-body trailer's flexibility shows up
+ * in the ranking, not just in single-body slots.
+ */
+export function analyticalFirstPickEVProfile(
+  depots: CityDepotData[],
+  profile: string[],
+  cache?: DepotItemsCache,
+): number {
+  if (profile.length === 1) return analyticalFirstPickEV(depots, profile[0], cache);
+
+  const depotItems: DepotItemsCache = cache ?? buildDepotItemsCache(depots);
+
+  const itemHv = (item: { bodyHV: Record<string, number> }): number => {
+    let m = 0;
+    for (const bt of profile) {
+      const v = item.bodyHV[bt] || 0;
+      if (v > m) m = v;
+    }
+    return m;
+  };
+
+  const hvSet = new Set<number>([0]);
+  for (const items of depotItems) {
+    for (const item of items) {
+      const hv = itemHv(item);
+      if (hv > 0) hvSet.add(hv);
+    }
+  }
+
+  const hvValues = [...hvSet].sort((a, b) => a - b);
+  if (hvValues.length <= 1) return 0;
+
+  function totalCDF(H: number): number {
+    let result = 1;
+    for (const items of depotItems) {
+      let cdf = 0;
+      for (const item of items) {
+        if (itemHv(item) <= H) cdf += item.p;
+      }
+      result *= Math.pow(cdf, JOBS_PER_DEPOT);
+    }
+    return result;
+  }
+
+  let ev = 0;
+  for (let i = 1; i < hvValues.length; i++) {
+    const pMax = totalCDF(hvValues[i]) - totalCDF(hvValues[i - 1]);
+    ev += hvValues[i] * pMax;
+  }
+  return ev;
+}
+
 // ============================================
 // Seeded PRNG for deterministic MC results
 // ============================================
@@ -338,6 +414,26 @@ function bestJob(board: DepotCargoItem[], bodyType: string): { hv: number; idx: 
   return { hv: Math.max(0, best), idx: bestIdx };
 }
 
+/**
+ * Find best job on board for a body-type profile (set of body types).
+ * Returns the max hv across all body types in the profile — represents a
+ * multi-body trailer that can fall back to any of its supported body types.
+ * For single-body profiles this matches `bestJob` exactly.
+ */
+function bestJobProfile(board: DepotCargoItem[], profile: string[]): { hv: number; idx: number } {
+  let best = -1, bestIdx = -1;
+  for (let i = 0; i < board.length; i++) {
+    const hvMap = board[i].bodyHV;
+    let row = 0;
+    for (const bt of profile) {
+      const hv = hvMap[bt] || 0;
+      if (hv > row) row = hv;
+    }
+    if (row > best) { best = row; bestIdx = i; }
+  }
+  return { hv: Math.max(0, best), idx: bestIdx };
+}
+
 // ============================================
 // Body type display info (country-aware)
 // ============================================
@@ -352,9 +448,97 @@ interface TrailerInfo {
 /** Cache: country → bodyType → best trailer info */
 const trailerInfoCache = new Map<string, Map<string, TrailerInfo>>();
 
-/** Clear trailer info cache — needed when DLC filter state changes between optimizer runs */
+/** Cache: country → profileKey → best trailer info matching that exact profile */
+const profileTrailerCache = new Map<string, Map<string, TrailerInfo & { bodyTypes: string[] }>>();
+
+/** Clear trailer info caches — needed when DLC filter state changes between optimizer runs */
 export function clearTrailerInfoCache(): void {
   trailerInfoCache.clear();
+  profileTrailerCache.clear();
+}
+
+/**
+ * Distinct body-type profiles available in a country: each entry is the
+ * sorted body-type set of at least one ownable trailer valid here. Multi-body
+ * trailers contribute >1-sized profiles via `extra_body_types`.
+ *
+ * Also returns the best (cheapest among walked > parser > unpriced) trailer
+ * realizing each profile — for display purposes after the optimizer picks.
+ */
+function getProfileTrailerInfoForCountry(
+  country: string, data: AllData, lookups: Lookups,
+): Map<string, TrailerInfo & { bodyTypes: string[] }> {
+  const cached = profileTrailerCache.get(country);
+  if (cached) return cached;
+
+  // Per profile, track best trailer by total haul value across its body-type slots.
+  const bestByProfile = new Map<string, { trailer: Trailer; bodyTypes: string[]; totalHV: number }>();
+
+  for (const t of data.trailers) {
+    if (!t.ownable) continue;
+    if (t.country_validity && t.country_validity.length > 0
+      && !t.country_validity.includes(country)) continue;
+
+    const cargoSet = lookups.trailerCargoMap.get(t.id);
+    if (!cargoSet) continue;
+
+    const bodyTypes = [t.body_type, ...(t.extra_body_types ?? [])];
+    const key = profileKey(bodyTypes);
+    const sortedBodyTypes = decodeProfileKey(key);
+
+    // Sum HV across all body slots this trailer can serve (multi-body trailers
+    // see the union as their realized capacity for ranking purposes).
+    let totalHV = 0;
+    for (const cargoId of cargoSet) {
+      const c = lookups.cargoById.get(cargoId);
+      if (!c || c.excluded) continue;
+      const matches = c.body_types.some((bt) => sortedBodyTypes.includes(bt));
+      if (!matches) continue;
+      const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
+      const bonus = cargoBonus(c);
+      totalHV += c.value * bonus * units;
+    }
+    if (totalHV === 0) continue;
+
+    const existing = bestByProfile.get(key);
+    if (!existing) {
+      bestByProfile.set(key, { trailer: t, bodyTypes: sortedBodyTypes, totalHV });
+      continue;
+    }
+    if (totalHV > existing.totalHV) {
+      bestByProfile.set(key, { trailer: t, bodyTypes: sortedBodyTypes, totalHV });
+      continue;
+    }
+    if (totalHV === existing.totalHV) {
+      // Same tiebreaker as getTrailerInfoForCountry: walked > parser > unpriced;
+      // within tier, lowest price wins.
+      const curWalked = existing.trailer.priceWalked === true;
+      const newWalked = t.priceWalked === true;
+      const curPriced = existing.trailer.price > 0;
+      const newPriced = t.price > 0;
+      if (newWalked && !curWalked) {
+        bestByProfile.set(key, { trailer: t, bodyTypes: sortedBodyTypes, totalHV });
+      } else if (newWalked === curWalked) {
+        if (newPriced && (!curPriced || t.price < existing.trailer.price)) {
+          bestByProfile.set(key, { trailer: t, bodyTypes: sortedBodyTypes, totalHV });
+        }
+      }
+    }
+  }
+
+  const info = new Map<string, TrailerInfo & { bodyTypes: string[] }>();
+  for (const [key, { trailer, bodyTypes }] of bestByProfile) {
+    info.set(key, {
+      trailerId: trailer.id,
+      trailerSpec: formatTrailerSpec(trailer),
+      estimatedPrice: trailer.price,
+      levelFloor: trailer.level_floor,
+      bodyTypes,
+    });
+  }
+
+  profileTrailerCache.set(country, info);
+  return info;
 }
 
 /**
@@ -369,17 +553,8 @@ export function getTrailerInfoForCountry(
   if (cached) return cached;
 
   const info = new Map<string, TrailerInfo>();
-  // Best-EV trailer per body type, regardless of dealer-price availability.
-  // HCT / double / b-double chains the parser couldn't price (assembled in-game
-  // via the customization screen, not a flat dealer file) used to be excluded
-  // by a `price > 0` filter — but the MC simulation in `buildCityDepots` does
-  // NOT share that filter, so excluding them here caused the displayed
-  // representative to disagree with the bodyHV the optimizer scored against
-  // (player saw the cheap-single representative while the fleet's predicted EV
-  // was computed from the larger multi-chain capacity). Display now matches the
-  // MC math; trailers with missing price render as `—` in the fleet table per
-  // city-detail-view's existing fallback. `manual-prices.json` overrides are
-  // the way to fill those gaps (see AlexOQ/trucker#254).
+  // Includes trailers with missing dealer price so display matches the MC math;
+  // those render as `—` in the fleet table and are filled in via `manual-prices.json`.
   const bestByBT = new Map<string, { trailer: Trailer; totalHV: number }>();
 
   for (const t of data.trailers) {
@@ -410,12 +585,8 @@ export function getTrailerInfoForCountry(
       if (!existing || totalHV > existing.totalHV) {
         bestByBT.set(bt, { trailer: t, totalHV });
       } else if (totalHV === existing.totalHV) {
-        // Tiebreaker priority:
-        //   (a) walked > parser-only > unpriced (parser prices unreliable —
-        //       see feedback_trucker_parser_prices_unreliable memory)
-        //   (b) within same tier, lowest price wins
-        // Avoids alphabetical-iteration luck and avoids surfacing parser-priced
-        // entries (≈ chain_base only) when a hand-walked sibling exists.
+        // Tiebreaker: walked > parser > unpriced, then lowest price within tier.
+        // Parser prices are chain_base only and unreliable, so any walked sibling beats them.
         const curWalked = existing.trailer.priceWalked === true;
         const newWalked = t.priceWalked === true;
         const curPriced = existing.trailer.price > 0;
@@ -507,6 +678,19 @@ function countCityCargoForBodyType(depots: CityDepotData[], bodyType: string): n
   return cargoIds.size;
 }
 
+/** Count distinct cargo types compatible with ANY body type in a profile across city depots */
+function countCityCargoForProfile(depots: CityDepotData[], bodyTypes: string[]): number {
+  const cargoIds = new Set<string>();
+  for (const depot of depots) {
+    for (const c of depot.cargo) {
+      for (const bt of bodyTypes) {
+        if (c.bodyHV[bt]) { cargoIds.add(c.cargoId); break; }
+      }
+    }
+  }
+  return cargoIds.size;
+}
+
 // ============================================
 // Optimal fleet recommendation (MC)
 // ============================================
@@ -533,9 +717,10 @@ export function computeOptimalFleet(
 
   const city = lookups.citiesById.get(cityId);
   const country = city?.country ?? '';
-  const trailerInfo = getTrailerInfoForCountry(country, data, lookups);
+  const profileInfo = getProfileTrailerInfoForCountry(country, data, lookups);
 
-  // Collect all body types and eliminate dominated ones
+  // Collect all body types and eliminate dominated ones (kept body-type level
+  // since domination semantics are about cargo-coverage subsumption, not multi-body flexibility).
   const allBodyTypes = new Set<string>();
   for (const depot of depots) {
     for (const c of depot.cargo) {
@@ -544,44 +729,45 @@ export function computeOptimalFleet(
   }
 
   const dominated = findDominatedBodyTypes(depots, allBodyTypes);
-  for (const bt of dominated) allBodyTypes.delete(bt);
 
-  // Build depot items cache once; reused for every body type evaluation below.
+  // Build depot items cache once; reused for every profile evaluation below.
   const depotItemsCache = buildDepotItemsCache(depots);
 
-  const bodyTypeEVs: Array<{ bt: string; ev: number }> = [];
-  for (const bt of allBodyTypes) {
-    const ev = analyticalFirstPickEV(depots, bt, depotItemsCache);
-    if (ev > 0) bodyTypeEVs.push({ bt, ev });
+  // Candidate profiles drop any body_type that's dominated or absent in city depots;
+  // a multi-body profile survives as long as at least one of its body_types remains.
+  const candidates: Array<{ key: string; bodyTypes: string[]; ev: number }> = [];
+  for (const [key, info] of profileInfo) {
+    const surviving = info.bodyTypes.filter((bt) => allBodyTypes.has(bt) && !dominated.has(bt));
+    if (surviving.length === 0) continue;
+    const ev = analyticalFirstPickEVProfile(depots, surviving, depotItemsCache);
+    if (ev > 0) candidates.push({ key, bodyTypes: surviving, ev });
   }
-  bodyTypeEVs.sort((a, b) => b.ev - a.ev);
+  candidates.sort((a, b) => b.ev - a.ev);
 
-  // Top body types for MC evaluation
-  const viableBodyTypes = bodyTypeEVs.slice(0, 15).map((e) => e.bt);
-  if (viableBodyTypes.length === 0) return null;
+  const viableProfiles = candidates.slice(0, 15);
+  if (viableProfiles.length === 0) return null;
 
   // Pre-allocate board buffer (reused across all MC simulations)
   const totalSlots = depots.length * JOBS_PER_DEPOT;
   const boardBuffer: DepotCargoItem[] = new Array(totalSlots);
 
-  // Phase 1: Greedy driver selection
-  const fleet: string[] = [];
+  // Phase 1: Greedy driver selection by profile (body-type set)
+  const fleet: Array<{ key: string; bodyTypes: string[] }> = [];
 
   for (let pick = 0; pick < MAX_DRIVERS; pick++) {
-    // Generate shared boards for this round — store raw generated boards
+    // Generate shared boards for this round
     const rawBoards: DepotCargoItem[][] = [];
     for (let s = 0; s < MC_SIMS; s++) {
       const len = fillBoard(boardBuffer, depots);
       rawBoards.push(boardBuffer.slice(0, len));
     }
 
-    // Pre-compute base fleet simulation on each board
+    // Pre-compute base fleet simulation on each board (existing drivers pick first)
     const baseRemainders: DepotCargoItem[][] = [];
-
     for (const board of rawBoards) {
       const remaining = board.slice();
-      for (const bt of fleet) {
-        const { hv, idx } = bestJob(remaining, bt);
+      for (const driver of fleet) {
+        const { hv, idx } = bestJobProfile(remaining, driver.bodyTypes);
         if (hv > 0 && idx >= 0) {
           remaining[idx] = remaining[remaining.length - 1];
           remaining.pop();
@@ -590,21 +776,23 @@ export function computeOptimalFleet(
       baseRemainders.push(remaining);
     }
 
-    // Evaluate each candidate body type's marginal contribution
-    let bestBT = '';
+    // Evaluate each candidate profile's marginal contribution
+    let bestProfile: { key: string; bodyTypes: string[] } | null = null;
     let bestMarginal = -1;
-
-    for (const bt of viableBodyTypes) {
+    for (const cand of viableProfiles) {
       let marginalSum = 0;
       for (const remaining of baseRemainders) {
-        marginalSum += bestJob(remaining, bt).hv;
+        marginalSum += bestJobProfile(remaining, cand.bodyTypes).hv;
       }
       const marginal = marginalSum / MC_SIMS;
-      if (marginal > bestMarginal) { bestMarginal = marginal; bestBT = bt; }
+      if (marginal > bestMarginal) {
+        bestMarginal = marginal;
+        bestProfile = { key: cand.key, bodyTypes: cand.bodyTypes };
+      }
     }
 
-    if (bestMarginal <= 0) break;
-    fleet.push(bestBT);
+    if (bestMarginal <= 0 || !bestProfile) break;
+    fleet.push(bestProfile);
   }
 
   if (fleet.length === 0) return null;
@@ -616,7 +804,7 @@ export function computeOptimalFleet(
     const len = fillBoard(boardBuffer, depots);
     const remaining = boardBuffer.slice(0, len);
     for (let d = 0; d < fleet.length; d++) {
-      const { hv, idx } = bestJob(remaining, fleet[d]);
+      const { hv, idx } = bestJobProfile(remaining, fleet[d].bodyTypes);
       if (hv > 0 && idx >= 0) {
         driverEVs[d] += hv;
         remaining[idx] = remaining[remaining.length - 1];
@@ -627,27 +815,30 @@ export function computeOptimalFleet(
 
   for (let d = 0; d < fleet.length; d++) driverEVs[d] /= MC_SIMS;
 
-  // Collapse fleet into counts (e.g., 3× curtainside → one entry with count=3)
-  const driverMap = new Map<string, { ev: number; count: number }>();
+  // Collapse fleet into counts by profile key
+  const driverMap = new Map<string, { ev: number; count: number; bodyTypes: string[] }>();
   for (let d = 0; d < fleet.length; d++) {
-    const bt = fleet[d];
-    const existing = driverMap.get(bt);
+    const driver = fleet[d];
+    const existing = driverMap.get(driver.key);
     if (existing) {
       existing.count++;
     } else {
-      driverMap.set(bt, { ev: driverEVs[d], count: 1 });
+      driverMap.set(driver.key, { ev: driverEVs[d], count: 1, bodyTypes: driver.bodyTypes });
     }
   }
 
-  const drivers: OptimalFleetEntry[] = [...driverMap.entries()].map(([bt, { ev, count }]) => {
-    const info = trailerInfo.get(bt);
+  const drivers: OptimalFleetEntry[] = [...driverMap.entries()].map(([key, { ev, count, bodyTypes }]) => {
+    const info = profileInfo.get(key);
+    const primary = bodyTypes[0];
+    const cargoMatched = countCityCargoForProfile(depots, bodyTypes);
     return {
-      displayName: bodyTypeDisplayName(bt),
-      bodyType: bt,
-      trailerId: info?.trailerId ?? bt,
-      trailerSpec: info?.trailerSpec ?? bt,
+      displayName: profileDisplayName(bodyTypes),
+      bodyType: primary,
+      bodyTypes,
+      trailerId: info?.trailerId ?? primary,
+      trailerSpec: info?.trailerSpec ?? primary,
       ev,
-      cargoMatched: countCityCargoForBodyType(depots, bt),
+      cargoMatched,
       count,
       estimatedPrice: info?.estimatedPrice ?? 0,
       levelFloor: info?.levelFloor ?? 0,
@@ -668,8 +859,10 @@ export function computeOptimalFleet(
 /**
  * Rank all cities by total earning potential using analytical E[max of N].
  *
- * Score = sum of top RANKING_DRIVERS body types' analytical first-pick EVs.
- * This approximates the greedy fleet total without needing MC per city.
+ * Score = sum of top RANKING_DRIVERS profiles' analytical first-pick EVs.
+ * Profile-aware so multi-body trailers credit toward the city's score
+ * (a `[flatbed, container]` trailer counts as a candidate that competes in
+ * both pools, matching what `computeOptimalFleet` would actually pick).
  */
 export function calculateCityRankings(
   data: AllData, lookups: Lookups,
@@ -680,13 +873,14 @@ export function calculateCityRankings(
     const depots = buildCityDepotProfiles(city.id, lookups);
     if (!depots) continue;
 
-    const trailerInfo = getTrailerInfoForCountry(city.country, data, lookups);
+    const profileInfo = getProfileTrailerInfoForCountry(city.country, data, lookups);
 
     const cityCompanies = lookups.cityCompanyMap.get(city.id) || [];
     let depotCount = 0;
     for (const { count } of cityCompanies) depotCount += count;
 
-    // Collect all body types and eliminate dominated ones
+    // Body types present in this city's depots; domination still computed at
+    // body-type level (cargo-coverage relation is a single-bt notion).
     const allBodyTypes = new Set<string>();
     for (const depot of depots) {
       for (const c of depot.cargo) {
@@ -695,23 +889,22 @@ export function calculateCityRankings(
     }
 
     const dominated = findDominatedBodyTypes(depots, allBodyTypes);
-    for (const bt of dominated) allBodyTypes.delete(bt);
-
-    // Build depot items cache once; reused for every body type evaluation below.
     const depotItemsCache = buildDepotItemsCache(depots);
 
-    // Compute analytical first-pick EV per body type
-    const bodyTypeEVs: Array<{ bt: string; ev: number }> = [];
-    for (const bt of allBodyTypes) {
-      const ev = analyticalFirstPickEV(depots, bt, depotItemsCache);
-      if (ev > 0) bodyTypeEVs.push({ bt, ev });
+    // Per profile: analytical first-pick EV over the profile's surviving (non-dominated, present) body types.
+    const profileEVs: Array<{ key: string; bodyTypes: string[]; ev: number }> = [];
+    for (const [key, info] of profileInfo) {
+      const surviving = info.bodyTypes.filter((bt) => allBodyTypes.has(bt) && !dominated.has(bt));
+      if (surviving.length === 0) continue;
+      const ev = analyticalFirstPickEVProfile(depots, surviving, depotItemsCache);
+      if (ev > 0) profileEVs.push({ key, bodyTypes: surviving, ev });
     }
-    bodyTypeEVs.sort((a, b) => b.ev - a.ev);
+    profileEVs.sort((a, b) => b.ev - a.ev);
 
-    if (bodyTypeEVs.length === 0) continue;
+    if (profileEVs.length === 0) continue;
 
-    // Score = sum of top N body type EVs
-    const topN = bodyTypeEVs.slice(0, RANKING_DRIVERS);
+    // Score = sum of top N profile EVs
+    const topN = profileEVs.slice(0, RANKING_DRIVERS);
     const score = topN.reduce((s, e) => s + e.ev, 0);
 
     // Count unique cargo types across all depots
@@ -721,18 +914,20 @@ export function calculateCityRankings(
     }
 
     // Build top trailer entries for display
-    const topTrailers: FleetEntry[] = bodyTypeEVs.slice(0, TOP_TRAILERS).map((e) => {
-      const info = trailerInfo.get(e.bt);
+    const topTrailers: FleetEntry[] = profileEVs.slice(0, TOP_TRAILERS).map((e) => {
+      const info = profileInfo.get(e.key);
+      const primary = e.bodyTypes[0];
       return {
-        trailerId: info?.trailerId ?? e.bt,
-        bodyType: e.bt,
+        trailerId: info?.trailerId ?? primary,
+        bodyType: primary,
+        bodyTypes: e.bodyTypes,
         chainType: 'single',
         countryValidity: [],
-        displayName: bodyTypeDisplayName(e.bt),
-        trailerSpec: info?.trailerSpec ?? e.bt,
+        displayName: profileDisplayName(e.bodyTypes),
+        trailerSpec: info?.trailerSpec ?? primary,
         cityValue: e.ev,
         pctOfTotal: score > 0 ? (e.ev / score) * 100 : 0,
-        cargoMatched: countCityCargoForBodyType(depots, e.bt),
+        cargoMatched: countCityCargoForProfile(depots, e.bodyTypes),
         variants: 1,
       };
     });

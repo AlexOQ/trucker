@@ -472,6 +472,42 @@ describe('optimizer', () => {
       expect(info.get('dryvan')?.trailerId).toBe('box_b');
     });
 
+    it('multi-body trailer drains both pools when picked by computeOptimalFleet', () => {
+      // City has two cargoes per depot: dryvan electronics and flatbed machinery, both 1.0 prob_coef.
+      // Only a single multi-body trailer is ownable, serving both body types.
+      // The optimizer must pick a profile [dryvan, flatbed] and its driver must
+      // consume across both pools — verifies bestJobProfile fallback behavior.
+      clearTrailerInfoCache();
+      const data = createMockData();
+      const trailerSpec = {
+        chassis_mass: 5000, body_mass: 3000,
+        gross_weight_limit: 40000, length: 13.6, chain_type: 'single' as const,
+        ownable: true, level_floor: 0,
+      };
+      data.gameDefs.trailers = {
+        combo: { name: 'Combo', body_type: 'dryvan', volume: 90, ...trailerSpec, extra_body_types: ['flatbed'] },
+      };
+      data.trailers = [
+        { id: 'combo', name: 'Combo', body_type: 'dryvan', volume: 90, ...trailerSpec, extra_body_types: ['flatbed'] },
+      ];
+      data.gameDefs.cargo_trailers = {
+        electronics: ['combo'],
+        machinery: ['combo'],
+      };
+      data.gameDefs.cargo_trailer_units = {
+        electronics: { combo: 90 },
+        machinery: { combo: 1 },
+      };
+      const lookups = buildLookups(data);
+      const fleet = computeOptimalFleet('berlin', data, lookups);
+      expect(fleet).not.toBeNull();
+      const driver = fleet!.drivers[0];
+      // Driver's bodyTypes must include both — confirms profile picking, not single-body picking.
+      expect(driver.bodyTypes.sort()).toEqual(['dryvan', 'flatbed']);
+      // Display name should reflect the multi-body profile.
+      expect(driver.displayName).toContain('+');
+    });
+
     it('higher totalHV still wins over a cheaper but lower-HV trailer', () => {
       clearTrailerInfoCache();
       // box_a: tied baseline. high_cap: same body type but volume=180 ⇒ double the units ⇒ double the HV.

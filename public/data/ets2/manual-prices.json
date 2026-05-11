@@ -1,355 +1,1027 @@
 {
   "game": "ets2",
   "schema_version": 1,
-  "_doc": "Manually-walked trailer prices for entries the static def parser sees as price=0 (and overrides for parser-incomplete entries). See AlexOQ/trucker#254. POLICY: prices reflect MINIMUM-money-to-outfit configuration — cheapest paintjob (min of paintjob_range) for budget/optimizer-friendly representation, not dealer-stock-default which bundles mid/premium paint. Decomposed via in-game customization screen.",
-  "_pricing_policy": {
-    "paint": "minimum (cheapest paintjob in dealer's range, typically 2.6k single / 5.2k double / 7.8k HCT)",
-    "rationale": "Optimizer's primary use case is min-cost garage outfitting. Stock-offer prices include cosmetic paint that the budget-conscious player would skip. Manual-prices.json represents the floor a player must pay for a working trailer.",
-    "consequence": "Override deltas vs parser-derived prices reflect parser-missed accessory chains (chassis, body, base), NOT the cosmetic-paint addition."
-  },
-  "_build_up_reference": {
-    "schmitz_scs_single": {
-      "components": {
-        "chain_base": 16785,
-        "chassis_single_2": 17000,
-        "chassis_single_3": 20000,
-        "chassis_single_3sp": 20000,
-        "chassis_single_3_15": 25000,
-        "body_any_variant": 5000,
-        "paintjob_min": 2600,
-        "paintjob_range": [2600, 28000]
-      },
-      "formula": "price = chain_base + chassis + body (5000 for any of universal/ecofix/_p variants) + paintjob_min (2600)"
-    },
-    "schmitz_scs_double": {
-      "components": {
-        "chain_base": 24425,
-        "chassis_double_3_2": 32000,
-        "body_any_variant": 8000,
-        "paintjob_min": 5200,
-        "paintjob_range": [5200, 56000]
-      },
-      "formula": "price = 24425 + 32000 + 8000 + 5200 = 69625"
-    },
-    "schmitz_scs_hct": {
-      "components": {
-        "chain_base": 34615,
-        "chassis_hct_3_2_3": 44000,
-        "body_any_variant": 10000,
-        "paintjob_min": 7800,
-        "paintjob_range": [7800, 84000]
-      },
-      "formula": "price = 34615 + 44000 + 10000 + 7800 = 96415"
-    },
-    "schmitz_sbo_single": {
-      "components": {
-        "chain_base": 10450,
-        "chassis_single_2": 17000,
-        "chassis_single_3": 20000,
-        "chassis_single_3_15": 25000,
-        "body_express": 30000,
-        "paintjob_min": 2600,
-        "paintjob_range": [2600, 28000]
-      },
-      "formula": "price = 10450 + chassis + 30000 + 2600"
-    },
-    "schmitz_ski_single": {
-      "components": {
-        "chain_base": 9310,
-        "chassis_2ax_steel_or_alu": 16000,
-        "chassis_3ax_short_steel_or_alu": 20000,
-        "chassis_3ax_long_steel_or_alu": 20000,
-        "body_solid": 15000,
-        "body_solid_sc": 16000,
-        "body_light": 20000,
-        "body_light_sc": 22000,
-        "paintjob_min": 2600,
-        "paintjob_range": [2600, 27000]
-      },
-      "formula": "price = 9310 + chassis + body + 2600. 6 chassis stems share fee (alu vs steel legs same; 8.5m vs 9.6m chassis same fee, only volume differs)."
-    },
-    "schmitz_sko_single": {
-      "components": {
-        "chain_base": 42050,
-        "chassis_single_2": 17000,
-        "chassis_single_2sa": 18000,
-        "chassis_single_3": 20000,
-        "chassis_single_3sa": 22000,
-        "chassis_single_3_15": 25000,
-        "body_city_or_cool": 60000,
-        "paintjob_min": 2600,
-        "paintjob_range": [2600, "unknown"]
-      },
-      "formula": "price = 42050 + chassis + 60000 + 2600. Note: city + cool both 60k body fee but distinct trailer_def — see _known_parser_gaps."
-    },
-    "schmitz_sko_double": {
-      "components": {
-        "chain_base": 69420,
-        "chassis_double_3_2": 32000,
-        "body_cool": 100000,
-        "paintjob_min": 5200
-      },
-      "formula": "price = 69420 + 32000 + 100000 + 5200 = 206620"
-    },
-    "kassbohrer_shg_single": {
-      "components": {
-        "chain_base": 42365,
-        "chassis_3e_20": 25000,
-        "chassis_3e_220": 25000,
-        "chassis_3e_40": 25000,
-        "body_container_carrier": 200,
-        "paintjob_min": 2600
-      },
-      "formula": "price = 42365 + 25000 + 200 + 2600 = 70165 (uniform across all 3 chassis variants — extendable 20ft / 2x20ft / 40ft share fee). Container carrier body is twist-lock hardware only, hence the very low 200 body fee vs enclosed bodies."
-    },
-    "kassbohrer_sll_single": {
-      "components": {
-        "chain_base": 51700,
-        "chassis_single_2_ln": 22000,
-        "chassis_single_2_sh": 22000,
-        "chassis_single_3_ln": 24000,
-        "chassis_single_3_sh": 24000,
-        "body_low_loader": 20000,
-        "body_container_carrier": 21000,
-        "body_wooden_low_loader": 22000,
-        "paintjob_min": 2600
-      },
-      "formula": "price = 51700 + chassis + body + 2600. 2-axle chassis (long/short) share 22k fee; 3-axle (long/short) share 24k. Bodies span 20k–22k."
-    },
-    "scs_fdt_single": {
-      "components": {
-        "chain_base": 51100,
-        "chassis_single_2": 17000,
-        "chassis_single_3": 20000,
-        "body_paint": 20000,
-        "body_chrome": 25000,
-        "paintjob_min": 2600
-      },
-      "formula": "price = 51100 + chassis + body + 2600. SCS base foodtank — 2 chassis × 2 bodies = 4 variants. Parser had only single_3.chrome=0 (and presumably the rest). Confirms parser-prices-unreliable hypothesis: scs.gastank/fueltank parser=50000 likely the analogous chain_base for those tanker subtypes."
-    },
-    "scs_gst_single": {
-      "components": {
-        "chain_base": 48940,
-        "chassis_single_2": 17000,
-        "chassis_single_3": 20000,
-        "body_gastank": 30000,
-        "paintjob_min": 2600
-      },
-      "formula": "price = 48940 + chassis + 30000 + 2600. SCS base gastank — 2 chassis × 1 body = 2 variants. Parser=50000 for single_3 closely matches chain_base=48940 — confirms parser is reading a chain_base-adjacent field, not full configured cost."
-    },
-    "scs_fueltank_single": {
-      "components": {
-        "chain_base": 49940,
-        "chassis_single_2": 17000,
-        "chassis_single_3": 20000,
-        "body_fueltank": 30000,
-        "paintjob_min": 2600
-      },
-      "formula": "price = 49940 + chassis + 30000 + 2600. SCS base fueltank — 2 chassis × 1 body = 2 variants. Parser=50000 for single_3 vs chain_base=49940 — within 60 of the chain_base, confirming parser reads a chain_base-adjacent field. Sibling pattern to scs_gst_single (gastank chain_base=48940)."
-    },
-    "scs_lst_single": {
-      "components": {
-        "chain_base": 15970,
-        "chassis_single_3s": 22000,
-        "chassis_single_3b": 24000,
-        "body_str_paint_or_steel": 35000,
-        "body_belly_paint_or_steel": 45000,
-        "paintjob_min": 2600
-      },
-      "formula": "price = 15970 + chassis + body + 2600. SCS base livestock — pairing constraint: 3s chassis pairs only with str (non-belly) body; 3b chassis pairs only with belly body. Cheapest config: 3s+str+paint=75570. Belly config: 3b+belly+paint=87570. chain_base derived from user-supplied cheapest config price 75570."
-    },
-    "scs_lowbed_single": {
-      "components": {
-        "chain_base": 8960,
-        "chassis_single_2s": 18000,
-        "chassis_single_3": 20000,
-        "chassis_single_3s": 21000,
-        "chassis_single_4_lnsh": 27000,
-        "chassis_single_41_lnsh": 29000,
-        "chassis_single_5_lnsh": 29000,
-        "body_lowbed": 20000,
-        "paintjob_min": 2600
-      },
-      "formula": "price = 8960 + chassis + 20000 + 2600. SCS base lowbed — 1 body × 9 chassis variants. Cheapest config: 2-ax spread = 49560. chain_base derived from user-supplied cheapest config price. 4/41/5-axle long vs short share chassis fee — only volume/length differs."
-    },
-    "scs_lowloader_single": {
-      "components": {
-        "chain_base": 8900,
-        "chassis_single_2_lnsh": 22000,
-        "chassis_single_3_lnsh": 24000,
-        "chassis_single_3_1": 26000,
-        "chassis_single_4_lnsh": 27000,
-        "chassis_single_4_1": 28000,
-        "body_lowloader": 20000,
-        "paintjob_min": 2600
-      },
-      "formula": "price = 8900 + chassis + 20000 + 2600. SCS base lowloader (lowboy body) — 1 body × 8 chassis variants. Cheapest config: 2-ax extendable = 53500. chain_base derived from user-supplied cheapest. _1 suffix = +1 lead axle (3_1 = 1+3 = 26k, 4_1 = 1+4 = 28k). 2/3/4-axle long vs short share chassis fee per axle count."
-    },
-    "scs_flatbed_single": {
-      "components": {
-        "chain_base": 9100,
-        "chassis_single_2": 17000,
-        "chassis_single_2a": 18000,
-        "chassis_single_3": 20000,
-        "chassis_single_3s": 22000,
-        "chassis_single_3sa": 22000,
-        "chassis_single_3s2": 24000,
-        "chassis_single_4": 27000,
-        "body_flatbed_w_wooden": 2000,
-        "body_flatbed_s_steel": 7000,
-        "body_brick_dropside": 8000,
-        "body_container_pins": 10000,
-        "body_brick_crane_dropside_with_crane": 12000,
-        "paintjob_min": 2600
-      },
-      "formula": "price = 9100 + chassis + body + 2600. SCS base flatbed — 7 chassis × 5 bodies = 35 variants. Cheapest config: 2-ax + wooden floor = 30700. 3s (steerable spread) and 3sa (steerable spread rear) share 22k chassis fee. The .container body (floor with container pins) maps to body_type=container in game-defs; .brick and .brick_crane both map to flatbed_brck."
-    }
-  },
+  "_doc": "Walks methodology and audit log: docs/manual-prices-audit.md.",
   "prices": {
-    "schmitz.scs.single_2.curtain":     { "price": 41385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "16785 + 17000 + 5000 + 2600 (min paint)." },
-    "schmitz.scs.single_2.curtainp":    { "price": 41385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as curtain (cosmetic body variant)." },
-    "schmitz.scs.single_3.curtain":     { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "16785 + 20000 + 5000 + 2600. Overrides parser=25000." },
-    "schmitz.scs.single_3.curtainp":    { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same chassis price as curtain." },
-    "schmitz.scs.single_3.curtain_ef":  { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same chassis price (ecofix body, also 5k). Overrides parser=25000." },
-    "schmitz.scs.single_3.curtain_efp": { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as curtain_ef." },
-    "schmitz.scs.single_3sp.curtain":   { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "16785 + 20000 (steerable spread, same fee as single_3) + 5000 + 2600." },
-    "schmitz.scs.single_3sp.curtainp":  { "price": 44385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as single_3sp.curtain." },
-    "schmitz.scs.single_3_15.curtain":  { "price": 49385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "16785 + 25000 (3 axles long, 15m) + 5000 + 2600." },
-    "schmitz.scs.single_3_15.curtainp": { "price": 49385, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as single_3_15.curtain." },
-    "schmitz.scs.double_3_2.curtain":   { "price": 69625, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "24425 + 32000 + 8000 + 5200 (min paint). Overrides parser=40000." },
-    "schmitz.scs.double_3_2.curtainp":  { "price": 69625, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as curtain." },
-    "schmitz.scs.hct_3_2_3.curtain":    { "price": 96415, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "34615 + 44000 + 10000 + 7800 (min paint). Overrides parser=54000." },
-    "schmitz.scs.hct_3_2_3.curtainp":   { "price": 96415, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as curtain." },
-
-    "schmitz.sbo.single_2.dryvan":      { "price": 60050, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "10450 + 17000 + 30000 + 2600 (min paint)." },
-    "schmitz.sbo.single_3.dryvan":      { "price": 63050, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "10450 + 20000 + 30000 + 2600. Overrides parser=50000." },
-    "schmitz.sbo.single_3_15.dryvan":   { "price": 68050, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "10450 + 25000 + 30000 + 2600." },
-
-    "schmitz.ski.ch_2_dsl.solid":      { "price": 42910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 16000 + 15000 + 2600 (min paint). Cheapest S.KI single config = anchor." },
-    "schmitz.ski.ch_2_dsl.solid_sc":   { "price": 43910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 16000 + 16000 + 2600." },
-    "schmitz.ski.ch_2_dsl.light":      { "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 16000 + 20000 + 2600." },
-    "schmitz.ski.ch_2_dsl.light_sc":   { "price": 49910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 16000 + 22000 + 2600." },
-    "schmitz.ski.ch_2_dal.solid":      { "price": 42910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_2_dsl.solid (alu vs steel legs same chassis fee)." },
-    "schmitz.ski.ch_2_dal.solid_sc":   { "price": 43910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_2_dsl.solid_sc." },
-    "schmitz.ski.ch_2_dal.light":      { "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_2_dsl.light." },
-    "schmitz.ski.ch_2_dal.light_sc":   { "price": 49910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_2_dsl.light_sc." },
-    "schmitz.ski.ch_3_dsl.solid":      { "price": 46910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 20000 + 15000 + 2600." },
-    "schmitz.ski.ch_3_dsl.solid_sc":   { "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 20000 + 16000 + 2600." },
-    "schmitz.ski.ch_3_dsl.light":      { "price": 51910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 20000 + 20000 + 2600." },
-    "schmitz.ski.ch_3_dsl.light_sc":   { "price": 53910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9310 + 20000 + 22000 + 2600." },
-    "schmitz.ski.ch_3_dal.solid":      { "price": 46910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_3_dsl.solid. Overrides parser=35000." },
-    "schmitz.ski.ch_3_dal.solid_sc":   { "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_3_dsl.solid_sc." },
-    "schmitz.ski.ch_3_dal.light":      { "price": 51910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_3_dsl.light." },
-    "schmitz.ski.ch_3_dal.light_sc":   { "price": 53910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "Same as ch_3_dsl.light_sc." },
-    "schmitz.ski.ch_3_33_dsl.solid":   { "price": 46910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long chassis, same chassis fee as 8.5m short, larger volume (31m³ vs 24m³)." },
-    "schmitz.ski.ch_3_33_dsl.solid_sc":{ "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long, solid_sc body." },
-    "schmitz.ski.ch_3_33_dsl.light":   { "price": 51910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long, light body. 33m³ volume." },
-    "schmitz.ski.ch_3_33_dsl.light_sc":{ "price": 53910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long, light_sc body." },
-    "schmitz.ski.ch_3_33_dal.solid":   { "price": 46910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long alu, solid body." },
-    "schmitz.ski.ch_3_33_dal.solid_sc":{ "price": 47910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long alu, solid_sc body." },
-    "schmitz.ski.ch_3_33_dal.light":   { "price": 51910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long alu, light body." },
-    "schmitz.ski.ch_3_33_dal.light_sc":{ "price": 53910, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "9.6m long alu, light_sc body. Overrides parser=47000." },
-
-    "schmitz.sko.single_2.reefer":     { "price": 121650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 17000 + 60000 + 2600 (min paint). Cheapest S.KO single = anchor." },
-    "schmitz.sko.single_2sa.reefer":   { "price": 122650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 18000 (steerable spread) + 60000 + 2600. Overrides parser=78000." },
-    "schmitz.sko.single_3.reefer":     { "price": 124650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 20000 + 60000 + 2600. Overrides parser=80000." },
-    "schmitz.sko.single_3sa.reefer":   { "price": 126650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 22000 (3-ax steerable spread) + 60000 + 2600." },
-    "schmitz.sko.single_3_15.reefer":  { "price": 129650, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "42050 + 25000 (3-ax long, 15m) + 60000 + 2600." },
-    "schmitz.sko.double_3_2.reefer":   { "price": 206620, "source_pack": "schmitz_cargobull", "last_verified_game_version": "1.59", "notes": "69420 + 32000 + 100000 + 5200 (min paint). Overrides parser=132000. S.KO Cool double anchor; city variant has different (cheaper) chassis defaults — see _known_parser_gaps." },
-
-    "kassbohrer.shg.singl_3e_20.container":  { "price": 70165, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "42365 + 25000 (3-ax extendable, 20ft) + 200 (container carrier body) + 2600 (min paint)." },
-    "kassbohrer.shg.singl_3e_220.container": { "price": 70165, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "42365 + 25000 (3-ax extendable, 2x20ft) + 200 + 2600." },
-    "kassbohrer.shg.singl_3e_40.container":  { "price": 70165, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "42365 + 25000 (3-ax extendable, 40ft) + 200 + 2600." },
-
-    "kassbohrer.sll.single_2_ln.cont":      { "price": 97300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 (2-ax long) + 21000 (container carrier) + 2600." },
-    "kassbohrer.sll.single_2_ln.low":       { "price": 96300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 + 20000 (low loader) + 2600." },
-    "kassbohrer.sll.single_2_ln.low_wood":  { "price": 98300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 + 22000 (wooden low loader) + 2600." },
-    "kassbohrer.sll.single_2_sh.cont":      { "price": 97300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 (2-ax short, same fee as long) + 21000 + 2600." },
-    "kassbohrer.sll.single_2_sh.low":       { "price": 96300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 + 20000 + 2600." },
-    "kassbohrer.sll.single_2_sh.low_wood":  { "price": 98300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 22000 + 22000 + 2600." },
-    "kassbohrer.sll.single_3_ln.cont":      { "price": 99300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 (3-ax long) + 21000 + 2600." },
-    "kassbohrer.sll.single_3_ln.low":       { "price": 98300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 + 20000 + 2600." },
-    "kassbohrer.sll.single_3_ln.low_wood":  { "price": 100300, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 + 22000 + 2600." },
-    "kassbohrer.sll.single_3_sh.cont":      { "price": 99300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 (3-ax short, same fee as long) + 21000 + 2600." },
-    "kassbohrer.sll.single_3_sh.low":       { "price": 98300,  "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 + 20000 + 2600." },
-    "kassbohrer.sll.single_3_sh.low_wood":  { "price": 100300, "source_pack": "kassbohrer", "last_verified_game_version": "1.59", "notes": "51700 + 24000 + 22000 + 2600." },
-
-    "scs.foodtank.single_2.paint":   { "price": 90700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "51100 + 17000 (2-ax) + 20000 (paint body) + 2600." },
-    "scs.foodtank.single_2.chrome":  { "price": 95700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "51100 + 17000 + 25000 (chrome body) + 2600." },
-    "scs.foodtank.single_3.paint":   { "price": 93700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "51100 + 20000 (3-ax) + 20000 + 2600." },
-    "scs.foodtank.single_3.chrome":  { "price": 98700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "51100 + 20000 + 25000 + 2600." },
-
-    "scs.gastank.single_2.gastank":  { "price": 98540,  "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "48940 + 17000 (2-ax) + 30000 (gas tank body) + 2600." },
-    "scs.gastank.single_3.gastank":  { "price": 101540, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "48940 + 20000 (3-ax) + 30000 + 2600. Overrides parser=50000 (chain_base only)." },
-
-    "scs.fueltank.single_2.fueltank": { "price": 99540,  "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "49940 + 17000 (2-ax) + 30000 (fuel tank body) + 2600." },
-    "scs.fueltank.single_3.fueltank": { "price": 102540, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "49940 + 20000 (3-ax) + 30000 + 2600. Overrides parser=50000 (chain_base only)." },
-
-    "scs.livestock.single_3s.str_pnt":   { "price": 75570, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "15970 + 22000 (3-ax non-belly) + 35000 (str body, paint or steel) + 2600. Cheapest LST config." },
-    "scs.livestock.single_3s.str_stl":   { "price": 75570, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "Same as str_pnt (str body fee identical for paint and steel finish). Overrides parser=57000 (chain_base-adjacent only)." },
-    "scs.livestock.single_3b.belly_pnt": { "price": 87570, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "15970 + 24000 (3-ax belly chassis) + 45000 (belly body) + 2600. Pairing: 3b chassis only valid with belly body." },
-    "scs.livestock.single_3b.belly_stl": { "price": 87570, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "Same as belly_pnt (belly body fee identical for paint and steel finish)." },
-
-    "scs.lowbed.single_2s.short":   { "price": 49560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 18000 (2-ax spread) + 20000 (lowbed body) + 2600. Cheapest LB config." },
-    "scs.lowbed.single_3.short":    { "price": 51560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 20000 (3-ax) + 20000 + 2600. Overrides parser=40000 (chain_base-adjacent)." },
-    "scs.lowbed.single_3s.short":   { "price": 52560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 21000 (3-ax spread) + 20000 + 2600." },
-    "scs.lowbed.single_4_ln.long":  { "price": 58560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 27000 (4-ax extendable, long) + 20000 + 2600." },
-    "scs.lowbed.single_4_sh.short": { "price": 58560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 27000 (4-ax extendable, short, same chassis fee as long) + 20000 + 2600." },
-    "scs.lowbed.single_41_ln.long": { "price": 60560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 29000 (1+4 ax extendable, long) + 20000 + 2600." },
-    "scs.lowbed.single_41_sh.short":{ "price": 60560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 29000 (1+4 ax extendable, short) + 20000 + 2600." },
-    "scs.lowbed.single_5_ln.long":  { "price": 60560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 29000 (5-ax extendable, long) + 20000 + 2600." },
-    "scs.lowbed.single_5_sh.short": { "price": 60560, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8960 + 29000 (5-ax extendable, short) + 20000 + 2600." },
-
-    "scs.lowloader.single_2_ln.long":  { "price": 53500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 22000 (2-ax extendable, long) + 20000 (lowloader body) + 2600. Cheapest LLD config." },
-    "scs.lowloader.single_2_sh.short": { "price": 53500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 22000 (2-ax extendable, short, same chassis fee as long) + 20000 + 2600." },
-    "scs.lowloader.single_3_ln.long":  { "price": 55500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 24000 (3-ax extendable, long) + 20000 + 2600." },
-    "scs.lowloader.single_3_sh.short": { "price": 55500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 24000 (3-ax extendable, short) + 20000 + 2600. Overrides parser=44000 (chain_base-adjacent)." },
-    "scs.lowloader.single_3_1.short":  { "price": 57500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 26000 (1+3 axles) + 20000 + 2600." },
-    "scs.lowloader.single_4_ln.long":  { "price": 58500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 27000 (4-ax extendable, long) + 20000 + 2600." },
-    "scs.lowloader.single_4_sh.short": { "price": 58500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 27000 (4-ax extendable, short) + 20000 + 2600." },
-    "scs.lowloader.single_4_1.short":  { "price": 59500, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "8900 + 28000 (1+4 axles) + 20000 + 2600." },
-
-    "scs.flatbed.single_2.flatbed_w":     { "price": 30700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 (2-ax) + 2000 (wooden floor) + 2600. Cheapest SCS flatbed config. Overrides parser=19000." },
-    "scs.flatbed.single_2.flatbed_s":     { "price": 35700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 + 7000 (steel floor) + 2600." },
-    "scs.flatbed.single_2.brick":         { "price": 36700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 + 8000 (drop side) + 2600." },
-    "scs.flatbed.single_2.container":     { "price": 38700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 + 10000 (floor with container pins) + 2600." },
-    "scs.flatbed.single_2.brick_crane":   { "price": 40700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 17000 + 12000 (drop side w/ crane) + 2600." },
-    "scs.flatbed.single_2a.flatbed_w":    { "price": 31700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 (2-ax spread) + 2000 + 2600." },
-    "scs.flatbed.single_2a.flatbed_s":    { "price": 36700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 + 7000 + 2600." },
-    "scs.flatbed.single_2a.brick":        { "price": 37700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 + 8000 + 2600." },
-    "scs.flatbed.single_2a.container":    { "price": 39700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 + 10000 + 2600." },
-    "scs.flatbed.single_2a.brick_crane":  { "price": 41700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 18000 + 12000 + 2600." },
-    "scs.flatbed.single_3.flatbed_w":     { "price": 33700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 (3-ax) + 2000 + 2600." },
-    "scs.flatbed.single_3.flatbed_s":     { "price": 38700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 + 7000 + 2600." },
-    "scs.flatbed.single_3.brick":         { "price": 39700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 + 8000 + 2600." },
-    "scs.flatbed.single_3.container":     { "price": 41700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 + 10000 + 2600." },
-    "scs.flatbed.single_3.brick_crane":   { "price": 43700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 20000 + 12000 + 2600." },
-    "scs.flatbed.single_3s.flatbed_w":    { "price": 35700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 (3-ax steerable spread) + 2000 + 2600." },
-    "scs.flatbed.single_3s.flatbed_s":    { "price": 40700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 7000 + 2600." },
-    "scs.flatbed.single_3s.brick":        { "price": 41700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 8000 + 2600." },
-    "scs.flatbed.single_3s.container":    { "price": 43700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 10000 + 2600." },
-    "scs.flatbed.single_3s.brick_crane":  { "price": 45700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 12000 + 2600." },
-    "scs.flatbed.single_3sa.flatbed_w":   { "price": 35700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 (3-ax steerable spread rear, same fee as 3s) + 2000 + 2600." },
-    "scs.flatbed.single_3sa.flatbed_s":   { "price": 40700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 7000 + 2600." },
-    "scs.flatbed.single_3sa.brick":       { "price": 41700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 8000 + 2600." },
-    "scs.flatbed.single_3sa.container":   { "price": 43700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 10000 + 2600." },
-    "scs.flatbed.single_3sa.brick_crane": { "price": 45700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 22000 + 12000 + 2600." },
-    "scs.flatbed.single_3s2.flatbed_w":   { "price": 37700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 (3-ax 2 steerable) + 2000 + 2600." },
-    "scs.flatbed.single_3s2.flatbed_s":   { "price": 42700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 + 7000 + 2600. Overrides parser=31000." },
-    "scs.flatbed.single_3s2.brick":       { "price": 43700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 + 8000 + 2600." },
-    "scs.flatbed.single_3s2.container":   { "price": 45700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 + 10000 + 2600." },
-    "scs.flatbed.single_3s2.brick_crane": { "price": 47700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 24000 + 12000 + 2600." },
-    "scs.flatbed.single_4.flatbed_w":     { "price": 40700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 (4-ax steerable) + 2000 + 2600." },
-    "scs.flatbed.single_4.flatbed_s":     { "price": 45700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 + 7000 + 2600." },
-    "scs.flatbed.single_4.brick":         { "price": 46700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 + 8000 + 2600." },
-    "scs.flatbed.single_4.container":     { "price": 48700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 + 10000 + 2600." },
-    "scs.flatbed.single_4.brick_crane":   { "price": 50700, "source_pack": "scs_base", "last_verified_game_version": "1.59", "notes": "9100 + 27000 + 12000 + 2600." }
-  },
-  "_resolved_stock_offers_decode": {
-    "ski_solid_24_77_2_sr_66725": "S.KI solid 24/77.2 sr stock = ch_2_dsl.solid (2-axle steel, 8.5m). Stock paint ~26415; manual-prices uses min-paint 2600 instead per pricing policy.",
-    "ski_light_33_9_6_ak_sliding_cover_78725": "S.KI light 33/9.6 ak sliding cover stock = ch_3_33_dal.light_sc (3-ax long alu). Stock paint ~27415; manual-prices uses min-paint."
-  },
-  "_known_parser_gaps": {
-    "schmitz_sko_city_vs_cool": "Stock offers show distinct prices: city=137050, cool=143685. Both have 60k body fee per dealer customization screen, but city uses cheaper 17-18k chassis (likely 2-axle) while cool uses 20k+ (3-axle+). Parser merges both under single 'reefer' body, so manual-prices.json can only key by parser id (single_*). Tracked at AlexOQ/trucker#256."
+    "schmitz.scs.single_2.curtain": {
+      "price": 41385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.single_2.curtainp": {
+      "price": 41385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.single_3.curtain": {
+      "price": 44385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.single_3.curtainp": {
+      "price": 44385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.single_3.curtain_ef": {
+      "price": 44385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.single_3.curtain_efp": {
+      "price": 44385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.single_3sp.curtain": {
+      "price": 44385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.single_3sp.curtainp": {
+      "price": 44385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.single_3_15.curtain": {
+      "price": 49385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.single_3_15.curtainp": {
+      "price": 49385,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.double_3_2.curtain": {
+      "price": 69625,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.double_3_2.curtainp": {
+      "price": 69625,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.hct_3_2_3.curtain": {
+      "price": 96415,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.scs.hct_3_2_3.curtainp": {
+      "price": 96415,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.sbo.single_2.dryvan": {
+      "price": 60050,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.sbo.single_3.dryvan": {
+      "price": 63050,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.sbo.single_3_15.dryvan": {
+      "price": 68050,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_2_dsl.solid": {
+      "price": 42910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_2_dsl.solid_sc": {
+      "price": 43910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_2_dsl.light": {
+      "price": 47910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_2_dsl.light_sc": {
+      "price": 49910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_2_dal.solid": {
+      "price": 42910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_2_dal.solid_sc": {
+      "price": 43910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_2_dal.light": {
+      "price": 47910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_2_dal.light_sc": {
+      "price": 49910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_dsl.solid": {
+      "price": 46910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_dsl.solid_sc": {
+      "price": 47910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_dsl.light": {
+      "price": 51910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_dsl.light_sc": {
+      "price": 53910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_dal.solid": {
+      "price": 46910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_dal.solid_sc": {
+      "price": 47910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_dal.light": {
+      "price": 51910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_dal.light_sc": {
+      "price": 53910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_33_dsl.solid": {
+      "price": 46910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_33_dsl.solid_sc": {
+      "price": 47910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_33_dsl.light": {
+      "price": 51910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_33_dsl.light_sc": {
+      "price": 53910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_33_dal.solid": {
+      "price": 46910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_33_dal.solid_sc": {
+      "price": 47910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_33_dal.light": {
+      "price": 51910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.ski.ch_3_33_dal.light_sc": {
+      "price": 53910,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.sko.single_2.reefer": {
+      "price": 121650,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.sko.single_2sa.reefer": {
+      "price": 122650,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.sko.single_3.reefer": {
+      "price": 124650,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.sko.single_3sa.reefer": {
+      "price": 126650,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.sko.single_3_15.reefer": {
+      "price": 129650,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "schmitz.sko.double_3_2.reefer": {
+      "price": 206620,
+      "source_pack": "schmitz_cargobull",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.scx.hct_3_2_3.curtain": {
+      "price": 95600,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.scx.hct_3_2_3.curtainp": {
+      "price": 97600,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.shg.singl_3e_20.container": {
+      "price": 70165,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.shg.singl_3e_220.container": {
+      "price": 70165,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.shg.singl_3e_40.container": {
+      "price": 70165,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_2_ln.cont": {
+      "price": 97300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_2_ln.low": {
+      "price": 96300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_2_ln.low_wood": {
+      "price": 98300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_2_sh.cont": {
+      "price": 97300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_2_sh.low": {
+      "price": 96300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_2_sh.low_wood": {
+      "price": 98300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_3_ln.cont": {
+      "price": 99300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_3_ln.low": {
+      "price": 98300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_3_ln.low_wood": {
+      "price": 100300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_3_sh.cont": {
+      "price": 99300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_3_sh.low": {
+      "price": 98300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.sll.single_3_sh.low_wood": {
+      "price": 100300,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.foodtank.single_2.paint": {
+      "price": 90700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.foodtank.single_2.chrome": {
+      "price": 95700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.foodtank.single_3.paint": {
+      "price": 93700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.foodtank.single_3.chrome": {
+      "price": 98700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.gastank.single_2.gastank": {
+      "price": 98540,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.gastank.single_3.gastank": {
+      "price": 101540,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.fueltank.single_2.fueltank": {
+      "price": 99540,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.fueltank.single_3.fueltank": {
+      "price": 102540,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.livestock.single_3s.str_pnt": {
+      "price": 75570,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.livestock.single_3s.str_stl": {
+      "price": 75570,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.livestock.single_3b.belly_pnt": {
+      "price": 87570,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.livestock.single_3b.belly_stl": {
+      "price": 87570,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowbed.single_2s.short": {
+      "price": 49560,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowbed.single_3.short": {
+      "price": 51560,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowbed.single_3s.short": {
+      "price": 52560,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowbed.single_4_ln.long": {
+      "price": 58560,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowbed.single_4_sh.short": {
+      "price": 58560,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowbed.single_41_ln.long": {
+      "price": 60560,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowbed.single_41_sh.short": {
+      "price": 60560,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowbed.single_5_ln.long": {
+      "price": 60560,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowbed.single_5_sh.short": {
+      "price": 60560,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowloader.single_2_ln.long": {
+      "price": 53500,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowloader.single_2_sh.short": {
+      "price": 53500,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowloader.single_3_ln.long": {
+      "price": 55500,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowloader.single_3_sh.short": {
+      "price": 55500,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowloader.single_3_1.short": {
+      "price": 57500,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowloader.single_4_ln.long": {
+      "price": 58500,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowloader.single_4_sh.short": {
+      "price": 58500,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.lowloader.single_4_1.short": {
+      "price": 59500,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2.flatbed_w": {
+      "price": 30700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2.flatbed_s": {
+      "price": 35700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2.brick": {
+      "price": 36700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2.container": {
+      "price": 38700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2.brick_crane": {
+      "price": 40700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2a.flatbed_w": {
+      "price": 31700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2a.flatbed_s": {
+      "price": 36700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2a.brick": {
+      "price": 37700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2a.container": {
+      "price": 39700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_2a.brick_crane": {
+      "price": 41700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3.flatbed_w": {
+      "price": 33700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3.flatbed_s": {
+      "price": 38700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3.brick": {
+      "price": 39700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3.container": {
+      "price": 41700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3.brick_crane": {
+      "price": 43700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s.flatbed_w": {
+      "price": 35700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s.flatbed_s": {
+      "price": 40700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s.brick": {
+      "price": 41700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s.container": {
+      "price": 43700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s.brick_crane": {
+      "price": 45700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3sa.flatbed_w": {
+      "price": 35700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3sa.flatbed_s": {
+      "price": 40700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3sa.brick": {
+      "price": 41700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3sa.container": {
+      "price": 43700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3sa.brick_crane": {
+      "price": 45700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s2.flatbed_w": {
+      "price": 37700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s2.flatbed_s": {
+      "price": 42700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s2.brick": {
+      "price": 43700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s2.container": {
+      "price": 45700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_3s2.brick_crane": {
+      "price": 47700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_4.flatbed_w": {
+      "price": 40700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_4.flatbed_s": {
+      "price": 45700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_4.brick": {
+      "price": 46700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_4.container": {
+      "price": 48700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.single_4.brick_crane": {
+      "price": 50700,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.hct_3_2_3.curtain": {
+      "price": 93480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.hct_3_2_3.dryvan": {
+      "price": 143480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.hct_3_2_3.dryvan_s": {
+      "price": 147480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.hct_3_2_3.dryvan_m": {
+      "price": 149480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.hct_3_2_3.insulated": {
+      "price": 183480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.hct_3_2_3.insulated_s": {
+      "price": 187480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.hct_3_2_3.reefer": {
+      "price": 203480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.hct_3_2_3.reefer_s": {
+      "price": 207480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2_3.flatbed_w": {
+      "price": 87480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2_3.flatbed_s": {
+      "price": 97480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2_3.brick": {
+      "price": 99480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2_3.brick_crane": {
+      "price": 103480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2_3.container": {
+      "price": 103480,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.log.hct_3_2_3.wood": {
+      "price": 107408,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.log.hct_3_2_3.steel": {
+      "price": 111408,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.gooseneck.hct_3_2_3.container": {
+      "price": 83880,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_1.curtain": {
+      "price": 19690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_1.dryvan": {
+      "price": 36690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_1.dryvan_s": {
+      "price": 38690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_1.dryvan_m": {
+      "price": 39690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_1.insulated": {
+      "price": 51690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_1.insulated_s": {
+      "price": 53690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_1.reefer": {
+      "price": 58690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_1.reefer_s": {
+      "price": 58690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_3.curtain": {
+      "price": 38110,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_3.dryvan": {
+      "price": 63110,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_3.dryvan_s": {
+      "price": 65110,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_3.dryvan_m": {
+      "price": 69110,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_3.insulated": {
+      "price": 83110,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_3.insulated_s": {
+      "price": 85110,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_3.reefer": {
+      "price": 117110,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_3.reefer_s": {
+      "price": 119110,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.single_3.reefer_m": {
+      "price": 120110,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.bdouble_2_2.curtain": {
+      "price": 62800,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.bdouble_2_2.dryvan": {
+      "price": 104800,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.bdouble_2_2.dryvan_s": {
+      "price": 108800,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.bdouble_2_2.dryvan_m": {
+      "price": 116800,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.bdouble_2_2.insulated": {
+      "price": 139800,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.bdouble_2_2.insulated_s": {
+      "price": 143800,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.bdouble_2_2.reefer": {
+      "price": 202800,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.box.bdouble_2_2.reefer_s": {
+      "price": 206800,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_3.flatbed_w": {
+      "price": 65520,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_3.flatbed_s": {
+      "price": 74020,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_3.brick": {
+      "price": 76020,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_3.container": {
+      "price": 79020,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_3.brick_crane": {
+      "price": 80020,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_2.flatbed_w": {
+      "price": 60310,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_2.flatbed_s": {
+      "price": 68810,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_2.brick": {
+      "price": 70810,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_2.container": {
+      "price": 73810,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_2.brick_crane": {
+      "price": 74810,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_1.flatbed_w": {
+      "price": 55100,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_1.flatbed_s": {
+      "price": 63600,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_1.brick": {
+      "price": 65600,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_1.container": {
+      "price": 68600,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.double_3_1.brick_crane": {
+      "price": 69600,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.log.bdouble_3_3.wood": {
+      "price": 89620,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.log.bdouble_3_3.steel": {
+      "price": 92620,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2s_4.flatbed_w": {
+      "price": 98690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2s_4.flatbed_s": {
+      "price": 108690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2s_4.brick": {
+      "price": 110690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2s_4.brick_crane": {
+      "price": 114690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.flatbed.hct_3_2s_4.container": {
+      "price": 114690,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.scx.single_3_15.curtain": {
+      "price": 47410,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.scx.single_3_15.curtainp": {
+      "price": 48410,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.chemtank.single_3.paint": {
+      "price": 67310,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.chemtank.single_3.chrome": {
+      "price": 72310,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.dumper.single_3_10.steel": {
+      "price": 56470,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.dumper.single_3_10.alu": {
+      "price": 63470,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.log.single_3.wood": {
+      "price": 47310,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.log.single_3.steel": {
+      "price": 49310,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.silo.single_3_10.silo": {
+      "price": 73895,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.silo.bdouble_3_3.silo": {
+      "price": 127765,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "scs.silo.hct_3_3_2.silo": {
+      "price": 173305,
+      "source_pack": "scs_base",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.scx.hct_3s_2_3.curtain": {
+      "price": 99600,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    },
+    "kassbohrer.scx.hct_3s_2_3.curtainp": {
+      "price": 101600,
+      "source_pack": "kassbohrer",
+      "last_verified_game_version": "1.59"
+    }
   }
 }
