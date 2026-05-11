@@ -3,17 +3,13 @@ import { buildLookups } from '../lookups';
 import { buildCityDepotProfiles, analyticalFirstPickEVForRep } from '../optimizer';
 import type { AllData } from '../types';
 
-// Fixture: two lowboy trailers competing in one city for three lowboy cargoes.
-// SLL .cont (multi-body lowboy+container, gwl=59t) — bodyVolumes.lowboy=95 lifts
-// its lowboy volume above the native container slot's 40, but its weight cap
-// excludes the heavy cargo. SCS 4-axle (pure lowboy, gwl=79t) — carries everything.
-// Verifies analyticalFirstPickEVForRep reflects per-rep weight clamping:
-// SLL's EV credits 0 HV for heavy cargo; SCS's EV credits heavy properly.
+// Fixture: SLL .cont (lowboy+container, gwl=59t) and SCS 4-axle (pure lowboy,
+// gwl=79t) compete for three lowboy cargoes. Heavy cargo clamps out of SLL.cont
+// (51t cap) but rides SCS. Asserts analyticalFirstPickEVForRep credits 0 HV
+// for unhaulable cargo per rep.
 //
-// Closed-form EV assertions (173/27, 249/27) assume JOBS_PER_DEPOT=3. If that
-// constant moves, recompute the expected values — don't chase the math as a bug.
-// Heavy cargo mass=60000 exaggerates the clamp margin for clarity; real ETS2
-// max-mass lowboy cargo (log_stacker at 54t) still clamps but more tightly.
+// EV assertions assume JOBS_PER_DEPOT=3. Heavy mass=60t exaggerates the clamp
+// margin; real game max is log_stacker at 54t.
 function build(): AllData {
   const common = { chassis_mass: 5000, body_mass: 3000, length: 13.68, level_floor: 0 };
   const cargo = {
