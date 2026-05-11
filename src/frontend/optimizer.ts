@@ -441,15 +441,11 @@ interface TrailerInfo {
   levelFloor: number;
 }
 
-/** Cache: country → bodyType → best trailer info */
-const trailerInfoCache = new Map<string, Map<string, TrailerInfo>>();
-
 /** Cache: country → profileKey → best trailer info matching that exact profile */
 const profileTrailerCache = new Map<string, Map<string, TrailerInfo & { bodyTypes: string[] }>>();
 
-/** Clear trailer info caches — needed when DLC filter state changes between optimizer runs */
+/** Clear trailer info cache — needed when DLC filter state changes between optimizer runs */
 export function clearTrailerInfoCache(): void {
-  trailerInfoCache.clear();
   profileTrailerCache.clear();
 }
 
@@ -535,80 +531,6 @@ function getProfileTrailerInfoForCountry(
   }
 
   profileTrailerCache.set(country, info);
-  return info;
-}
-
-/**
- * Get the best representative trailer per body type for a specific country.
- * Picks the ownable trailer valid in this country with highest total haul value,
- * so HCT/double/b_double variants win when available (they have more capacity).
- */
-export function getTrailerInfoForCountry(
-  country: string, data: AllData, lookups: Lookups,
-): Map<string, TrailerInfo> {
-  const cached = trailerInfoCache.get(country);
-  if (cached) return cached;
-
-  const info = new Map<string, TrailerInfo>();
-  // Includes trailers with missing dealer price so display matches the MC math;
-  // those render as `—` in the fleet table and are filled in via `manual-prices.json`.
-  const bestByBT = new Map<string, { trailer: Trailer; totalHV: number }>();
-
-  for (const t of data.trailers) {
-    if (!t.ownable) continue;
-    if (t.country_validity && t.country_validity.length > 0
-      && !t.country_validity.includes(country)) continue;
-
-    const cargoSet = lookups.trailerCargoMap.get(t.id);
-    if (!cargoSet) continue;
-
-    // Multi-body trailers compete in every body slot they can serve. Score per
-    // slot is restricted to cargo whose body_types include that slot.
-    const slotBodyTypes = [t.body_type, ...(t.extra_body_types ?? [])];
-
-    for (const bt of slotBodyTypes) {
-      let totalHV = 0;
-      for (const cargoId of cargoSet) {
-        const c = lookups.cargoById.get(cargoId);
-        if (!c || c.excluded) continue;
-        if (!c.body_types.includes(bt)) continue;
-        const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
-        const bonus = cargoBonus(c);
-        totalHV += c.value * bonus * units;
-      }
-      if (totalHV === 0) continue;
-
-      const existing = bestByBT.get(bt);
-      if (!existing || totalHV > existing.totalHV) {
-        bestByBT.set(bt, { trailer: t, totalHV });
-      } else if (totalHV === existing.totalHV) {
-        // Tiebreaker: walked > parser > unpriced, then lowest price within tier.
-        // Parser prices are chain_base only and unreliable, so any walked sibling beats them.
-        const curWalked = existing.trailer.priceWalked === true;
-        const newWalked = t.priceWalked === true;
-        const curPriced = existing.trailer.price > 0;
-        const newPriced = t.price > 0;
-        if (newWalked && !curWalked) {
-          bestByBT.set(bt, { trailer: t, totalHV });
-        } else if (newWalked === curWalked) {
-          if (newPriced && (!curPriced || t.price < existing.trailer.price)) {
-            bestByBT.set(bt, { trailer: t, totalHV });
-          }
-        }
-      }
-    }
-  }
-
-  for (const [bt, { trailer }] of bestByBT) {
-    info.set(bt, {
-      trailerId: trailer.id,
-      trailerSpec: formatTrailerSpec(trailer),
-      estimatedPrice: trailer.price,
-      levelFloor: trailer.level_floor,
-    });
-  }
-
-  trailerInfoCache.set(country, info);
   return info;
 }
 

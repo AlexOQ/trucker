@@ -5,7 +5,6 @@ import {
   computeOptimalFleet,
   analyticalFirstPickEV,
   buildCityDepotProfiles,
-  getTrailerInfoForCountry,
   clearTrailerInfoCache,
   type CityDepotData,
 } from '../optimizer.ts';
@@ -412,66 +411,7 @@ describe('optimizer', () => {
     });
   });
 
-  describe('getTrailerInfoForCountry tiebreaker', () => {
-    // Three dryvan trailers tied at identical totalHV (same volume → same units →
-    // same haul value). Differ only in price. The picker should prefer a priced
-    // entry over price=0, and pick the lowest priced among ties.
-    const buildTiedFixture = (prices: { box_a: number; box_b: number; box_c: number }): AllData => {
-      const base = createMockData();
-      const trailerSpec = {
-        body_type: 'dryvan' as const,
-        volume: 90, chassis_mass: 5000, body_mass: 3000,
-        gross_weight_limit: 40000, length: 13.6, chain_type: 'single' as const,
-        ownable: true, level_floor: 0,
-      };
-      base.gameDefs.trailers = {
-        box_a: { name: 'Box A', ...trailerSpec, price: prices.box_a },
-        box_b: { name: 'Box B', ...trailerSpec, price: prices.box_b },
-        box_c: { name: 'Box C', ...trailerSpec, price: prices.box_c },
-      };
-      base.trailers = [
-        { id: 'box_a', name: 'Box A', ...trailerSpec, price: prices.box_a },
-        { id: 'box_b', name: 'Box B', ...trailerSpec, price: prices.box_b },
-        { id: 'box_c', name: 'Box C', ...trailerSpec, price: prices.box_c },
-      ];
-      base.gameDefs.cargo_trailers = { electronics: ['box_a', 'box_b', 'box_c'] };
-      base.gameDefs.cargo_trailer_units = {
-        electronics: { box_a: 90, box_b: 90, box_c: 90 },
-      };
-      return base;
-    };
-
-    it('prefers a priced trailer over a price=0 sibling on tie', () => {
-      clearTrailerInfoCache();
-      const data = buildTiedFixture({ box_a: 0, box_b: 50000, box_c: 0 });
-      const lookups = buildLookups(data);
-      const info = getTrailerInfoForCountry('germany', data, lookups);
-      expect(info.get('dryvan')?.trailerId).toBe('box_b');
-    });
-
-    it('picks the lowest priced when multiple priced trailers tie', () => {
-      clearTrailerInfoCache();
-      const data = buildTiedFixture({ box_a: 50000, box_b: 80000, box_c: 30000 });
-      const lookups = buildLookups(data);
-      const info = getTrailerInfoForCountry('germany', data, lookups);
-      expect(info.get('dryvan')?.trailerId).toBe('box_c');
-    });
-
-    it('prefers a walked-priced trailer over a cheaper parser-priced one on tie', () => {
-      clearTrailerInfoCache();
-      // Both same totalHV. parser-priced=21000, walked=70165 — walked wins
-      // despite higher nominal price (parser prices unreliable).
-      const data = buildTiedFixture({ box_a: 21000, box_b: 70165, box_c: 0 });
-      // box_b is the walked one; box_a is parser-only.
-      const aTrailer = data.trailers.find((t) => t.id === 'box_a')!;
-      const bTrailer = data.trailers.find((t) => t.id === 'box_b')!;
-      aTrailer.priceWalked = false;
-      bTrailer.priceWalked = true;
-      const lookups = buildLookups(data);
-      const info = getTrailerInfoForCountry('germany', data, lookups);
-      expect(info.get('dryvan')?.trailerId).toBe('box_b');
-    });
-
+  describe('multi-body profile picks', () => {
     it('multi-body trailer drains both pools when picked by computeOptimalFleet', () => {
       // City has two cargoes per depot: dryvan electronics and flatbed machinery, both 1.0 prob_coef.
       // Only a single multi-body trailer is ownable, serving both body types.
@@ -544,30 +484,5 @@ describe('optimizer', () => {
       expect(driver.displayName).toBe('Flatbed + Dryvan');
     });
 
-    it('higher totalHV still wins over a cheaper but lower-HV trailer', () => {
-      clearTrailerInfoCache();
-      // box_a: tied baseline. high_cap: same body type but volume=180 ⇒ double the units ⇒ double the HV.
-      const data = createMockData();
-      const trailerSpec = {
-        body_type: 'dryvan' as const, chassis_mass: 5000, body_mass: 3000,
-        gross_weight_limit: 40000, length: 13.6, chain_type: 'single' as const,
-        ownable: true, level_floor: 0,
-      };
-      data.gameDefs.trailers = {
-        box_a: { name: 'Box A', ...trailerSpec, volume: 90, price: 10000 },
-        high_cap: { name: 'High Cap', ...trailerSpec, volume: 180, price: 999999 },
-      };
-      data.trailers = [
-        { id: 'box_a', name: 'Box A', ...trailerSpec, volume: 90, price: 10000 },
-        { id: 'high_cap', name: 'High Cap', ...trailerSpec, volume: 180, price: 999999 },
-      ];
-      data.gameDefs.cargo_trailers = { electronics: ['box_a', 'high_cap'] };
-      data.gameDefs.cargo_trailer_units = {
-        electronics: { box_a: 90, high_cap: 180 },
-      };
-      const lookups = buildLookups(data);
-      const info = getTrailerInfoForCountry('germany', data, lookups);
-      expect(info.get('dryvan')?.trailerId).toBe('high_cap');
-    });
   });
 });
