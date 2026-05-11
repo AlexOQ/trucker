@@ -263,6 +263,10 @@ export function buildDepotItemsCache(depots: CityDepotData[]): DepotItemsCache {
  *
  * Pass a pre-built `cache` from `buildDepotItemsCache` to avoid rebuilding
  * depot data on every body-type evaluation for the same city.
+ *
+ * Note: kept inline (no `hvPerItem` precompute) because `item.bodyHV[bt]` is a
+ * property read on a Record. If `bodyHV` storage ever shifts (Map, lazy fn),
+ * mirror the precompute pattern used in `analyticalFirstPickEVForRep`.
  */
 export function analyticalFirstPickEV(
   depots: CityDepotData[],

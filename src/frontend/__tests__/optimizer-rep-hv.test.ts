@@ -9,6 +9,11 @@ import type { AllData } from '../types';
 // excludes the heavy cargo. SCS 4-axle (pure lowboy, gwl=79t) — carries everything.
 // Verifies analyticalFirstPickEVForRep reflects per-rep weight clamping:
 // SLL's EV credits 0 HV for heavy cargo; SCS's EV credits heavy properly.
+//
+// Closed-form EV assertions (173/27, 249/27) assume JOBS_PER_DEPOT=3. If that
+// constant moves, recompute the expected values — don't chase the math as a bug.
+// Heavy cargo mass=60000 exaggerates the clamp margin for clarity; real ETS2
+// max-mass lowboy cargo (log_stacker at 54t) still clamps but more tightly.
 function build(): AllData {
   const common = { chassis_mass: 5000, body_mass: 3000, length: 13.68, level_floor: 0 };
   const cargo = {
