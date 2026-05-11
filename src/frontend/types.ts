@@ -40,6 +40,13 @@ export interface Trailer {
   id: string;
   name: string;
   body_type: string;
+  /**
+   * Additional body types this trailer can physically haul beyond `body_type`.
+   * Populated from `multi-body-overrides.json`. Example: a flatbed-with-container-pins
+   * (body_type=container) can also serve as a regular flatbed when pins are unused,
+   * so its `extra_body_types` is `['flatbed']`. Empty / unset for single-body trailers.
+   */
+  extra_body_types?: string[];
   volume: number;
   chassis_mass: number;
   body_mass: number;
@@ -50,6 +57,13 @@ export interface Trailer {
   ownable: boolean;
   /** Total purchase price across all accessories, rounded UP to nearest 1000. 0 if no dealer data. */
   price: number;
+  /**
+   * True when `price` came from a hand-walked entry in manual-prices.json (full
+   * configured cost). False/undefined when from parser, which reads only a
+   * chain_base-adjacent field and is unreliable. Tiebreaker uses this to prefer
+   * walked over parser-priced regardless of nominal value.
+   */
+  priceWalked?: boolean;
   /** Max accessory unlock level — level at which the trailer becomes available. 0 if no dealer data. */
   level_floor: number;
 }
@@ -166,6 +180,32 @@ export interface Observations {
   company_zone_body_type_frequency?: Record<string, Record<string, Record<string, number>>>;
   company_job_count?: Record<string, number>;
   company_body_type_avg_value?: Record<string, Record<string, number>>;
+}
+
+/** Multi-body trailer overrides — see public/data/<game>/multi-body-overrides.json. */
+export interface MultiBodyOverrides {
+  game: 'ets2' | 'ats';
+  schema_version: 1;
+  /** trailerId -> additional body types it can serve beyond trailer.body_type */
+  overrides: Record<string, string[]>;
+}
+
+/**
+ * Manual trailer-price walks — see public/data/<game>/manual-prices.json.
+ * Frontend-side mirror of `scripts/types/manual-prices.ts`. Loaded at runtime
+ * by `loader.ts` and applied to trailer.price + priceWalked, so walks show up
+ * without needing to re-run the parser against the def/ folder.
+ */
+export interface ManualPriceEntry {
+  price: number;
+  source_pack?: string;
+  last_verified_game_version?: string;
+  notes?: string;
+}
+export interface ManualPricesFile {
+  game: 'ets2' | 'ats';
+  schema_version: 1;
+  prices: Record<string, ManualPriceEntry>;
 }
 
 export interface AllData {

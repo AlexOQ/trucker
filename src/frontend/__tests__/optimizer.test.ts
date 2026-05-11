@@ -5,6 +5,7 @@ import {
   computeOptimalFleet,
   analyticalFirstPickEV,
   buildCityDepotProfiles,
+  clearTrailerInfoCache,
   type CityDepotData,
 } from '../optimizer.ts';
 
@@ -407,6 +408,129 @@ describe('optimizer', () => {
         }
         expect(depot.cumProbs[depot.cumProbs.length - 1]).toBeCloseTo(1, 10);
       }
+    });
+  });
+
+  describe('multi-body profile picks', () => {
+    it('multi-body trailer drains both pools when picked by computeOptimalFleet', () => {
+      // City has two cargoes per depot: dryvan electronics and flatbed machinery, both 1.0 prob_coef.
+      // Only a single multi-body trailer is ownable, serving both body types.
+      // The optimizer must pick a profile [dryvan, flatbed] and its driver must
+      // consume across both pools — verifies bestJobProfile fallback behavior.
+      clearTrailerInfoCache();
+      const data = createMockData();
+      const trailerSpec = {
+        chassis_mass: 5000, body_mass: 3000,
+        gross_weight_limit: 40000, length: 13.6, chain_type: 'single' as const,
+        ownable: true, level_floor: 0,
+      };
+      data.gameDefs.trailers = {
+        combo: { name: 'Combo', body_type: 'dryvan', volume: 90, ...trailerSpec, extra_body_types: ['flatbed'] },
+      };
+      data.trailers = [
+        { id: 'combo', name: 'Combo', body_type: 'dryvan', volume: 90, ...trailerSpec, extra_body_types: ['flatbed'] },
+      ];
+      data.gameDefs.cargo_trailers = {
+        electronics: ['combo'],
+        machinery: ['combo'],
+      };
+      data.gameDefs.cargo_trailer_units = {
+        electronics: { combo: 90 },
+        machinery: { combo: 1 },
+      };
+      const lookups = buildLookups(data);
+      const fleet = computeOptimalFleet('berlin', data, lookups);
+      expect(fleet).not.toBeNull();
+      const driver = fleet!.drivers[0];
+      // Driver's bodyTypes must include both — confirms profile picking, not single-body picking.
+      expect(driver.bodyTypes.sort()).toEqual(['dryvan', 'flatbed']);
+      // Display name should reflect the multi-body profile.
+      expect(driver.displayName).toContain('+');
+    });
+
+    it('preserves chassis-natural bodyTypes order when extras precede primary alphabetically', () => {
+      // Regression: profileKey canonicalizes via alphabetical sort, but the exposed
+      // bodyTypes array must retain `[primary, ...extras]` so the displayed primary
+      // and `trailers.html#body-{bodyType}` route point at the trailer's loader-declared
+      // body_type. Here `body_type='flatbed', extra_body_types=['dryvan']` — an
+      // alphabetical pass would yield `[dryvan, flatbed]` → wrong primary.
+      clearTrailerInfoCache();
+      const data = createMockData();
+      const trailerSpec = {
+        chassis_mass: 5000, body_mass: 3000,
+        gross_weight_limit: 40000, length: 13.6, chain_type: 'single' as const,
+        ownable: true, level_floor: 0,
+      };
+      data.gameDefs.trailers = {
+        combo: { name: 'Combo', body_type: 'flatbed', volume: 90, ...trailerSpec, extra_body_types: ['dryvan'] },
+      };
+      data.trailers = [
+        { id: 'combo', name: 'Combo', body_type: 'flatbed', volume: 90, ...trailerSpec, extra_body_types: ['dryvan'] },
+      ];
+      data.gameDefs.cargo_trailers = {
+        electronics: ['combo'],
+        machinery: ['combo'],
+      };
+      data.gameDefs.cargo_trailer_units = {
+        electronics: { combo: 90 },
+        machinery: { combo: 1 },
+      };
+      const lookups = buildLookups(data);
+      const fleet = computeOptimalFleet('berlin', data, lookups);
+      expect(fleet).not.toBeNull();
+      const driver = fleet!.drivers[0];
+      expect(driver.bodyTypes).toEqual(['flatbed', 'dryvan']);
+      expect(driver.bodyType).toBe('flatbed');
+      expect(driver.displayName).toBe('Flatbed + Dryvan');
+    });
+
+    // Tied-hv fixture: N single-body dryvan trailers with identical specs (→ identical
+    // totalHV), differing only in price + priceWalked tier. Exercises the tiebreaker
+    // in getProfileTrailerInfoForCountry through computeOptimalFleet.
+    const buildTiedDryvanFixture = (rigs: Array<{ id: string; price: number; walked: boolean }>) => {
+      const data = createMockData();
+      const spec = {
+        body_type: 'dryvan' as const,
+        volume: 90, chassis_mass: 5000, body_mass: 3000,
+        gross_weight_limit: 40000, length: 13.6, chain_type: 'single' as const,
+        ownable: true, level_floor: 0,
+      };
+      data.gameDefs.trailers = Object.fromEntries(
+        rigs.map((r) => [r.id, { name: r.id, ...spec, price: r.price }]),
+      );
+      data.trailers = rigs.map((r) => ({
+        id: r.id, name: r.id, ...spec, price: r.price, priceWalked: r.walked,
+      }));
+      data.gameDefs.cargo_trailers = { electronics: rigs.map((r) => r.id) };
+      data.gameDefs.cargo_trailer_units = {
+        electronics: Object.fromEntries(rigs.map((r) => [r.id, 90])),
+      };
+      return data;
+    };
+
+    const winnerOf = (data: AllData): string => {
+      const fleet = computeOptimalFleet('berlin', data, buildLookups(data));
+      expect(fleet).not.toBeNull();
+      return fleet!.drivers[0].trailerId;
+    };
+
+    it('walked-priced trailer beats cheaper parser-priced sibling at tied hv', () => {
+      clearTrailerInfoCache();
+      const data = buildTiedDryvanFixture([
+        { id: 'box_parser', price: 21000, walked: false },
+        { id: 'box_walked', price: 70000, walked: true },
+      ]);
+      expect(winnerOf(data)).toBe('box_walked');
+    });
+
+    it('lowest priced wins among same-tier (all walked) tied trailers', () => {
+      clearTrailerInfoCache();
+      const data = buildTiedDryvanFixture([
+        { id: 'box_a', price: 50000, walked: true },
+        { id: 'box_b', price: 80000, walked: true },
+        { id: 'box_c', price: 30000, walked: true },
+      ]);
+      expect(winnerOf(data)).toBe('box_c');
     });
   });
 });

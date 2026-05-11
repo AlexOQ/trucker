@@ -71,6 +71,48 @@ export function buildLookups(data: AllData): Lookups {
     }
   }
 
+  // Multi-body fan-out: for trailers with extra_body_types (set by loader from
+  // multi-body-overrides.json), register them as compatible with cargo of any
+  // matching body type they weren't already in. Iterate the FULL augmented set
+  // [primary, ...extras] — the override can change body_type away from the
+  // parser's original, leaving the new primary unregistered. Units computed
+  // inline using the same volume/weight formula as the parser
+  // (scripts/parse-game-defs.ts:1260).
+  for (const trailer of data.trailers) {
+    if (!trailer.extra_body_types || trailer.extra_body_types.length === 0) continue;
+    const augmentedBodyTypes = [trailer.body_type, ...trailer.extra_body_types];
+    for (const cargo of data.cargo) {
+      if (cargo.excluded) continue;
+      // Skip if cargo's body_types don't overlap any of trailer's body types
+      const overlaps = augmentedBodyTypes.some((bt) => cargo.body_types.includes(bt));
+      if (!overlaps) continue;
+      // Skip if already compatible (parser registered, or earlier fan-out pass)
+      const existingTrailers = cargoTrailerMap.get(cargo.id);
+      if (existingTrailers?.has(trailer.id)) continue;
+
+      // Volume-limited units
+      let units = 1;
+      if (cargo.volume > 0 && trailer.volume > 0) {
+        units = Math.floor(trailer.volume / cargo.volume);
+        if (units < 1) units = 1;
+      }
+      // Weight-limited: cargo can't ride at all if even one unit overweights
+      if (trailer.gross_weight_limit > 0 && cargo.mass > 0) {
+        const maxCargoWeight = trailer.gross_weight_limit - trailer.chassis_mass - trailer.body_mass;
+        const weightUnits = Math.floor(maxCargoWeight / cargo.mass);
+        if (weightUnits <= 0) continue;
+        if (weightUnits < units) units = weightUnits;
+      }
+
+      // Register in all three maps
+      if (!cargoTrailerMap.has(cargo.id)) cargoTrailerMap.set(cargo.id, new Set());
+      cargoTrailerMap.get(cargo.id)!.add(trailer.id);
+      if (!trailerCargoMap.has(trailer.id)) trailerCargoMap.set(trailer.id, new Set());
+      trailerCargoMap.get(trailer.id)!.add(cargo.id);
+      cargoTrailerUnits.set(`${cargo.id}:${trailer.id}`, units);
+    }
+  }
+
   return {
     citiesById,
     companiesById,

@@ -3,14 +3,21 @@
 // JSON data files for the Trucker Advisor frontend.
 //
 // Usage:
-//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--game ets2|ats]          # Parse and write
-//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --diff [--game ets2|ats]   # Diff against existing, don't write
+//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--game ets2|ats]                  # Parse and write
+//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --diff [--game ets2|ats]           # Diff against existing, don't write
+//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --audit-walks [--diff]             # Surface trailers needing a manual-price walk
+// --audit-walks emits 4 sections: new SKUs without a walked price, walked
+// trailers whose attributes changed (re-verify), and orphan entries in
+// manual-prices.json / multi-body-overrides.json. Combine with --diff to audit
+// without writing game-defs.json.
 
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, mkdirSync } from 'fs';
 import { join, basename, dirname } from 'path';
+import { mergeManualPrices } from './merge-manual-prices';
 
 const args = process.argv.slice(2);
 const diffMode = args.includes('--diff');
+const auditWalks = args.includes('--audit-walks');
 const gameFlagIdx = args.indexOf('--game');
 const rawGame = gameFlagIdx >= 0 ? args[gameFlagIdx + 1] : 'ets2';
 if (!process.env.VITEST && rawGame !== 'ets2' && rawGame !== 'ats') {
@@ -22,16 +29,19 @@ if (!process.env.VITEST && rawGame !== 'ets2' && rawGame !== 'ats') {
 const game = (rawGame === 'ats' ? 'ats' : 'ets2') as 'ets2' | 'ats';
 const rawDefsPath = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--game');
 if (!process.env.VITEST && (!rawDefsPath || !existsSync(rawDefsPath))) {
-  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff] [--game ets2|ats]');
-  console.error('  --diff        Compare against existing game-defs.json without writing');
-  console.error('  --game <id>   Target game (default: ets2). Routes I/O to public/data/<id>/game-defs.json');
-  console.error('Example: npx tsx scripts/parse-game-defs.ts /tmp/ats-dlc-defs --game ats --diff');
+  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff] [--audit-walks] [--game ets2|ats]');
+  console.error('  --diff         Compare against existing game-defs.json without writing');
+  console.error('  --audit-walks  Emit advisory of trailers needing a manual-price walk (new SKUs, attribute changes, stale overrides)');
+  console.error('  --game <id>    Target game (default: ets2). Routes I/O to public/data/<id>/game-defs.json');
+  console.error('Example: npx tsx scripts/parse-game-defs.ts /tmp/ets2-1.60-defs --game ets2 --diff --audit-walks');
   process.exit(1);
 }
 // Same VITEST safety: defsPath is only consumed inside main()/runDiff which
 // are gated; cast to string for the file-reading helpers.
 const defsPath: string = rawDefsPath ?? '';
 const gameDefsPath = join(process.cwd(), 'public', 'data', game, 'game-defs.json');
+const manualPricesPath = join(process.cwd(), 'public', 'data', game, 'manual-prices.json');
+const multiBodyOverridesPath = join(process.cwd(), 'public', 'data', game, 'multi-body-overrides.json');
 
 // ─── SII/SUI Parser ────────────────────────────────────────────────────
 
@@ -1391,8 +1401,24 @@ function main() {
   console.log(`  Found ${cargo.length} cargo types`);
 
   console.log('Extracting trailers...');
-  const trailers = extractTrailers();
-  console.log(`  Found ${trailers.length} trailer definitions`);
+  const parsedTrailers = extractTrailers();
+  console.log(`  Found ${parsedTrailers.length} trailer definitions`);
+
+  const manualMerge = mergeManualPrices(parsedTrailers, manualPricesPath, game);
+  const trailers = manualMerge.trailers;
+  if (manualMerge.applied > 0) {
+    console.log(`  Applied ${manualMerge.applied} manual price overrides from ${basename(manualPricesPath)}`);
+  }
+  if (manualMerge.unknownIds.length > 0) {
+    console.warn(`  ${manualMerge.unknownIds.length} manual price entries reference unknown trailer ids:`);
+    for (const id of manualMerge.unknownIds) console.warn(`    - ${id}`);
+  }
+  if (manualMerge.overrides.length > 0) {
+    console.log(`  ${manualMerge.overrides.length} manual price entries override parser-derived prices (manual wins — dealer stock):`);
+    for (const c of manualMerge.overrides) {
+      console.log(`    - ${c.id}: parser=${c.parserPrice} → manual=${c.manualPrice}`);
+    }
+  }
 
   console.log('Extracting companies...');
   const companies = extractCompanies();
@@ -1430,6 +1456,11 @@ function main() {
   } else {
     writeOutput(cargo, trailers, companies, cities, countries, economy, trucks, matches, cityCompanyMap, frontendData);
     printSummary(cargo, trailers, companies, cities, countries, trucks, matches, cityCompanyMap);
+  }
+
+  // Audit runs after diff/write — same comparison logic regardless of mode.
+  if (auditWalks) {
+    runAuditWalks(frontendData);
   }
 }
 
@@ -1603,6 +1634,113 @@ function printSummary(
   console.log(`Trucks: ${trucks.length} models, ${trucks.reduce((s, t) => s + t.engines.length, 0)} engines`);
   console.log(`Cargo-trailer matches: ${matches.length}`);
   console.log(`City-company placements: ${cityCompanyMap.length}`);
+}
+
+// ─── Audit Walks Mode ─────────────────────────────────────────────────
+
+/**
+ * Emit an advisory of trailers needing a manual-price walk.
+ *
+ * Compares newly parsed data against existing game-defs.json, manual-prices.json,
+ * and multi-body-overrides.json. Surfaces four classes of problem after a
+ * game-update reparse:
+ *
+ *   1. NEW SKUs that don't yet have a walked price (and have parser=0).
+ *   2. EXISTING walked trailers whose underlying physical attributes changed
+ *      (volume / GWL / body_type / chain_type / masses) since the walk —
+ *      price may still be valid but the walk is worth re-confirming.
+ *   3. manual-prices entries whose trailer id no longer exists in parsed data
+ *      (deleted SKUs — clean these up).
+ *   4. multi-body-overrides entries whose trailer id no longer exists.
+ */
+function runAuditWalks(newData: ReturnType<typeof buildFrontendData>): void {
+  console.log('\n=== AUDIT WALKS ===');
+  console.log(`Game: ${game}`);
+
+  const manualPrices = existsSync(manualPricesPath)
+    ? (JSON.parse(readFileSync(manualPricesPath, 'utf-8')).prices ?? {}) as Record<string, { price: number }>
+    : {};
+  const multiBody = existsSync(multiBodyOverridesPath)
+    ? (JSON.parse(readFileSync(multiBodyOverridesPath, 'utf-8')).overrides ?? {}) as Record<string, string[]>
+    : {};
+  const existing: { trailers?: Record<string, Record<string, unknown>> } = existsSync(gameDefsPath)
+    ? JSON.parse(readFileSync(gameDefsPath, 'utf-8'))
+    : {};
+  const oldTrailers = existing.trailers ?? {};
+  const newTrailers = newData.trailers;
+
+  // 1. NEW SKUs without manual price (and parser couldn't fill it either)
+  const newWithoutPrice: Array<{ id: string; bt: string; chain: string }> = [];
+  for (const [id, t] of Object.entries(newTrailers)) {
+    if (!t.ownable) continue;
+    if (id in oldTrailers) continue; // existing SKU; covered by class 2
+    if (id in manualPrices) continue; // already walked
+    if ((t.price ?? 0) > 0) continue; // parser priced it (rare but skip)
+    newWithoutPrice.push({ id, bt: t.body_type, chain: t.chain_type });
+  }
+
+  // 2. Walked trailers whose physical attributes drifted
+  const walkedChanged: Array<{ id: string; diffs: string[] }> = [];
+  const walkedFields: Array<keyof typeof newTrailers[string]> = [
+    'body_type', 'chain_type', 'volume', 'gross_weight_limit', 'chassis_mass', 'body_mass', 'length',
+  ];
+  for (const id of Object.keys(manualPrices)) {
+    const oldT = oldTrailers[id];
+    const newT = newTrailers[id];
+    if (!oldT || !newT) continue; // missing handled below
+    const diffs: string[] = [];
+    for (const field of walkedFields) {
+      if (oldT[field] !== newT[field]) {
+        diffs.push(`${field}: ${oldT[field]} → ${newT[field]}`);
+      }
+    }
+    if (diffs.length > 0) walkedChanged.push({ id, diffs });
+  }
+
+  // 3. Manual-price entries pointing to missing IDs
+  const orphanPrices = Object.keys(manualPrices).filter((id) => !(id in newTrailers));
+
+  // 4. Multi-body overrides pointing to missing IDs
+  const orphanOverrides = Object.keys(multiBody).filter((id) => !(id in newTrailers));
+
+  // ── Report ──
+  console.log(`\nNEW TRAILERS WITHOUT MANUAL PRICE (${newWithoutPrice.length}):`);
+  if (newWithoutPrice.length === 0) {
+    console.log('  (none)');
+  } else {
+    for (const { id, bt, chain } of newWithoutPrice) {
+      console.log(`  ${id}  body=${bt}  chain=${chain}`);
+    }
+  }
+
+  console.log(`\nWALKED TRAILERS WITH ATTRIBUTE CHANGES (${walkedChanged.length}):`);
+  if (walkedChanged.length === 0) {
+    console.log('  (none — all walked SKUs unchanged)');
+  } else {
+    for (const { id, diffs } of walkedChanged) {
+      console.log(`  ${id}`);
+      for (const d of diffs) console.log(`    ${d}`);
+    }
+  }
+
+  console.log(`\nMANUAL PRICES POINTING TO MISSING TRAILER IDs (${orphanPrices.length}):`);
+  if (orphanPrices.length === 0) {
+    console.log('  (none)');
+  } else {
+    for (const id of orphanPrices) console.log(`  ${id}`);
+    console.log('  Remove these from manual-prices.json.');
+  }
+
+  console.log(`\nMULTI-BODY OVERRIDES POINTING TO MISSING TRAILER IDs (${orphanOverrides.length}):`);
+  if (orphanOverrides.length === 0) {
+    console.log('  (none)');
+  } else {
+    for (const id of orphanOverrides) console.log(`  ${id}`);
+    console.log('  Remove these from multi-body-overrides.json.');
+  }
+
+  const total = newWithoutPrice.length + walkedChanged.length + orphanPrices.length + orphanOverrides.length;
+  console.log(`\nAudit total: ${total} item(s) needing attention.`);
 }
 
 // ─── Diff Mode ────────────────────────────────────────────────────────
