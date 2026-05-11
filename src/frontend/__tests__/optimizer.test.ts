@@ -484,5 +484,70 @@ describe('optimizer', () => {
       expect(driver.displayName).toBe('Flatbed + Dryvan');
     });
 
+    it('walked-priced trailer beats cheaper parser-priced sibling at tied hv', () => {
+      // Two single-body dryvan trailers, identical specs → identical totalHV.
+      // box_parser has the lower dealer price (21k vs 70k) but its price came
+      // from the static parser, whose values are chain_base only and unreliable
+      // (see feedback_trucker_parser_prices_unreliable). box_walked has a
+      // hand-verified walked price and must win the displayed pick despite
+      // costing more nominally.
+      clearTrailerInfoCache();
+      const data = createMockData();
+      const trailerSpec = {
+        body_type: 'dryvan' as const,
+        volume: 90, chassis_mass: 5000, body_mass: 3000,
+        gross_weight_limit: 40000, length: 13.6, chain_type: 'single' as const,
+        ownable: true, level_floor: 0,
+      };
+      data.gameDefs.trailers = {
+        box_parser: { name: 'Box Parser', ...trailerSpec, price: 21000 },
+        box_walked: { name: 'Box Walked', ...trailerSpec, price: 70000 },
+      };
+      data.trailers = [
+        { id: 'box_parser', name: 'Box Parser', ...trailerSpec, price: 21000, priceWalked: false },
+        { id: 'box_walked', name: 'Box Walked', ...trailerSpec, price: 70000, priceWalked: true },
+      ];
+      data.gameDefs.cargo_trailers = { electronics: ['box_parser', 'box_walked'] };
+      data.gameDefs.cargo_trailer_units = {
+        electronics: { box_parser: 90, box_walked: 90 },
+      };
+      const lookups = buildLookups(data);
+      const fleet = computeOptimalFleet('berlin', data, lookups);
+      expect(fleet).not.toBeNull();
+      const driver = fleet!.drivers[0];
+      expect(driver.trailerId).toBe('box_walked');
+    });
+
+    it('lowest priced wins among same-tier (all walked) tied trailers', () => {
+      // Three walked single-body dryvan trailers, identical specs → identical
+      // totalHV. Within the same priceWalked tier, the cheapest wins.
+      clearTrailerInfoCache();
+      const data = createMockData();
+      const trailerSpec = {
+        body_type: 'dryvan' as const,
+        volume: 90, chassis_mass: 5000, body_mass: 3000,
+        gross_weight_limit: 40000, length: 13.6, chain_type: 'single' as const,
+        ownable: true, level_floor: 0,
+      };
+      data.gameDefs.trailers = {
+        box_a: { name: 'Box A', ...trailerSpec, price: 50000 },
+        box_b: { name: 'Box B', ...trailerSpec, price: 80000 },
+        box_c: { name: 'Box C', ...trailerSpec, price: 30000 },
+      };
+      data.trailers = [
+        { id: 'box_a', name: 'Box A', ...trailerSpec, price: 50000, priceWalked: true },
+        { id: 'box_b', name: 'Box B', ...trailerSpec, price: 80000, priceWalked: true },
+        { id: 'box_c', name: 'Box C', ...trailerSpec, price: 30000, priceWalked: true },
+      ];
+      data.gameDefs.cargo_trailers = { electronics: ['box_a', 'box_b', 'box_c'] };
+      data.gameDefs.cargo_trailer_units = {
+        electronics: { box_a: 90, box_b: 90, box_c: 90 },
+      };
+      const lookups = buildLookups(data);
+      const fleet = computeOptimalFleet('berlin', data, lookups);
+      expect(fleet).not.toBeNull();
+      const driver = fleet!.drivers[0];
+      expect(driver.trailerId).toBe('box_c');
+    });
   });
 });
