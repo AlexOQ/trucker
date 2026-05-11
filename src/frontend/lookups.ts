@@ -84,16 +84,23 @@ export function buildLookups(data: AllData): Lookups {
     for (const cargo of data.cargo) {
       if (cargo.excluded) continue;
       // Skip if cargo's body_types don't overlap any of trailer's body types
-      const overlaps = augmentedBodyTypes.some((bt) => cargo.body_types.includes(bt));
-      if (!overlaps) continue;
+      const matchingModes = augmentedBodyTypes.filter((bt) => cargo.body_types.includes(bt));
+      if (matchingModes.length === 0) continue;
       // Skip if already compatible (parser registered, or earlier fan-out pass)
       const existingTrailers = cargoTrailerMap.get(cargo.id);
       if (existingTrailers?.has(trailer.id)) continue;
 
+      // Pick the trailer's best applicable bed for this cargo
+      let effectiveVolume = 0;
+      for (const bt of matchingModes) {
+        const v = trailer.bodyVolumes?.[bt] ?? trailer.volume;
+        if (v > effectiveVolume) effectiveVolume = v;
+      }
+
       // Volume-limited units
       let units = 1;
-      if (cargo.volume > 0 && trailer.volume > 0) {
-        units = Math.floor(trailer.volume / cargo.volume);
+      if (cargo.volume > 0 && effectiveVolume > 0) {
+        units = Math.floor(effectiveVolume / cargo.volume);
         if (units < 1) units = 1;
       }
       // Weight-limited: cargo can't ride at all if even one unit overweights

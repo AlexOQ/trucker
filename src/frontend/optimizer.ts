@@ -118,8 +118,29 @@ function profileKey(bodyTypes: Iterable<string>): string {
 interface DepotCargoItem {
   cargoId: string;
   probCoef: number;
-  /** bodyType → best haul value (value × bonus × units) for standard ownable trailers */
+  /** value × bonus per unit — multiply by per-rep units for rep-specific HV */
+  unitVal: number;
+  /** bodyType → best haul value across ownable trailers in this body type */
   bodyHV: Record<string, number>;
+  /** repId → unitVal × units; populated by populateRepHV before MC sim. */
+  repHV?: Record<string, number>;
+}
+
+/** Populate repHV[repId] on each DepotCargoItem; call after candidate selection, before MC sim. */
+function populateRepHV(depots: CityDepotData[], repIds: string[], lookups: Lookups): void {
+  const seen = new Set<DepotCargoItem>();
+  for (const depot of depots) {
+    for (const c of depot.cargo) {
+      if (seen.has(c)) continue;
+      seen.add(c);
+      const map: Record<string, number> = {};
+      for (const repId of repIds) {
+        const units = lookups.cargoTrailerUnits.get(`${c.cargoId}:${repId}`) ?? 0;
+        map[repId] = c.unitVal * units;
+      }
+      c.repHV = map;
+    }
+  }
 }
 
 /** A depot instance with its cargo profile and sampling CDF */
@@ -188,7 +209,7 @@ export function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDe
       }
 
       if (Object.keys(bodyHV).length === 0) continue;
-      cargo.push({ cargoId, probCoef, bodyHV });
+      cargo.push({ cargoId, probCoef, unitVal, bodyHV });
       totalProbCoef += probCoef;
     }
 
@@ -211,23 +232,19 @@ export function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDe
 // Analytical E[max of N] — for city rankings
 // ============================================
 
-/**
- * Per-depot pre-built items for `analyticalFirstPickEV`.
- * Each entry is one cargo slot: bodyHV carries all body-type HV values,
- * p is the normalised spawn probability (probCoef / totalProbCoef).
- *
- * Build once per city with `buildDepotItemsCache`, then pass to every
- * `analyticalFirstPickEV` call for that city to avoid redundant allocation.
- */
-export type DepotItemsCache = Array<Array<{ bodyHV: Record<string, number>; p: number }>>;
+/** Per-depot cargo items: cargoId, unitVal, bodyHV, normalised p — reused across EV evaluations. */
+export type DepotItemsCache = Array<Array<{
+  cargoId: string;
+  unitVal: number;
+  bodyHV: Record<string, number>;
+  p: number;
+}>>;
 
-/**
- * Precompute per-depot cargo items (bodyHV + normalised probability).
- * Call once per city; pass the result to every `analyticalFirstPickEV` call.
- */
 export function buildDepotItemsCache(depots: CityDepotData[]): DepotItemsCache {
   return depots.map((depot) =>
     depot.cargo.map((c) => ({
+      cargoId: c.cargoId,
+      unitVal: c.unitVal,
       bodyHV: c.bodyHV,
       p: c.probCoef / depot.totalProbCoef,
     }))
@@ -296,6 +313,7 @@ export function analyticalFirstPickEV(
  * `analyticalFirstPickEV` but `hv` per cargo item is the max bodyHV across all
  * body types in the profile — so a multi-body trailer's flexibility shows up
  * in the ranking, not just in single-body slots.
+ * For fleet-picking accuracy use `analyticalFirstPickEVForRep`.
  */
 export function analyticalFirstPickEVProfile(
   depots: CityDepotData[],
@@ -313,6 +331,54 @@ export function analyticalFirstPickEVProfile(
       if (v > m) m = v;
     }
     return m;
+  };
+
+  const hvSet = new Set<number>([0]);
+  for (const items of depotItems) {
+    for (const item of items) {
+      const hv = itemHv(item);
+      if (hv > 0) hvSet.add(hv);
+    }
+  }
+
+  const hvValues = [...hvSet].sort((a, b) => a - b);
+  if (hvValues.length <= 1) return 0;
+
+  function totalCDF(H: number): number {
+    let result = 1;
+    for (const items of depotItems) {
+      let cdf = 0;
+      for (const item of items) {
+        if (itemHv(item) <= H) cdf += item.p;
+      }
+      result *= Math.pow(cdf, JOBS_PER_DEPOT);
+    }
+    return result;
+  }
+
+  let ev = 0;
+  for (let i = 1; i < hvValues.length; i++) {
+    const pMax = totalCDF(hvValues[i]) - totalCDF(hvValues[i - 1]);
+    ev += hvValues[i] * pMax;
+  }
+  return ev;
+}
+
+/**
+ * Analytical first-pick EV using the rep's actual per-cargo HV
+ * (weight/volume-clamped via cargoTrailerUnits). Correct EV for the fleet picker.
+ */
+export function analyticalFirstPickEVForRep(
+  depots: CityDepotData[],
+  repId: string,
+  lookups: Lookups,
+  cache?: DepotItemsCache,
+): number {
+  const depotItems: DepotItemsCache = cache ?? buildDepotItemsCache(depots);
+
+  const itemHv = (item: { cargoId: string; unitVal: number }): number => {
+    const units = lookups.cargoTrailerUnits.get(`${item.cargoId}:${repId}`) ?? 0;
+    return item.unitVal * units;
   };
 
   const hvSet = new Set<number>([0]);
@@ -410,22 +476,14 @@ function bestJob(board: DepotCargoItem[], bodyType: string): { hv: number; idx: 
   return { hv: Math.max(0, best), idx: bestIdx };
 }
 
-/**
- * Find best job on board for a body-type profile (set of body types).
- * Returns the max hv across all body types in the profile — represents a
- * multi-body trailer that can fall back to any of its supported body types.
- * For single-body profiles this matches `bestJob` exactly.
- */
-function bestJobProfile(board: DepotCargoItem[], profile: string[]): { hv: number; idx: number } {
+/** Best job for rep; reads pre-populated repHV[repId]. */
+function bestJobForRep(
+  board: DepotCargoItem[], repId: string,
+): { hv: number; idx: number } {
   let best = -1, bestIdx = -1;
   for (let i = 0; i < board.length; i++) {
-    const hvMap = board[i].bodyHV;
-    let row = 0;
-    for (const bt of profile) {
-      const hv = hvMap[bt] || 0;
-      if (hv > row) row = hv;
-    }
-    if (row > best) { best = row; bestIdx = i; }
+    const hv = board[i].repHV?.[repId] ?? 0;
+    if (hv > best) { best = hv; bestIdx = i; }
   }
   return { hv: Math.max(0, best), idx: bestIdx };
 }
@@ -654,24 +712,27 @@ export function computeOptimalFleet(
 
   // Candidate profiles drop any body_type that's dominated or absent in city depots;
   // a multi-body profile survives as long as at least one of its body_types remains.
-  const candidates: Array<{ key: string; bodyTypes: string[]; ev: number }> = [];
+  const candidates: Array<{ key: string; bodyTypes: string[]; repId: string; ev: number }> = [];
   for (const [key, info] of profileInfo) {
     const surviving = info.bodyTypes.filter((bt) => allBodyTypes.has(bt) && !dominated.has(bt));
     if (surviving.length === 0) continue;
-    const ev = analyticalFirstPickEVProfile(depots, surviving, depotItemsCache);
-    if (ev > 0) candidates.push({ key, bodyTypes: surviving, ev });
+    const ev = analyticalFirstPickEVForRep(depots, info.trailerId, lookups, depotItemsCache);
+    if (ev > 0) candidates.push({ key, bodyTypes: surviving, repId: info.trailerId, ev });
   }
   candidates.sort((a, b) => b.ev - a.ev);
 
   const viableProfiles = candidates.slice(0, 15);
   if (viableProfiles.length === 0) return null;
 
+  // Cache rep HV per (cargo, viable rep) so the MC inner loop is pure array access.
+  populateRepHV(depots, viableProfiles.map((p) => p.repId), lookups);
+
   // Pre-allocate board buffer (reused across all MC simulations)
   const totalSlots = depots.length * JOBS_PER_DEPOT;
   const boardBuffer: DepotCargoItem[] = new Array(totalSlots);
 
-  // Phase 1: Greedy driver selection by profile (body-type set)
-  const fleet: Array<{ key: string; bodyTypes: string[] }> = [];
+  // Phase 1: Greedy driver selection by profile (body-type set + rep trailer)
+  const fleet: Array<{ key: string; bodyTypes: string[]; repId: string }> = [];
 
   for (let pick = 0; pick < MAX_DRIVERS; pick++) {
     // Generate shared boards for this round
@@ -686,7 +747,7 @@ export function computeOptimalFleet(
     for (const board of rawBoards) {
       const remaining = board.slice();
       for (const driver of fleet) {
-        const { hv, idx } = bestJobProfile(remaining, driver.bodyTypes);
+        const { hv, idx } = bestJobForRep(remaining, driver.repId);
         if (hv > 0 && idx >= 0) {
           remaining[idx] = remaining[remaining.length - 1];
           remaining.pop();
@@ -696,17 +757,17 @@ export function computeOptimalFleet(
     }
 
     // Evaluate each candidate profile's marginal contribution
-    let bestProfile: { key: string; bodyTypes: string[] } | null = null;
+    let bestProfile: { key: string; bodyTypes: string[]; repId: string } | null = null;
     let bestMarginal = -1;
     for (const cand of viableProfiles) {
       let marginalSum = 0;
       for (const remaining of baseRemainders) {
-        marginalSum += bestJobProfile(remaining, cand.bodyTypes).hv;
+        marginalSum += bestJobForRep(remaining, cand.repId).hv;
       }
       const marginal = marginalSum / MC_SIMS;
       if (marginal > bestMarginal) {
         bestMarginal = marginal;
-        bestProfile = { key: cand.key, bodyTypes: cand.bodyTypes };
+        bestProfile = { key: cand.key, bodyTypes: cand.bodyTypes, repId: cand.repId };
       }
     }
 
@@ -723,7 +784,7 @@ export function computeOptimalFleet(
     const len = fillBoard(boardBuffer, depots);
     const remaining = boardBuffer.slice(0, len);
     for (let d = 0; d < fleet.length; d++) {
-      const { hv, idx } = bestJobProfile(remaining, fleet[d].bodyTypes);
+      const { hv, idx } = bestJobForRep(remaining, fleet[d].repId);
       if (hv > 0 && idx >= 0) {
         driverEVs[d] += hv;
         remaining[idx] = remaining[remaining.length - 1];
@@ -811,11 +872,12 @@ export function calculateCityRankings(
     const depotItemsCache = buildDepotItemsCache(depots);
 
     // Per profile: analytical first-pick EV over the profile's surviving (non-dominated, present) body types.
+    // Use rep-HV (same as fleet picker) so top-N picks match.
     const profileEVs: Array<{ key: string; bodyTypes: string[]; ev: number }> = [];
     for (const [key, info] of profileInfo) {
       const surviving = info.bodyTypes.filter((bt) => allBodyTypes.has(bt) && !dominated.has(bt));
       if (surviving.length === 0) continue;
-      const ev = analyticalFirstPickEVProfile(depots, surviving, depotItemsCache);
+      const ev = analyticalFirstPickEVForRep(depots, info.trailerId, lookups, depotItemsCache);
       if (ev > 0) profileEVs.push({ key, bodyTypes: surviving, ev });
     }
     profileEVs.sort((a, b) => b.ev - a.ev);

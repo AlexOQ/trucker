@@ -160,7 +160,12 @@ function buildTrailers(
   const walked = manualPrices?.prices ?? {};
   if (defs) {
     return Object.entries(defs.trailers).map(([id, t]) => {
-      const bodyTypes = overrides[id];
+      const override = overrides[id];
+      // Normalise legacy array form and new object form to one shape.
+      const bodyTypes = Array.isArray(override)
+        ? override
+        : override?.body_types;
+      const volumesMap = !Array.isArray(override) ? override?.volumes : undefined;
       const primary = bodyTypes && bodyTypes.length > 0 ? bodyTypes[0] : t.body_type;
       const extras = bodyTypes && bodyTypes.length > 1 ? bodyTypes.slice(1) : undefined;
       const walkedEntry = walked[id];
@@ -173,6 +178,7 @@ function buildTrailers(
         name: t.name,
         body_type: primary,
         extra_body_types: extras,
+        bodyVolumes: volumesMap,
         volume: t.volume,
         chassis_mass: t.chassis_mass,
         body_mass: t.body_mass,

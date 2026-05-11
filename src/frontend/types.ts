@@ -47,6 +47,8 @@ export interface Trailer {
    * so its `extra_body_types` is `['flatbed']`. Empty / unset for single-body trailers.
    */
   extra_body_types?: string[];
+  /** Per-body-type volume override; missing keys fall back to `volume`. See multi-body-overrides.json. */
+  bodyVolumes?: Record<string, number>;
   volume: number;
   chassis_mass: number;
   body_mass: number;
@@ -182,12 +184,18 @@ export interface Observations {
   company_body_type_avg_value?: Record<string, Record<string, number>>;
 }
 
+/** Per-trailer entry in `multi-body-overrides.json` — see that file's `_doc`. */
+export type MultiBodyOverrideEntry = string[] | {
+  body_types: string[];
+  volumes?: Record<string, number>;
+};
+
 /** Multi-body trailer overrides — see public/data/<game>/multi-body-overrides.json. */
 export interface MultiBodyOverrides {
   game: 'ets2' | 'ats';
-  schema_version: 1;
-  /** trailerId -> additional body types it can serve beyond trailer.body_type */
-  overrides: Record<string, string[]>;
+  schema_version: 1 | 2;
+  /** trailerId -> body-type override entry (legacy bare array or object form) */
+  overrides: Record<string, MultiBodyOverrideEntry>;
 }
 
 /**

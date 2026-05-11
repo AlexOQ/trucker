@@ -1,11 +1,11 @@
 {
   "game": "ets2",
-  "schema_version": 1,
-  "_doc": "Multi-body trailer overrides. The parser assigns trailer.body_type based on the trailer's CONFIGURED body (e.g., a flatbed chassis with container pins gets body_type=container). For trailers with attachments that don't preclude their chassis-natural use, the chassis-natural body type is the more accurate primary. This file lists the full body_types array in priority order: arr[0] becomes the new trailer.body_type (overriding parser); arr.slice(1) becomes trailer.extra_body_types. Loader applies both, and cargoTrailerMap/units are fanned out so the trailer competes in every body slot it can serve.",
+  "schema_version": 2,
+  "_doc": "Multi-body trailer overrides. The parser assigns trailer.body_type based on the trailer's CONFIGURED body (e.g., a flatbed chassis with container pins gets body_type=container). For trailers with attachments that don't preclude their chassis-natural use, the chassis-natural body type is the more accurate primary. Two override forms: (1) bare array `[\"primary\", \"extra\", ...]` — arr[0] becomes trailer.body_type, arr.slice(1) becomes trailer.extra_body_types; native game-defs volume is used for every mode. (2) object form `{body_types: [...], volumes: {bodyType: m³}}` — same as (1) plus per-body-mode volume overrides for chassis whose physical bed capacity differs by mode. Volumes absent from the map fall back to the trailer's native volume. Loader applies both, and cargoTrailerMap/units are fanned out so the trailer competes in every body slot it can serve.",
   "_rationale": {
     "container_pins_on_flatbed": "scs.flatbed.*.container — flatbed chassis with bottom-mounted container pins. Parser sees body=container; chassis-natural is flatbed. Pins are additive, not exclusive. → primary=flatbed, extra=container.",
     "dropside_flatbeds": "scs.flatbed.*.brick and scs.flatbed.*.brick_crane — flatbed chassis with fold-down sides (and optional crane). Parser sees body=flatbed_brck; chassis-natural is flatbed. Sides drop for plain flatbed cargo. → primary=flatbed, extra=flatbed_brck. Same for krone.profilinerbm.*.brick.",
-    "lowloader_container": "kassbohrer.sll.*.cont — heavy low-loader chassis configured with container body. Parser sees body=container; chassis-natural is lowboy. → primary=lowboy, extra=container."
+    "lowloader_container": "kassbohrer.sll.*.cont — heavy low-loader chassis configured with container body. Parser sees body=container, volume=40 (container slot). Chassis-natural is lowboy with the full SLL bed (~95m³ long / ~60m³ short). → primary=lowboy, extra=container; lowboy-mode volume restored via `volumes.lowboy`."
   },
   "overrides": {
     "scs.flatbed.single_2.container":     ["flatbed", "container"],
@@ -61,9 +61,9 @@
     "krone.profilinerbm.single_3sa.brick":   ["flatbed", "flatbed_brck"],
     "krone.profilinerbm.single_3sa.brick75": ["flatbed", "flatbed_brck"],
 
-    "kassbohrer.sll.single_2_ln.cont": ["lowboy", "container"],
-    "kassbohrer.sll.single_2_sh.cont": ["lowboy", "container"],
-    "kassbohrer.sll.single_3_ln.cont": ["lowboy", "container"],
-    "kassbohrer.sll.single_3_sh.cont": ["lowboy", "container"]
+    "kassbohrer.sll.single_2_ln.cont": { "body_types": ["lowboy", "container"], "volumes": { "lowboy": 95 } },
+    "kassbohrer.sll.single_2_sh.cont": { "body_types": ["lowboy", "container"], "volumes": { "lowboy": 60 } },
+    "kassbohrer.sll.single_3_ln.cont": { "body_types": ["lowboy", "container"], "volumes": { "lowboy": 95 } },
+    "kassbohrer.sll.single_3_sh.cont": { "body_types": ["lowboy", "container"], "volumes": { "lowboy": 60 } }
   }
 }
