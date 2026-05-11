@@ -376,15 +376,21 @@ export function analyticalFirstPickEVForRep(
 ): number {
   const depotItems: DepotItemsCache = cache ?? buildDepotItemsCache(depots);
 
-  const itemHv = (item: { cargoId: string; unitVal: number }): number => {
-    const units = lookups.cargoTrailerUnits.get(`${item.cargoId}:${repId}`) ?? 0;
-    return item.unitVal * units;
-  };
+  // Precompute per-depot, per-item HV once. The body-typed twin reads
+  // item.bodyHV[bt] in totalCDF directly (cheap property access); the rep
+  // version's lookup is unitVal × Map.get(cargoTrailerUnits) — 10x heavier per
+  // call. Skipping the precompute would multiply that cost by hvValues.length
+  // inside totalCDF, which compounds at city-rankings scale.
+  const hvPerItem: number[][] = depotItems.map((items) =>
+    items.map((item) => {
+      const units = lookups.cargoTrailerUnits.get(`${item.cargoId}:${repId}`) ?? 0;
+      return item.unitVal * units;
+    })
+  );
 
   const hvSet = new Set<number>([0]);
-  for (const items of depotItems) {
-    for (const item of items) {
-      const hv = itemHv(item);
+  for (const depotHvs of hvPerItem) {
+    for (const hv of depotHvs) {
       if (hv > 0) hvSet.add(hv);
     }
   }
@@ -394,10 +400,12 @@ export function analyticalFirstPickEVForRep(
 
   function totalCDF(H: number): number {
     let result = 1;
-    for (const items of depotItems) {
+    for (let d = 0; d < depotItems.length; d++) {
+      const items = depotItems[d];
+      const hvs = hvPerItem[d];
       let cdf = 0;
-      for (const item of items) {
-        if (itemHv(item) <= H) cdf += item.p;
+      for (let i = 0; i < items.length; i++) {
+        if (hvs[i] <= H) cdf += items[i].p;
       }
       result *= Math.pow(cdf, JOBS_PER_DEPOT);
     }
