@@ -361,9 +361,11 @@ describe('optimizer', () => {
 
       expect(paris!.score).toBeGreaterThan(0);
 
-      // Score consistency: sum of topTrailer cityValues ≤ score (top 5 of N drivers)
+      // Score == sum of topTrailer cityValues when |drivers| ≤ TOP_TRAILERS
+      // (the slice keeps all of them). Catches drift between `ev × count`
+      // aggregation and `totalFleetEV`.
       const summedCityValues = paris!.topTrailers.reduce((s, t) => s + t.cityValue, 0);
-      expect(summedCityValues).toBeLessThanOrEqual(paris!.score + 0.001);
+      expect(Math.abs(summedCityValues - paris!.score)).toBeLessThanOrEqual(0.001);
 
       // Top trailer's contention-aware EV must not exceed its standalone analytical EV.
       const topBT = paris!.topTrailers[0].bodyType;

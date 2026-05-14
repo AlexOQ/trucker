@@ -70,9 +70,8 @@ Each city has company depots that spawn random cargo jobs. Each cargo type has a
 
 1. **Builds a cargo profile** for every depot in every city
 2. **Eliminates dominated trailer types** — if trailer A can haul everything trailer B can (and more), B is dropped
-3. **Simulates 20,000 job boards** per city using Monte Carlo methods
-4. **Greedily selects drivers** — each round picks the trailer type that adds the most marginal expected value
-5. **Ranks cities** using an analytical formula for speed (no simulation needed per city)
+3. **Greedily selects drivers** via Monte Carlo simulation — each round picks the trailer that adds the most marginal expected value on a residual board (20k rounds per city detail, 500 for the rankings table)
+4. **Ranks cities** by total fleet EV from the same greedy picker; the rankings table and the city detail view share one computed fleet for parity
 
 For more detail on the algorithm and game mechanics, see [docs/ALGORITHM-NOTES.md](docs/ALGORITHM-NOTES.md).
 
