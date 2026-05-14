@@ -97,7 +97,12 @@ export async function renderCity(
     return;
   }
 
-  const optimal = await computeFleetAsync(cityId, state.data, state.lookups);
+  // Prefer the fleet already computed by the rankings pass — same picks,
+  // no MC divergence between the table's "Best Trailers" column and the
+  // detail view's "Recommended Fleet". Fall back to a fresh compute when
+  // the user lands here without rankings being primed yet.
+  const cachedFleet = state.cachedRankings?.find(r => r.id === cityId)?.fleet ?? null;
+  const optimal = cachedFleet ?? await computeFleetAsync(cityId, state.data, state.lookups);
   if (!optimal) {
     const emptyOwned = isOwnedGarage(cityId);
     cityContent.innerHTML = `

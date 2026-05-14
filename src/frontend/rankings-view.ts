@@ -209,7 +209,9 @@ function updateResultsCount(resultsCount: HTMLElement, shown: number, total: num
 // ============================================
 
 function summarizeTrailers(fleet: FleetEntry[]): string {
-  return fleet.map(e => e.displayName).join(', ');
+  return fleet
+    .map(e => (e.variants > 1 ? `${e.displayName} ×${e.variants}` : e.displayName))
+    .join(', ');
 }
 
 // ============================================
@@ -221,7 +223,7 @@ const SORTABLE_COLUMNS: { col: SortColumn; label: string; tooltip?: string }[] =
   { col: 'country', label: 'Country' },
   { col: 'depotCount', label: 'Depots', tooltip: 'Company facilities in this city' },
   { col: 'cargoTypes', label: 'Cargo', tooltip: 'Distinct cargo types available' },
-  { col: 'score', label: 'Fleet EV', tooltip: 'Sum of top 5 body type EVs \u2014 fleet earning potential' },
+  { col: 'score', label: 'Fleet EV', tooltip: 'Expected haul value per cycle for the recommended 5-driver fleet (contention- and stacking-aware)' },
 ];
 
 export function sortRankings(rankings: CityRanking[], col: SortColumn, dir: SortDirection): CityRanking[] {

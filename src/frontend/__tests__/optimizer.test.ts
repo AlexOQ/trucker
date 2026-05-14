@@ -343,9 +343,13 @@ describe('optimizer', () => {
       expect(dryvanEV).toBeGreaterThan(tankerEV);
     });
 
-    it('returns consistent results with calculateCityRankings', () => {
-      // The ranking score for a city is the sum of top 5 body type EVs
-      // from analyticalFirstPickEV. Verify they agree.
+    it('ranking score equals real fleet EV (sum of per-driver fleet contributions)', () => {
+      // Rankings now run the greedy MC picker per city (with reduced sample
+      // count). Score == sum of topTrailers' cityValue == totalFleetEV from
+      // computeOptimalFleet. The top trailer's cityValue is its profile's
+      // fleet contribution (per-driver EV × count after contention) and is
+      // bounded by the analytical first-pick EV — strictly less when other
+      // drivers compete for the same jobs.
       const data = createMockData();
       const lookups = buildLookups(data);
       const rankings = calculateCityRankings(data, lookups);
@@ -355,15 +359,20 @@ describe('optimizer', () => {
       const paris = rankings.find((r) => r.id === 'paris');
       expect(paris).toBeDefined();
 
-      // Paris should have a positive score
       expect(paris!.score).toBeGreaterThan(0);
 
-      // Compute EV for each body type manually and verify sum matches score
-      // (minus dominated body types, which we can't easily replicate here)
-      // At minimum, the top trailer's cityValue should match analyticalFirstPickEV
+      // Score consistency: sum of topTrailer cityValues ≤ score (top 5 of N drivers)
+      const summedCityValues = paris!.topTrailers.reduce((s, t) => s + t.cityValue, 0);
+      expect(summedCityValues).toBeLessThanOrEqual(paris!.score + 0.001);
+
+      // Top trailer's contention-aware EV must not exceed its standalone analytical EV.
       const topBT = paris!.topTrailers[0].bodyType;
-      const topEV = analyticalFirstPickEV(depots!, topBT);
-      expect(paris!.topTrailers[0].cityValue).toBeCloseTo(topEV, 2);
+      const standaloneEV = analyticalFirstPickEV(depots!, topBT);
+      // cityValue = ev × count; for count=1 it equals contested per-driver EV ≤ standalone.
+      // For stacked profiles (count > 1) the comparison no longer holds, so guard.
+      if (paris!.topTrailers[0].variants === 1) {
+        expect(paris!.topTrailers[0].cityValue).toBeLessThanOrEqual(standaloneEV + 0.001);
+      }
     });
   });
 
