@@ -10,7 +10,7 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 - Cities contain depots (company facilities), each spawning random cargo jobs
 - Cargoes have value, spawn probability (prob_coef), and compatible trailer body types
 - Monte Carlo simulation finds best fleet: greedy driver selection maximizing marginal EV
-- City rankings use analytical E[max of N] formula for speed (no MC needed per city)
+- City rankings run the same greedy MC picker as fleet computation (`RANKING_MC_SIMS = 500`); fleet cached on `CityRanking.fleet` and shared with the city detail view
 
 **First-Visit UX**:
 - DLC configuration banner prompts new visitors to set up owned DLCs for accurate results
@@ -138,9 +138,10 @@ Phase 3 — Collapse:
 ```
 
 ### City Ranking Score (`calculateCityRankings()`)
-- Uses analytical E[max of N] formula (`analyticalFirstPickEV()`) — no MC needed
-- For each non-dominated body type: compute expected value of the best job across all depots
-- `score = sum of top RANKING_DRIVERS (5) body type EVs`
+- Runs `computeOptimalFleet` with a reduced sample count (`RANKING_MC_SIMS = 500`) per city
+- `score = totalFleetEV` — sum of all drivers' per-driver EVs after contention/stacking
+- `CityRanking.fleet` caches the full fleet; detail view reads it directly so rankings table and detail panel show identical picks
+- Analytical `analyticalFirstPickEV()` still used as candidate pre-filter inside the picker (top-15) and by `dlc-value.ts` for marginal-value calculations
 - Cities ranked by score descending
 
 ### Analytical E[max of N] (`analyticalFirstPickEV()`)

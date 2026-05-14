@@ -31,9 +31,10 @@ const MAX_DRIVERS = 5;
 const MC_SIMS = 20_000;
 
 /**
- * Lower MC count for city rankings — 234 cities × full greedy needs to stay
- * snappy on DLC toggles. Variance ~1/sqrt(N) ≈ 2-3% per per-driver-EV at 2k
- * sims, acceptable for ranking order (sort by score, not absolute fidelity).
+ * Lower MC count for city rankings — ~370 cities × full greedy needs to stay
+ * snappy on DLC toggles. Variance ~1/sqrt(N) ≈ 4-5% per per-driver-EV at this
+ * sample count, acceptable for ranking order (sort by score, not absolute fidelity).
+ * Bump if borderline picks shuffle between runs.
  */
 const RANKING_MC_SIMS = 500;
 
