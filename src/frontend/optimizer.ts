@@ -1,18 +1,11 @@
 /**
- * Trailer Set Optimizer for ETS2 Trucker Advisor
+ * Trailer Set Optimizer for ETS2 Trucker Advisor.
  *
- * Model: Best-of-N Monte Carlo fleet optimization
- * - Each depot independently spawns JOBS_PER_DEPOT random jobs from its cargo pool
- * - AI drivers see the combined job board and pick the highest-value job they can haul
- * - Fleet composition determined by greedy selection: each pick maximizes marginal EV
+ * Best-of-N Monte Carlo fleet optimization — depots spawn JOBS_PER_DEPOT random
+ * jobs, drivers greedy-pick the highest-value job they can haul. See CLAUDE.md
+ * "Key Algorithms" for model details and "City Ranking Score" for the rankings path.
  *
- * City rankings run the same greedy MC picker with a reduced sample count
- * (RANKING_MC_SIMS) so the rankings table's "Best Trailers" column matches
- * what the city detail view shows. The analytical E[max of N] formulas are
- * still used as the candidate pre-filter inside the picker (top-15 by
- * analytical EV) and by `dlc-value.ts` for marginal-value calculations.
- *
- * Data source: game-defs.json (authoritative cargo values, spawn coefficients, trailer specs)
+ * Data source: game-defs.json.
  */
 
 import {
@@ -30,12 +23,7 @@ const MAX_DRIVERS = 5;
 /** Monte Carlo simulations for fleet computation (individual city) */
 const MC_SIMS = 20_000;
 
-/**
- * Lower MC count for city rankings — ~370 cities × full greedy needs to stay
- * snappy on DLC toggles. Variance ~1/sqrt(N) ≈ 4-5% per per-driver-EV at this
- * sample count, acceptable for ranking order (sort by score, not absolute fidelity).
- * Bump if borderline picks shuffle between runs.
- */
+/** MC count for city rankings. ~4-5% variance per per-driver-EV. Bump if picks shuffle between runs. */
 const RANKING_MC_SIMS = 500;
 
 /** Number of top trailers shown in rankings summary */
@@ -69,11 +57,7 @@ export interface OptimalFleetEntry {
   bodyTypes: string[];
   trailerId: string;
   trailerSpec: string;
-  /**
-   * Average per-driver EV across all picks of this profile. For stacked
-   * profiles (count > 1), this is the mean of per-driver EVs — multiplying
-   * by `count` recovers the profile's total contribution to fleet EV.
-   */
+  /** Mean per-driver EV across this profile's picks; multiply by `count` for total contribution. */
   ev: number;
   cargoMatched: number;
   count: number;           // 1-5 for drivers (collapsed by profile)
@@ -90,11 +74,7 @@ export interface OptimalFleet {
   totalEstimatedPrice: number;
   /** Highest level floor across all recommended drivers — when the full fleet becomes ownable. */
   fleetLevelFloor: number;
-  /**
-   * Sum of all drivers' per-cycle EVs after contention/stacking. The true
-   * expected haul value the whole fleet captures per job cycle — used as the
-   * city-ranking score and matches what `Phase 2` simulated.
-   */
+  /** Sum of per-driver EVs after contention/stacking — the fleet's expected haul value per cycle. */
   totalFleetEV: number;
 }
 
@@ -109,12 +89,7 @@ export interface CityRanking {
   cargoTypes: number;
   score: number;
   topTrailers: FleetEntry[];
-  /**
-   * Full fleet computed during ranking. The detail view reads this directly
-   * so it sees the exact same picks (no MC-divergence between table and
-   * detail). Detail-view fallback only fires when rankings haven't been
-   * computed yet (direct nav to a city URL bypassing the rankings page).
-   */
+  /** Cached fleet — detail view reads this for parity with the rankings column. */
   fleet: OptimalFleet;
 }
 
@@ -891,18 +866,7 @@ export function computeOptimalFleet(
 // City rankings (analytical)
 // ============================================
 
-/**
- * Rank all cities by total earning potential using the same greedy MC picker
- * as `computeOptimalFleet`, with a reduced MC sample count (RANKING_MC_SIMS).
- *
- * Score = real fleet EV (sum of per-driver EVs after contention/stacking),
- * not the sum-of-standalone-EVs heuristic the previous implementation used.
- *
- * `topTrailers` reflects the actual greedy fleet picks — same profiles, in
- * the same pick order, as the city-detail view shows. The display column is
- * therefore a useful "where can I deploy a chemtank?" query: scan for the
- * trailer profile, find cities where it earns a seat in the recommended fleet.
- */
+/** Rank all cities by greedy fleet EV. See CLAUDE.md "City Ranking Score". */
 export function calculateCityRankings(
   data: AllData, lookups: Lookups,
 ): CityRanking[] {
