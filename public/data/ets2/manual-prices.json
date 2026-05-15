@@ -1022,6 +1022,51 @@
       "price": 101600,
       "source_pack": "kassbohrer",
       "last_verified_game_version": "1.59"
+    },
+    "wielton.strongm.ch_4_sw.strongm": {
+      "price": 68200,
+      "source_pack": "wielton",
+      "last_verified_game_version": "1.59"
+    },
+    "wielton.dropsidem.single_3.dropside635": {
+      "price": 42830,
+      "source_pack": "wielton",
+      "last_verified_game_version": "1.59"
+    },
+    "wielton.dropsidem.single_3.dropside835": {
+      "price": 43330,
+      "source_pack": "wielton",
+      "last_verified_game_version": "1.59"
+    },
+    "wielton.dropsidem.single_3.dropside1035": {
+      "price": 43830,
+      "source_pack": "wielton",
+      "last_verified_game_version": "1.59"
+    },
+    "wielton.curtainm.single_3.curtain": {
+      "price": 41330,
+      "source_pack": "wielton",
+      "last_verified_game_version": "1.59"
+    },
+    "wielton.curtainm.single_3.curtain_sb": {
+      "price": 42330,
+      "source_pack": "wielton",
+      "last_verified_game_version": "1.59"
+    },
+    "wielton.drym.single_3.drym": {
+      "price": 65130,
+      "source_pack": "wielton",
+      "last_verified_game_version": "1.59"
+    },
+    "wielton.containerm.single_3_220.container": {
+      "price": 35170,
+      "source_pack": "wielton",
+      "last_verified_game_version": "1.59"
+    },
+    "wielton.containerm.single_3_40.container": {
+      "price": 38970,
+      "source_pack": "wielton",
+      "last_verified_game_version": "1.59"
     }
   }
 }

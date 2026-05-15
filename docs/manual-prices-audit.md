@@ -67,18 +67,18 @@ May be correct, but flagged because the asserted equivalence isn't independently
 - `scs.livestock.single_3b.belly_pnt` = `belly_stl` (87,570)
 - `schmitz.ski.ch_*_dal.*` = `ch_*_dsl.*` (16 entries, alu vs steel legs)
 
-## Walk queue — DLC trailers (24 chassis, 33 body prices)
+## Walk queue — DLC trailers (18 chassis, 24 body prices remaining; Wielton complete 2026-05-15)
 
 For DLC trailers that participate in winner-tie groups but lack walked prices.
 Each row = one dealer visit when the DLC is owned.
 
 ### Wielton (4 chassis — biggest hv uplift over SCS, 4.3-9.5% across band-1)
-- `wielton.curtainm.single_3` — curtain, curtain_sb (curtainside band 1)
-- `wielton.drym.single_3` — drym (dryvan band 1)
-- `wielton.dropsidem.single_3` — dropside1035, dropside635, dropside835 (flatbed_brck band 1)
-- `wielton.strongm.ch_4_sw` — strongm (dumper ALL 36)
-- `wielton.containerm.single_3_220` — container (band 1)
-- `wielton.containerm.single_3_40` — container (band 1)
+- ~~`wielton.curtainm.single_3` — curtain, curtain_sb (curtainside band 1)~~ ✅ curtain=41,330 / curtain_sb=42,330 (single 3-axle 20k + body 5k/6k + paint 2.6k; chain_base=13,730)
+- ~~`wielton.drym.single_3` — drym (dryvan band 1)~~ ✅ 65,130 (single 3-axle 20k + body 30k + paint 2.6k; chain_base=12,530)
+- ~~`wielton.dropsidem.single_3` — dropside1035, dropside635, dropside835 (flatbed_brck band 1)~~ ✅ 635=42,830 / 835=43,330 / 1035=43,830 (single 3-axle + body 6.5/7/7.5k + paint 2.6k)
+- ~~`wielton.strongm.ch_4_sw` — strongm (dumper ALL 36)~~ ✅ 68,200 (4-axle steerable 27k + strongm body 30k + paint 2.6k + chain_base 8.6k)
+- ~~`wielton.containerm.single_3_220` — container (band 1)~~ ✅ 35,170 (3-axle 20k + body ns3_p20_sl 700 + paint 2.6k; chain_base=11,870)
+- ~~`wielton.containerm.single_3_40` — container (band 1)~~ ✅ 38,970 (3-axle 24k + body ns3_p40_sl 700 + paint 2.6k; chain_base=11,670; 2 visual chassis variants priced identically)
 
 ### Feldbinder (3 chassis — silo specialist, 25-29% uplift on silo body)
 - `feldbinder.tsaadr.single_3_32` — 32_1_1, 32_4_1 (chemtank ALL 36, 2.4% uplift)
