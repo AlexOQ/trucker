@@ -1,5 +1,7 @@
 # manual-prices.json — methodology, audit, walk queue
 
+> **DEPRECATED** — As of PR #264 (2026-05-15), the parser reads exact trailer prices directly from game defs. Manual walks are no longer needed. This file and `manual-prices.json` will be removed in a follow-up cleanup PR.
+
 ## SCS internal name → dealer UI label
 
 Internal body suffixes in the trailer keys don't match what the in-game dealer screen calls them. Quick reference for walks:

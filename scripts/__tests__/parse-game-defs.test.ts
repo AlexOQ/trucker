@@ -135,10 +135,12 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
         if (t.price !== undefined) {
           expect(typeof t.price).toBe('number');
           expect(t.price as number).toBeGreaterThanOrEqual(0);
+          expect(Number.isInteger(t.price as number)).toBe(true);
         }
         if (t.level_floor !== undefined) {
           expect(typeof t.level_floor).toBe('number');
           expect(t.level_floor as number).toBeGreaterThanOrEqual(0);
+          expect(Number.isInteger(t.level_floor as number)).toBe(true);
         }
       }
     });
