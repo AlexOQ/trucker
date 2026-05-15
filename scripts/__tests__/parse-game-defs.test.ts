@@ -129,6 +129,20 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
     // Snapshots parsed before that don't have them; computeMinCost gracefully
     // falls back to []. Once present, asserts shape so we don't accidentally
     // ship malformed entries.
+    //
+    // Regression guard (ets2 only): canonical source must have at least one
+    // truck with non-empty cabins so a silent parser-walk break (directory
+    // rename, unit-type change) doesn't ship valid-but-empty arrays.
+    if (game === 'ets2') {
+      it('at least one truck has populated cabins (canary against silent parser regression)', () => {
+        const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
+        const hasCabins = (data.trucks as Array<Record<string, unknown>>).some(
+          (t) => Array.isArray(t.cabins) && (t.cabins as unknown[]).length > 0,
+        );
+        expect(hasCabins).toBe(true);
+      });
+    }
+
     it('truck cabin/paint fields, when present, have the documented shape', () => {
       const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
       for (const truck of data.trucks as Array<Record<string, unknown>>) {

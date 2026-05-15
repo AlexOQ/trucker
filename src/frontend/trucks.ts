@@ -73,7 +73,7 @@ function renderTruckList(filter = ''): void {
           ${filtered.map(({ truck, config }) => `
             <tr>
               <td>${escapeHtml(brandLabel(truck.brand))}</td>
-              <td><a href="#truck-${truck.id}" class="link" data-truck-id="${truck.id}">${escapeHtml(modelLabel(truck.model))}</a></td>
+              <td><a href="#truck-${escapeHtml(truck.id)}" class="link" data-truck-id="${escapeHtml(truck.id)}">${escapeHtml(modelLabel(truck.model))}</a></td>
               <td class="num"><strong>€${config.total.toLocaleString()}</strong></td>
               <td class="num">${config.levelFloor}</td>
               <td class="num">€${config.cabin.price.toLocaleString()}</td>
@@ -147,7 +147,10 @@ function showTruckDetail(truckId: string): void {
 
   content.style.display = 'none';
   truckDetail.style.display = 'block';
-  window.location.hash = `truck-${truckId}`;
+  // Guard the hash write — assigning it fires `hashchange`, which routes back
+  // into showTruckDetail and re-renders. Only push when it would actually change.
+  const targetHash = `#truck-${truckId}`;
+  if (window.location.hash !== targetHash) window.location.hash = targetHash;
 
   detailContent.innerHTML = `
     <div class="detail-header">
@@ -185,7 +188,7 @@ function showTruckDetail(truckId: string): void {
 function showTruckList(): void {
   truckDetail.style.display = 'none';
   content.style.display = 'block';
-  window.location.hash = '';
+  if (window.location.hash !== '') window.location.hash = '';
   renderTruckList(searchInput.value);
 }
 
