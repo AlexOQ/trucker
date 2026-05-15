@@ -1,8 +1,3 @@
-/**
- * Min-cost truck builder — pure functions, no DOM. Used by trucks.ts page
- * module and exercised in tests.
- */
-
 import type { GameDefs } from './types';
 
 type Truck = GameDefs['trucks'][number];
