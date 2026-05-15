@@ -11,7 +11,7 @@
 import { initPageData, initThemeToggle, initGameSelector } from './page-init';
 import { normalize, type GameDefs } from './data';
 import { escapeHtml } from './utils';
-import { computeMinCost, type MinCostConfig } from './trucks-cost';
+import { computeMinCost, brandLabel, modelLabel, displayName, type MinCostConfig } from './trucks-cost';
 
 type Truck = GameDefs['trucks'][number];
 
@@ -22,15 +22,6 @@ const truckDetail = document.getElementById('truck-detail') as HTMLElement;
 const detailContent = document.getElementById('detail-content') as HTMLElement;
 const searchInput = document.getElementById('search') as HTMLInputElement;
 const backLink = document.getElementById('back-link') as HTMLElement;
-
-function brandLabel(brand: string): string {
-  // brand IDs are lowercase ("volvo", "mercedes", "renault_t"); humanise.
-  return brand.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
-
-function modelLabel(model: string): string {
-  return model.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-}
 
 function renderTruckList(filter = ''): void {
   const filterNorm = normalize(filter);
@@ -127,17 +118,6 @@ function componentTable<T extends { id: string; name: string; price: number; unl
       </table>
     </div>
   `;
-}
-
-/**
- * Strip @@token@@ name placeholders for display. The parser doesn't resolve
- * locale strings, so cabin/paint names like "@@cabin_aero_sleeper@@" leak
- * through. Show a stripped fallback rather than raw locale tokens.
- */
-function displayName(raw: string): string {
-  const m = raw.match(/^@@(.+)@@$/);
-  if (!m) return raw;
-  return m[1].replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
 function showTruckDetail(truckId: string): void {

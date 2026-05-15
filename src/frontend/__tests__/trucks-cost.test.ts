@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { cheapest, cheapestCabinChassis, computeMinCost } from '../trucks-cost';
+import {
+  cheapest, cheapestCabinChassis, computeMinCost,
+  brandLabel, modelLabel, displayName,
+} from '../trucks-cost';
 import type { GameDefs } from '../types';
 
 type Truck = GameDefs['trucks'][number];
@@ -71,6 +74,39 @@ describe('cheapestCabinChassis', () => {
     const result = cheapestCabinChassis(truck)!;
     expect(result.cabin.id).toBe('mid_cabin');
     expect(result.chassis.id).toBe('cheap');
+  });
+});
+
+describe('brandLabel', () => {
+  it('title-cases simple lowercase brand ids', () => {
+    expect(brandLabel('volvo')).toBe('Volvo');
+    expect(brandLabel('scania')).toBe('Scania');
+  });
+  it('humanises underscore-separated multi-word brands', () => {
+    expect(brandLabel('renault_t')).toBe('Renault T');
+    expect(brandLabel('mercedes_benz')).toBe('Mercedes Benz');
+  });
+});
+
+describe('modelLabel', () => {
+  it('replaces underscores with spaces and capitalises each word', () => {
+    expect(modelLabel('fh_2024')).toBe('Fh 2024');
+    expect(modelLabel('actros2014')).toBe('Actros2014');
+    expect(modelLabel('r_2024_new_gen')).toBe('R 2024 New Gen');
+  });
+});
+
+describe('displayName', () => {
+  it('strips @@token@@ wrappers and humanises the content', () => {
+    expect(displayName('@@cabin_aero_sleeper@@')).toBe('Cabin Aero Sleeper');
+    expect(displayName('@@pj_black_knight@@')).toBe('Pj Black Knight');
+  });
+  it('passes plain strings through unchanged', () => {
+    expect(displayName('Plain Label')).toBe('Plain Label');
+    expect(displayName('')).toBe('');
+  });
+  it('only strips outer @@…@@ — does not touch mid-string occurrences', () => {
+    expect(displayName('prefix @@token@@ suffix')).toBe('prefix @@token@@ suffix');
   });
 });
 

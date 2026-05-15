@@ -52,6 +52,28 @@ export function cheapestCabinChassis(truck: Truck): { cabin: Cabin; chassis: Cha
   return best ? { cabin: best.cabin, chassis: best.chassis } : null;
 }
 
+/** Humanise lowercase brand IDs like "volvo", "renault_t" → "Volvo", "Renault T". */
+export function brandLabel(brand: string): string {
+  return brand.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+/** Humanise underscore-separated model IDs like "fh_2024" → "Fh 2024". */
+export function modelLabel(model: string): string {
+  return model.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/**
+ * Strip `@@token@@` locale-string placeholders for display. The parser doesn't
+ * resolve locale strings, so cabin/paint names like "@@cabin_aero_sleeper@@"
+ * leak through. Return a stripped, title-cased fallback rather than raw tokens;
+ * pass non-placeholder strings through unchanged.
+ */
+export function displayName(raw: string): string {
+  const m = raw.match(/^@@(.+)@@$/);
+  if (!m) return raw;
+  return m[1].replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function computeMinCost(truck: Truck): MinCostConfig | null {
   const cc = cheapestCabinChassis(truck);
   const engine = cheapest(truck.engines);
