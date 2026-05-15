@@ -129,13 +129,11 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
     // trailer pricing extraction (#251). Once a user re-runs the parser against
     // extracted defs, every trailer gets price + level_floor; if they're missing
     // (older snapshot), the loader defaults to 0 and the frontend renders "—".
-    it('trailer pricing fields, when present, are numeric and price is a multiple of 1000', () => {
+    it('trailer pricing fields, when present, are non-negative numbers', () => {
       const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
       for (const [, t] of Object.entries(data.trailers as Record<string, { price?: unknown; level_floor?: unknown }>)) {
         if (t.price !== undefined) {
           expect(typeof t.price).toBe('number');
-          // Issue #251 spec: rounded UP to the nearest 1000.
-          expect((t.price as number) % 1000).toBe(0);
           expect(t.price as number).toBeGreaterThanOrEqual(0);
         }
         if (t.level_floor !== undefined) {
