@@ -125,10 +125,36 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
       expect(orphans).toEqual([]);
     });
 
-    // Forward-compatible: existing game-defs.json snapshots may pre-date the
-    // trailer pricing extraction (#251). Once a user re-runs the parser against
-    // extracted defs, every trailer gets price + level_floor; if they're missing
-    // (older snapshot), the loader defaults to 0 and the frontend renders "—".
+    // Forward-compatible: cabins[] and paints[] arrive with #252 reparse.
+    // Snapshots parsed before that don't have them; computeMinCost gracefully
+    // falls back to []. Once present, asserts shape so we don't accidentally
+    // ship malformed entries.
+    it('truck cabin/paint fields, when present, have the documented shape', () => {
+      const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
+      for (const truck of data.trucks as Array<Record<string, unknown>>) {
+        if (Array.isArray(truck.cabins)) {
+          for (const cabin of truck.cabins as Array<Record<string, unknown>>) {
+            expect(typeof cabin.id).toBe('string');
+            expect(typeof cabin.price).toBe('number');
+            expect(cabin.price as number).toBeGreaterThanOrEqual(0);
+            expect(typeof cabin.unlock).toBe('number');
+            expect(Array.isArray(cabin.suitable_for)).toBe(true);
+            for (const chassisRef of cabin.suitable_for as unknown[]) {
+              expect(typeof chassisRef).toBe('string');
+            }
+          }
+        }
+        if (Array.isArray(truck.paints)) {
+          for (const paint of truck.paints as Array<Record<string, unknown>>) {
+            expect(typeof paint.id).toBe('string');
+            expect(typeof paint.price).toBe('number');
+            expect(paint.price as number).toBeGreaterThanOrEqual(0);
+            expect(typeof paint.unlock).toBe('number');
+          }
+        }
+      }
+    });
+
     it('trailer pricing fields, when present, are non-negative numbers', () => {
       const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
       for (const [, t] of Object.entries(data.trailers as Record<string, { price?: unknown; level_floor?: unknown }>)) {

@@ -1122,6 +1122,23 @@ interface TruckChassis {
   unlock: number;
 }
 
+interface TruckCabin {
+  id: string;
+  name: string;
+  price: number;
+  unlock: number;
+  // Chassis IDs (fully-qualified, e.g. "4x2.volvo.fh_2024.chassis") this cabin
+  // fits. Empty means no constraint (rare). Drives min-cost compatibility.
+  suitable_for: string[];
+}
+
+interface TruckPaint {
+  id: string;
+  name: string;
+  price: number;
+  unlock: number;
+}
+
 interface TruckData {
   id: string;
   brand: string;
@@ -1129,6 +1146,8 @@ interface TruckData {
   engines: TruckEngine[];
   transmissions: TruckTransmission[];
   chassis: TruckChassis[];
+  cabins: TruckCabin[];
+  paints: TruckPaint[];
 }
 
 function extractTrucks(): TruckData[] {
@@ -1152,6 +1171,8 @@ function extractTrucks(): TruckData[] {
       engines: [],
       transmissions: [],
       chassis: [],
+      cabins: [],
+      paints: [],
     };
 
     // Engines
@@ -1234,6 +1255,44 @@ function extractTrucks(): TruckData[] {
           axle_config: axleConfig,
           tank_size: typeof unit.props.tank_size === 'number' ? unit.props.tank_size : 0,
           price: typeof unit.props.price === 'number' ? unit.props.price : 0,
+          unlock: typeof unit.props.unlock === 'number' ? unit.props.unlock : 0,
+        });
+      }
+    }
+
+    // Cabins
+    const cabinDir = join(truckPath, 'cabin');
+    if (existsSync(cabinDir)) {
+      const units = readAllSiiFiles(cabinDir, '.sii');
+      for (const unit of units) {
+        if (unit.type !== 'accessory_cabin_data') continue;
+        if (typeof unit.props.price !== 'number') continue;
+        const suitable = Array.isArray(unit.props.suitable_for)
+          ? (unit.props.suitable_for as string[])
+          : [];
+        truck.cabins.push({
+          id: unit.name,
+          name: String(unit.props.name || ''),
+          price: unit.props.price,
+          unlock: typeof unit.props.unlock === 'number' ? unit.props.unlock : 0,
+          suitable_for: suitable,
+        });
+      }
+    }
+
+    // Paint jobs — most paint files don't carry a price (they're livery refs
+    // or DLC-mod entries); only factory paints have one. Filter on price
+    // presence so we don't bloat game-defs.json with thousands of empty rows.
+    const paintDir = join(truckPath, 'paint_job');
+    if (existsSync(paintDir)) {
+      const units = readAllSiiFiles(paintDir, '.sii');
+      for (const unit of units) {
+        if (unit.type !== 'accessory_paint_job_data') continue;
+        if (typeof unit.props.price !== 'number') continue;
+        truck.paints.push({
+          id: unit.name,
+          name: String(unit.props.name || ''),
+          price: unit.props.price,
           unlock: typeof unit.props.unlock === 'number' ? unit.props.unlock : 0,
         });
       }
@@ -1558,6 +1617,7 @@ function buildFrontendData(
     trucks: trucks.map(t => ({
       id: t.id, brand: t.brand, model: t.model,
       engines: t.engines, transmissions: t.transmissions, chassis: t.chassis,
+      cabins: t.cabins, paints: t.paints,
     })),
     // DLC registry — single source of truth for frontend
     dlc: {
