@@ -120,7 +120,7 @@ function componentTable<T extends { id: string; name: string; price: number; unl
               <td>${escapeHtml(displayName(item.name))}</td>
               <td class="num">€${item.price.toLocaleString()}</td>
               <td class="num">${item.unlock}</td>
-              ${extraCols.map((c) => `<td>${c.render(item)}</td>`).join('')}
+              ${extraCols.map((c) => `<td>${escapeHtml(c.render(item))}</td>`).join('')}
             </tr>
           `).join('')}
         </tbody>
@@ -170,7 +170,7 @@ function showTruckDetail(truckId: string): void {
       { header: 'Fits chassis', render: (c) => c.suitable_for.length === 0 ? 'any' : `${c.suitable_for.length}` },
     ])}
     ${componentTable('Chassis', truck.chassis, config.chassis.id, [
-      { header: 'Axle', render: (c) => escapeHtml(c.axle_config || '?') },
+      { header: 'Axle', render: (c) => c.axle_config || '?' },
       { header: 'Tank L', render: (c) => `${c.tank_size}` },
     ])}
     ${componentTable('Engines', truck.engines, config.engine.id, [
