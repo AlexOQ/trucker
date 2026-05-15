@@ -1404,11 +1404,8 @@ function main() {
   const parsedTrailers = extractTrailers();
   console.log(`  Found ${parsedTrailers.length} trailer definitions`);
 
-  // Required: the dealer-accessory traversal in extractTrailerPricing() misses
-  // chain_base + per-chassis body fees. Without this merge, ~368 walked
-  // trailers price as 0 and another ~70 underestimate by €5k–€55k. PR #264
-  // misread parser-matching-walked output as "parser is exact" and proposed
-  // deleting the merge — verification disproved that. Keep this call.
+  // Load-bearing: parser cannot recover chain_base or per-chassis body fees.
+  // See docs/manual-prices-audit.md → "Why the parser alone is insufficient".
   const manualMerge = mergeManualPrices(parsedTrailers, manualPricesPath, game);
   const trailers = manualMerge.trailers;
   if (manualMerge.applied > 0) {

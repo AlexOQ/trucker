@@ -26,6 +26,10 @@ Internal body suffixes in the trailer keys don't match what the in-game dealer s
 
 ## Walk methodology
 
+### Why the parser alone is insufficient
+
+`extractTrailerPricing()` in `parse-game-defs.ts` walks the dealer-accessory entries in the game defs but cannot recover `chain_base` (a per-brand/chain constant) or the per-chassis `body_fee` scaling — both of which are only visible on the live in-game dealer screen. Without `mergeManualPrices()` applying the walked overrides, ~368 trailers price as 0 and another ~70 underestimate by €5k–€55k. The manual walk queue is load-bearing for any trailer that participates in a winner-tie group.
+
 For each trailer key, record the **cheapest configured-trailer total** the dealer screen shows when every selectable section (chassis / body / paint / wheels / accessories) is set to its lowest-priced option. This becomes the entry's `price`.
 
 **Important — body fees scale with chassis.** When the dealer is on a 1-axle chassis, an insulated body shows e.g. 35k; switch to a 3-axle chassis and the same insulated body shows 50k. So:
