@@ -154,6 +154,22 @@ export interface GameDefs {
       price: number;
       unlock: number;
     }>;
+    // Cabins + paints are optional so older game-defs.json snapshots (parsed
+    // before #252) still type-check; loader.ts falls back to [] when missing.
+    cabins?: Array<{
+      id: string;
+      name: string;
+      price: number;
+      unlock: number;
+      /** Chassis IDs this cabin fits (fully-qualified, e.g. "4x2.volvo.fh_2024.chassis"). */
+      suitable_for: string[];
+    }>;
+    paints?: Array<{
+      id: string;
+      name: string;
+      price: number;
+      unlock: number;
+    }>;
   }>;
 }
 

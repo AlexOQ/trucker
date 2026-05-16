@@ -77,6 +77,7 @@ export default defineConfig({
         companies: resolve(__dirname, 'public/companies.html'),
         cargo: resolve(__dirname, 'public/cargo.html'),
         trailers: resolve(__dirname, 'public/trailers.html'),
+        trucks: resolve(__dirname, 'public/trucks.html'),
         dlcs: resolve(__dirname, 'public/dlcs.html'),
       },
     },

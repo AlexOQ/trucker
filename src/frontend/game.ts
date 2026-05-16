@@ -13,6 +13,7 @@ export interface GameMeta {
   shortName: string;     // "ETS2"
   subtitle: string;      // shown below the title
   dataDir: string;       // "ets2" — subdirectory under /data/
+  currencySymbol: string; // "€" for ETS2, "$" for ATS
 }
 
 export const GAMES: Record<GameId, GameMeta> = {
@@ -22,6 +23,7 @@ export const GAMES: Record<GameId, GameMeta> = {
     shortName: 'ETS2',
     subtitle: 'Your AI drivers haul cargo from city garages. This tool finds the best trailer mix per garage to maximize income.',
     dataDir: 'ets2',
+    currencySymbol: '€',
   },
   ats: {
     id: 'ats',
@@ -29,6 +31,7 @@ export const GAMES: Record<GameId, GameMeta> = {
     shortName: 'ATS',
     subtitle: 'Your AI drivers haul cargo from city garages. This tool finds the best trailer mix per garage to maximize income.',
     dataDir: 'ats',
+    currencySymbol: '$',
   },
 };
 
