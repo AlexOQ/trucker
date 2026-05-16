@@ -9,6 +9,7 @@
  */
 
 import { initPageData, initThemeToggle, initGameSelector } from './page-init';
+import { getGameMeta } from './game';
 import { normalize, type GameDefs } from './data';
 import { escapeHtml } from './utils';
 import { computeMinCost, brandLabel, modelLabel, displayName, type MinCostConfig } from './trucks-cost';
@@ -16,6 +17,8 @@ import { computeMinCost, brandLabel, modelLabel, displayName, type MinCostConfig
 type Truck = GameDefs['trucks'][number];
 
 let truckRows: Array<{ truck: Truck; config: MinCostConfig }> = [];
+// Read once at init — switching games triggers a page reload so this is stable.
+let currency = '€';
 
 const content = document.getElementById('content') as HTMLElement;
 const truckDetail = document.getElementById('truck-detail') as HTMLElement;
@@ -65,13 +68,13 @@ function renderTruckList(filter = ''): void {
             <tr>
               <td>${escapeHtml(brandLabel(truck.brand))}</td>
               <td><a href="#truck-${escapeHtml(truck.id)}" class="link" data-truck-id="${escapeHtml(truck.id)}">${escapeHtml(modelLabel(truck.model))}</a></td>
-              <td class="num"><strong>€${config.total.toLocaleString()}</strong></td>
+              <td class="num"><strong>${currency}${config.total.toLocaleString()}</strong></td>
               <td class="num">${config.levelFloor}</td>
-              <td class="num">€${config.cabin.price.toLocaleString()}</td>
-              <td class="num">€${config.chassis.price.toLocaleString()}</td>
-              <td class="num">€${config.engine.price.toLocaleString()}</td>
-              <td class="num">€${config.transmission.price.toLocaleString()}</td>
-              <td class="num">${config.paint ? `€${config.paint.price.toLocaleString()}` : '—'}</td>
+              <td class="num">${currency}${config.cabin.price.toLocaleString()}</td>
+              <td class="num">${currency}${config.chassis.price.toLocaleString()}</td>
+              <td class="num">${currency}${config.engine.price.toLocaleString()}</td>
+              <td class="num">${currency}${config.transmission.price.toLocaleString()}</td>
+              <td class="num">${config.paint ? `${currency}${config.paint.price.toLocaleString()}` : '—'}</td>
             </tr>
           `).join('')}
         </tbody>
@@ -109,7 +112,7 @@ function componentTable<T extends { id: string; name: string; price: number; unl
           ${sorted.map((item) => `
             <tr${item.id === selectedId ? ' class="highlight"' : ''}>
               <td>${escapeHtml(displayName(item.name))}</td>
-              <td class="num">€${item.price.toLocaleString()}</td>
+              <td class="num">${currency}${item.price.toLocaleString()}</td>
               <td class="num">${item.unlock}</td>
               ${extraCols.map((c) => `<td>${escapeHtml(c.render(item))}</td>`).join('')}
             </tr>
@@ -135,15 +138,15 @@ function showTruckDetail(truckId: string): void {
   detailContent.innerHTML = `
     <div class="detail-header">
       <h2>${escapeHtml(brandLabel(truck.brand))} ${escapeHtml(modelLabel(truck.model))}</h2>
-      <div class="subtitle">Cheapest configuration: <strong>€${config.total.toLocaleString()}</strong> · unlock level ${config.levelFloor}</div>
+      <div class="subtitle">Cheapest configuration: <strong>${currency}${config.total.toLocaleString()}</strong> · unlock level ${config.levelFloor}</div>
     </div>
 
     <div class="stats">
-      <div class="stat"><div class="stat-value">€${config.cabin.price.toLocaleString()}</div><div class="stat-label">Cabin · ${escapeHtml(displayName(config.cabin.name))}</div></div>
-      <div class="stat"><div class="stat-value">€${config.chassis.price.toLocaleString()}</div><div class="stat-label">Chassis · ${escapeHtml(config.chassis.axle_config || displayName(config.chassis.name))}</div></div>
-      <div class="stat"><div class="stat-value">€${config.engine.price.toLocaleString()}</div><div class="stat-label">Engine</div></div>
-      <div class="stat"><div class="stat-value">€${config.transmission.price.toLocaleString()}</div><div class="stat-label">Transmission</div></div>
-      <div class="stat"><div class="stat-value">${config.paint ? `€${config.paint.price.toLocaleString()}` : '—'}</div><div class="stat-label">Paint${config.paint ? ` · ${escapeHtml(displayName(config.paint.name))}` : ''}</div></div>
+      <div class="stat"><div class="stat-value">${currency}${config.cabin.price.toLocaleString()}</div><div class="stat-label">Cabin · ${escapeHtml(displayName(config.cabin.name))}</div></div>
+      <div class="stat"><div class="stat-value">${currency}${config.chassis.price.toLocaleString()}</div><div class="stat-label">Chassis · ${escapeHtml(config.chassis.axle_config || displayName(config.chassis.name))}</div></div>
+      <div class="stat"><div class="stat-value">${currency}${config.engine.price.toLocaleString()}</div><div class="stat-label">Engine</div></div>
+      <div class="stat"><div class="stat-value">${currency}${config.transmission.price.toLocaleString()}</div><div class="stat-label">Transmission</div></div>
+      <div class="stat"><div class="stat-value">${config.paint ? `${currency}${config.paint.price.toLocaleString()}` : '—'}</div><div class="stat-label">Paint${config.paint ? ` · ${escapeHtml(displayName(config.paint.name))}` : ''}</div></div>
     </div>
 
     ${componentTable('Cabins', truck.cabins ?? [], config.cabin.id, [
@@ -185,6 +188,7 @@ function handleHashChange(): void {
 async function init(): Promise<void> {
   initThemeToggle();
   initGameSelector();
+  currency = getGameMeta().currencySymbol;
   content.innerHTML = '<div class="loading" role="status">Loading trucks...</div>';
 
   try {
