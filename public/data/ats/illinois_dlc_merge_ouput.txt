@@ -1,0 +1,54 @@
+npx tsx scripts/parse-game-defs.ts ../ats-dlcs-extracted/def --game ats                                           ──(Sun,May17)─┘
+Parsing ETS2 game definitions from: ../ats-dlcs-extracted/def
+
+Extracting cargo...
+  Found 264 cargo types
+Extracting trailers...
+  Found 562 trailer definitions
+Extracting companies...
+  Found 217 companies
+Extracting cities...
+  Found 284 cities
+Extracting countries...
+  Found 20 countries
+Extracting economy data...
+  Done
+Extracting trucks...
+  Found 19 truck brands/models
+Computing cargo-trailer matches...
+  Found 24937 cargo-trailer combinations
+Building city-company map...
+  Found 2098 city-company placements
+
+Writing raw parsed files...
+  Wrote ../ats-dlcs-extracted/parsed/cargo.json
+  Wrote ../ats-dlcs-extracted/parsed/trailers.json
+  Wrote ../ats-dlcs-extracted/parsed/companies.json
+  Wrote ../ats-dlcs-extracted/parsed/cities.json
+  Wrote ../ats-dlcs-extracted/parsed/countries.json
+  Wrote ../ats-dlcs-extracted/parsed/economy.json
+  Wrote ../ats-dlcs-extracted/parsed/trucks.json
+  Wrote ../ats-dlcs-extracted/parsed/cargo-trailers.json
+  Wrote ../ats-dlcs-extracted/parsed/city-companies.json
+
+Generating frontend data file...
+  Wrote /Users/matt/Downloads/trucker/public/data/ats/game-defs.json (3.5MB)
+
+=== Summary ===
+Cargo: 264 types
+  High value: 96
+  Fragile (fragility >= 0.5): 154
+  ADR: 24
+  Body types: bulkfeed, chemtank, chipvan, container, curtainside, dropdeck, dryvan, dumper, flatbed, foodtank, fueltank, gastank, hopper, insulated, livestock, log, lowboy, refrigerated, silo
+Trailers: 562 definitions
+  Body types: bulkfeed, chemtank, chipvan, container, curtainside, dropdeck, dryvan, dumper, flatbed, foodtank, fueltank, gastank, hopper, insulated, livestock, log, lowboy, refrigerated, silo
+  Country-restricted: 140
+  Chain types: bdouble, double, rmdouble, single, tpdouble, triple
+Companies: 217
+Cities: 284
+Countries: 20
+Trucks: 19 models, 177 engines
+Cargo-trailer matches: 24937
+City-company placements: 2098
+(node:78241) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
