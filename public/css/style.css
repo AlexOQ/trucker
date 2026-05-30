@@ -285,6 +285,67 @@ nav a:focus {
   outline-offset: 2px;
 }
 
+/* Data Details dropdown (#247) */
+.nav-dropdown {
+  position: relative;
+  display: inline-flex;
+}
+
+.nav-dropdown-toggle {
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.5rem 1rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.nav-dropdown-toggle:hover,
+.nav-dropdown-toggle.active,
+.nav-dropdown.open .nav-dropdown-toggle {
+  color: var(--accent);
+  background: var(--bg-secondary);
+}
+
+.nav-dropdown-toggle:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.nav-dropdown-toggle .caret {
+  font-size: 0.7em;
+}
+
+.nav-dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0.25rem;
+  flex-direction: column;
+  min-width: 160px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-muted);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  z-index: 100;
+  padding: 0.25rem;
+}
+
+.nav-dropdown.open .nav-dropdown-menu {
+  display: flex;
+}
+
+.nav-dropdown-menu a {
+  white-space: nowrap;
+}
+
 /* Theme Toggle */
 .game-selector {
   display: inline-flex;
