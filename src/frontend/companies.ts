@@ -3,7 +3,7 @@
  * Displays company browser with city/cargo information
  */
 
-import { initPageData, initThemeToggle, initGameSelector } from './page-init';
+import { initPageData, initGameSelector } from './page-init';
 import { normalize, cargoBonus, type AllData, type Lookups, type City, type Cargo } from './data';
 import { escapeHtml } from './utils';
 import { getRegionTerms } from './game';
@@ -287,7 +287,6 @@ function handleHashChange(): void {
 }
 
 async function init(): Promise<void> {
-  initThemeToggle();
   initGameSelector();
   // Show loading state
   content.innerHTML = '<div class="loading">Loading companies...</div>';

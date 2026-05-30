@@ -5,7 +5,7 @@
  * Level 3: All trailer variants within a tier, sorted by totalHV
  */
 
-import { initPageData, initThemeToggle, initGameSelector } from './page-init';
+import { initPageData, initGameSelector } from './page-init';
 import {
   normalize, cargoBonus, getOwnableTrailers,
   pickBestTrailer, trailerTotalHV, formatTrailerSpec,
@@ -550,7 +550,6 @@ function handleHashChange(): void {
 }
 
 async function init(): Promise<void> {
-  initThemeToggle();
   initGameSelector();
   content.innerHTML = '<div class="loading">Loading trailers...</div>';
 

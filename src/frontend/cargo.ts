@@ -3,7 +3,7 @@
  * Displays cargo browser with provider/trailer information
  */
 
-import { initPageData, initThemeToggle, initGameSelector } from './page-init';
+import { initPageData, initGameSelector } from './page-init';
 import { normalize, type AllData, type Lookups, type Company, type Trailer } from './data';
 import { escapeHtml } from './utils';
 
@@ -311,7 +311,6 @@ function handleHashChange(): void {
 }
 
 async function init(): Promise<void> {
-  initThemeToggle();
   initGameSelector();
   // Show loading state
   content.innerHTML = '<div class="loading">Loading cargo...</div>';
