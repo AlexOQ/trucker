@@ -14,6 +14,8 @@ export interface GameMeta {
   subtitle: string;      // shown below the title
   dataDir: string;       // "ets2" — subdirectory under /data/
   currencySymbol: string; // "€" for ETS2, "$" for ATS
+  regionNoun: string;       // "Country" (ETS2) / "State" (ATS) — ATS data models US states as "countries"
+  regionNounPlural: string; // "Countries" / "States"
 }
 
 export const GAMES: Record<GameId, GameMeta> = {
@@ -24,6 +26,8 @@ export const GAMES: Record<GameId, GameMeta> = {
     subtitle: 'Your AI drivers haul cargo from city garages. This tool finds the best trailer mix per garage to maximize income.',
     dataDir: 'ets2',
     currencySymbol: '€',
+    regionNoun: 'Country',
+    regionNounPlural: 'Countries',
   },
   ats: {
     id: 'ats',
@@ -32,6 +36,8 @@ export const GAMES: Record<GameId, GameMeta> = {
     subtitle: 'Your AI drivers haul cargo from city garages. This tool finds the best trailer mix per garage to maximize income.',
     dataDir: 'ats',
     currencySymbol: '$',
+    regionNoun: 'State',
+    regionNounPlural: 'States',
   },
 };
 
@@ -55,4 +61,13 @@ export function setActiveGame(id: GameId): void {
 /** Get metadata for the active game. */
 export function getGameMeta(): GameMeta {
   return GAMES[getActiveGame()];
+}
+
+/**
+ * Region term for the active game — "Country/Countries" (ETS2) or "State/States"
+ * (ATS). The data model stores both as `country`; this is the user-facing label.
+ */
+export function getRegionTerms(): { singular: string; plural: string } {
+  const m = getGameMeta();
+  return { singular: m.regionNoun, plural: m.regionNounPlural };
 }

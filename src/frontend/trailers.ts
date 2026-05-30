@@ -5,7 +5,7 @@
  * Level 3: All trailer variants within a tier, sorted by totalHV
  */
 
-import { initPageData, initThemeToggle, initGameSelector } from './page-init';
+import { initPageData, initGameSelector } from './page-init';
 import {
   normalize, cargoBonus, getOwnableTrailers,
   pickBestTrailer, trailerTotalHV, formatTrailerSpec,
@@ -13,6 +13,7 @@ import {
 } from './data';
 import { escapeHtml, tierFromChainType } from './utils';
 import { COUNTRY_DISPLAY_NAMES } from './display-names';
+import { getRegionTerms } from './game';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
@@ -276,7 +277,7 @@ function showBodyType(bodyType: string): void {
             <th>Length</th>
             <th>GWL</th>
             <th class="tooltip" data-tooltip="Number of ownable trailer models">Variants</th>
-            <th>Countries</th>
+            <th>${getRegionTerms().plural}</th>
           </tr>
         </thead>
         <tbody>
@@ -438,7 +439,7 @@ function showTierVariants(bodyType: string, tier: string): void {
       <table>
         <thead>
           <tr>
-            <th>Countries</th>
+            <th>${getRegionTerms().plural}</th>
             <th>Best Trailer</th>
             <th class="tooltip" data-tooltip="Sum of haul value across all compatible cargo">Total HV</th>
             <th>Volume</th>
@@ -549,7 +550,6 @@ function handleHashChange(): void {
 }
 
 async function init(): Promise<void> {
-  initThemeToggle();
   initGameSelector();
   content.innerHTML = '<div class="loading">Loading trailers...</div>';
 

@@ -3,7 +3,7 @@
  * Displays city browser with company/depot information
  */
 
-import { initPageData, initThemeToggle, initGameSelector } from './page-init';
+import { initPageData, initGameSelector } from './page-init';
 import { normalize, type AllData, type Lookups, type Company } from './data';
 import { isOwnedGarage } from './storage';
 import { escapeHtml } from './utils';
@@ -269,7 +269,6 @@ function handleHashChange(): void {
 }
 
 async function init(): Promise<void> {
-  initThemeToggle();
   initGameSelector();
   // Show loading state
   content.innerHTML = '<div class="loading">Loading cities...</div>';

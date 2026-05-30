@@ -8,7 +8,7 @@
  * need them.
  */
 
-import { initPageData, initThemeToggle, initGameSelector } from './page-init';
+import { initPageData, initGameSelector } from './page-init';
 import { getGameMeta } from './game';
 import { normalize, type GameDefs } from './data';
 import { escapeHtml } from './utils';
@@ -186,7 +186,6 @@ function handleHashChange(): void {
 }
 
 async function init(): Promise<void> {
-  initThemeToggle();
   initGameSelector();
   currency = getGameMeta().currencySymbol;
   content.innerHTML = '<div class="loading" role="status">Loading trucks...</div>';
