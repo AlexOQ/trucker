@@ -37037,7 +37037,7 @@
     "champaign": {
       "name": "Champaign",
       "country": "illinois",
-      "has_garage": false
+      "has_garage": true
     },
     "cheyenne": {
       "name": "Cheyenne",
@@ -37047,7 +37047,7 @@
     "chicago": {
       "name": "Chicago",
       "country": "illinois",
-      "has_garage": false
+      "has_garage": true
     },
     "clifton": {
       "name": "Clifton",
@@ -37627,7 +37627,7 @@
     "marion": {
       "name": "Marion",
       "country": "illinois",
-      "has_garage": false
+      "has_garage": true
     },
     "marysville": {
       "name": "Marysville",
@@ -37812,7 +37812,7 @@
     "peoria": {
       "name": "Peoria",
       "country": "illinois",
-      "has_garage": false
+      "has_garage": true
     },
     "phillipsburg": {
       "name": "Phillipsburg",
@@ -38092,7 +38092,7 @@
     "springfie_il": {
       "name": "Springfield",
       "country": "illinois",
-      "has_garage": false
+      "has_garage": true
     },
     "st_george": {
       "name": "St. George",
@@ -109401,7 +109401,8 @@
       "arkansas": "Arkansas",
       "iowa": "Iowa",
       "louisiana": "Louisiana",
-      "missouri": "Missouri"
+      "missouri": "Missouri",
+      "illinois": "Illinois"
     },
     "city_dlc_map": {
       "washington": [
@@ -109652,6 +109653,19 @@
         "pine_bluff",
         "springdale",
         "texarkana_ar"
+      ],
+      "illinois": [
+        "bloomington",
+        "champaign",
+        "chicago",
+        "east_st_loui",
+        "effingham",
+        "marion",
+        "moline",
+        "peoria",
+        "quincy",
+        "rockford",
+        "springfie_il"
       ]
     },
     "cargo_dlc_map": {},
@@ -109672,7 +109686,9 @@
       "cape_girarde",
       "carson_city",
       "casper",
+      "champaign",
       "cheyenne",
+      "chicago",
       "coeur_dalene",
       "colorado_spr",
       "corpus_chris",
@@ -109720,6 +109736,7 @@
       "little_rock",
       "los_angeles",
       "lufkin",
+      "marion",
       "mason_city",
       "mcalester",
       "mcallen",
@@ -109736,6 +109753,7 @@
       "olympia",
       "omaha",
       "ontario",
+      "peoria",
       "phoenix",
       "pine_bluff",
       "portland",
@@ -109757,6 +109775,7 @@
       "shreveport",
       "sioux_city",
       "spokane",
+      "springfie_il",
       "springfield",
       "st_george",
       "st_louis",

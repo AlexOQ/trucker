@@ -422,6 +422,7 @@ const ATS_STATE_TO_DLC: Record<string, string | null> = {
   iowa: 'iowa',
   louisiana: 'louisiana',
   missouri: 'missouri',
+  illinois: 'illinois',
 };
 
 /** Trailer DLC packs (ATS) — brand prefix → display name. Both `lodeking.*`
@@ -462,6 +463,7 @@ const ATS_MAP_DLCS: Record<string, string> = {
   iowa: 'Iowa',
   louisiana: 'Louisiana',
   missouri: 'Missouri',
+  illinois: 'Illinois',
 };
 
 /** Cargo → DLC pack mapping (ATS).
@@ -645,6 +647,8 @@ const ATS_GARAGE_CITIES: ReadonlySet<string> = new Set([
   'alamosa','colorado_spr','denver','fort_collins','lamar','montrose','steamboat_sp','sterling',
   // Idaho (5)
   'boise','coeur_dalene','idaho_falls','salmon','twin_falls',
+  // Illinois (5) — wiki-verified; the other 6 Illinois cities have no buyable garage.
+  'champaign','chicago','marion','peoria','springfie_il',
   // Iowa (5)
   'council_bluf','des_moines','iowa_city','mason_city','sioux_city',
   // Kansas (6)
