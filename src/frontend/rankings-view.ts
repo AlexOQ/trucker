@@ -221,9 +221,13 @@ function summarizeTrailers(fleet: FleetEntry[]): string {
 // Sorting
 // ============================================
 
+// `country`'s label is resolved per render in buildSortableHeader() via
+// getRegionTerms() — like every other region label — so it tracks the active
+// game. A literal here would freeze at module-load (ETS2 "Country") and only
+// the full-reload in setActiveGame() masks that.
 const SORTABLE_COLUMNS: { col: SortColumn; label: string; tooltip?: string }[] = [
   { col: 'name', label: 'City' },
-  { col: 'country', label: getRegionTerms().singular },
+  { col: 'country', label: 'Country' },
   { col: 'depotCount', label: 'Depots', tooltip: 'Company facilities in this city' },
   { col: 'cargoTypes', label: 'Cargo', tooltip: 'Distinct cargo types available' },
   { col: 'score', label: 'Fleet EV', tooltip: 'Expected haul value per cycle for the recommended 5-driver fleet (contention- and stacking-aware)' },
@@ -263,15 +267,16 @@ export function applyRankingsFilters(
 
 function buildSortableHeader(col: SortColumn, activeSortCol: SortColumn, activeSortDir: SortDirection): string {
   const meta = SORTABLE_COLUMNS.find(c => c.col === col)!;
+  const label = col === 'country' ? getRegionTerms().singular : meta.label;
   const isActive = activeSortCol === col;
   const indicator = isActive ? (activeSortDir === 'asc' ? ' \u25b2' : ' \u25bc') : '';
   const tooltipClass = meta.tooltip ? ' tooltip' : '';
   const tooltipAttr = meta.tooltip ? ` data-tooltip="${meta.tooltip}"` : '';
-  const ariaLabel = meta.tooltip ? ` aria-label="${meta.label} \u2014 ${meta.tooltip}"` : '';
+  const ariaLabel = meta.tooltip ? ` aria-label="${label} \u2014 ${meta.tooltip}"` : '';
   const ariaSortAttr = isActive
     ? ` aria-sort="${activeSortDir === 'asc' ? 'ascending' : 'descending'}"`
     : ' aria-sort="none"';
-  return `<th class="sortable${tooltipClass}${isActive ? ' sort-active' : ''}" tabindex="0" data-sort-col="${col}"${ariaSortAttr}${tooltipAttr}${ariaLabel}>${meta.label}${indicator}</th>`;
+  return `<th class="sortable${tooltipClass}${isActive ? ' sort-active' : ''}" tabindex="0" data-sort-col="${col}"${ariaSortAttr}${tooltipAttr}${ariaLabel}>${label}${indicator}</th>`;
 }
 
 function attachSortHandlers(
