@@ -46,18 +46,18 @@ export function initThemeToggle(): void {
 
 /**
  * Wire up the game selector (ETS2 / ATS toggle in every page's nav).
- * Sets page title and subtitle based on active game.
+ * Title is a stable brand; the active game is shown only by the selector and subtitle.
  */
 export function initGameSelector(): void {
   const meta = getGameMeta();
   const activeGame = getActiveGame();
 
-  // Set page title and subtitle
+  // Stable brand title — does not change with ETS2/ATS selection (#247).
   const titleEl = document.getElementById('page-title');
   const subtitleEl = document.getElementById('page-subtitle');
-  if (titleEl) titleEl.textContent = `${meta.shortName} Trucker Advisor`;
+  if (titleEl) titleEl.textContent = 'Trucker Advisor';
   if (subtitleEl) subtitleEl.textContent = meta.subtitle;
-  document.title = `${meta.shortName} Trucker Advisor`;
+  document.title = 'Trucker Advisor';
 
   // Highlight active game button
   const selector = document.getElementById('game-selector');

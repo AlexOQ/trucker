@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ETS2 Trucker Advisor</title>
+  <title>Trucker Advisor</title>
   <link rel="stylesheet" href="css/style.css">
   <script>if('serviceWorker' in navigator)navigator.serviceWorker.register('/trucker/sw.js');</script>
   <script>(function(){var t=localStorage.getItem('trucker-theme')||localStorage.getItem('ets2-theme');if(!t)t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';document.documentElement.setAttribute('data-theme',t)})()</script>
@@ -181,6 +181,10 @@
       <div id="city-content" aria-live="polite" tabindex="-1"></div>
     </div>
     </main>
+
+    <footer class="site-footer">
+      <a href="https://github.com/AlexOQ/trucker/issues" target="_blank" rel="noopener noreferrer">Report an issue or request a feature on GitHub</a>
+    </footer>
   </div>
 
   <script type="module" src="/src/frontend/main.ts"></script>

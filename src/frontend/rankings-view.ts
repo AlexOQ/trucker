@@ -17,6 +17,7 @@ import {
 import { normalize } from './data.js';
 import { escapeHtml } from './utils.js';
 import { COUNTRY_DISPLAY_NAMES } from './display-names.js';
+import { getRegionTerms } from './game.js';
 import type { AllData, Lookups } from './data.js';
 import {
   isInComparison, toggleComparison, updateCompareBar, announceStatus,
@@ -112,16 +113,18 @@ function closeDropdown() {
 
 function updateCountryButtonText() {
   const selected = getSelectedCountries();
+  const { singular, plural } = getRegionTerms();
+  const noun = singular.toLowerCase();
   const btn = document.getElementById('country-filter-btn')!;
   if (selected.length === 0) {
-    btn.textContent = 'All Countries';
-    btn.setAttribute('aria-label', 'Filter by country');
+    btn.textContent = `All ${plural}`;
+    btn.setAttribute('aria-label', `Filter by ${noun}`);
   } else if (selected.length === 1) {
-    btn.textContent = '1 Country';
-    btn.setAttribute('aria-label', 'Filter by country, 1 selected');
+    btn.textContent = `1 ${singular}`;
+    btn.setAttribute('aria-label', `Filter by ${noun}, 1 selected`);
   } else {
-    btn.textContent = `${selected.length} Countries`;
-    btn.setAttribute('aria-label', `Filter by country, ${selected.length} selected`);
+    btn.textContent = `${selected.length} ${plural}`;
+    btn.setAttribute('aria-label', `Filter by ${noun}, ${selected.length} selected`);
   }
 }
 
@@ -135,7 +138,7 @@ function renderCountryCheckboxes(data: AllData, renderRankings: () => void) {
       <input type="checkbox" id="all-countries-checkbox"
         aria-checked="${selected.length === 0 ? 'true' : 'false'}"
         ${selected.length === 0 ? 'checked' : ''}>
-      <span>All Countries</span>
+      <span>All ${getRegionTerms().plural}</span>
     </label>
     ${countries.map((country) => `
       <label class="country-option" role="option">
@@ -220,7 +223,7 @@ function summarizeTrailers(fleet: FleetEntry[]): string {
 
 const SORTABLE_COLUMNS: { col: SortColumn; label: string; tooltip?: string }[] = [
   { col: 'name', label: 'City' },
-  { col: 'country', label: 'Country' },
+  { col: 'country', label: getRegionTerms().singular },
   { col: 'depotCount', label: 'Depots', tooltip: 'Company facilities in this city' },
   { col: 'cargoTypes', label: 'Cargo', tooltip: 'Distinct cargo types available' },
   { col: 'score', label: 'Fleet EV', tooltip: 'Expected haul value per cycle for the recommended 5-driver fleet (contention- and stacking-aware)' },

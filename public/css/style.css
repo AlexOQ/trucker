@@ -2284,3 +2284,21 @@ tr.owned-garage {
     gap: 0.5rem;
   }
 }
+
+.site-footer {
+  margin-top: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border-muted);
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.site-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.site-footer a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
