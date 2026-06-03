@@ -116,6 +116,19 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
       }
     });
 
+    it('every cargo fragile flag matches the fragility >= 0.7 gate (#269)', () => {
+      const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
+      const cargo = Object.values(data.cargo) as Array<{ fragility: number; fragile: boolean }>;
+      expect(cargo.length).toBeGreaterThan(0);
+      const mismatches = cargo.filter(c => c.fragile !== (c.fragility >= 0.7));
+      expect(mismatches).toEqual([]);
+      // The 0.5–0.69 band is the empirically-confirmed non-fragile side of the gate;
+      // it must exist and stay non-fragile (guards against a silent revert to >= 0.5).
+      const boundary = cargo.filter(c => c.fragility >= 0.5 && c.fragility < 0.7);
+      expect(boundary.length).toBeGreaterThan(0);
+      expect(boundary.every(c => !c.fragile)).toBe(true);
+    });
+
     it('every cities[*].country exists as a key in countries', () => {
       const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
       const countryKeys = new Set(Object.keys(data.countries));

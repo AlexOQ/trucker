@@ -40,7 +40,7 @@ function createTestData(): AllData {
       cargo: {
         electronics: { name: 'Electronics', value: 2.5, volume: 1, mass: 500, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['curtainside'], groups: [], excluded: false },
         machinery: { name: 'Machinery', value: 3.0, volume: 1, mass: 800, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 0.5, body_types: ['flatbed'], groups: [], excluded: false },
-        glass: { name: 'Glass', value: 2.0, volume: 1, mass: 600, fragility: 0.6, fragile: true, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['curtainside'], groups: [], excluded: false },
+        glass: { name: 'Glass', value: 2.0, volume: 1, mass: 600, fragility: 0.75, fragile: true, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['curtainside'], groups: [], excluded: false },
         fruit: { name: 'Fruit', value: 1.0, volume: 1, mass: 300, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['reefer'], groups: [], excluded: false },
         excluded_cargo: { name: 'Excluded', value: 100.0, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['curtainside'], groups: [], excluded: true },
       },
@@ -88,7 +88,7 @@ function createTestData(): AllData {
     cargo: [
       { id: 'electronics', name: 'Electronics', value: 2.5, volume: 1, mass: 500, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['curtainside'], groups: [], excluded: false },
       { id: 'machinery', name: 'Machinery', value: 3.0, volume: 1, mass: 800, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 0.5, body_types: ['flatbed'], groups: [], excluded: false },
-      { id: 'glass', name: 'Glass', value: 2.0, volume: 1, mass: 600, fragility: 0.6, fragile: true, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['curtainside'], groups: [], excluded: false },
+      { id: 'glass', name: 'Glass', value: 2.0, volume: 1, mass: 600, fragility: 0.75, fragile: true, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['curtainside'], groups: [], excluded: false },
       { id: 'fruit', name: 'Fruit', value: 1.0, volume: 1, mass: 300, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['reefer'], groups: [], excluded: false },
       { id: 'excluded_cargo', name: 'Excluded', value: 100.0, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1.0, body_types: ['curtainside'], groups: [], excluded: true },
     ],

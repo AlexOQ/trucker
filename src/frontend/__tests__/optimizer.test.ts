@@ -40,7 +40,7 @@ describe('optimizer', () => {
       cargo: {
         electronics: { name: 'Electronics', value: 2.5, volume: 1, mass: 500, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: false },
         machinery: { name: 'Machinery', value: 3.0, volume: 1, mass: 800, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['flatbed'], groups: [], excluded: false },
-        chemicals: { name: 'Chemicals', value: 4.0, volume: 1, mass: 600, fragility: 0.6, fragile: true, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['tanker'], groups: [], excluded: false },
+        chemicals: { name: 'Chemicals', value: 4.0, volume: 1, mass: 600, fragility: 0.75, fragile: true, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['tanker'], groups: [], excluded: false },
         furniture: { name: 'Furniture', value: 1.5, volume: 1, mass: 300, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: false },
         excluded_cargo: { name: 'Excluded', value: 10.0, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: true },
       },
@@ -88,7 +88,7 @@ describe('optimizer', () => {
     cargo: [
       { id: 'electronics', name: 'Electronics', value: 2.5, volume: 1, mass: 500, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: false },
       { id: 'machinery', name: 'Machinery', value: 3.0, volume: 1, mass: 800, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['flatbed'], groups: [], excluded: false },
-      { id: 'chemicals', name: 'Chemicals', value: 4.0, volume: 1, mass: 600, fragility: 0.6, fragile: true, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['tanker'], groups: [], excluded: false },
+      { id: 'chemicals', name: 'Chemicals', value: 4.0, volume: 1, mass: 600, fragility: 0.75, fragile: true, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['tanker'], groups: [], excluded: false },
       { id: 'furniture', name: 'Furniture', value: 1.5, volume: 1, mass: 300, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: false },
       { id: 'excluded_cargo', name: 'Excluded', value: 10.0, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: true },
     ],
