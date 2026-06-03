@@ -5,7 +5,7 @@ Questions to verify once extracted game definition files are received.
 ## Cargo (def/cargo/)
 
 1. [ANSWERED] Is `group[]` the array that contains `fragile` token for Fragile Cargo skill? (vs `fragility` float which is damage sensitivity)
-   - **Answer**: No. `fragility` float is used: `fragile: fragility >= 0.5`. Default fragility is 1.0 when not specified (all 25 cargo without explicit fragility are inherently fragile). `group[]` contains tokens like `machinery`, `adr`, `oversize`, etc. but is not used for the fragile skill check.
+   - **Answer**: No. `fragility` float is used: `fragile: fragility >= 0.7` (corrected from the earlier `>= 0.5` guess — the in-game [fragile] tag gate was empirically confirmed at 0.7, see #269: 0.69 cargo are untagged, 0.71 are tagged and pay the Fragile skill bonus). Default fragility is 1.0 when not specified (all 25 cargo without explicit fragility are inherently fragile). `group[]` contains tokens like `machinery`, `adr`, `oversize`, etc. but is not used for the fragile skill check.
 2. [ANSWERED] Does `valuable: true` correspond to the High Value Cargo skill requirement?
    - **Answer**: Yes. Parser maps `valuable: true` directly to `high_value: true`.
 3. [ANSWERED] What are all possible `body_types[]` tokens across all cargo? (curtainside, dryvan, refrigerated, flatbed, etc.)

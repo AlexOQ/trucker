@@ -27,7 +27,7 @@ export interface Cargo {
   volume: number;      // m3 per unit
   mass: number;        // kg per unit
   fragility: number;
-  fragile: boolean;    // fragility >= 0.5
+  fragile: boolean;    // fragility >= 0.7 — in-game [fragile] tag gate (#269)
   high_value: boolean; // valuable: true in defs
   adr_class: number;
   prob_coef: number;   // spawn probability coefficient

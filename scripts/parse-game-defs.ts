@@ -733,7 +733,7 @@ function extractCargo(): CargoData[] {
       fragile: fragility >= 0.7,  // In-game [fragile] tag gate, empirically confirmed at 0.7 (#269):
                                   // 0.69 cargo (shock_absorb, ter_forklift) untagged; 0.71 (emp_wine_bot,
                                   // furniture) tagged + pays the Fragile skill bonus. Defs straddle the
-                                  // boundary deliberately (9 cargo at 0.69, 3 at 0.71).
+                                  // boundary deliberately (ETS2: 9 cargo at 0.69, 3 at 0.71; ATS: 4 and 1).
       high_value: unit.props.valuable === true,
       adr_class: typeof unit.props.adr_class === 'number' ? unit.props.adr_class : 0,
       prob_coef: typeof unit.props.prob_coef === 'number' ? unit.props.prob_coef : 1.0,

@@ -20,7 +20,7 @@ function createBodyTypeTestData(): AllData {
       cargo: {
         electronics: { name: 'Electronics', value: 2.5, volume: 1, mass: 500, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['curtainside'], groups: [], excluded: false },
         machinery: { name: 'Machinery', value: 3.0, volume: 1, mass: 800, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['flatbed'], groups: [], excluded: false },
-        glass: { name: 'Glass', value: 2.0, volume: 1, mass: 600, fragility: 0.6, fragile: true, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['curtainside', 'flatbed'], groups: [], excluded: false },
+        glass: { name: 'Glass', value: 2.0, volume: 1, mass: 600, fragility: 0.75, fragile: true, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['curtainside', 'flatbed'], groups: [], excluded: false },
         cement: { name: 'Cement', value: 1.5, volume: 1, mass: 1000, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['silo'], groups: [], excluded: false },
       },
       trailers: {
@@ -59,7 +59,7 @@ function createBodyTypeTestData(): AllData {
     cargo: [
       { id: 'electronics', name: 'Electronics', value: 2.5, volume: 1, mass: 500, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['curtainside'], groups: [], excluded: false },
       { id: 'machinery', name: 'Machinery', value: 3.0, volume: 1, mass: 800, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['flatbed'], groups: [], excluded: false },
-      { id: 'glass', name: 'Glass', value: 2.0, volume: 1, mass: 600, fragility: 0.6, fragile: true, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['curtainside', 'flatbed'], groups: [], excluded: false },
+      { id: 'glass', name: 'Glass', value: 2.0, volume: 1, mass: 600, fragility: 0.75, fragile: true, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['curtainside', 'flatbed'], groups: [], excluded: false },
       { id: 'cement', name: 'Cement', value: 1.5, volume: 1, mass: 1000, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['silo'], groups: [], excluded: false },
     ],
     trailers: [
