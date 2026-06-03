@@ -174,7 +174,7 @@ interface CargoData {
   volume: number;
   mass: number;
   fragility: number;
-  fragile: boolean;      // fragility >= 0.5 (default 1.0 when not specified in defs)
+  fragile: boolean;      // fragility >= 0.7 — in-game [fragile] tag gate (#269); fragility defaults to 1.0 when not in defs
   high_value: boolean;   // valuable: true
   adr_class: number;
   prob_coef: number;
@@ -730,7 +730,10 @@ function extractCargo(): CargoData[] {
       volume: typeof unit.props.volume === 'number' ? unit.props.volume : 1,
       mass: typeof unit.props.mass === 'number' ? unit.props.mass : 0,
       fragility,
-      fragile: fragility >= 0.5,  // High fragility = fragile cargo skill applies
+      fragile: fragility >= 0.7,  // In-game [fragile] tag gate, empirically confirmed at 0.7 (#269):
+                                  // 0.69 cargo (shock_absorb, ter_forklift) untagged; 0.71 (emp_wine_bot,
+                                  // furniture) tagged + pays the Fragile skill bonus. Defs straddle the
+                                  // boundary deliberately (9 cargo at 0.69, 3 at 0.71).
       high_value: unit.props.valuable === true,
       adr_class: typeof unit.props.adr_class === 'number' ? unit.props.adr_class : 0,
       prob_coef: typeof unit.props.prob_coef === 'number' ? unit.props.prob_coef : 1.0,
@@ -1687,7 +1690,7 @@ function printSummary(
   console.log('\n=== Summary ===');
   console.log(`Cargo: ${cargo.length} types`);
   console.log(`  High value: ${cargo.filter(c => c.high_value).length}`);
-  console.log(`  Fragile (fragility >= 0.5): ${cargo.filter(c => c.fragile).length}`);
+  console.log(`  Fragile (fragility >= 0.7): ${cargo.filter(c => c.fragile).length}`);
   console.log(`  ADR: ${cargo.filter(c => c.adr_class > 0).length}`);
   console.log(`  Body types: ${[...new Set(cargo.flatMap(c => c.body_types))].sort().join(', ')}`);
   console.log(`Trailers: ${trailers.length} definitions`);
