@@ -120,6 +120,38 @@ export function buildLookups(data: AllData): Lookups {
     }
   }
 
+  // Cargo -> [cityId] destinations
+  const cargoDestinationsMap = new Map<string, string[]>();
+  if (defs?.companies) {
+    // 1. Map cargoId to set of company IDs that accept it
+    const cargoToAcceptingCompanies = new Map<string, Set<string>>();
+    for (const [coId, co] of Object.entries(defs.companies)) {
+      for (const cargoId of co.cargo_in || []) {
+        if (!cargoToAcceptingCompanies.has(cargoId)) {
+          cargoToAcceptingCompanies.set(cargoId, new Set());
+        }
+        cargoToAcceptingCompanies.get(cargoId)!.add(coId);
+      }
+    }
+
+    // 2. Map cargoId to all cities that have at least one accepting company
+    // Only include cities that actually exist in our filtered citiesById map.
+    for (const [cargoId, acceptingCos] of cargoToAcceptingCompanies.entries()) {
+      const cityIds = new Set<string>();
+      for (const coId of acceptingCos) {
+        const coCities = defs.companies[coId]?.cities || [];
+        for (const cityId of coCities) {
+          if (citiesById.has(cityId)) {
+            cityIds.add(cityId);
+          }
+        }
+      }
+      if (cityIds.size > 0) {
+        cargoDestinationsMap.set(cargoId, [...cityIds]);
+      }
+    }
+  }
+
   return {
     citiesById,
     companiesById,
@@ -130,5 +162,6 @@ export function buildLookups(data: AllData): Lookups {
     trailerCargoMap,
     cargoTrailerMap,
     cargoTrailerUnits,
+    cargoDestinationsMap,
   };
 }

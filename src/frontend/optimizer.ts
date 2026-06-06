@@ -26,6 +26,9 @@ const MC_SIMS = 20_000;
 /** MC count for city rankings. ~4-5% variance per per-driver-EV. Bump if picks shuffle between runs. */
 const RANKING_MC_SIMS = 500;
 
+/** Penalty (per km) for driving back empty from a destination with no jobs. */
+const EMPTY_RETURN_PENALTY = 10.0;
+
 /** Number of top trailers shown in rankings summary */
 const TOP_TRAILERS = 5;
 
@@ -126,6 +129,8 @@ interface DepotCargoItem {
   bodyHV: Record<string, number>;
   /** repId → unitVal × units; populated by populateRepHV before MC sim. */
   repHV?: Record<string, number>;
+  /** Possible destination cities for this cargo */
+  destinations: string[];
 }
 
 /** Populate repHV[repId] on each DepotCargoItem; call after candidate selection, before MC sim. */
@@ -211,7 +216,16 @@ export function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDe
       }
 
       if (Object.keys(bodyHV).length === 0) continue;
-      cargo.push({ cargoId, probCoef, unitVal, bodyHV });
+      let destinations = lookups.cargoDestinationsMap.get(cargoId) || [];
+      if (destinations.length === 0) {
+        // Fallback for tests or incomplete data: assume it can go to any other city
+        destinations = Array.from(lookups.citiesById.keys()).filter(id => id !== cityId);
+        // If still empty (single-city dataset), allow self-delivery
+        if (destinations.length === 0) destinations = [cityId];
+      }
+      if (destinations.length === 0) continue;
+
+      cargo.push({ cargoId, probCoef, unitVal, bodyHV, destinations });
       totalProbCoef += probCoef;
     }
 
@@ -377,18 +391,17 @@ export function analyticalFirstPickEVForRep(
   repId: string,
   lookups: Lookups,
   cache?: DepotItemsCache,
+  cargoExtraValue?: Map<string, number>,
 ): number {
   const depotItems: DepotItemsCache = cache ?? buildDepotItemsCache(depots);
 
-  // Precompute per-depot, per-item HV once. The body-typed twin reads
-  // item.bodyHV[bt] in totalCDF directly (cheap property access); the rep
-  // version's lookup is unitVal × Map.get(cargoTrailerUnits) — 10x heavier per
-  // call. Skipping the precompute would multiply that cost by hvValues.length
-  // inside totalCDF, which compounds at city-rankings scale.
+  // Precompute per-depot, per-item HV once.
   const hvPerItem: number[][] = depotItems.map((items) =>
     items.map((item) => {
       const units = lookups.cargoTrailerUnits.get(`${item.cargoId}:${repId}`) ?? 0;
-      return item.unitVal * units;
+      if (units <= 0) return 0;
+      const extra = cargoExtraValue?.get(item.cargoId) ?? 0;
+      return (item.unitVal * units) + extra;
     })
   );
 
@@ -468,11 +481,20 @@ function mcPick(depot: CityDepotData): DepotCargoItem {
 }
 
 /** Fill a pre-allocated board buffer in-place. Returns number of slots filled. */
-function fillBoard(buffer: DepotCargoItem[], depots: CityDepotData[]): number {
+function fillBoard(
+  buffer: DepotCargoItem[],
+  destIdxBuffer: number[],
+  depots: CityDepotData[],
+  cityToIndex: Map<string, number>,
+): number {
   let idx = 0;
   for (const depot of depots) {
     for (let j = 0; j < JOBS_PER_DEPOT; j++) {
-      buffer[idx++] = mcPick(depot);
+      const item = mcPick(depot);
+      buffer[idx] = item;
+      const destId = item.destinations[Math.floor(rng() * item.destinations.length)];
+      destIdxBuffer[idx] = cityToIndex.get(destId) ?? -1;
+      idx++;
     }
   }
   return idx;
@@ -488,14 +510,26 @@ function bestJob(board: DepotCargoItem[], bodyType: string): { hv: number; idx: 
   return { hv: Math.max(0, best), idx: bestIdx };
 }
 
-/** Best job for rep; reads pre-populated repHV[repId]. */
+/** Best job for rep; reads pre-populated repHV[repId]. Includes return benefit. */
 function bestJobForRep(
-  board: DepotCargoItem[], repId: string,
+  board: DepotCargoItem[],
+  destIdxBuffer: number[],
+  repId: string,
+  benefitArray: Float64Array,
 ): { hv: number; idx: number } {
   let best = -1, bestIdx = -1;
   for (let i = 0; i < board.length; i++) {
-    const hv = board[i].repHV?.[repId] ?? 0;
-    if (hv > best) { best = hv; bestIdx = i; }
+    const outboundHV = board[i].repHV?.[repId] ?? 0;
+    if (outboundHV <= 0) continue;
+
+    const dIdx = destIdxBuffer[i];
+    const returnBenefit = dIdx >= 0 ? benefitArray[dIdx] : 0;
+    const totalHV = outboundHV + returnBenefit;
+
+    if (totalHV > best) {
+      best = totalHV;
+      bestIdx = i;
+    }
   }
   return { hv: Math.max(0, best), idx: bestIdx };
 }
@@ -514,9 +548,63 @@ interface TrailerInfo {
 /** Cache: country → profileKey → best trailer info matching that exact profile */
 const profileTrailerCache = new Map<string, Map<string, TrailerInfo & { bodyTypes: string[] }>>();
 
+/** Cache: cityId → repId → return benefit (EV - P_empty * penalty) */
+const returnBenefitCache = new Map<string, Map<string, number>>();
+
 /** Clear trailer info cache — needed when DLC filter state changes between optimizer runs */
 export function clearTrailerInfoCache(): void {
   profileTrailerCache.clear();
+  returnBenefitCache.clear();
+}
+
+/**
+ * Get (or compute) the analytical return benefit for a trailer at a city.
+ * Benefit = analyticalFirstPickEV - (probOfNoJobs * EMPTY_RETURN_PENALTY).
+ */
+function getReturnBenefit(cityId: string, repId: string, data: AllData, lookups: Lookups): number {
+  let cityMap = returnBenefitCache.get(cityId);
+  if (!cityMap) {
+    cityMap = new Map<string, number>();
+    returnBenefitCache.set(cityId, cityMap);
+  }
+
+  if (cityMap.has(repId)) return cityMap.get(repId)!;
+
+  const depots = buildCityDepotProfiles(cityId, lookups);
+  if (!depots) {
+    cityMap.set(repId, 0);
+    return 0;
+  }
+
+  // totalCDF(0) gives the probability that no jobs are compatible/available
+  const depotItems = buildDepotItemsCache(depots);
+  const hvPerItem: number[][] = depotItems.map((items) =>
+    items.map((item) => {
+      const units = lookups.cargoTrailerUnits.get(`${item.cargoId}:${repId}`) ?? 0;
+      return item.unitVal * units;
+    })
+  );
+
+  function probNoJobs(): number {
+    let result = 1;
+    for (let d = 0; d < depotItems.length; d++) {
+      const items = depotItems[d];
+      const hvs = hvPerItem[d];
+      let cdf = 0;
+      for (let i = 0; i < items.length; i++) {
+        if (hvs[i] <= 0) cdf += items[i].p;
+      }
+      result *= Math.pow(cdf, JOBS_PER_DEPOT);
+    }
+    return result;
+  }
+
+  const pEmpty = probNoJobs();
+  const ev = analyticalFirstPickEVForRep(depots, repId, lookups, depotItems);
+  const benefit = ev - (pEmpty * EMPTY_RETURN_PENALTY);
+
+  cityMap.set(repId, benefit);
+  return benefit;
 }
 
 /**
@@ -730,13 +818,29 @@ export function computeOptimalFleet(
   // Build depot items cache once; reused for every profile evaluation below.
   const depotItemsCache = buildDepotItemsCache(depots);
 
+  const cityToIndex = new Map<string, number>();
+  data.cities.forEach((c, i) => cityToIndex.set(c.id, i));
+
   // Candidate profiles drop any body_type that's dominated or absent in city depots;
   // a multi-body profile survives as long as at least one of its body_types remains.
   const candidates: Array<{ key: string; bodyTypes: string[]; repId: string; ev: number }> = [];
   for (const [key, info] of profileInfo) {
     const surviving = info.bodyTypes.filter((bt) => allBodyTypes.has(bt) && !dominated.has(bt));
     if (surviving.length === 0) continue;
-    const ev = analyticalFirstPickEVForRep(depots, info.trailerId, lookups, depotItemsCache);
+
+    // For analytical candidate selection, compute mean return benefit across all reachable destinations
+    const cargoReturnBenefits = new Map<string, number>();
+    for (const depot of depots) {
+      for (const item of depot.cargo) {
+        if (cargoReturnBenefits.has(item.cargoId)) continue;
+        const meanBenefit = item.destinations.length > 0
+          ? item.destinations.reduce((sum, d) => sum + getReturnBenefit(d, info.trailerId, data, lookups), 0) / item.destinations.length
+          : 0;
+        cargoReturnBenefits.set(item.cargoId, meanBenefit);
+      }
+    }
+
+    const ev = analyticalFirstPickEVForRep(depots, info.trailerId, lookups, depotItemsCache, cargoReturnBenefits);
     if (ev > 0) candidates.push({ key, bodyTypes: surviving, repId: info.trailerId, ev });
   }
   candidates.sort((a, b) => b.ev - a.ev);
@@ -744,49 +848,63 @@ export function computeOptimalFleet(
   const viableProfiles = candidates.slice(0, 15);
   if (viableProfiles.length === 0) return null;
 
+  // Pre-compute benefit arrays for viable profiles
+  const benefitMatrices = new Map<string, Float64Array>();
+  for (const cand of viableProfiles) {
+    const arr = new Float64Array(data.cities.length);
+    for (const c of data.cities) {
+      arr[cityToIndex.get(c.id)!] = getReturnBenefit(c.id, cand.repId, data, lookups);
+    }
+    benefitMatrices.set(cand.repId, arr);
+  }
+
   // Cache rep HV per (cargo, viable rep) so the MC inner loop is pure array access.
   populateRepHV(depots, viableProfiles.map((p) => p.repId), lookups);
 
-  // Pre-allocate board buffer (reused across all MC simulations)
+  // Pre-allocate board buffers
   const totalSlots = depots.length * JOBS_PER_DEPOT;
   const boardBuffer: DepotCargoItem[] = new Array(totalSlots);
+  const destIdxBuffer: number[] = new Array(totalSlots);
 
   // Phase 1: Greedy driver selection by profile (body-type set + rep trailer).
-  // Stacking is allowed — a profile already in `fleet` is still evaluated against
-  // the residual board, because a second pick of the same profile picks the
-  // next-best job (not the same one). The greedy keeps stacking only while
-  // marginal EV exceeds every other candidate's residual.
   const fleet: Array<{ key: string; bodyTypes: string[]; repId: string }> = [];
 
   for (let pick = 0; pick < MAX_DRIVERS; pick++) {
     // Generate shared boards for this round
     const rawBoards: DepotCargoItem[][] = [];
+    const rawDestIdx: number[][] = [];
     for (let s = 0; s < mcSims; s++) {
-      const len = fillBoard(boardBuffer, depots);
+      const len = fillBoard(boardBuffer, destIdxBuffer, depots, cityToIndex);
       rawBoards.push(boardBuffer.slice(0, len));
+      rawDestIdx.push(destIdxBuffer.slice(0, len));
     }
 
     // Pre-compute base fleet simulation on each board (existing drivers pick first)
-    const baseRemainders: DepotCargoItem[][] = [];
-    for (const board of rawBoards) {
-      const remaining = board.slice();
+    const baseRemainders: Array<{ board: DepotCargoItem[]; destIdx: number[] }> = [];
+    for (let s = 0; s < mcSims; s++) {
+      const board = rawBoards[s].slice();
+      const destIdx = rawDestIdx[s].slice();
       for (const driver of fleet) {
-        const { hv, idx } = bestJobForRep(remaining, driver.repId);
+        const benefits = benefitMatrices.get(driver.repId)!;
+        const { hv, idx } = bestJobForRep(board, destIdx, driver.repId, benefits);
         if (hv > 0 && idx >= 0) {
-          remaining[idx] = remaining[remaining.length - 1];
-          remaining.pop();
+          board[idx] = board[board.length - 1];
+          board.pop();
+          destIdx[idx] = destIdx[destIdx.length - 1];
+          destIdx.pop();
         }
       }
-      baseRemainders.push(remaining);
+      baseRemainders.push({ board, destIdx });
     }
 
     // Evaluate each candidate profile's marginal contribution
     let bestProfile: { key: string; bodyTypes: string[]; repId: string } | null = null;
     let bestMarginal = -1;
     for (const cand of viableProfiles) {
+      const benefits = benefitMatrices.get(cand.repId)!;
       let marginalSum = 0;
-      for (const remaining of baseRemainders) {
-        marginalSum += bestJobForRep(remaining, cand.repId).hv;
+      for (const rem of baseRemainders) {
+        marginalSum += bestJobForRep(rem.board, rem.destIdx, cand.repId, benefits).hv;
       }
       const marginal = marginalSum / mcSims;
       if (marginal > bestMarginal) {
@@ -805,14 +923,18 @@ export function computeOptimalFleet(
   const driverEVs = new Array(fleet.length).fill(0);
 
   for (let s = 0; s < mcSims; s++) {
-    const len = fillBoard(boardBuffer, depots);
+    const len = fillBoard(boardBuffer, destIdxBuffer, depots, cityToIndex);
     const remaining = boardBuffer.slice(0, len);
+    const remainingDestIdx = destIdxBuffer.slice(0, len);
     for (let d = 0; d < fleet.length; d++) {
-      const { hv, idx } = bestJobForRep(remaining, fleet[d].repId);
+      const benefits = benefitMatrices.get(fleet[d].repId)!;
+      const { hv, idx } = bestJobForRep(remaining, remainingDestIdx, fleet[d].repId, benefits);
       if (hv > 0 && idx >= 0) {
         driverEVs[d] += hv;
         remaining[idx] = remaining[remaining.length - 1];
         remaining.pop();
+        remainingDestIdx[idx] = remainingDestIdx[remainingDestIdx.length - 1];
+        remainingDestIdx.pop();
       }
     }
   }

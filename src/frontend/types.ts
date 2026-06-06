@@ -251,6 +251,8 @@ export interface Lookups {
   trailerCargoMap: Map<string, Set<string>>;
   cargoTrailerMap: Map<string, Set<string>>;
   cargoTrailerUnits: Map<string, number>; // "cargoId:trailerId" -> units
+  /** Cargo -> [cityId] where this cargo is accepted (cargo_in) */
+  cargoDestinationsMap: Map<string, string[]>;
 }
 
 export interface BodyTypeProfile {

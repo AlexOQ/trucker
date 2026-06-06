@@ -180,6 +180,7 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
       case 'reset': {
         storedData = msg.data;
         storedLookups = msg.lookups;
+        clearTrailerInfoCache();
         self.postMessage({ type: 'initResult', id: msg.id } satisfies WorkerResponse);
         break;
       }

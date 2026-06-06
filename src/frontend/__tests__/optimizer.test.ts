@@ -27,13 +27,13 @@ describe('optimizer', () => {
         logistics_co: {
           name: 'Logistics Co',
           cargo_out: ['electronics', 'machinery', 'chemicals', 'excluded_cargo'],
-          cargo_in: [],
+          cargo_in: ['electronics', 'machinery', 'chemicals', 'furniture'],
           cities: ['berlin', 'paris'],
         },
         transport_inc: {
           name: 'Transport Inc',
           cargo_out: ['machinery', 'furniture'],
-          cargo_in: [],
+          cargo_in: ['machinery', 'furniture', 'electronics'],
           cities: ['berlin'],
         },
       },
