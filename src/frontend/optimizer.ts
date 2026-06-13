@@ -855,6 +855,12 @@ export function computeOptimalFleet(
     };
   });
 
+  // #247: present the fleet in descending EV order. driverMap insertion order
+  // reflects greedy job-assignment sequence, not the displayed per-trailer EV
+  // (evSum / count), so the two diverge without an explicit sort. Shared by the
+  // city-detail fleet table, the rankings cache, and CSV/JSON export.
+  drivers.sort((a, b) => b.ev - a.ev);
+
   const totalTrailers = drivers.reduce((s, d) => s + d.count, 0);
   const totalEstimatedPrice = drivers.reduce((s, d) => s + d.estimatedPrice * d.count, 0);
   const fleetLevelFloor = drivers.reduce((m, d) => Math.max(m, d.levelFloor), 0);
