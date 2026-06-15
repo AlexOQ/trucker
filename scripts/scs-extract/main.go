@@ -6,8 +6,8 @@
 // HashFS v2 metadata table sequentially and aborts ("unhandled file type") on
 // the texture/sample/mip entry types that ship inside DLC archives. This tool
 // never walks the metadata table sequentially. The metadata table is a flat
-// array of 4-byte words; a catalog entry's MetadataIndex is the word offset of
-// its own metadata record, so we seek straight to meta[MetadataIndex*4] for the
+// array of 4-byte words; a catalog entry's data locator is the last of its
+// MetadataCount records (see metaByteOffset), so we seek straight to it for the
 // one file we want. Directory contents are themselves plain files listing their
 // children, so a recursive walk from a root path reaches every `.sii`/`.sui`
 // def file without ever decoding a texture entry.
@@ -143,13 +143,29 @@ func (a *archive) readFile(p string) ([]byte, error) {
 	return a.readEntry(e)
 }
 
+// metaByteOffset returns the byte offset of an entry's metadata record in the
+// decompressed table. The table is a flat array of 4-byte words; an entry owns
+// MetadataCount consecutive records and its data locator is the last one, at
+// word MetadataIndex+MetadataCount-1. Plain files and directories always have
+// MetadataCount==1 (verified across base + DLC archives: 32k+ entries, no
+// exception), so this reduces to MetadataIndex for everything this tool
+// extracts — the general form just keeps a hypothetical multi-record plain
+// entry from being mis-seeked.
+func (a *archive) metaByteOffset(e catalogEntry) int {
+	return (int(e.MetadataIndex) + int(e.MetadataCount) - 1) * metaWordSize
+}
+
 func (a *archive) entryType(e catalogEntry) byte {
-	return a.meta[int(e.MetadataIndex)*metaWordSize+3]
+	off := a.metaByteOffset(e)
+	if off < 0 || off+4 > len(a.meta) {
+		return 0 // out of range → treated as non-plain, skipped
+	}
+	return a.meta[off+3]
 }
 
 func (a *archive) readEntry(e catalogEntry) ([]byte, error) {
-	off := int(e.MetadataIndex) * metaWordSize
-	if off+20 > len(a.meta) {
+	off := a.metaByteOffset(e)
+	if off < 0 || off+20 > len(a.meta) {
 		return nil, fmt.Errorf("metadata offset out of range")
 	}
 	p := a.meta[off+4 : off+20] // 16-byte payload after the 4-byte type header
@@ -184,11 +200,17 @@ func (a *archive) readDir(dir string) ([]child, error) {
 		return nil, nil
 	}
 	count := binary.LittleEndian.Uint32(data)
+	if 4+int(count) > len(data) {
+		return nil, fmt.Errorf("directory listing truncated: %s", dir)
+	}
 	lengths := data[4 : 4+count]
 	pos := 4 + int(count)
 	out := make([]child, 0, count)
 	for i := uint32(0); i < count; i++ {
 		n := int(lengths[i])
+		if pos+n > len(data) {
+			return nil, fmt.Errorf("directory name overruns listing: %s", dir)
+		}
 		name := string(data[pos : pos+n])
 		pos += n
 		isDir := strings.HasPrefix(name, "/")
