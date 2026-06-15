@@ -17,7 +17,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "bobcat"
     },
     "aircon": {
       "name": "air_condition",
@@ -190,7 +191,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "volvo_ce"
     },
     "auger_wag": {
       "name": "auger_wagon",
@@ -208,7 +210,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "tractor_au": {
       "name": "autonomous_tractor",
@@ -226,7 +229,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "digger500": {
       "name": "backhoe_loader",
@@ -264,7 +268,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "barley": {
       "name": "barley",
@@ -494,7 +499,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "volvo_ce"
     },
     "bulldozer": {
       "name": "bulldozer",
@@ -604,7 +610,8 @@
       "groups": [
         "construction"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "cans": {
       "name": "cans",
@@ -830,7 +837,8 @@
       "groups": [
         "construction"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "com_tractor": {
       "name": "compact_tractor",
@@ -867,7 +875,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "volvo_ce"
     },
     "bob_pa127v": {
       "name": "compressor_bobcat_pa127v",
@@ -886,7 +895,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "bobcat"
     },
     "computers": {
       "name": "computers",
@@ -1032,7 +1042,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "cott_lint": {
       "name": "cotton_lint",
@@ -1107,7 +1118,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "tractor_c2": {
       "name": "crawler_tractor",
@@ -1125,7 +1137,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "crude_oil": {
       "name": "crude_oil",
@@ -1198,7 +1211,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "kr_ecb880cv": {
       "name": "disk_mower_krone_ecb880cv",
@@ -1216,7 +1230,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "krone_agri"
     },
     "dry_fruit": {
       "name": "dryfruit",
@@ -1334,7 +1349,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "dynamite": {
       "name": "dynamite",
@@ -1484,7 +1500,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "bobcat"
     },
     "jcb_mexc19ce": {
       "name": "excavator_jcb_19ce",
@@ -1503,7 +1520,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "jcb_exc245xr": {
       "name": "excavator_jcb_245xr",
@@ -1521,7 +1539,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "volvo_ec220e": {
       "name": "excavator_volvo_ec220e",
@@ -1539,7 +1558,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "volvo_ce"
     },
     "vol_ew240emh": {
       "name": "excavator_volvo_ew240emh",
@@ -1557,7 +1577,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "volvo_ce"
     },
     "fertilizer": {
       "name": "fertilizer",
@@ -1598,7 +1619,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "fert_tank": {
       "name": "fertilizer_tank",
@@ -1698,7 +1720,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "kr_bigx1180": {
       "name": "forage_harvester_krone_bigx1180",
@@ -1716,7 +1739,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "krone_agri"
     },
     "forklifts": {
       "name": "forklifts",
@@ -1753,7 +1777,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "bobcat"
     },
     "forwarder": {
       "name": "forwarder",
@@ -1771,7 +1796,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "forest_machinery"
     },
     "frozen_food": {
       "name": "frozen_food",
@@ -2143,7 +2169,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "home_acc": {
       "name": "home_acc",
@@ -2347,7 +2374,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "lift_truck_s": {
       "name": "lift_truck_chassis",
@@ -2365,7 +2393,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "limestone": {
       "name": "limestone",
@@ -2474,7 +2503,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "forest_machinery"
     },
     "log_loader": {
       "name": "log_loader",
@@ -2492,7 +2522,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "forest_machinery"
     },
     "log_stacker": {
       "name": "log_stacker",
@@ -2510,7 +2541,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "forest_machinery"
     },
     "logs": {
       "name": "logs",
@@ -2786,7 +2818,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "bob_e10e": {
       "name": "mini_excavator_bobcat_e10e",
@@ -2805,7 +2838,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "bobcat"
     },
     "mixtank": {
       "name": "mix_tank",
@@ -2861,7 +2895,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "mob_crusher": {
       "name": "mobile_crusher",
@@ -2879,7 +2914,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "mob_screener": {
       "name": "mobile_screener",
@@ -2897,7 +2933,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "mob_stacker": {
       "name": "mobile_stacker",
@@ -2915,7 +2952,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "moor_buoy": {
       "name": "moor_buoy",
@@ -3005,7 +3043,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "krone_agri"
     },
     "mulcher": {
       "name": "mulcher",
@@ -3023,7 +3062,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "forest_machinery"
     },
     "truck_muni": {
       "name": "municipal_truck",
@@ -3295,7 +3335,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "plows": {
       "name": "plows",
@@ -3411,7 +3452,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "hipresstank": {
       "name": "presstank",
@@ -3634,7 +3676,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "krone_agri"
     },
     "ter_forklift": {
       "name": "rough_terrain_forklift",
@@ -3673,7 +3716,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "krone_agri"
     },
     "rye": {
       "name": "rye",
@@ -3878,7 +3922,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "truck_servic": {
       "name": "service_truck",
@@ -3950,7 +3995,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "bob_s86": {
       "name": "skid_steer_loader_bobcat_s86",
@@ -3968,7 +4014,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "bobcat"
     },
     "skidder": {
       "name": "skidder",
@@ -3986,7 +4033,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "forest_machinery"
     },
     "soda_ash": {
       "name": "soda_ash",
@@ -4101,7 +4149,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "square_baler": {
       "name": "square_baler",
@@ -4119,7 +4168,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "kr_bigp1290": {
       "name": "square_baler_krone_bigp1290",
@@ -4137,7 +4187,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "krone_agri"
     },
     "sq_tub": {
       "name": "square_tubing",
@@ -4192,7 +4243,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "forest_machinery"
     },
     "sugar": {
       "name": "sugar",
@@ -4387,7 +4439,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "toys": {
       "name": "toys",
@@ -4446,7 +4499,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "train_part": {
       "name": "train_parts",
@@ -4501,7 +4555,8 @@
       "groups": [
         "construction"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "heavy_cargo"
     },
     "trees": {
       "name": "trees",
@@ -4659,7 +4714,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "krone_agri"
     },
     "waste_paper": {
       "name": "waste_paper",
@@ -4741,7 +4797,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "bobcat"
     },
     "jcb_wload457": {
       "name": "wheel_loader_jcb_457",
@@ -4759,7 +4816,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "jcb"
     },
     "volvo_l250h": {
       "name": "wheel_loader_volvo_l250h",
@@ -4777,7 +4835,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "volvo_ce"
     },
     "volvo_rims": {
       "name": "wheels_with_volvo_rims",
@@ -4795,7 +4854,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "volvo_ce"
     },
     "windml_eng": {
       "name": "windmill_engine",
@@ -4849,7 +4909,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "farm_machinery"
     },
     "wire_rod": {
       "name": "wire_rod_coil",
@@ -109668,7 +109729,69 @@
         "springfie_il"
       ]
     },
-    "cargo_dlc_map": {},
+    "cargo_dlc_map": {
+      "bob_d30": "bobcat",
+      "bob_e10e": "bobcat",
+      "bob_e60": "bobcat",
+      "bob_l95": "bobcat",
+      "bob_pa127v": "bobcat",
+      "bob_s86": "bobcat",
+      "bob_tl3070a": "bobcat",
+      "jcb_bhl4cx": "jcb",
+      "jcb_dmp6t2": "jcb",
+      "jcb_dmphtd5e": "jcb",
+      "jcb_exc245xr": "jcb",
+      "jcb_ft4220": "jcb",
+      "jcb_g100rs": "jcb",
+      "jcb_mexc19ce": "jcb",
+      "jcb_pw125qe": "jcb",
+      "jcb_th540180": "jcb",
+      "jcb_wload457": "jcb",
+      "asph_miller": "heavy_cargo",
+      "coil": "heavy_cargo",
+      "cott_harvest": "heavy_cargo",
+      "dozer": "heavy_cargo",
+      "lift_truck": "heavy_cargo",
+      "lift_truck_s": "heavy_cargo",
+      "mob_crusher": "heavy_cargo",
+      "mob_screener": "heavy_cargo",
+      "mob_stacker": "heavy_cargo",
+      "mobile_crane": "heavy_cargo",
+      "scraper": "heavy_cargo",
+      "tractor_c": "heavy_cargo",
+      "transformer": "heavy_cargo",
+      "kr_bigm450": "krone_agri",
+      "kr_bigp1290": "krone_agri",
+      "kr_bigx1180": "krone_agri",
+      "kr_ecb880cv": "krone_agri",
+      "kr_gx440": "krone_agri",
+      "kr_stc1370": "krone_agri",
+      "kr_vpv190xc": "krone_agri",
+      "auger_wag": "farm_machinery",
+      "disc_harrows": "farm_machinery",
+      "fert_spread": "farm_machinery",
+      "forage_harv": "farm_machinery",
+      "planter": "farm_machinery",
+      "sprayer": "farm_machinery",
+      "square_baler": "farm_machinery",
+      "tractor_au": "farm_machinery",
+      "tractor_c2": "farm_machinery",
+      "windrower": "farm_machinery",
+      "vol_ew240emh": "volvo_ce",
+      "volvo_a25g": "volvo_ce",
+      "volvo_bucket": "volvo_ce",
+      "volvo_ec220e": "volvo_ce",
+      "volvo_l250h": "volvo_ce",
+      "volvo_rims": "volvo_ce",
+      "volvo_sd160b": "volvo_ce",
+      "forwarder": "forest_machinery",
+      "log_harvest": "forest_machinery",
+      "log_loader": "forest_machinery",
+      "log_stacker": "forest_machinery",
+      "mulcher": "forest_machinery",
+      "skidder": "forest_machinery",
+      "stumper": "forest_machinery"
+    },
     "map_dlc_cargo": {},
     "garage_cities": [
       "abilene",

@@ -468,15 +468,57 @@ const ATS_MAP_DLCS: Record<string, string> = {
 
 /** Cargo → DLC pack mapping (ATS).
  *
- * NOT YET POPULATED — populating per-cargo DLC pack assignments for ATS
- * requires per-pack wiki research (which cargo IDs ship in which pack).
- * Until populated, ATS cargo will report no DLC pack on the marginal-value
- * calculator. Tracked as a follow-up. */
-const ATS_CARGO_DLC_MAP: Record<string, string> = {};
+ * Sourced directly from each pack's `def/cargo.<dlc>.sii` aggregator inside the
+ * owned `dlc_*.scs` archives (HashFS v2). Every id is cross-checked to exist in
+ * `public/data/ats/game-defs.json` `.cargo` and to NOT collide with any base
+ * `def.scs` cargo (so nothing base-game gets wrongly DLC-gated). */
+const ATS_CARGO_DLC_MAP: Record<string, string> = {
+  // Bobcat Cargo Pack (7)
+  bob_d30: 'bobcat', bob_e10e: 'bobcat', bob_e60: 'bobcat', bob_l95: 'bobcat',
+  bob_pa127v: 'bobcat', bob_s86: 'bobcat', bob_tl3070a: 'bobcat',
+  // JCB Equipment Pack (10)
+  jcb_bhl4cx: 'jcb', jcb_dmp6t2: 'jcb', jcb_dmphtd5e: 'jcb', jcb_exc245xr: 'jcb',
+  jcb_ft4220: 'jcb', jcb_g100rs: 'jcb', jcb_mexc19ce: 'jcb', jcb_pw125qe: 'jcb',
+  jcb_th540180: 'jcb', jcb_wload457: 'jcb',
+  // Heavy Cargo Pack (13)
+  asph_miller: 'heavy_cargo', coil: 'heavy_cargo', cott_harvest: 'heavy_cargo',
+  dozer: 'heavy_cargo', lift_truck: 'heavy_cargo', lift_truck_s: 'heavy_cargo',
+  mob_crusher: 'heavy_cargo', mob_screener: 'heavy_cargo', mob_stacker: 'heavy_cargo',
+  mobile_crane: 'heavy_cargo', scraper: 'heavy_cargo', tractor_c: 'heavy_cargo',
+  transformer: 'heavy_cargo',
+  // KRONE Agriculture Equipment (7)
+  kr_bigm450: 'krone_agri', kr_bigp1290: 'krone_agri', kr_bigx1180: 'krone_agri',
+  kr_ecb880cv: 'krone_agri', kr_gx440: 'krone_agri', kr_stc1370: 'krone_agri',
+  kr_vpv190xc: 'krone_agri',
+  // Farm Machinery (10)
+  auger_wag: 'farm_machinery', disc_harrows: 'farm_machinery', fert_spread: 'farm_machinery',
+  forage_harv: 'farm_machinery', planter: 'farm_machinery', sprayer: 'farm_machinery',
+  square_baler: 'farm_machinery', tractor_au: 'farm_machinery', tractor_c2: 'farm_machinery',
+  windrower: 'farm_machinery',
+  // Volvo Construction Equipment (7)
+  vol_ew240emh: 'volvo_ce', volvo_a25g: 'volvo_ce', volvo_bucket: 'volvo_ce',
+  volvo_ec220e: 'volvo_ce', volvo_l250h: 'volvo_ce', volvo_rims: 'volvo_ce',
+  volvo_sd160b: 'volvo_ce',
+  // Forest Machinery (7) — kb_loader and tub_grinder also ship in dlc_forest_harvesting
+  // but are trailer-delivery cargo (body_types _kb_lderkber / _tub_dertuer), excluded by
+  // the parser, so they are absent from the dataset and intentionally omitted here.
+  forwarder: 'forest_machinery', log_harvest: 'forest_machinery', log_loader: 'forest_machinery',
+  log_stacker: 'forest_machinery', mulcher: 'forest_machinery', skidder: 'forest_machinery',
+  stumper: 'forest_machinery',
+  // Special Transport (dlc_oversize): all 16 of its cargo are oversize/player-only (group
+  // 'oversize') and excluded from the AI-haulable dataset — same as ETS2, where only
+  // escort-capable Special Transport cargo qualify. No in-dataset cargo, hence no entries;
+  // the pack still appears in ATS_CARGO_DLCS so its (zero) marginal value renders correctly.
+};
 
-/** Cargo only available with a specific map expansion (ATS).
+/** Cargo only available with a specific map expansion (ATS) — "shadow cargo".
  *
- * NOT YET POPULATED — same reason as ATS_CARGO_DLC_MAP. */
+ * Empty: only the free Arizona/Nevada state DLCs are installed (both map to null
+ * in ATS_STATE_TO_DLC, i.e. base-tier), so no *purchasable* state map DLC is owned
+ * to source state-exclusive cargo from. Populate per owned state by reading that
+ * state's `dlc_<state>.scs` `def/cargo.dlc_<state>.sii` aggregator (same method as
+ * ATS_CARGO_DLC_MAP) and tagging each id with its state DLC id. Grows as map DLCs
+ * are bought; see #243. */
 const ATS_MAP_DLC_CARGO: Record<string, string> = {};
 
 // ─── Game-aware aliases ─────────────────────────────────────────────
