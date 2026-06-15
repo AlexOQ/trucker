@@ -77,7 +77,7 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 ## Key Algorithms
 
 ### Game Data Pipeline
-1. Extract `def/` folder from ETS2 *or* ATS `.scs` archives (SCS Extractor)
+1. Extract `def/` folder from ETS2 *or* ATS `.scs` archives — `scripts/scs-extract/` (handles HashFS v2 DLC archives; see its README) or any SCS Extractor
 2. Run `npx tsx scripts/parse-game-defs.ts /path/to/extracted/def --game <ets2|ats>` (default `ets2`)
 3. Parser reads all `.sii/.sui` files: cargo, trailers, companies, cities, countries, economy, trucks
 4. Computes cargo-trailer compatibility from `body_type` matching
@@ -174,7 +174,7 @@ Three categories of DLC content affect optimization results:
 - **Brand DLCs (ATS)**: enumerated in `ATS_TRAILER_DLCS` (`scripts/parse-game-defs.ts`); ATS uses brand-prefix matching identical to ETS2.
 - **Map expansion DLCs (ATS)**: each US state shipped as a separate DLC. Mapping lives in `ATS_STATE_TO_DLC` (`Record<stateCode, string[]>`). City→DLC map built dynamically by `buildAtsCityDlcMap(cities)` from each city's `country` (state code) field — no hand-curated `ATS_CITY_DLC_MAP`.
 - **Garage cities (ATS)**: enumerated in `ATS_GARAGE_CITIES`. SCS internal IDs follow a 12-char truncation rule with documented per-city exceptions (`salt_lake`, asymmetric `texarkana` / `texarkana_ar`, symmetric `kansas_ci_ks` / `kansas_ci_mo`); see comment block above `ATS_GARAGE_CITIES`.
-- **Cargo pack DLCs (ATS)**: `ATS_CARGO_DLC_MAP` and `ATS_MAP_DLC_CARGO` are intentional empty stubs — not yet populated. Affects only the marginal-value DLC calculator for ATS cargo. Tracked as known gap in PR #242.
+- **Cargo pack DLCs (ATS)**: `ATS_CARGO_DLC_MAP` is populated (61 cargo across 7 packs), sourced from each pack's `def/cargo.<dlc>.sii` aggregator inside the owned `dlc_*.scs` archives and cross-checked against `game-defs.json` (#243). Special Transport (`dlc_oversize`) maps to zero cargo — all its cargo is oversize/player-only and excluded from the AI-haulable dataset. `ATS_MAP_DLC_CARGO` stays empty until a *purchasable* state map DLC is owned (only free Arizona/Nevada are installed); populate per owned state via the same archive method.
 - **Trucks page (ATS)**: cabin and paint data only populated for ETS2 as of #252. Switching to ATS on `trucks.html` renders an empty list. Parser is game-agnostic; an ATS reparse against fresh defs will populate it.
 
 **DLC Filtering Pipeline**:
