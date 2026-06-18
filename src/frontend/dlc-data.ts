@@ -324,6 +324,28 @@ export interface DlcSection {
   garage_cities: string[];
 }
 
+/** Per-category DLC counts from a game's DLC registry. */
+export interface DlcCoverageCounts {
+  trailer: number;
+  cargo: number;
+  map: number;
+  total: number;
+}
+
+/**
+ * Count the DLCs a game's data covers, by category. This is the single
+ * canonical count: the footer (UI) and scripts/gen-data-coverage.ts (README)
+ * both call it, so the surfaced number can't drift between them or from the
+ * `dlc` registry it reads. Coverage is the catalog of known DLCs and is
+ * independent of which DLCs the user owns.
+ */
+export function dlcCoverageCounts(dlc: DlcSection): DlcCoverageCounts {
+  const trailer = Object.keys(dlc.trailer_dlcs).length;
+  const cargo = Object.keys(dlc.cargo_dlcs).length;
+  const map = Object.keys(dlc.map_dlcs).length;
+  return { trailer, cargo, map, total: trailer + cargo + map };
+}
+
 /**
  * Override fallback DLC data with live data from game-defs.json.
  * Called by loadAllData() each time data is loaded — including after a

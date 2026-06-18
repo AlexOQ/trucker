@@ -2389,3 +2389,21 @@ tr.owned-garage {
   color: var(--link-hover);
   text-decoration: underline;
 }
+
+/* Data version + DLC coverage line (#255) */
+.site-footer .footer-coverage {
+  margin: 0 0 0.4rem;
+  color: var(--text-muted);
+}
+
+.site-footer .footer-coverage:empty {
+  display: none;
+}
+
+.footer-coverage-note {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  font-style: italic;
+  opacity: 0.85;
+}

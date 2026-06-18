@@ -15,6 +15,7 @@ import {
   COMBINED_CARGO_DLC_MAP, CITY_DLC_MAP,
   getTheme, toggleTheme,
 } from './storage';
+import { dlcCoverageCounts } from './dlc-data';
 import type { AllData, Lookups } from './types';
 
 export interface PageData {
@@ -101,12 +102,71 @@ export function renderNav(): void {
 }
 
 /**
+ * Render the shared site footer. Mirrors renderNav() — the footer used to be
+ * static HTML present only in index.html; this centralizes it so every page
+ * carries the same chrome (#255), creating the element when a page doesn't
+ * ship one. The data-coverage line starts empty and is filled by
+ * renderDataCoverage() once game data has loaded.
+ */
+export function renderFooter(): void {
+  let footer = document.querySelector('footer.site-footer') as HTMLElement | null;
+  if (!footer) {
+    footer = document.createElement('footer');
+    footer.className = 'site-footer';
+    const container = document.querySelector('.container') ?? document.body;
+    container.appendChild(footer);
+  }
+  footer.innerHTML = `
+    <p class="footer-coverage" id="footer-coverage" aria-live="polite"></p>
+    <a href="https://github.com/AlexOQ/trucker/issues" target="_blank" rel="noopener noreferrer">Report an issue or request a feature on GitHub</a>
+  `;
+}
+
+/**
+ * Fill the footer's data-coverage line for the active game: bundled game
+ * version + refresh date (from data-version.json) and the DLC count (from the
+ * game-defs `dlc` registry, the one canonical home — never duplicated into the
+ * version file). Any coverage caveats render as a muted note. No-op if the
+ * footer slot isn't present (e.g. a page without the shared footer) and
+ * degrades gracefully when either source is missing.
+ */
+export function renderDataCoverage(data: AllData): void {
+  const el = document.getElementById('footer-coverage');
+  if (!el) return;
+  el.textContent = '';
+  el.removeAttribute('title');
+
+  const dlc = data.gameDefs?.dlc;
+  const dv = data.dataVersion;
+  if (!dlc && !dv) return;
+
+  const game = getGameMeta().shortName;
+  const parts: string[] = [];
+  parts.push(dv ? `${game} data v${dv.game_version} · refreshed ${dv.refreshed_at}` : `${game} data`);
+  if (dlc) {
+    const c = dlcCoverageCounts(dlc);
+    parts.push(`${c.total} DLCs covered (${c.trailer} trailer · ${c.cargo} cargo · ${c.map} map)`);
+  }
+  el.textContent = parts.join(' — ');
+
+  const notes = dv?.coverage_notes?.trim();
+  if (notes) {
+    el.title = notes;
+    const note = document.createElement('span');
+    note.className = 'footer-coverage-note';
+    note.textContent = notes;
+    el.appendChild(note);
+  }
+}
+
+/**
  * Wire up the game selector (ETS2 / ATS toggle in every page's nav).
  * Renders the shared nav first, then wires the selector + theme toggle.
  * Title is a stable brand; the active game is shown only by the selector and subtitle.
  */
 export function initGameSelector(): void {
   renderNav();
+  renderFooter();
   const meta = getGameMeta();
   const activeGame = getActiveGame();
 
@@ -158,5 +218,11 @@ export async function initPageData(): Promise<PageData> {
     blocked,
   );
   const lookups = buildLookups(data);
+
+  // Surface bundled data version + DLC coverage in the footer. Use the
+  // pre-filter rawData: coverage is the full DLC catalog, independent of which
+  // DLCs the user owns. Safe no-op when the footer slot isn't on the page.
+  renderDataCoverage(rawData);
+
   return { data, lookups };
 }

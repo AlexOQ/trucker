@@ -17,7 +17,7 @@ import { getCityDisplayNames, getCountryDisplayNames } from './display-names';
 import { titleCase } from './utils';
 import type {
   City, Company, Cargo, Trailer,
-  GameDefs, Observations, AllData, MultiBodyOverrides, ManualPricesFile,
+  GameDefs, Observations, AllData, MultiBodyOverrides, ManualPricesFile, DataVersion,
 } from './types';
 
 const dataCache: Record<string, unknown> = {};
@@ -50,11 +50,13 @@ export async function loadAllData(): Promise<AllData> {
   // multiple body_type slots in the optimizer. manual-prices.json is also
   // optional — when present, hand-walked prices override parser values at load
   // time so walks show up immediately without re-running the parser.
-  const [gameDefs, observations, multiBody, manualPrices] = await Promise.all([
+  // data-version.json is optional too — surfaced in the footer/README (#255).
+  const [gameDefs, observations, multiBody, manualPrices, dataVersion] = await Promise.all([
     loadJson<GameDefs>(`${dataDir}/game-defs.json`),
     loadJson<Observations>(`${dataDir}/observations.json`),
     loadJson<MultiBodyOverrides>(`${dataDir}/multi-body-overrides.json`),
     loadJson<ManualPricesFile>(`${dataDir}/manual-prices.json`),
+    loadJson<DataVersion>(`${dataDir}/data-version.json`),
   ]);
 
   if (!gameDefs && !observations) {
@@ -72,7 +74,7 @@ export async function loadAllData(): Promise<AllData> {
   const cargo = buildCargo(gameDefs, observations);
   const trailers = buildTrailers(gameDefs, observations, multiBody, manualPrices);
 
-  return { gameDefs, observations, cities, companies, cargo, trailers };
+  return { gameDefs, observations, cities, companies, cargo, trailers, dataVersion };
 }
 
 function buildCities(defs: GameDefs | null, obs: Observations | null): City[] {
