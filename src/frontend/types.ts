@@ -232,6 +232,18 @@ export interface ManualPricesFile {
   prices: Record<string, ManualPriceEntry>;
 }
 
+/**
+ * Per-game data provenance — see public/data/<game>/data-version.json.
+ * Manual fields, updated once per data refresh (the parser/refresh touchpoint).
+ * The DLC list is intentionally NOT stored here — it derives from the game-defs
+ * `dlc` registry (one canonical home), counted via dlcCoverageCounts().
+ */
+export interface DataVersion {
+  game_version: string;   // e.g. "1.59"
+  refreshed_at: string;   // ISO date, e.g. "2026-06-15"
+  coverage_notes: string; // user-facing caveats; "" when none
+}
+
 export interface AllData {
   gameDefs: GameDefs | null;
   observations: Observations | null;
@@ -239,6 +251,9 @@ export interface AllData {
   companies: Company[];
   cargo: Cargo[];
   trailers: Trailer[];
+  // Optional: data-version.json may be absent for a game; loader supplies null,
+  // and older AllData literals (tests) omit it entirely.
+  dataVersion?: DataVersion | null;
 }
 
 export interface Lookups {
