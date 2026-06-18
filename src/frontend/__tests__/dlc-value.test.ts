@@ -18,7 +18,7 @@ vi.mock('../storage', () => ({
 }));
 
 // Import after mocking
-import { sumGarageScores, computeAllDLCValues } from '../dlc-value';
+import { sumGarageScores, computeAllDLCValues, computeDLCValuesCore } from '../dlc-value';
 import { applyDLCFilter, getBlockedCities } from '../dlc-filter';
 import { buildLookups } from '../lookups';
 import type { AllData } from '../types';
@@ -236,5 +236,92 @@ describe('computeAllDLCValues', () => {
 
     const highPower = results.find((r) => r.dlcId === 'high_power');
     expect(highPower!.newGarageCities).toHaveLength(0);
+  });
+});
+
+/**
+ * Body-type breakdown (#257). `boxes` (dryvan) and `chilled` (reefer) ship from
+ * one Berlin company. Base `scs` trailers: dryvan vol 100 (HV 200), reefer vol 80
+ * (HV 240). `krone` adds a dryvan vol 150 (HV 300 — strict win) AND a reefer vol 80
+ * (HV 240 — exact tie). `tieonly` adds a dryvan vol 100 (HV 200 — exact tie). So
+ * krone wins exactly one body type (dryvan), and tieonly wins none.
+ */
+function createBreakdownTestData(): AllData {
+  const cargo = [
+    { id: 'boxes', name: 'Boxes', value: 2, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: false },
+    { id: 'chilled', name: 'Chilled', value: 3, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['reefer'], groups: [], excluded: false },
+  ];
+  const trailers = [
+    { id: 'scs.dryvan.s3', name: 'SCS Dryvan', body_type: 'dryvan', volume: 100, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+    { id: 'scs.reefer.s3', name: 'SCS Reefer', body_type: 'reefer', volume: 80, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+    { id: 'krone.dryvan.xl', name: 'Krone Dryvan XL', body_type: 'dryvan', volume: 150, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+    { id: 'krone.reefer.s3', name: 'Krone Reefer', body_type: 'reefer', volume: 80, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+    { id: 'tieonly.dryvan.s3', name: 'TieOnly Dryvan', body_type: 'dryvan', volume: 100, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+  ];
+  return {
+    gameDefs: {
+      cities: { berlin: { name: 'Berlin', country: 'germany', has_garage: true } },
+      countries: { germany: { name: 'Germany' } },
+      companies: { co: { name: 'Co', cargo_out: ['boxes', 'chilled'], cargo_in: [], cities: ['berlin'] } },
+      cargo: Object.fromEntries(cargo.map(c => [c.id, { name: c.name, value: c.value, volume: c.volume, mass: c.mass, fragility: c.fragility, fragile: c.fragile, high_value: c.high_value, adr_class: c.adr_class, prob_coef: c.prob_coef, body_types: c.body_types, groups: c.groups, excluded: c.excluded }])),
+      trailers: Object.fromEntries(trailers.map(t => [t.id, { name: t.name, body_type: t.body_type, volume: t.volume, chassis_mass: t.chassis_mass, body_mass: t.body_mass, gross_weight_limit: t.gross_weight_limit, length: t.length, chain_type: t.chain_type, ownable: t.ownable }])),
+      city_companies: { berlin: { co: 2 } },
+      company_cargo: { co: ['boxes', 'chilled'] },
+      cargo_trailers: {
+        boxes: ['scs.dryvan.s3', 'krone.dryvan.xl', 'tieonly.dryvan.s3'],
+        chilled: ['scs.reefer.s3', 'krone.reefer.s3'],
+      },
+      cargo_trailer_units: {
+        boxes: { 'scs.dryvan.s3': 100, 'krone.dryvan.xl': 150, 'tieonly.dryvan.s3': 100 },
+        chilled: { 'scs.reefer.s3': 80, 'krone.reefer.s3': 80 },
+      },
+      economy: { fixed_revenue: 0, revenue_coef_per_km: 1, cargo_market_revenue_coef_per_km: 1 },
+      trucks: [],
+    },
+    observations: null,
+    cities: [{ id: 'berlin', name: 'Berlin', country: 'germany', hasGarage: true }],
+    companies: [{ id: 'co', name: 'Co' }],
+    cargo,
+    trailers,
+  };
+}
+
+describe('computeDLCValuesCore — body-type breakdown (#257)', () => {
+  const ownership = {
+    ownedTrailer: [], ownedCargo: [], ownedMap: [],
+    activeGarages: new Set(['berlin']),
+    garageCities: new Set(['berlin']),
+    unowned: [
+      { id: 'krone', type: 'trailer' as const, name: 'Krone' },
+      { id: 'tieonly', type: 'trailer' as const, name: 'Tie Only' },
+    ],
+    cityDlcMap: {}, combinedCargoDlcMap: {},
+  };
+
+  it('breaks down the body type a DLC wins, with runner-up and HV margin', () => {
+    const results = computeDLCValuesCore(createBreakdownTestData(), ownership);
+    const krone = results.find(r => r.dlcId === 'krone')!;
+
+    expect(krone.bodyTypeBreakdown).toBeDefined();
+    const dryvan = krone.bodyTypeBreakdown!.find(b => b.bodyType === 'dryvan');
+    expect(dryvan).toBeDefined();
+    expect(dryvan!.marginHV).toBe(100);            // 300 (krone) − 200 (scs)
+    expect(dryvan!.runnerUpTrailerSpec).toBeTruthy();
+    expect(dryvan!.countries).toBe(1);
+    expect(krone.totalDelta).toBeGreaterThan(0);   // the win flows through to EV
+  });
+
+  it('excludes body types the DLC only ties (no unique haul value)', () => {
+    const results = computeDLCValuesCore(createBreakdownTestData(), ownership);
+    const krone = results.find(r => r.dlcId === 'krone')!;
+    // krone.reefer.s3 ties scs.reefer.s3 → reefer must NOT appear
+    expect(krone.bodyTypeBreakdown!.some(b => b.bodyType === 'reefer')).toBe(false);
+  });
+
+  it('a pure-tie DLC yields no breakdown and ~0 EV delta (deterministic seed)', () => {
+    const results = computeDLCValuesCore(createBreakdownTestData(), ownership);
+    const tie = results.find(r => r.dlcId === 'tieonly')!;
+    expect(tie.bodyTypeBreakdown).toBeUndefined();
+    expect(Math.abs(tie.totalDelta)).toBeLessThan(1e-6);
   });
 });
