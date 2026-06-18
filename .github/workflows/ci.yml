@@ -58,6 +58,9 @@ jobs:
       - name: Run linter
         run: npm run lint
 
+      - name: Verify data-coverage table is current
+        run: npx tsx scripts/gen-data-coverage.ts --check
+
       - name: Build frontend
         run: npm run build:frontend
 
