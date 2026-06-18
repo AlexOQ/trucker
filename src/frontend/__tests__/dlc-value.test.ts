@@ -325,3 +325,112 @@ describe('computeDLCValuesCore — body-type breakdown (#257)', () => {
     expect(Math.abs(tie.totalDelta)).toBeLessThan(1e-6);
   });
 });
+
+/**
+ * Demand-scoping: Berlin ships only `boxes` (dryvan). `steel` (flatbed) exists in
+ * the dataset (flatbed trailers have HV > 0) but NO company ships it. `kogel` adds
+ * a stronger flatbed trailer. Because Berlin demands no flatbed, the DLC's flatbed
+ * dominance is irrelevant to this profile — it must NOT appear in the breakdown,
+ * and totalDelta is ~0.
+ */
+function createUndemandedTestData(): AllData {
+  const cargo = [
+    { id: 'boxes', name: 'Boxes', value: 2, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: false },
+    { id: 'steel', name: 'Steel', value: 5, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['flatbed'], groups: [], excluded: false },
+  ];
+  const trailers = [
+    { id: 'scs.dryvan.s3', name: 'SCS Dryvan', body_type: 'dryvan', volume: 100, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+    { id: 'scs.flatbed.s3', name: 'SCS Flatbed', body_type: 'flatbed', volume: 100, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+    { id: 'kogel.flatbed.xl', name: 'Kogel Flatbed XL', body_type: 'flatbed', volume: 200, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+  ];
+  return {
+    gameDefs: {
+      cities: { berlin: { name: 'Berlin', country: 'germany', has_garage: true } },
+      countries: { germany: { name: 'Germany' } },
+      companies: { co: { name: 'Co', cargo_out: ['boxes'], cargo_in: [], cities: ['berlin'] } },
+      cargo: Object.fromEntries(cargo.map(c => [c.id, { ...c }])),
+      trailers: Object.fromEntries(trailers.map(t => [t.id, { ...t }])),
+      city_companies: { berlin: { co: 2 } },
+      company_cargo: { co: ['boxes'] },
+      cargo_trailers: { boxes: ['scs.dryvan.s3'], steel: ['scs.flatbed.s3', 'kogel.flatbed.xl'] },
+      cargo_trailer_units: { boxes: { 'scs.dryvan.s3': 100 }, steel: { 'scs.flatbed.s3': 100, 'kogel.flatbed.xl': 200 } },
+      economy: { fixed_revenue: 0, revenue_coef_per_km: 1, cargo_market_revenue_coef_per_km: 1 },
+      trucks: [],
+    },
+    observations: null,
+    cities: [{ id: 'berlin', name: 'Berlin', country: 'germany', hasGarage: true }],
+    companies: [{ id: 'co', name: 'Co' }],
+    cargo, trailers,
+  };
+}
+
+/**
+ * Multi-country MAX-margin aggregation. Both Aaa (country_a) and Bbb (country_b)
+ * ship `boxes` (dryvan). `scs.dryvan.big` (HV 250) is valid only in country_b, so
+ * the runner-up there is stronger: krone wins by +100 in A (over scs.dryvan.s3,
+ * HV 200) and by +50 in B (over scs.dryvan.big, HV 250). The breakdown must report
+ * the MAX margin (100), its country's runner-up, and 2 affected countries.
+ */
+function createMultiCountryTestData(): AllData {
+  const cargo = [
+    { id: 'boxes', name: 'Boxes', value: 2, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: false },
+  ];
+  const trailers = [
+    { id: 'scs.dryvan.s3', name: 'SCS Dryvan', body_type: 'dryvan', volume: 100, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+    { id: 'scs.dryvan.big', name: 'SCS Dryvan Big', body_type: 'dryvan', volume: 125, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true, country_validity: ['country_b'] },
+    { id: 'krone.dryvan.xl', name: 'Krone Dryvan XL', body_type: 'dryvan', volume: 150, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+  ];
+  return {
+    gameDefs: {
+      cities: { aaa: { name: 'Aaa', country: 'country_a', has_garage: true }, bbb: { name: 'Bbb', country: 'country_b', has_garage: true } },
+      countries: { country_a: { name: 'Country A' }, country_b: { name: 'Country B' } },
+      companies: {
+        co_a: { name: 'Co A', cargo_out: ['boxes'], cargo_in: [], cities: ['aaa'] },
+        co_b: { name: 'Co B', cargo_out: ['boxes'], cargo_in: [], cities: ['bbb'] },
+      },
+      cargo: Object.fromEntries(cargo.map(c => [c.id, { ...c }])),
+      trailers: Object.fromEntries(trailers.map(t => [t.id, { ...t }])),
+      city_companies: { aaa: { co_a: 2 }, bbb: { co_b: 2 } },
+      company_cargo: { co_a: ['boxes'], co_b: ['boxes'] },
+      cargo_trailers: { boxes: ['scs.dryvan.s3', 'scs.dryvan.big', 'krone.dryvan.xl'] },
+      cargo_trailer_units: { boxes: { 'scs.dryvan.s3': 100, 'scs.dryvan.big': 125, 'krone.dryvan.xl': 150 } },
+      economy: { fixed_revenue: 0, revenue_coef_per_km: 1, cargo_market_revenue_coef_per_km: 1 },
+      trucks: [],
+    },
+    observations: null,
+    cities: [
+      { id: 'aaa', name: 'Aaa', country: 'country_a', hasGarage: true },
+      { id: 'bbb', name: 'Bbb', country: 'country_b', hasGarage: true },
+    ],
+    companies: [{ id: 'co_a', name: 'Co A' }, { id: 'co_b', name: 'Co B' }],
+    cargo, trailers,
+  };
+}
+
+describe('computeDLCValuesCore — breakdown demand-scoping + multi-country (#257)', () => {
+  it('omits body types the garages do not demand (no false win, ~0 delta)', () => {
+    const results = computeDLCValuesCore(createUndemandedTestData(), {
+      ownedTrailer: [], ownedCargo: [], ownedMap: [],
+      activeGarages: new Set(['berlin']), garageCities: new Set(['berlin']),
+      unowned: [{ id: 'kogel', type: 'trailer' as const, name: 'Kogel' }],
+      cityDlcMap: {}, combinedCargoDlcMap: {},
+    });
+    const kogel = results.find(r => r.dlcId === 'kogel')!;
+    expect(kogel.bodyTypeBreakdown).toBeUndefined(); // flatbed not hauled at Berlin
+    expect(Math.abs(kogel.totalDelta)).toBeLessThan(1e-6);
+  });
+
+  it('reports the MAX margin and country count across multiple garage countries', () => {
+    const results = computeDLCValuesCore(createMultiCountryTestData(), {
+      ownedTrailer: [], ownedCargo: [], ownedMap: [],
+      activeGarages: new Set(['aaa', 'bbb']), garageCities: new Set(['aaa', 'bbb']),
+      unowned: [{ id: 'krone', type: 'trailer' as const, name: 'Krone' }],
+      cityDlcMap: {}, combinedCargoDlcMap: {},
+    });
+    const krone = results.find(r => r.dlcId === 'krone')!;
+    const dryvan = krone.bodyTypeBreakdown!.find(b => b.bodyType === 'dryvan')!;
+    expect(dryvan).toBeDefined();
+    expect(dryvan.marginHV).toBe(100);  // max(100 in A, 50 in B)
+    expect(dryvan.countries).toBe(2);
+  });
+});

@@ -203,7 +203,7 @@ function renderResults(results: DLCMarginalValue[]): void {
     } else if (r.bodyTypeBreakdown && r.bodyTypeBreakdown.length > 0) {
       const lines = r.bodyTypeBreakdown.map(b => {
         const vs = b.runnerUpTrailerSpec ? `over <code>${b.runnerUpTrailerSpec}</code>` : '(no prior trailer)';
-        const where = b.countries > 0 ? ` · ${b.countries} ${b.countries === 1 ? 'country' : 'countries'}` : '';
+        const where = ` · ${b.countries} ${b.countries === 1 ? 'country' : 'countries'}`;
         return `<li><span class="dlc-bt-name">${b.displayName}</span> wins ${vs} by <span class="positive">+${formatEV(b.marginHV)} HV</span>${where}</li>`;
       }).join('');
       const n = r.bodyTypeBreakdown.length;

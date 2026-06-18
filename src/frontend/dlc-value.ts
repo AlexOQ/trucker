@@ -14,7 +14,7 @@
 
 import { applyDLCFilter, buildLookups, getBlockedCities, type AllData, type Lookups } from './data';
 import {
-  calculateCityRankings, clearTrailerInfoCache,
+  calculateCityRankings, clearTrailerInfoCache, buildCityDepotProfiles,
   computeProfileTrailerInfoForCountry, bodyTypeDisplayName,
   type ProfileTrailerInfo,
 } from './optimizer';
@@ -104,13 +104,31 @@ export function sumGarageScores(
   return { total, perCity, filtered, lookups };
 }
 
-/** Distinct countries of the active garage cities. */
-function garageCountriesOf(rawData: AllData, activeGarages: Set<string>): string[] {
-  const countries = new Set<string>();
+/** Active garage city ids grouped by country. */
+function garagesByCountryOf(rawData: AllData, activeGarages: Set<string>): Map<string, string[]> {
+  const byCountry = new Map<string, string[]>();
   for (const c of rawData.cities) {
-    if (activeGarages.has(c.id)) countries.add(c.country);
+    if (!activeGarages.has(c.id)) continue;
+    const list = byCountry.get(c.country);
+    if (list) list.push(c.id); else byCountry.set(c.country, [c.id]);
   }
-  return [...countries];
+  return byCountry;
+}
+
+/** Body types actually demanded at the given garage cities (under a given scenario's
+ *  trailer availability) — the union of bodyHV keys across their depots. */
+function demandedBodyTypes(cities: string[], lookups: Lookups): Set<string> {
+  const demanded = new Set<string>();
+  for (const cityId of cities) {
+    const depots = buildCityDepotProfiles(cityId, lookups);
+    if (!depots) continue;
+    for (const depot of depots) {
+      for (const c of depot.cargo) {
+        for (const bt of Object.keys(c.bodyHV)) demanded.add(bt);
+      }
+    }
+  }
+  return demanded;
 }
 
 /**
@@ -120,22 +138,29 @@ function garageCountriesOf(rawData: AllData, activeGarages: Set<string>): string
  * baseline scenario's per-country winners against the hypothetical's. The only
  * trailers hypo adds over baseline are this DLC's, so any HV increase is attributable
  * to it.
+ *
+ * Scoped to body types the player's garages actually demand (#257: the breakdown
+ * must reflect the operating profile — a DLC that dominates a body type none of
+ * your garages haul is irrelevant noise). A profile is reported only when one of
+ * the country's garages spawns cargo for it.
  */
 function computeBodyTypeBreakdown(
   baselineProfiles: Map<string, Map<string, ProfileTrailerInfo>>,
   hypo: ScenarioResult,
-  garageCountries: string[],
+  garagesByCountry: Map<string, string[]>,
 ): BodyTypeWinDelta[] {
   const agg = new Map<string, {
     bodyTypes: string[]; winnerSpec: string; runnerUpSpec: string | null;
     maxMargin: number; countries: Set<string>;
   }>();
 
-  for (const country of garageCountries) {
+  for (const [country, cities] of garagesByCountry) {
     const baseInfo = baselineProfiles.get(country);
     if (!baseInfo) continue;
+    const demanded = demandedBodyTypes(cities, hypo.lookups);
     const hypoInfo = computeProfileTrailerInfoForCountry(country, hypo.filtered, hypo.lookups);
     for (const [key, hypoRep] of hypoInfo) {
+      if (!hypoRep.bodyTypes.some(bt => demanded.has(bt))) continue; // not hauled at this country's garages
       const baseRep = baseInfo.get(key);
       const baseHV = baseRep ? baseRep.totalHV : 0;
       const margin = hypoRep.totalHV - baseHV;
@@ -184,10 +209,10 @@ export function computeDLCValuesCore(
   const baselineCargoSet = new Set([...o.ownedCargo, ...o.ownedMap]);
   const baseline = sumGarageScores(rawData, o.ownedTrailer, baselineCargoSet, o.ownedMap, o.activeGarages, o.cityDlcMap, o.combinedCargoDlcMap);
 
-  const garageCountries = garageCountriesOf(rawData, o.activeGarages);
+  const garagesByCountry = garagesByCountryOf(rawData, o.activeGarages);
   // Baseline per-(profile, country) winners — computed once, diffed against each hypo.
   const baselineProfiles = new Map<string, Map<string, ProfileTrailerInfo>>();
-  for (const country of garageCountries) {
+  for (const country of garagesByCountry.keys()) {
     baselineProfiles.set(country, computeProfileTrailerInfoForCountry(country, baseline.filtered, baseline.lookups));
   }
 
@@ -244,8 +269,8 @@ export function computeDLCValuesCore(
       newGarageCities,
     };
 
-    if (dlc.type === 'trailer' && garageCountries.length > 0) {
-      const breakdown = computeBodyTypeBreakdown(baselineProfiles, hypo, garageCountries);
+    if (dlc.type === 'trailer' && garagesByCountry.size > 0) {
+      const breakdown = computeBodyTypeBreakdown(baselineProfiles, hypo, garagesByCountry);
       if (breakdown.length > 0) result.bodyTypeBreakdown = breakdown;
     }
 
