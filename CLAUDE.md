@@ -85,6 +85,7 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 6. Generates DLC registry: trailer DLCs (by brand), cargo DLCs (by pack), map DLCs (by city membership), garage cities, cargo-DLC associations
 7. Outputs `public/data/<game>/game-defs.json` (e.g. `public/data/ets2/game-defs.json`, `public/data/ats/game-defs.json`) — single file per game, idempotent, includes all DLC content
 8. Re-run per game on every game update or DLC — full reseed, no incremental merge needed
+9. After re-parsing, update the manual fields in `public/data/<game>/data-version.json` (`game_version`, `coverage_notes`) and run `npm run gen:data-coverage` to refresh the README table + UI footer (see README "Data Coverage"; `--check` gates this in CI)
 
 **Diff mode**: `npx tsx scripts/parse-game-defs.ts /path/to/def --diff --game <ets2|ats>`
 - Compares freshly parsed data against existing `game-defs.json` without writing
