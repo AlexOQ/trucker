@@ -79,15 +79,23 @@ function emit(obj) {
   process.stdout.write(JSON.stringify(obj, null, 2) + '\n');
 }
 
+// Own-property check, not bracket truthiness. `defs.cargo['toString']` (and
+// other Object.prototype names — constructor, valueOf, hasOwnProperty,
+// __proto__, …) would otherwise resolve to an inherited member, reporting a
+// bogus hit for a prototype-name id: exit 0 instead of the unknown-id error
+// the #279 contract requires. Object.hasOwn keys the check to real data only.
+function has(map, id) {
+  return Object.hasOwn(map, id);
+}
+
 const COMMANDS = {
   cargo(defs, id) {
-    const rec = defs.cargo[id];
-    if (!rec) die(`unknown cargo id '${id}'`);
-    emit({ id, ...rec });
+    if (!has(defs.cargo, id)) die(`unknown cargo id '${id}'`);
+    emit({ id, ...defs.cargo[id] });
   },
 
   'companies-for-cargo'(defs, id) {
-    if (!defs.cargo[id]) die(`unknown cargo id '${id}'`);
+    if (!has(defs.cargo, id)) die(`unknown cargo id '${id}'`);
     const companies = Object.entries(defs.companies)
       .filter(([, c]) => Array.isArray(c.cargo_out) && c.cargo_out.includes(id))
       .map(([cid, c]) => ({ id: cid, name: c.name }));
@@ -95,17 +103,15 @@ const COMMANDS = {
   },
 
   city(defs, id) {
-    const rec = defs.cities[id];
-    if (!rec) die(`unknown city id '${id}'`);
-    emit({ id, ...rec });
+    if (!has(defs.cities, id)) die(`unknown city id '${id}'`);
+    emit({ id, ...defs.cities[id] });
   },
 
   'city-companies'(defs, id) {
-    const present = defs.city_companies[id];
-    if (!present) die(`unknown city id '${id}' (no city_companies entry)`);
-    const companies = Object.entries(present).map(([cid, count]) => ({
+    if (!has(defs.city_companies, id)) die(`unknown city id '${id}' (no city_companies entry)`);
+    const companies = Object.entries(defs.city_companies[id]).map(([cid, count]) => ({
       id: cid,
-      name: defs.companies[cid] ? defs.companies[cid].name : null,
+      name: has(defs.companies, cid) ? defs.companies[cid].name : null,
       count,
     }));
     emit({ city: id, count: companies.length, companies });
