@@ -407,6 +407,41 @@ function createMultiCountryTestData(): AllData {
   };
 }
 
+/**
+ * DLC enables the FIRST trailer for a demanded body type. Berlin ships `boxes`
+ * (dryvan, served by scs) and `special` (silo) — but scs has NO silo trailer, so
+ * baseline can't haul `special`. feldbinder adds the only silo trailer.
+ */
+function createNewlyEnabledTestData(): AllData {
+  const cargo = [
+    { id: 'boxes', name: 'Boxes', value: 2, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['dryvan'], groups: [], excluded: false },
+    { id: 'special', name: 'Special', value: 4, volume: 1, mass: 100, fragility: 0, fragile: false, high_value: false, adr_class: 0, prob_coef: 1, body_types: ['silo'], groups: [], excluded: false },
+  ];
+  const trailers = [
+    { id: 'scs.dryvan.s3', name: 'SCS Dryvan', body_type: 'dryvan', volume: 100, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+    { id: 'feldbinder.silo.s3', name: 'Feldbinder Silo', body_type: 'silo', volume: 80, chassis_mass: 5000, body_mass: 3000, gross_weight_limit: 40000, length: 13.6, chain_type: 'single', ownable: true },
+  ];
+  return {
+    gameDefs: {
+      cities: { berlin: { name: 'Berlin', country: 'germany', has_garage: true } },
+      countries: { germany: { name: 'Germany' } },
+      companies: { co: { name: 'Co', cargo_out: ['boxes', 'special'], cargo_in: [], cities: ['berlin'] } },
+      cargo: Object.fromEntries(cargo.map(c => [c.id, { ...c }])),
+      trailers: Object.fromEntries(trailers.map(t => [t.id, { ...t }])),
+      city_companies: { berlin: { co: 2 } },
+      company_cargo: { co: ['boxes', 'special'] },
+      cargo_trailers: { boxes: ['scs.dryvan.s3'], special: ['feldbinder.silo.s3'] },
+      cargo_trailer_units: { boxes: { 'scs.dryvan.s3': 100 }, special: { 'feldbinder.silo.s3': 80 } },
+      economy: { fixed_revenue: 0, revenue_coef_per_km: 1, cargo_market_revenue_coef_per_km: 1 },
+      trucks: [],
+    },
+    observations: null,
+    cities: [{ id: 'berlin', name: 'Berlin', country: 'germany', hasGarage: true }],
+    companies: [{ id: 'co', name: 'Co' }],
+    cargo, trailers,
+  };
+}
+
 describe('computeDLCValuesCore — breakdown demand-scoping + multi-country (#257)', () => {
   it('omits body types the garages do not demand (no false win, ~0 delta)', () => {
     const results = computeDLCValuesCore(createUndemandedTestData(), {
@@ -432,5 +467,23 @@ describe('computeDLCValuesCore — breakdown demand-scoping + multi-country (#25
     expect(dryvan).toBeDefined();
     expect(dryvan.marginHV).toBe(100);  // max(100 in A, 50 in B)
     expect(dryvan.countries).toBe(2);
+  });
+
+  it('reports a null runner-up when the DLC adds the first trailer for a demanded body type', () => {
+    // Berlin demands silo (`special`); scs has no silo trailer — feldbinder adds
+    // the first. baseHV = 0 → runner-up null, margin = the trailer's full HV, and
+    // the newly-enabled haul raises EV.
+    const results = computeDLCValuesCore(createNewlyEnabledTestData(), {
+      ownedTrailer: [], ownedCargo: [], ownedMap: [],
+      activeGarages: new Set(['berlin']), garageCities: new Set(['berlin']),
+      unowned: [{ id: 'feldbinder', type: 'trailer' as const, name: 'Feldbinder' }],
+      cityDlcMap: {}, combinedCargoDlcMap: {},
+    });
+    const f = results.find(r => r.dlcId === 'feldbinder')!;
+    const silo = f.bodyTypeBreakdown!.find(b => b.bodyType === 'silo')!;
+    expect(silo).toBeDefined();
+    expect(silo.runnerUpTrailerSpec).toBeNull();
+    expect(silo.marginHV).toBe(320);       // special.value 4 × 80 units, no prior trailer
+    expect(f.totalDelta).toBeGreaterThan(0);
   });
 });
