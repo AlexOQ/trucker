@@ -1,5 +1,5 @@
 {
-  "game_version": "1.59",
-  "refreshed_at": "2026-06-15",
+  "game_version": "1.60.1.0",
+  "refreshed_at": "2026-06-18",
   "coverage_notes": "Truck cabin/paint catalog not yet populated for ATS. Map-expansion cargo limited to installed states; Special Transport cargo excluded (player-only)."
 }
