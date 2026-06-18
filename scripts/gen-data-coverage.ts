@@ -38,7 +38,10 @@ function readJson<T>(path: string): T {
 }
 
 function row(label: string, dv: DataVersion, c: DlcCoverageCounts): string {
-  const notes = dv.coverage_notes.trim() || '—';
+  // coverage_notes is free-form human-authored text. Neutralize the two things
+  // that corrupt a Markdown table cell: a literal pipe (splits the cell) and a
+  // newline (splits the row). Escape the first, collapse the second to a space.
+  const notes = (dv.coverage_notes.trim() || '—').replace(/\|/g, '\\|').replace(/\s*\n\s*/g, ' ');
   return `| ${label} | ${dv.game_version} | ${dv.refreshed_at} | ${c.total} (${c.trailer} / ${c.cargo} / ${c.map}) | ${notes} |`;
 }
 
