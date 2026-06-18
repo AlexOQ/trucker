@@ -200,6 +200,16 @@ function renderResults(results: DLCMarginalValue[]): void {
         parts.push(`${r.newGarageCities.length} new garages: ${cityList}${more}`);
       }
       detail = parts.length ? `<div class="dlc-value-detail">${parts.join(' · ')}</div>` : '';
+    } else if (r.bodyTypeBreakdown && r.bodyTypeBreakdown.length > 0) {
+      const lines = r.bodyTypeBreakdown.map(b => {
+        const vs = b.runnerUpTrailerSpec ? `over <code>${b.runnerUpTrailerSpec}</code>` : '(no prior trailer)';
+        const where = ` · ${b.countries} ${b.countries === 1 ? 'country' : 'countries'}`;
+        return `<li><span class="dlc-bt-name">${b.displayName}</span> wins ${vs} by <span class="positive">+${formatEV(b.marginHV)} HV</span>${where}</li>`;
+      }).join('');
+      const n = r.bodyTypeBreakdown.length;
+      // Structural breakdown: which body types this DLC wins and the haul-value
+      // margin over the runner-up. Does not sum to the EV delta above (#257).
+      detail = `<details class="dlc-value-detail dlc-breakdown"><summary>Wins ${n} body type${n !== 1 ? 's' : ''} — where the value comes from</summary><ul>${lines}</ul></details>`;
     }
 
     return `

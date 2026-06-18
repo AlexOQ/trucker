@@ -15,11 +15,11 @@
  */
 
 import {
-  computeOptimalFleet, calculateCityRankings, clearTrailerInfoCache,
+  computeOptimalFleet, calculateCityRankings,
   type OptimalFleet, type CityRanking,
 } from './optimizer';
 import type { AllData, Lookups } from './types';
-import { sumGarageScores, type DLCMarginalValue } from './dlc-value';
+import { computeDLCValuesCore, type DLCMarginalValue } from './dlc-value';
 
 // ============================================
 // Module-level data store
@@ -72,99 +72,26 @@ function computeDLCValuesInWorker(
   postProgress: (completed: number, total: number) => void,
 ): DLCMarginalValue[] {
   const { ownedTrailer, ownedCargo, ownedMap, ownedGarages } = config;
-  const garageCitiesSet = new Set(config.garageCities);
+  const garageCities = new Set(config.garageCities);
 
   // Active garages = intersection of owned garages and garage cities
   const activeGarages = new Set<string>();
   for (const g of ownedGarages) {
-    if (garageCitiesSet.has(g)) activeGarages.add(g);
+    if (garageCities.has(g)) activeGarages.add(g);
   }
 
-  // Baseline
-  const baselineCargoSet = new Set([...ownedCargo, ...ownedMap]);
-  const baseline = sumGarageScores(
-    rawData, ownedTrailer, baselineCargoSet, ownedMap, activeGarages,
-    config.cityDlcMap, config.combinedCargoDlcMap,
-  );
-
-  const unownedMap = config.allMapDLCIds.filter(id => !ownedMap.includes(id));
-  const unownedTrailer = config.allTrailerDLCIds.filter(id => !ownedTrailer.includes(id));
-  const unownedCargo = config.allCargoDLCIds.filter(id => !ownedCargo.includes(id));
-
-  // Names are patched by the client after results come back
-  const allUnowned = [
-    ...unownedMap.map(id => ({ id, type: 'map' as const })),
-    ...unownedTrailer.map(id => ({ id, type: 'trailer' as const })),
-    ...unownedCargo.map(id => ({ id, type: 'cargo' as const })),
+  // Names are id placeholders — the client patches them after results return
+  // (the worker has no DLC name maps).
+  const unowned = [
+    ...config.allMapDLCIds.filter(id => !ownedMap.includes(id)).map(id => ({ id, type: 'map' as const, name: id })),
+    ...config.allTrailerDLCIds.filter(id => !ownedTrailer.includes(id)).map(id => ({ id, type: 'trailer' as const, name: id })),
+    ...config.allCargoDLCIds.filter(id => !ownedCargo.includes(id)).map(id => ({ id, type: 'cargo' as const, name: id })),
   ];
 
-  const results: DLCMarginalValue[] = [];
-  let completed = 0;
-
-  for (const dlc of allUnowned) {
-    const hypoTrailer = dlc.type === 'trailer' ? [...ownedTrailer, dlc.id] : ownedTrailer;
-    const hypoCargo = dlc.type === 'cargo' ? [...ownedCargo, dlc.id] : ownedCargo;
-    const hypoMap = dlc.type === 'map' ? [...ownedMap, dlc.id] : ownedMap;
-    const hypoCargoSet = new Set([...hypoCargo, ...hypoMap]);
-
-    const hypoGarages = new Set(activeGarages);
-    const newGarageCities: Array<{ id: string; name: string; score: number }> = [];
-
-    if (dlc.type === 'map') {
-      const dlcCities = config.cityDlcMap[dlc.id] || [];
-      for (const cityId of dlcCities) {
-        if (garageCitiesSet.has(cityId)) {
-          hypoGarages.add(cityId);
-        }
-      }
-    }
-
-    const hypo = sumGarageScores(
-      rawData, hypoTrailer, hypoCargoSet, hypoMap, hypoGarages,
-      config.cityDlcMap, config.combinedCargoDlcMap,
-    );
-
-    let existingGarageDelta = 0;
-    for (const g of activeGarages) {
-      const baseScore = baseline.perCity.get(g) ?? 0;
-      const hypoScore = hypo.perCity.get(g) ?? 0;
-      existingGarageDelta += hypoScore - baseScore;
-    }
-
-    let newCityPotential = 0;
-    if (dlc.type === 'map') {
-      const dlcCities = config.cityDlcMap[dlc.id] || [];
-      for (const cityId of dlcCities) {
-        if (garageCitiesSet.has(cityId) && !activeGarages.has(cityId)) {
-          const score = hypo.perCity.get(cityId) ?? 0;
-          newCityPotential += score;
-          newGarageCities.push({
-            id: cityId,
-            name: rawData.cities.find(c => c.id === cityId)?.displayName ?? cityId,
-            score,
-          });
-        }
-      }
-      newGarageCities.sort((a, b) => b.score - a.score);
-    }
-
-    results.push({
-      dlcId: dlc.id,
-      dlcName: dlc.id,  // placeholder — client patches with real name
-      dlcType: dlc.type,
-      totalDelta: hypo.total - baseline.total,
-      existingGarageDelta,
-      newCityPotential,
-      newGarageCities,
-    });
-
-    completed++;
-    postProgress(completed, allUnowned.length);
-  }
-
-  clearTrailerInfoCache();
-  results.sort((a, b) => b.totalDelta - a.totalDelta);
-  return results;
+  return computeDLCValuesCore(rawData, {
+    ownedTrailer, ownedCargo, ownedMap, activeGarages, garageCities, unowned,
+    cityDlcMap: config.cityDlcMap, combinedCargoDlcMap: config.combinedCargoDlcMap,
+  }, postProgress);
 }
 
 // ============================================

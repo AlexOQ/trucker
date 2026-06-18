@@ -97,7 +97,7 @@ export interface CityRanking {
 // Display helpers
 // ============================================
 
-function bodyTypeDisplayName(bodyType: string): string {
+export function bodyTypeDisplayName(bodyType: string): string {
   return bodyType.charAt(0).toUpperCase() + bodyType.slice(1).replace(/_/g, ' ');
 }
 
@@ -511,8 +511,19 @@ interface TrailerInfo {
   levelFloor: number;
 }
 
+/**
+ * Best trailer realizing a body-type profile in a country, plus its total haul
+ * value across all compatible cargo. `totalHV` is the comparison key used to
+ * pick the winner; surfaced so the DLC-value calculator can diff winner vs
+ * runner-up across ownership scenarios (#257).
+ */
+export interface ProfileTrailerInfo extends TrailerInfo {
+  bodyTypes: string[];
+  totalHV: number;
+}
+
 /** Cache: country → profileKey → best trailer info matching that exact profile */
-const profileTrailerCache = new Map<string, Map<string, TrailerInfo & { bodyTypes: string[] }>>();
+const profileTrailerCache = new Map<string, Map<string, ProfileTrailerInfo>>();
 
 /** Clear trailer info cache — needed when DLC filter state changes between optimizer runs */
 export function clearTrailerInfoCache(): void {
@@ -527,12 +538,25 @@ export function clearTrailerInfoCache(): void {
  * Also returns the best (cheapest among walked > parser > unpriced) trailer
  * realizing each profile — for display purposes after the optimizer picks.
  */
-function getProfileTrailerInfoForCountry(
+export function getProfileTrailerInfoForCountry(
   country: string, data: AllData, lookups: Lookups,
-): Map<string, TrailerInfo & { bodyTypes: string[] }> {
+): Map<string, ProfileTrailerInfo> {
   const cached = profileTrailerCache.get(country);
   if (cached) return cached;
+  const info = computeProfileTrailerInfoForCountry(country, data, lookups);
+  profileTrailerCache.set(country, info);
+  return info;
+}
 
+/**
+ * Uncached variant of {@link getProfileTrailerInfoForCountry}. The cache is keyed
+ * by country alone, so it returns stale results when called against different
+ * DLC-filtered datasets; the DLC-value calculator (#257) diffs winner vs runner-up
+ * across baseline/hypothetical ownership and must compute fresh per scenario.
+ */
+export function computeProfileTrailerInfoForCountry(
+  country: string, data: AllData, lookups: Lookups,
+): Map<string, ProfileTrailerInfo> {
   // Per profile, track best trailer by total haul value across its body-type slots.
   const bestByProfile = new Map<string, { trailer: Trailer; bodyTypes: string[]; totalHV: number }>();
 
@@ -589,18 +613,18 @@ function getProfileTrailerInfoForCountry(
     }
   }
 
-  const info = new Map<string, TrailerInfo & { bodyTypes: string[] }>();
-  for (const [key, { trailer, bodyTypes }] of bestByProfile) {
+  const info = new Map<string, ProfileTrailerInfo>();
+  for (const [key, { trailer, bodyTypes, totalHV }] of bestByProfile) {
     info.set(key, {
       trailerId: trailer.id,
       trailerSpec: formatTrailerSpec(trailer),
       estimatedPrice: trailer.price,
       levelFloor: trailer.level_floor,
       bodyTypes,
+      totalHV,
     });
   }
 
-  profileTrailerCache.set(country, info);
   return info;
 }
 
