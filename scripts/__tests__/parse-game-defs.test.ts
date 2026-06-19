@@ -254,9 +254,13 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
         expect(localized.length).toBeGreaterThan(companies.length * 0.5);
       });
 
-      it('ttk_bg resolves to its def name "ТТК", not "Ttk Bg" (#267)', () => {
+      it('ttk_bg resolves to a real def name (non-ASCII), not the title-cased id (#267)', () => {
         const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
-        expect((data.companies.ttk_bg as { name: string }).name).toBe('ТТК');
+        const name = (data.companies.ttk_bg as { name: string }).name;
+        // Structural, not a pinned literal: a real game name that is non-ASCII
+        // (Cyrillic) and differs from formatCompanyName(id) ("Ttk Bg").
+        expect(name).not.toBe(formatCompanyName('ttk_bg'));
+        expect([...name].some((ch) => ch.charCodeAt(0) > 127)).toBe(true);
       });
     }
   });

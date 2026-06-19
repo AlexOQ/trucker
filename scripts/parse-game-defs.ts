@@ -1097,7 +1097,8 @@ export function buildCompanyNameMap(units: ParsedUnit[]): Map<string, string> {
   const names = new Map<string, string>();
   for (const unit of units) {
     if (unit.type !== 'company_permanent') continue;
-    const id = unit.name.replace('company.permanent.', '');
+    if (!unit.name.startsWith('company.permanent.')) continue;
+    const id = unit.name.slice('company.permanent.'.length);
     const name = unit.props.name;
     if (typeof name !== 'string') continue;
     const trimmed = name.trim();
