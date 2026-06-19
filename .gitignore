@@ -6,6 +6,7 @@ dist/
 .playwright-mcp/
 specs/
 analysis/
+playthrough/
 saves/
 coverage/
 test-results/
