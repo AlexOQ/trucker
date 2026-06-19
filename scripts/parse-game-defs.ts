@@ -995,6 +995,11 @@ function extractCompanies(): CompanyData[] {
 
   const companies: CompanyData[] = [];
 
+  // Company display names live in the top-level def/company/<id>.sui metadata
+  // files (siblings of the per-company subdirs). readAllSiiFiles is non-recursive
+  // so it reads only those, not the out/in/editor subdirs.
+  const companyNames = buildCompanyNameMap(readAllSiiFiles(companyDir));
+
   // Each subdirectory in company/ is a company
   for (const entry of readdirSync(companyDir)) {
     const companyPath = join(companyDir, entry);
@@ -1061,7 +1066,7 @@ function extractCompanies(): CompanyData[] {
     if ((cargoOut.length > 0 || cargoIn.length > 0) && cities.length > 0) {
       companies.push({
         id,
-        name: formatCompanyName(id),
+        name: companyNames.get(id) ?? formatCompanyName(id),
         cargo_out: cargoOut.sort(),
         cargo_in: cargoIn.sort(),
         cities: cities.sort(),
@@ -1072,11 +1077,35 @@ function extractCompanies(): CompanyData[] {
   return companies.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function formatCompanyName(id: string): string {
+export function formatCompanyName(id: string): string {
   // Simple formatting: replace underscores, capitalize
   return id
     .replace(/_/g, ' ')
     .replace(/\b\w/g, c => c.toUpperCase());
+}
+
+/**
+ * Map company id → game display name from the def `name` field.
+ *
+ * Company metadata lives in the top-level def/company/<id>.sui files as
+ * `company_permanent: company.permanent.<id> { name: "<game string>" }` — the
+ * name is a literal localized string (e.g. "ТТК"), not an @@token@@ reference.
+ * Skips empty values and unresolved tokens so callers fall back to
+ * formatCompanyName(id).
+ */
+export function buildCompanyNameMap(units: ParsedUnit[]): Map<string, string> {
+  const names = new Map<string, string>();
+  for (const unit of units) {
+    if (unit.type !== 'company_permanent') continue;
+    if (!unit.name.startsWith('company.permanent.')) continue;
+    const id = unit.name.slice('company.permanent.'.length);
+    const name = unit.props.name;
+    if (typeof name !== 'string') continue;
+    const trimmed = name.trim();
+    if (!trimmed || /^@@.*@@$/.test(trimmed)) continue;
+    names.set(id, trimmed);
+  }
+  return names;
 }
 
 // ─── City Extraction ───────────────────────────────────────────────────

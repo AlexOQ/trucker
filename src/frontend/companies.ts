@@ -84,7 +84,10 @@ function renderCompanyList(filter = ''): void {
 
   const filterNorm = normalize(filter);
   const filtered = data.companies
-    .filter((c) => normalize(c.name).includes(filterNorm))
+    // Match the Latin id too: localized names can be non-Latin (e.g. "ТТК"),
+    // so a name-only search would make those companies unreachable by typed
+    // Latin queries (#267).
+    .filter((c) => normalize(c.name).includes(filterNorm) || normalize(c.id).includes(filterNorm))
     .sort((a, b) => a.name.localeCompare(b.name));
 
   if (filtered.length === 0) {
