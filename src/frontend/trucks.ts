@@ -12,7 +12,7 @@ import { initPageData, initGameSelector } from './page-init';
 import { getGameMeta } from './game';
 import { normalize, type GameDefs } from './data';
 import { escapeHtml } from './utils';
-import { computeMinCost, brandLabel, modelLabel, displayName, type MinCostConfig } from './trucks-cost';
+import { computeMinCost, isSelectable, brandLabel, modelLabel, displayName, type MinCostConfig } from './trucks-cost';
 
 type Truck = GameDefs['trucks'][number];
 
@@ -149,22 +149,22 @@ function showTruckDetail(truckId: string): void {
       <div class="stat"><div class="stat-value">${config.paint ? `${currency}${config.paint.price.toLocaleString()}` : '—'}</div><div class="stat-label">Paint${config.paint ? ` · ${escapeHtml(displayName(config.paint.name))}` : ''}</div></div>
     </div>
 
-    ${componentTable('Cabins', truck.cabins ?? [], config.cabin.id, [
+    ${componentTable('Cabins', (truck.cabins ?? []).filter(isSelectable), config.cabin.id, [
       { header: 'Fits chassis', render: (c) => c.suitable_for.length === 0 ? 'any' : `${c.suitable_for.length}` },
     ])}
-    ${componentTable('Chassis', truck.chassis, config.chassis.id, [
+    ${componentTable('Chassis', truck.chassis.filter(isSelectable), config.chassis.id, [
       { header: 'Axle', render: (c) => c.axle_config || '?' },
       { header: 'Tank L', render: (c) => `${c.tank_size}` },
     ])}
-    ${componentTable('Engines', truck.engines, config.engine.id, [
+    ${componentTable('Engines', truck.engines.filter(isSelectable), config.engine.id, [
       { header: 'Torque', render: (e) => `${e.torque}` },
       { header: 'Vol L', render: (e) => `${e.volume}` },
     ])}
-    ${componentTable('Transmissions', truck.transmissions, config.transmission.id, [
+    ${componentTable('Transmissions', truck.transmissions.filter(isSelectable), config.transmission.id, [
       { header: 'Gears', render: (t) => `${t.forward_gears}f / ${t.reverse_gears}r` },
       { header: 'Retarder', render: (t) => t.retarder ? 'yes' : '—' },
     ])}
-    ${componentTable('Paints', truck.paints ?? [], config.paint?.id ?? null)}
+    ${componentTable('Paints', (truck.paints ?? []).filter(isSelectable), config.paint?.id ?? null)}
   `;
 }
 
