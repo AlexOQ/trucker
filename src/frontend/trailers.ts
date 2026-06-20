@@ -576,6 +576,9 @@ function handleHashChange(): void {
   const rest = hash.replace('#body-', '');
   // Check for a chain-config suffix: #body-curtainside-hct, #body-box-b_double, …
   // (legacy #body-curtainside-standard resolves to the single configuration).
+  // Relies on the invariant that body_type ids contain no '-' (they use '_') and
+  // chain_types contain no '-', so the segment after the last '-' is the chain
+  // suffix. If a future game ships a hyphenated body_type, switch to URL-encoding.
   const lastDash = rest.lastIndexOf('-');
   if (lastDash > 0) {
     const chainType = resolveChainSuffix(rest.substring(lastDash + 1));
