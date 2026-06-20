@@ -19,14 +19,33 @@ export interface MinCostConfig {
 }
 
 /**
- * Cheapest item by price, ties broken by lowest unlock level so the
- * earliest-available wins when prices match.
+ * Some chassis are factory/AI-default parts, not player-buyable shop options —
+ * e.g. the ATS Kenworth W900 "medium II 6x4" and the Peterbilt 389 "mid"/"mid2".
+ * SCS hides these from the customization UI with an astronomical `unlock`
+ * sentinel (observed 13,000,000 / 130,000,000) and `price: 0`. Real parts unlock
+ * at driver levels (0–30 across the current ETS2+ATS data; the Truck Simulator
+ * Wiki's W900 chassis list has no separate buyable "medium II"). A part at or
+ * above this floor can't be bought, so it must not win a cheapest-config nor
+ * show in the component listings. (#298 — validated against the def files, the
+ * Truck Simulator Wiki, and the SCS modding docs for accessory_chassis_data.)
+ */
+export const UNBUYABLE_UNLOCK_FLOOR = 1_000_000;
+
+/** False for hidden factory/AI-default variants players can't buy (see UNBUYABLE_UNLOCK_FLOOR). */
+export function isSelectable(c: { unlock: number }): boolean {
+  return c.unlock < UNBUYABLE_UNLOCK_FLOOR;
+}
+
+/**
+ * Cheapest selectable item by price, ties broken by lowest unlock level so the
+ * earliest-available wins when prices match. Disabled sentinels are excluded.
  */
 export function cheapest<T extends { price: number; unlock: number }>(items: T[]): T | null {
-  if (items.length === 0) return null;
-  let best = items[0];
-  for (let i = 1; i < items.length; i++) {
-    const c = items[i];
+  const selectable = items.filter(isSelectable);
+  if (selectable.length === 0) return null;
+  let best = selectable[0];
+  for (let i = 1; i < selectable.length; i++) {
+    const c = selectable[i];
     if (c.price < best.price || (c.price === best.price && c.unlock < best.unlock)) {
       best = c;
     }
@@ -40,10 +59,11 @@ export function cheapest<T extends { price: number; unlock: number }>(items: T[]
  */
 export function cheapestCabinChassis(truck: Truck): { cabin: Cabin; chassis: Chassis } | null {
   let best: { cabin: Cabin; chassis: Chassis; total: number } | null = null;
-  for (const cabin of truck.cabins ?? []) {
-    const fits = cabin.suitable_for.length === 0
+  for (const cabin of (truck.cabins ?? []).filter(isSelectable)) {
+    const compatible = cabin.suitable_for.length === 0
       ? truck.chassis
       : truck.chassis.filter((c) => cabin.suitable_for.includes(c.id));
+    const fits = compatible.filter(isSelectable);
     for (const chassis of fits) {
       const total = cabin.price + chassis.price;
       if (!best || total < best.total) best = { cabin, chassis, total };

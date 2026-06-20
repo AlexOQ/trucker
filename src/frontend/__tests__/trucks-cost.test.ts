@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import {
-  cheapest, cheapestCabinChassis, computeMinCost,
+  cheapest, cheapestCabinChassis, computeMinCost, isSelectable, UNBUYABLE_UNLOCK_FLOOR,
   brandLabel, modelLabel, displayName,
 } from '../trucks-cost';
 import type { GameDefs } from '../types';
@@ -29,6 +31,25 @@ describe('cheapest', () => {
     const items = [{ price: 10, unlock: 5 }, { price: 10, unlock: 2 }, { price: 10, unlock: 8 }];
     expect(cheapest(items)?.unlock).toBe(2);
   });
+
+  it('excludes hidden factory/AI variants with a sentinel unlock (#298)', () => {
+    // The $0 part would win on price if not filtered; it's a hidden, unbuyable chassis.
+    const items = [{ price: 0, unlock: 13_000_000 }, { price: 30, unlock: 0 }];
+    expect(cheapest(items)?.price).toBe(30);
+  });
+
+  it('returns null when every item is an unbuyable sentinel (#298)', () => {
+    expect(cheapest([{ price: 0, unlock: 13_000_000 }])).toBeNull();
+  });
+});
+
+describe('isSelectable', () => {
+  it('accepts real driver-level unlocks, rejects sentinel floors (#298)', () => {
+    expect(isSelectable({ unlock: 0 })).toBe(true);
+    expect(isSelectable({ unlock: 30 })).toBe(true);
+    expect(isSelectable({ unlock: UNBUYABLE_UNLOCK_FLOOR })).toBe(false);
+    expect(isSelectable({ unlock: 13_000_000 })).toBe(false);
+  });
 });
 
 describe('cheapestCabinChassis', () => {
@@ -56,6 +77,19 @@ describe('cheapestCabinChassis', () => {
       ],
     });
     expect(cheapestCabinChassis(truck)?.chassis.id).toBe('b');
+  });
+
+  it('skips a hidden factory chassis (sentinel unlock), picking the buyable one (#298)', () => {
+    // Mirrors the real ATS W900/389: a $0 chassis hidden via a sentinel unlock
+    // sits alongside the real buyable chassis. Price-first would grab the $0 one.
+    const truck = mkTruck({
+      cabins: [{ id: 'cab', name: '', price: 10, unlock: 0, suitable_for: [] }],
+      chassis: [
+        { id: 'hidden', name: '', axle_config: '6x4', tank_size: 0, price: 0, unlock: 13_000_000 },
+        { id: 'real', name: '', axle_config: '6x4', tank_size: 0, price: 19100, unlock: 0 },
+      ],
+    });
+    expect(cheapestCabinChassis(truck)?.chassis.id).toBe('real');
   });
 
   it('respects suitable_for[] and finds globally cheapest valid pair, not greedy per-cabin', () => {
@@ -152,4 +186,38 @@ describe('computeMinCost', () => {
     expect(r.paint).toBeNull();
     expect(r.total).toBe(15000 + 25000 + 5000 + 4000);
   });
+
+  it('ignores a hidden factory chassis — no impossible levelFloor (#298)', () => {
+    const truck = mkTruck({
+      ...baseTruck,
+      cabins: [{ id: 'cab', name: '', price: 15000, unlock: 0, suitable_for: [] }],
+      chassis: [
+        { id: 'hidden', name: '', axle_config: '6x4', tank_size: 0, price: 0, unlock: 13_000_000 },
+        { id: 'real', name: '', axle_config: '4x2', tank_size: 0, price: 25000, unlock: 0 },
+      ],
+    });
+    const r = computeMinCost(truck)!;
+    expect(r.chassis.id).toBe('real');
+    expect(r.levelFloor).toBeLessThan(UNBUYABLE_UNLOCK_FLOOR);
+  });
+});
+
+// #298: the bundled data must not surface unbuyable builds. A truck whose
+// cheapest config requires a sentinel-unlock (hidden factory/AI) part would show
+// an impossible "min cost … unlock 13,000,000" row. This guards both games'
+// committed game-defs.json against that regression.
+describe('committed data has no unbuyable cheapest config (#298)', () => {
+  for (const game of ['ats', 'ets2'] as const) {
+    it(`${game}: every rendered truck's cheapest config is actually buyable`, () => {
+      const data = JSON.parse(
+        readFileSync(join(process.cwd(), 'public', 'data', game, 'game-defs.json'), 'utf-8'),
+      ) as { trucks: Truck[] };
+      expect(data.trucks.length).toBeGreaterThan(0);
+      for (const truck of data.trucks) {
+        const config = computeMinCost(truck);
+        if (!config) continue; // no buyable config → truck doesn't render; fine
+        expect(config.levelFloor, `${truck.id} levelFloor`).toBeLessThan(UNBUYABLE_UNLOCK_FLOOR);
+      }
+    });
+  }
 });
