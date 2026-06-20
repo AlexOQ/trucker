@@ -54,6 +54,8 @@ export interface Trailer {
   body_mass: number;
   gross_weight_limit: number;
   length: number;
+  /** Total axle count across all units of the chain (e.g. an HCT road-train of 3+2+4 = 9). From the trailer def `axles` field; absent for observations-only trailers. */
+  axles?: number;
   chain_type: string;
   country_validity?: string[];
   ownable: boolean;
@@ -93,6 +95,7 @@ export interface GameDefs {
     body_mass: number;
     gross_weight_limit: number;
     length: number;
+    axles?: number;
     chain_type: string;
     country_validity?: string[];
     ownable: boolean;

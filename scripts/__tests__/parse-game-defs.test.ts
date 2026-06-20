@@ -239,6 +239,21 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
       }
     });
 
+    // #250: axles is parsed from the trailer def and (for ATS, which can't be
+    // reparsed locally) backfilled by scripts/backfill-trailer-axles.cjs. Every
+    // trailer in the bundled data must carry a positive integer count — this
+    // guards against the field being dropped on a future reparse/regen.
+    it('every trailer has a positive integer axle count (#250)', () => {
+      const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
+      const entries = Object.entries(data.trailers as Record<string, { axles?: unknown }>);
+      expect(entries.length).toBeGreaterThan(0);
+      for (const [id, t] of entries) {
+        expect(typeof t.axles, `${id} axles`).toBe('number');
+        expect(Number.isInteger(t.axles as number), `${id} axles integer`).toBe(true);
+        expect(t.axles as number, `${id} axles >= 1`).toBeGreaterThanOrEqual(1);
+      }
+    });
+
     // #267: company names come from the def `name` field, not formatCompanyName(id).
     // ets2-only: the bundled ATS game-defs are donated (no full ATS def dump here),
     // so ATS company names stay title-cased until an ATS reparse with the fixed
