@@ -261,21 +261,21 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
       }
     });
 
-    // #267: company names come from the def `name` field, not formatCompanyName(id).
-    // ets2-only: the bundled ATS game-defs are donated (no full ATS def dump here),
-    // so ATS company names stay title-cased until an ATS reparse with the fixed
-    // parser. Only a minority of ets2 companies lack a def name file and fall back
-    // to the id, so the localized majority guards against a parser-walk regression
-    // silently reverting every name to titlecase(id).
-    if (game === 'ets2') {
-      it('most company names are def strings, not mechanical title-case of the id (#267)', () => {
-        const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
-        const companies = Object.entries(data.companies as Record<string, { name: string }>);
-        expect(companies.length).toBeGreaterThan(0);
-        const localized = companies.filter(([id, c]) => c.name !== formatCompanyName(id));
-        expect(localized.length).toBeGreaterThan(companies.length * 0.5);
-      });
+    // Company names come from the def `name` field, not formatCompanyName(id).
+    // ETS2 localized on reparse (#267); ATS via the targeted backfill (#289,
+    // scripts/backfill-company-names.cjs) since ATS can't be reparsed locally.
+    // Both: only a minority of companies lack a def name file and fall back to the
+    // id, so the localized majority guards against a regression silently reverting
+    // every name to titlecase(id).
+    it('most company names are def strings, not mechanical title-case of the id (#267, #289)', () => {
+      const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
+      const companies = Object.entries(data.companies as Record<string, { name: string }>);
+      expect(companies.length).toBeGreaterThan(0);
+      const localized = companies.filter(([id, c]) => c.name !== formatCompanyName(id));
+      expect(localized.length).toBeGreaterThan(companies.length * 0.5);
+    });
 
+    if (game === 'ets2') {
       it('ttk_bg resolves to a real def name (non-ASCII), not the title-cased id (#267)', () => {
         const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
         const name = (data.companies.ttk_bg as { name: string }).name;
@@ -283,6 +283,16 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
         // (Cyrillic) and differs from formatCompanyName(id) ("Ttk Bg").
         expect(name).not.toBe(formatCompanyName('ttk_bg'));
         expect([...name].some((ch) => ch.charCodeAt(0) > 127)).toBe(true);
+      });
+    }
+
+    if (game === 'ats') {
+      it('a known company resolves to its def name, not the title-cased id (#289)', () => {
+        const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
+        // gss_air_svc → "Global Sky Services"; formatCompanyName would give "Gss Air Svc".
+        const name = (data.companies.gss_air_svc as { name: string }).name;
+        expect(name).not.toBe(formatCompanyName('gss_air_svc'));
+        expect(name).toBe('Global Sky Services');
       });
     }
   });
