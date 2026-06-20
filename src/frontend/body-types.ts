@@ -124,21 +124,6 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
     const best = pickBestTrailer(trailers, trailers[0], lookups);
     const bestHV = trailerTotalHV(best, lookups);
 
-    // Check doubles/b-doubles/HCT availability from country_validity
-    const doublesSet = new Set<string>();
-    const bdoublesSet = new Set<string>();
-    const hctSet = new Set<string>();
-    for (const t of trailers) {
-      if (!t.country_validity) continue;
-      if (t.id.includes('hct')) {
-        for (const c of t.country_validity) hctSet.add(c);
-      } else if (t.id.includes('bdouble')) {
-        for (const c of t.country_validity) { bdoublesSet.add(c); doublesSet.add(c); }
-      } else if (t.id.includes('double')) {
-        for (const c of t.country_validity) { doublesSet.add(c); }
-      }
-    }
-
     const displayName = bt.charAt(0).toUpperCase() + bt.slice(1).replace(/_/g, ' ');
 
     profiles.push({
@@ -151,12 +136,6 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
       bestTotalHV: bestHV,
       bestChainType: best.chain_type || 'single',
       bestCountries: best.country_validity ?? [],
-      hasDoubles: doublesSet.size > 0,
-      hasBDoubles: bdoublesSet.size > 0,
-      hasHCT: hctSet.size > 0,
-      doublesCountries: [...doublesSet].sort(),
-      bdoublesCountries: [...bdoublesSet].sort(),
-      hctCountries: [...hctSet].sort(),
       dominatedBy: null,
     });
   }
@@ -184,31 +163,10 @@ export function getBodyTypeProfiles(data: AllData, lookups: Lookups): BodyTypePr
       const src = profiles[absIdx];
 
       for (const c of src.cargoIds) survivor.cargoIds.add(c);
-      if (src.hasDoubles) {
-        survivor.hasDoubles = true;
-        for (const c of src.doublesCountries) {
-          if (!survivor.doublesCountries.includes(c)) survivor.doublesCountries.push(c);
-        }
-      }
-      if (src.hasBDoubles) {
-        survivor.hasBDoubles = true;
-        for (const c of src.bdoublesCountries) {
-          if (!survivor.bdoublesCountries.includes(c)) survivor.bdoublesCountries.push(c);
-        }
-      }
-      if (src.hasHCT) {
-        survivor.hasHCT = true;
-        for (const c of src.hctCountries) {
-          if (!survivor.hctCountries.includes(c)) survivor.hctCountries.push(c);
-        }
-      }
       toRemoveIndices.push(absIdx);
     }
 
     survivor.cargoCount = survivor.cargoIds.size;
-    survivor.doublesCountries.sort();
-    survivor.bdoublesCountries.sort();
-    survivor.hctCountries.sort();
     survivor.displayName = survivor.displayName
       + ' (+' + absorbedBTs.map((bt) => bt.replace(/_/g, ' ')).join(', ') + ')';
 

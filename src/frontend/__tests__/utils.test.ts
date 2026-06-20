@@ -5,9 +5,9 @@ import {
   trailerTotalHV,
   formatTrailerSpec,
   escapeHtml,
-  tierFromChainType,
+  chainConfigLabel,
   CHAIN_LABELS,
-  TIER_BY_CHAIN_TYPE,
+  CHAIN_ORDER,
 } from '../utils';
 import type { Trailer, Lookups, Cargo } from '../types';
 
@@ -248,6 +248,7 @@ describe('formatTrailerSpec', () => {
       body_mass: 3000,
       gross_weight_limit: 40000,
       length: 13.6,
+      axles: 3,
       chain_type: 'single',
       ownable: true,
       ...overrides,
@@ -265,31 +266,36 @@ describe('formatTrailerSpec', () => {
     expect(spec).toContain('Krone');
   });
 
-  it('includes chain type label for doubles', () => {
+  it('uses the axles field, not an ID-derived per-unit breakdown', () => {
+    // A double_3_2 is a 3+2 = 5-axle rig; the spec shows the total integer.
     const spec = formatTrailerSpec(makeTrailer({
       id: 'scs.curtainside.double_3_2',
       chain_type: 'double',
+      axles: 5,
     }));
     expect(spec).toContain('Double');
-    expect(spec).toContain('3+2-axle');
+    expect(spec).toContain('5-axle');
+    expect(spec).not.toContain('3+2');
   });
 
-  it('includes HCT label', () => {
+  it('includes HCT label with total axle count', () => {
     const spec = formatTrailerSpec(makeTrailer({
       id: 'scs.curtainside.hct_3_2_3',
       chain_type: 'hct',
+      axles: 8,
     }));
     expect(spec).toContain('HCT');
-    expect(spec).toContain('3+2+3-axle');
+    expect(spec).toContain('8-axle');
   });
 
   it('includes B-double label', () => {
     const spec = formatTrailerSpec(makeTrailer({
       id: 'scs.curtainside.bdouble_2_2',
       chain_type: 'b_double',
+      axles: 4,
     }));
     expect(spec).toContain('B-double');
-    expect(spec).toContain('2+2-axle');
+    expect(spec).toContain('4-axle');
   });
 
   it('labels ATS bdouble (no underscore) chain type', () => {
@@ -324,6 +330,11 @@ describe('formatTrailerSpec', () => {
     expect(spec).toContain('Triple');
   });
 
+  it('omits the axle token when axles is absent (observations-only trailer)', () => {
+    const spec = formatTrailerSpec(makeTrailer({ axles: undefined }));
+    expect(spec).toBe('Scs 40t 13.6m');
+  });
+
   it('formats weight in tonnes', () => {
     const spec = formatTrailerSpec(makeTrailer({ gross_weight_limit: 60000 }));
     expect(spec).toContain('60t');
@@ -335,32 +346,34 @@ describe('formatTrailerSpec', () => {
   });
 });
 
-describe('tierFromChainType', () => {
-  it('buckets ETS2 chain types', () => {
-    expect(tierFromChainType('single')).toBe('Standard');
-    expect(tierFromChainType('double')).toBe('Double');
-    expect(tierFromChainType('b_double')).toBe('Double');
-    expect(tierFromChainType('hct')).toBe('HCT');
+describe('chainConfigLabel', () => {
+  it('labels singles as "Single"', () => {
+    expect(chainConfigLabel('single')).toBe('Single');
+    expect(chainConfigLabel(undefined)).toBe('Single');
+    expect(chainConfigLabel('')).toBe('Single');
   });
 
-  it('buckets ATS chain types', () => {
-    expect(tierFromChainType('bdouble')).toBe('Double');
-    expect(tierFromChainType('tpdouble')).toBe('Double');
-    expect(tierFromChainType('rmdouble')).toBe('Double');
-    expect(tierFromChainType('triple')).toBe('HCT');
+  it('labels multi-unit configurations via CHAIN_LABELS', () => {
+    expect(chainConfigLabel('double')).toBe('Double');
+    expect(chainConfigLabel('b_double')).toBe('B-double');
+    expect(chainConfigLabel('bdouble')).toBe('B-double');
+    expect(chainConfigLabel('hct')).toBe('HCT');
+    expect(chainConfigLabel('triple')).toBe('Triple');
+    expect(chainConfigLabel('tpdouble')).toBe('Turnpike-double');
+    expect(chainConfigLabel('rmdouble')).toBe('RM-double');
   });
 
-  it('treats unknown / undefined chain types as Standard', () => {
-    expect(tierFromChainType(undefined)).toBe('Standard');
-    expect(tierFromChainType('')).toBe('Standard');
-    expect(tierFromChainType('mystery')).toBe('Standard');
+  it('falls back to the raw chain_type for an unknown configuration', () => {
+    expect(chainConfigLabel('mystery')).toBe('mystery');
   });
 
-  it('CHAIN_LABELS and TIER_BY_CHAIN_TYPE cover the same chain types', () => {
-    // Drift guard: a new ATS/ETS2 chain type added to one map but not the other
-    // would silently produce a label without a tier (or vice versa). This test
-    // fails on any divergence so the second map gets updated alongside.
-    expect(Object.keys(CHAIN_LABELS).sort()).toEqual(Object.keys(TIER_BY_CHAIN_TYPE).sort());
+  it('CHAIN_ORDER covers every CHAIN_LABELS key plus single', () => {
+    // Drift guard: a chain_type with a label but no ordering entry would sort to
+    // the end of the configuration list silently. This fails on any such gap.
+    for (const ct of Object.keys(CHAIN_LABELS)) {
+      expect(CHAIN_ORDER, `${ct} missing from CHAIN_ORDER`).toContain(ct);
+    }
+    expect(CHAIN_ORDER).toContain('single');
   });
 });
 

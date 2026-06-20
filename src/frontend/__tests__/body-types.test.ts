@@ -104,19 +104,6 @@ describe('getBodyTypeProfiles', () => {
     expect(silo!.cargoCount).toBe(1);
   });
 
-  it('detects doubles availability from trailer IDs', () => {
-    const data = createBodyTypeTestData();
-    const lookups = buildLookups(data);
-    const profiles = getBodyTypeProfiles(data, lookups);
-
-    const curtainside = profiles.find((p) => p.bodyType === 'curtainside');
-    expect(curtainside!.hasDoubles).toBe(true);
-    expect(curtainside!.doublesCountries.length).toBeGreaterThan(0);
-
-    const flatbed = profiles.find((p) => p.bodyType === 'flatbed');
-    expect(flatbed!.hasDoubles).toBe(false);
-  });
-
   it('populates bestTrailerId and bestTotalHV', () => {
     const data = createBodyTypeTestData();
     const lookups = buildLookups(data);

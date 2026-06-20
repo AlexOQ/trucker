@@ -281,12 +281,6 @@ export interface BodyTypeProfile {
   bestTotalHV: number;       // sum of haulValue across all cargo for the best trailer
   bestChainType: string;     // chain_type of the best trailer
   bestCountries: string[];   // country_validity of the best trailer (empty = all)
-  hasDoubles: boolean;
-  hasBDoubles: boolean;
-  hasHCT: boolean;
-  doublesCountries: string[];
-  bdoublesCountries: string[];
-  hctCountries: string[];
   dominatedBy: string | null; // if non-null, this body type's cargo is a subset of the named body type
 }
 

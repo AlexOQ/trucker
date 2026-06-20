@@ -1,8 +1,8 @@
 /**
  * Trailers page module for ETS2 Trucker Advisor
- * Level 1: Body types with best standard trailer
- * Level 2: All tiers (Standard/Double/HCT) for a body type
- * Level 3: All trailer variants within a tier, sorted by totalHV
+ * Level 1: Body types with best trailer (single configuration)
+ * Level 2: All chain configurations (Single/Double/B-double/HCT/Triple/…) for a body type
+ * Level 3: All trailer variants within a configuration, best per region zone
  */
 
 import { initPageData, initGameSelector } from './page-init';
@@ -11,7 +11,7 @@ import {
   pickBestTrailer, trailerTotalHV, formatTrailerSpec,
   type AllData, type Lookups, type Cargo, type Trailer,
 } from './data';
-import { escapeHtml, tierFromChainType } from './utils';
+import { escapeHtml, chainConfigLabel, CHAIN_ORDER } from './utils';
 import { COUNTRY_DISPLAY_NAMES } from './display-names';
 import { getRegionTerms } from './game';
 
@@ -21,22 +21,24 @@ let lookups: Lookups | null = null;
 interface BodyTypeSummary {
   bodyType: string;
   displayName: string;
-  bestStandard: Trailer;
-  bestStandardSpec: string;
-  standardHV: number;
+  best: Trailer;          // best trailer of the headline (single) configuration
+  bestSpec: string;
+  bestHV: number;
   cargoCount: number;
   cargoIds: Set<string>;
-  tiers: TierSummary[];
+  configs: ChainConfigSummary[];
   dominatedBy: string | null;  // body type that covers all our cargo + more
 }
 
-interface TierSummary {
-  tier: string;
+interface ChainConfigSummary {
+  chainType: string;      // raw chain_type, e.g. 'single' | 'double' | 'b_double' | 'hct' | 'triple'
+  label: string;          // configurator-style label, e.g. 'Single', 'B-double', 'HCT'
   best: Trailer;
   bestSpec: string;
   totalHV: number;
   variants: Trailer[];
   countries: string;
+  axleRange: string;      // axle counts available in this config, e.g. '3' or '8–10'
 }
 
 let bodyTypes: BodyTypeSummary[] = [];
@@ -46,6 +48,14 @@ const trailerDetail = document.getElementById('trailer-detail') as HTMLElement;
 const detailContent = document.getElementById('detail-content') as HTMLElement;
 const searchInput = document.getElementById('search') as HTMLInputElement;
 const backLink = document.getElementById('back-link') as HTMLElement;
+
+// URL hash chain-config vocabulary. 'standard' is a legacy alias from the
+// retired 3-tier scheme (#250) — old links land on the single configuration.
+const CHAIN_SUFFIXES = new Set(CHAIN_ORDER);
+function resolveChainSuffix(suffix: string): string | null {
+  if (suffix === 'standard') return 'single';
+  return CHAIN_SUFFIXES.has(suffix) ? suffix : null;
+}
 
 interface CargoWithUnits extends Cargo {
   units: number;
@@ -68,7 +78,7 @@ function getCargo(cargoIds: Set<string>, trailerId: string): CargoWithUnits[] {
     .sort((a, b) => b.haulValue - a.haulValue);
 }
 
-function tierCountries(trailers: Trailer[]): string {
+function configCountries(trailers: Trailer[]): string {
   const countrySet = new Set<string>();
   let allCountries = false;
   for (const t of trailers) {
@@ -79,6 +89,17 @@ function tierCountries(trailers: Trailer[]): string {
     }
   }
   return allCountries ? 'All' : [...countrySet].sort().map(c => COUNTRY_DISPLAY_NAMES[c] ?? c).join(', ');
+}
+
+/** Axle-count range across a configuration's variants, e.g. '3' or '8–10'. */
+function axleRange(variants: Trailer[]): string {
+  const axles = variants
+    .map((v) => v.axles)
+    .filter((a): a is number => typeof a === 'number');
+  if (axles.length === 0) return '';
+  const min = Math.min(...axles);
+  const max = Math.max(...axles);
+  return min === max ? `${min}` : `${min}–${max}`;
 }
 
 function buildBodyTypes(): BodyTypeSummary[] {
@@ -103,44 +124,55 @@ function buildBodyTypes(): BodyTypeSummary[] {
     }
     if (cargoIds.size === 0) continue;
 
-    // Group by tier
-    const tierMap = new Map<string, Trailer[]>();
+    // Group by chain configuration
+    const configMap = new Map<string, Trailer[]>();
     for (const t of trailers) {
-      const tier = tierFromChainType(t.chain_type);
-      if (!tierMap.has(tier)) tierMap.set(tier, []);
-      tierMap.get(tier)!.push(t);
+      const ct = t.chain_type || 'single';
+      if (!configMap.has(ct)) configMap.set(ct, []);
+      configMap.get(ct)!.push(t);
     }
 
-    const tierOrder = ['Standard', 'Double', 'HCT'];
-    const tiers: TierSummary[] = tierOrder
-      .filter((tier) => tierMap.has(tier))
-      .map((tier) => {
-        const variants = tierMap.get(tier)!;
-        const best = pickBestTrailer(variants, variants[0], lookups!);
-        // Sort all variants by totalHV desc for the variant list
-        variants.sort((a, b) => trailerTotalHV(b, lookups!) - trailerTotalHV(a, lookups!));
-        return {
-          tier,
-          best,
-          bestSpec: formatTrailerSpec(best),
-          totalHV: trailerTotalHV(best, lookups!),
-          variants,
-          countries: tierCountries(variants),
-        };
-      });
+    // Order configs lightest → heaviest; any chain_type not in CHAIN_ORDER trails alphabetically.
+    const orderedChainTypes = [...configMap.keys()].sort((a, b) => {
+      const ia = CHAIN_ORDER.indexOf(a);
+      const ib = CHAIN_ORDER.indexOf(b);
+      if (ia !== ib) return (ia < 0 ? Infinity : ia) - (ib < 0 ? Infinity : ib);
+      return a.localeCompare(b);
+    });
 
-    // Best standard trailer (or best overall if no standard tier)
-    const stdTier = tiers.find((t) => t.tier === 'Standard') ?? tiers[0];
+    const configs: ChainConfigSummary[] = orderedChainTypes.map((ct) => {
+      const variants = configMap.get(ct)!;
+      const best = pickBestTrailer(variants, variants[0], lookups!);
+      // Sort variants by axles, then volume (game-vocabulary ordering)
+      variants.sort((a, b) =>
+        (a.axles ?? 0) - (b.axles ?? 0)
+        || a.volume - b.volume
+      );
+      return {
+        chainType: ct,
+        label: chainConfigLabel(ct),
+        best,
+        bestSpec: formatTrailerSpec(best),
+        totalHV: trailerTotalHV(best, lookups!),
+        variants,
+        countries: configCountries(variants),
+        axleRange: axleRange(variants),
+      };
+    });
+
+    // Headline trailer: the single configuration (the baseline every region has),
+    // or the lightest available configuration if a body type has no singles.
+    const headline = configs.find((c) => c.chainType === 'single') ?? configs[0];
 
     result.push({
       bodyType: bt,
       displayName: bt.charAt(0).toUpperCase() + bt.slice(1).replace(/_/g, ' '),
-      bestStandard: stdTier.best,
-      bestStandardSpec: stdTier.bestSpec,
-      standardHV: stdTier.totalHV,
+      best: headline.best,
+      bestSpec: headline.bestSpec,
+      bestHV: headline.totalHV,
       cargoCount: cargoIds.size,
       cargoIds,
-      tiers,
+      configs,
       dominatedBy: null,
     });
   }
@@ -161,7 +193,7 @@ function buildBodyTypes(): BodyTypeSummary[] {
     if (bestDominator) a.dominatedBy = bestDominator.displayName;
   }
 
-  result.sort((a, b) => b.standardHV - a.standardHV);
+  result.sort((a, b) => b.bestHV - a.bestHV);
   return result;
 }
 
@@ -174,7 +206,7 @@ function renderList(filter = ''): void {
   const filtered = bodyTypes.filter(
     (bt) => !bt.dominatedBy
       && (normalize(bt.displayName).includes(filterNorm)
-        || normalize(bt.bestStandardSpec).includes(filterNorm))
+        || normalize(bt.bestSpec).includes(filterNorm))
   );
 
   const totalCargo = data.cargo.filter((c) => !c.excluded).length;
@@ -190,27 +222,27 @@ function renderList(filter = ''): void {
   content.innerHTML = `
     <div class="table-section">
       <h2>Body Types (${filtered.length} types, ${totalCargo} cargo in game)</h2>
-      <p class="table-hint">Best standard trailer per body type by total haul value. Click for tiers and variants.</p>
+      <p class="table-hint">Best single-trailer per body type by total haul value. Click for configurations and variants.</p>
       <table>
         <thead>
           <tr>
             <th>Body Type</th>
-            <th>Best Standard Trailer</th>
+            <th>Best Trailer</th>
             <th class="tooltip" data-tooltip="Sum of haul value across all compatible cargo">Total HV</th>
             <th class="tooltip" data-tooltip="Number of cargo types this body type can haul">Cargo</th>
-            <th class="tooltip" data-tooltip="Available tiers: Standard, Double, HCT">Tiers</th>
+            <th class="tooltip" data-tooltip="Chain configurations available for this body type">Configurations</th>
           </tr>
         </thead>
         <tbody>
           ${filtered.map((bt) => {
-            const tierLabels = bt.tiers.map((t) => t.tier).join(', ');
+            const configLabels = bt.configs.map((c) => c.label).join(', ');
             return `
               <tr class="clickable" data-body-type="${bt.bodyType}" tabindex="0">
                 <td><strong>${bt.displayName}</strong></td>
-                <td class="trailer-spec">${bt.bestStandardSpec}</td>
-                <td class="amount">${bt.standardHV.toFixed(0)}</td>
+                <td class="trailer-spec">${bt.bestSpec}</td>
+                <td class="amount">${bt.bestHV.toFixed(0)}</td>
                 <td class="amount">${bt.cargoCount}</td>
-                <td>${tierLabels}</td>
+                <td>${configLabels}</td>
               </tr>
             `;
           }).join('')}
@@ -231,7 +263,7 @@ function renderList(filter = ''): void {
   });
 }
 
-/* ── Level 2: Body type detail (all tiers) ── */
+/* ── Level 2: Body type detail (all chain configurations) ── */
 
 function showBodyType(bodyType: string): void {
   if (!lookups || !data) return;
@@ -246,32 +278,33 @@ function showBodyType(bodyType: string): void {
   detailContent.innerHTML = `
     <div class="detail-header">
       <h2>${bt.displayName}</h2>
-      <div class="subtitle">${bt.cargoCount} cargo types · Best standard: ${bt.bestStandardSpec}</div>
+      <div class="subtitle">${bt.cargoCount} cargo types · Best: ${bt.bestSpec}</div>
     </div>
 
     <div class="stats">
       <div class="stat">
-        <div class="stat-value">${bt.standardHV.toFixed(0)}</div>
-        <div class="stat-label">Standard HV</div>
+        <div class="stat-value">${bt.bestHV.toFixed(0)}</div>
+        <div class="stat-label">Best HV</div>
       </div>
       <div class="stat">
         <div class="stat-value">${bt.cargoCount}</div>
         <div class="stat-label">Cargo Types</div>
       </div>
       <div class="stat">
-        <div class="stat-value">${bt.tiers.length}</div>
-        <div class="stat-label">Tiers</div>
+        <div class="stat-value">${bt.configs.length}</div>
+        <div class="stat-label">Configurations</div>
       </div>
     </div>
 
     <div class="table-section">
-      <h2>Available Tiers</h2>
-      <p class="table-hint">Best trailer per tier. Click to see all variants.</p>
+      <h2>Chain Configurations</h2>
+      <p class="table-hint">Best trailer per configuration. Click to see all variants.</p>
       <table>
         <thead>
           <tr>
-            <th>Tier</th>
+            <th>Configuration</th>
             <th>Best Trailer</th>
+            <th class="tooltip" data-tooltip="Total axle count across all units (range over this configuration's variants)">Axles</th>
             <th class="tooltip" data-tooltip="Sum of haul value across all compatible cargo">Total HV</th>
             <th>Volume</th>
             <th>Length</th>
@@ -281,16 +314,17 @@ function showBodyType(bodyType: string): void {
           </tr>
         </thead>
         <tbody>
-          ${bt.tiers.map((t) => `
-            <tr class="clickable" data-tier="${t.tier}" tabindex="0">
-              <td><strong>${t.tier}</strong></td>
-              <td class="trailer-spec">${t.bestSpec}</td>
-              <td class="amount">${t.totalHV.toFixed(0)}</td>
-              <td class="amount">${t.best.volume}</td>
-              <td class="amount">${t.best.length}</td>
-              <td class="amount">${Math.round(t.best.gross_weight_limit / 1000)}t</td>
-              <td class="amount">${t.variants.length}</td>
-              <td>${t.countries}</td>
+          ${bt.configs.map((c) => `
+            <tr class="clickable" data-chain-type="${c.chainType}" tabindex="0">
+              <td><strong>${c.label}</strong></td>
+              <td class="trailer-spec">${c.bestSpec}</td>
+              <td class="amount">${c.axleRange}</td>
+              <td class="amount">${c.totalHV.toFixed(0)}</td>
+              <td class="amount">${c.best.volume}</td>
+              <td class="amount">${c.best.length}</td>
+              <td class="amount">${Math.round(c.best.gross_weight_limit / 1000)}t</td>
+              <td class="amount">${c.variants.length}</td>
+              <td>${c.countries}</td>
             </tr>
           `).join('')}
         </tbody>
@@ -299,13 +333,13 @@ function showBodyType(bodyType: string): void {
 
     <div class="table-section">
       <h2>Compatible Cargo (${bt.cargoCount})</h2>
-      <p class="table-hint">Units and values for best standard trailer: ${bt.bestStandardSpec}.</p>
-      ${renderCargoTable(bt.cargoIds, bt.bestStandard.id)}
+      <p class="table-hint">Units and values for best trailer: ${bt.bestSpec}.</p>
+      ${renderCargoTable(bt.cargoIds, bt.best.id)}
     </div>
   `;
 
   detailContent.querySelectorAll('tr.clickable').forEach((row) => {
-    const handler = () => showTierVariants(bodyType, (row as HTMLElement).dataset.tier!);
+    const handler = () => showConfigVariants(bodyType, (row as HTMLElement).dataset.chainType!);
     row.addEventListener('click', handler);
     row.addEventListener('keydown', (e) => {
       if ((e as KeyboardEvent).key === 'Enter' || (e as KeyboardEvent).key === ' ') {
@@ -316,7 +350,7 @@ function showBodyType(bodyType: string): void {
   });
 }
 
-/* ── Level 3: Tier variants ── */
+/* ── Level 3: Configuration variants ── */
 
 interface ZoneRecommendation {
   zone: string;           // 'All' or comma-separated country list
@@ -330,7 +364,7 @@ interface ZoneRecommendation {
 }
 
 /**
- * Pick the single best trailer per country zone within a tier.
+ * Pick the single best trailer per country zone within a configuration.
  * Within equal totalHV, prefer SCS (base game) over DLC brands.
  * Within equal totalHV+brand, prefer shorter length.
  */
@@ -413,34 +447,39 @@ function bestPerZone(variants: Trailer[]): ZoneRecommendation[] {
   return filtered;
 }
 
-function showTierVariants(bodyType: string, tier: string): void {
+function showConfigVariants(bodyType: string, chainType: string): void {
   if (!lookups || !data) return;
 
   const bt = bodyTypes.find((b) => b.bodyType === bodyType);
   if (!bt) return;
-  const tierData = bt.tiers.find((t) => t.tier === tier);
-  if (!tierData) return;
+  const config = bt.configs.find((c) => c.chainType === chainType);
+  if (!config) {
+    // Stale/legacy link to a configuration this body type doesn't have — show the body type.
+    showBodyType(bodyType);
+    return;
+  }
 
-  const zones = bestPerZone(tierData.variants);
+  const zones = bestPerZone(config.variants);
 
   content.style.display = 'none';
   trailerDetail.style.display = 'block';
-  window.location.hash = `body-${bodyType}-${tier.toLowerCase()}`;
+  window.location.hash = `body-${bodyType}-${chainType}`;
 
   detailContent.innerHTML = `
     <div class="detail-header">
-      <h2>${bt.displayName} — ${tier}</h2>
-      <div class="subtitle">Best: ${tierData.bestSpec} · ${tierData.variants.length} total models</div>
+      <h2>${bt.displayName} — ${config.label}</h2>
+      <div class="subtitle">Best: ${config.bestSpec} · ${config.variants.length} total models</div>
     </div>
 
     <div class="table-section">
-      <h2>Best ${tier} Trailer by Region</h2>
+      <h2>Best ${config.label} Trailer by Region</h2>
       <p class="table-hint">Single best trailer per country zone. SCS (base game) fallback shown when best is DLC-only.</p>
       <table>
         <thead>
           <tr>
             <th>${getRegionTerms().plural}</th>
             <th>Best Trailer</th>
+            <th class="tooltip" data-tooltip="Total axle count across all units">Axles</th>
             <th class="tooltip" data-tooltip="Sum of haul value across all compatible cargo">Total HV</th>
             <th>Volume</th>
             <th>Length</th>
@@ -452,6 +491,7 @@ function showTierVariants(bodyType: string, tier: string): void {
             <tr>
               <td class="country">${z.zone}</td>
               <td class="trailer-spec">${z.bestSpec}${z.bestIsSCS ? '' : ' <span class="tag">DLC</span>'}</td>
+              <td class="amount">${z.best.axles ?? ''}</td>
               <td class="amount">${z.totalHV.toFixed(0)}</td>
               <td class="amount">${z.best.volume}</td>
               <td class="amount">${z.best.length}</td>
@@ -460,7 +500,8 @@ function showTierVariants(bodyType: string, tier: string): void {
             ${(!z.bestIsSCS && z.scsFallback) ? `
             <tr class="scs-fallback-row">
               <td class="country"></td>
-              <td class="trailer-spec">\u2514 Base game: ${z.scsSpec}</td>
+              <td class="trailer-spec">└ Base game: ${z.scsSpec}</td>
+              <td class="amount">${z.scsFallback.axles ?? ''}</td>
               <td class="amount">${z.scsHV.toFixed(0)}</td>
               <td class="amount">${z.scsFallback.volume}</td>
               <td class="amount">${z.scsFallback.length}</td>
@@ -474,8 +515,8 @@ function showTierVariants(bodyType: string, tier: string): void {
 
     <div class="table-section">
       <h2>Compatible Cargo (${bt.cargoCount})</h2>
-      <p class="table-hint">Units and values for best ${tier.toLowerCase()} trailer: ${tierData.bestSpec}.</p>
-      ${renderCargoTable(bt.cargoIds, tierData.best.id)}
+      <p class="table-hint">Units and values for best ${config.label.toLowerCase()} trailer: ${config.bestSpec}.</p>
+      ${renderCargoTable(bt.cargoIds, config.best.id)}
     </div>
   `;
 }
@@ -533,19 +574,19 @@ function handleHashChange(): void {
   }
 
   const rest = hash.replace('#body-', '');
-  // Check for tier suffix: #body-curtainside-hct, #body-curtainside-double, #body-curtainside-standard
-  const tierSuffixes: Record<string, string> = { standard: 'Standard', double: 'Double', hct: 'HCT' };
+  // Check for a chain-config suffix: #body-curtainside-hct, #body-box-b_double, …
+  // (legacy #body-curtainside-standard resolves to the single configuration).
   const lastDash = rest.lastIndexOf('-');
   if (lastDash > 0) {
-    const maybeTier = rest.substring(lastDash + 1);
-    if (tierSuffixes[maybeTier]) {
+    const chainType = resolveChainSuffix(rest.substring(lastDash + 1));
+    if (chainType) {
       const bodyType = rest.substring(0, lastDash);
-      showTierVariants(bodyType, tierSuffixes[maybeTier]);
+      showConfigVariants(bodyType, chainType);
       return;
     }
   }
 
-  // No tier suffix — show body type detail
+  // No config suffix — show body type detail
   showBodyType(rest);
 }
 
@@ -567,14 +608,13 @@ async function init(): Promise<void> {
 
     backLink.addEventListener('click', (e) => {
       e.preventDefault();
-      // If on variant view, go back to body type; otherwise go to list
+      // If on a configuration view, go back to body type; otherwise go to list
       const hash = window.location.hash;
       if (hash.startsWith('#body-')) {
         const rest = hash.replace('#body-', '');
         const lastDash = rest.lastIndexOf('-');
-        const tierSuffixes = ['standard', 'double', 'hct'];
-        if (lastDash > 0 && tierSuffixes.includes(rest.substring(lastDash + 1))) {
-          // On tier variant view → go back to body type
+        if (lastDash > 0 && resolveChainSuffix(rest.substring(lastDash + 1))) {
+          // On configuration view → go back to body type
           const bodyType = rest.substring(0, lastDash);
           window.location.hash = `body-${bodyType}`;
           return;
