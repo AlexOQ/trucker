@@ -243,6 +243,13 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
     // reparsed locally) backfilled by scripts/backfill-trailer-axles.cjs. Every
     // trailer in the bundled data must carry a positive integer count — this
     // guards against the field being dropped on a future reparse/regen.
+    //
+    // The floor is >= 1 (the physical invariant: a trailer has at least one
+    // axle), deliberately stricter than the parser, which coerces a missing
+    // `axles:` prop to 0 (parse-game-defs.ts, same house-style 0-default as its
+    // sibling numeric fields). That 0 is a missing-data sentinel: if a future
+    // def ships without an axle count, the regen lands a 0 here and this test is
+    // meant to FAIL — a loud data-gap alarm, not a contradiction.
     it('every trailer has a positive integer axle count (#250)', () => {
       const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
       const entries = Object.entries(data.trailers as Record<string, { axles?: unknown }>);

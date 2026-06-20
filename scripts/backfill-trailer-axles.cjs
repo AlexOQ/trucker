@@ -18,8 +18,10 @@
  * Source of truth: analysis/def-1.60/<game>/def/vehicle/trailer_defs/*.sii
  * Output: public/data/<game>/game-defs.json (axles inserted after `length`).
  *
- * Idempotent. Errors out without writing if any trailer lacks a def axle value,
- * so a partial dump can never silently produce zero-axle trailers.
+ * Idempotent and all-or-nothing: if ANY trailer in EITHER game lacks a def axle
+ * value, no file is written at all (both games are computed before either is
+ * flushed), so a partial dump can never silently produce zero-axle trailers or
+ * leave the two games in inconsistent states.
  *
  * Usage: node scripts/backfill-trailer-axles.cjs [defBase]
  *   defBase defaults to analysis/def-1.60
@@ -59,6 +61,7 @@ function withAxles(trailer, axles) {
 }
 
 let failed = false;
+const pending = []; // staged writes; flushed only if every game is complete (atomic)
 for (const game of ['ets2', 'ats']) {
   const jsonPath = path.join(repoRoot, 'public', 'data', game, 'game-defs.json');
   const raw = fs.readFileSync(jsonPath, 'utf8');
@@ -79,15 +82,23 @@ for (const game of ['ets2', 'ats']) {
   }
 
   if (missing.length > 0) {
-    console.error(`[${game}] ${missing.length} trailer(s) have no def axle value — NOT writing:`);
+    console.error(`[${game}] ${missing.length} trailer(s) have no def axle value:`);
     for (const id of missing) console.error(`  - ${id}`);
     failed = true;
     continue;
   }
 
   data.trailers = trailers;
-  fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2) + trailingNewline);
-  console.log(`[${game}] backfilled axles on ${Object.keys(trailers).length} trailers → ${path.relative(repoRoot, jsonPath)}`);
+  // Stage the write; don't flush until BOTH games are known-good (atomic).
+  pending.push({ game, jsonPath, body: JSON.stringify(data, null, 2) + trailingNewline, count: Object.keys(trailers).length });
 }
 
-if (failed) process.exit(1);
+if (failed) {
+  console.error('Aborting — no file written (backfill is all-or-nothing across both games).');
+  process.exit(1);
+}
+
+for (const { game, jsonPath, body, count } of pending) {
+  fs.writeFileSync(jsonPath, body);
+  console.log(`[${game}] backfilled axles on ${count} trailers → ${path.relative(repoRoot, jsonPath)}`);
+}
