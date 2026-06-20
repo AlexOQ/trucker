@@ -13,10 +13,16 @@
  *     surgical patch sets only the `name` field, the same targeted approach used
  *     for trailer axles (#250) and the original ETS2 company-name pass (#267).
  *
- * Mirrors buildCompanyNameMap()'s rules exactly: a `company.permanent.<id>` unit
- * with a literal `name` (trimmed, skipping `@@token@@` localization refs). Only
- * companies present in BOTH the defs and game-defs.json are touched; the rest
- * keep their mechanical title-case (e.g. ATS airports with no base def).
+ * Applies buildCompanyNameMap()'s rules: a `company.permanent.<id>` unit with a
+ * literal `name` (trimmed, skipping `@@token@@` localization refs). Only companies
+ * present in BOTH the defs and game-defs.json are touched; the rest keep their
+ * mechanical title-case (e.g. ATS airports with no base def).
+ *
+ * NOTE: this is a lightweight text-regex extractor, not the parser's SCS
+ * tokenizer. It matches the current corpus exactly (one unit per file, no
+ * comments, no escaped quotes, plain ASCII names) but would diverge on
+ * pathological defs (escaped quotes, multiple units per file). On a real reparse
+ * buildCompanyNameMap() is canonical; this is only the no-reparse bridge.
  *
  * Idempotent and additive — only `name` values change; no company added/removed.
  * Preserves the file's original trailing-newline style.
