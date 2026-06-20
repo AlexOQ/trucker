@@ -28,7 +28,7 @@ Internal body suffixes in the trailer keys don't match what the in-game dealer s
 
 ### Why the parser alone is insufficient
 
-`extractTrailerPricing()` in `parse-game-defs.ts` walks the dealer-accessory entries in the game defs but cannot recover `chain_base` (a per-brand/chain constant) or the per-chassis `body_fee` scaling — both of which are only visible on the live in-game dealer screen. Without `mergeManualPrices()` applying the walked overrides, ~429 of 514 trailers price as 0 and 29 more underestimate by up to ~€55k; even with the overlay, 245 remain unpriced (DLC packs not yet walked + non-winner variants). The manual walk queue is load-bearing for any trailer that participates in a winner-tie group. (Counts as of the 1.60.1.0 data — re-check with `node scripts/all-ties.cjs ets2`.)
+`extractTrailerPricing()` in `parse-game-defs.ts` walks the dealer-accessory entries in the game defs but cannot recover `chain_base` (a per-brand/chain constant) or the per-chassis `body_fee` scaling — both of which are only visible on the live in-game dealer screen. Without `mergeManualPrices()` applying the walked overrides, ~429 of 514 trailers price as 0 and 29 more underestimate by up to ~€75k; even with the overlay, 245 remain unpriced (DLC packs not yet walked + non-winner variants). The manual walk queue is load-bearing for any trailer that participates in a winner-tie group. (Counts as of the 1.60.1.0 data — re-check with `node scripts/all-ties.cjs ets2`.)
 
 For each trailer key, record the **cheapest configured-trailer total** the dealer screen shows when every selectable section (chassis / body / paint / wheels / accessories) is set to its lowest-priced option. This becomes the entry's `price`.
 
