@@ -28,10 +28,10 @@ Questions to verify once extracted game definition files are received.
     - **Answer**: Yes. Parser matches trailers to cargo by checking `cargo.body_types.includes(trailer.body_type)`.
 11. [ANSWERED] What `country_validity[]` restrictions exist? Which trailers have them?
     - **Answer**: Parser extracts `country_validity` as string array. Typically restricts certain trailers (e.g., HCT) to specific countries.
-12. [OPEN] What are the `length` values for trailers that have them? Which trailers are "long" (doubles, HCTs)?
-    - Parser extracts `length` field. `body-types.ts` still identifies long configurations via ID keywords (`double`, `bdouble`, `hct`) for the `hasDoubles`/`hasHCT`/`hasBDoubles` flags — known gap, tracked in #250.
+12. [ANSWERED] What are the `length` values for trailers that have them? Which trailers are "long" (doubles, HCTs)?
+    - **Answer**: Parser extracts `length`. Multi-unit configurations (doubles, HCTs, triples) are identified first-class via the `chain_type` and `axles` fields (#250) — no ID-keyword heuristics.
 13. [ANSWERED] What is `chain_type` and what values does it take? How does it affect job generation?
-    - **Answer**: Parser extracts `chain_type` (defaults to `'single'`). **ETS2 values**: `single`, `double`, `b_double`, `hct`. **ATS values**: `single`, `double`, `bdouble`, `rmdouble`, `tpdouble`, `triple`. Used for trailer tier classification — `trailers.ts` uses `chain_type` directly via `tierFromChainType()`; `body-types.ts` still uses ID-keyword heuristics for `hasHCT`/`hasDoubles`/`hasBDoubles` (known gap, tracked in #250).
+    - **Answer**: Parser extracts `chain_type` (defaults to `'single'`). **ETS2 values**: `single`, `double`, `b_double`, `hct`. **ATS values**: `single`, `double`, `bdouble`, `rmdouble`, `tpdouble`, `triple`. The trailer browser groups by `chain_type` directly, labels each configuration via `chainConfigLabel()`/`CHAIN_LABELS` and orders them via `CHAIN_ORDER` (`utils.ts`); per-trailer axle totals come from the `axles` field (#250).
 14. [ANSWERED] Can we compute exact unit counts as `floor(trailer_volume / cargo_volume)`? Or does the game use a different formula?
     - **Answer**: Yes. Parser computes `floor(trailer_volume / cargo_volume)` as primary method, with weight-limit cap when `gross_weight_limit` applies.
 15. [ANSWERED] Do weight limits ever cap units below what volume allows? (i.e., `gross_trailer_weight_limit` minus `chassis_mass` minus `body_mass` = max cargo weight, then `max_cargo_weight / cargo_mass` might be less than volume-based units)
