@@ -17,19 +17,15 @@ Example:
 
 ### 2. Fix Data Directly
 
-For simple fixes, edit the JSON file and submit a PR:
+For simple fixes, edit the data and submit a PR:
 
 1. Fork the repository
-2. Edit the relevant file in `/public/data/`
+2. Edit the relevant file under `public/data/<game>/`. Note: `game-defs.json` is **generated** by the parser — don't hand-edit it (a reparse overwrites your change). The hand-editable supplements are `observations.json`, `manual-prices.json`, and `multi-body-overrides.json`. Trailer prices have a dedicated path — see *Contribute Trailer Price Walks* below.
 3. Submit a pull request with a clear description
 
 ### 3. Add New Content
 
-When new DLC or updates add content:
-
-1. Check existing data to understand the format
-2. Add new entries following the conventions in [DATA.md](DATA.md)
-3. Submit a PR with all related changes
+When a game update or new DLC adds content, the data is **regenerated**, not hand-edited: extract the game's `def/` folder and re-run the parser (`scripts/parse-game-defs.ts`). See the **Game Data Pipeline** in [CLAUDE.md](CLAUDE.md) for the full procedure, then submit a PR with the regenerated `game-defs.json` plus any updated supplements.
 
 ### 4. Contribute Trailer Price Walks
 
@@ -60,63 +56,27 @@ Multi-trailer (HCT/double) and DLC-brand trailer prices are assembled in the in-
 - Mark non-purchasable trailers as `ownable: false`
 - Car transporters require special handling
 
-## File Formats
+## Data Model
 
-### cities.json
+The data is **generated**, not maintained as hand-written flat files. Each game has a single `public/data/<game>/game-defs.json` (e.g. `public/data/ets2/game-defs.json`) produced by `scripts/parse-game-defs.ts` from the extracted game `def/` files. It holds cargo, trailers, companies, cities, countries, economy, trucks, and the DLC registry — each section an object keyed by game id (not an array). It's supplemented by three smaller files per game:
+
+- `observations.json` — data parsed from save games (spawn frequencies, unit counts) that validates and fills gaps in the generated defs.
+- `manual-prices.json` — hand-walked trailer prices the parser can't recover (see *Contribute Trailer Price Walks*).
+- `multi-body-overrides.json` — trailers that physically haul more than their primary `body_type`.
+
+For the authoritative schema and how it's generated, see the **Data Model** and **Game Data Pipeline** sections of [CLAUDE.md](CLAUDE.md). A cargo entry, for example, is keyed by its game id:
+
 ```json
-[
-  { "id": 1, "name": "Berlin", "country": "Germany" }
-]
+"aircond": {
+  "name": "aircond",
+  "value": 4.7,
+  "fragile": true,
+  "high_value": true,
+  "excluded": false
+}
 ```
 
-### companies.json
-```json
-[
-  { "id": 1, "name": "Scania" }
-]
-```
-
-### cargo.json
-```json
-[
-  {
-    "id": 1,
-    "name": "Electronics",
-    "value": 1850,
-    "excluded": false,
-    "high_value": true,
-    "fragile": true
-  }
-]
-```
-
-### trailers.json
-```json
-[
-  { "id": 1, "name": "Curtain Sider", "ownable": true }
-]
-```
-
-### city-companies.json
-```json
-[
-  { "cityId": 1, "companyId": 5, "count": 2 }
-]
-```
-
-### company-cargo.json
-```json
-[
-  { "companyId": 5, "cargoId": 12 }
-]
-```
-
-### cargo-trailers.json
-```json
-[
-  { "cargoId": 12, "trailerId": 3 }
-]
-```
+(`value` is per-km; the entry carries more fields — `volume`, `mass`, `prob_coef`, `body_types`, … — see `game-defs.json` for the full shape.)
 
 ## Code Contributions
 
