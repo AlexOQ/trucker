@@ -14823,7 +14823,7 @@
   },
   "companies": {
     "18w_trl_svc": {
-      "name": "18w Trl Svc",
+      "name": "18 Wheels",
       "cargo_out": [
         "bus_hood",
         "cars_pick_cr",
@@ -14887,7 +14887,7 @@
       ]
     },
     "42p_pck_pln": {
-      "name": "42p Pck Pln",
+      "name": "42 Print",
       "cargo_out": [
         "bottles",
         "cans",
@@ -14940,7 +14940,7 @@
       ]
     },
     "42p_print": {
-      "name": "42p Print",
+      "name": "42 Print",
       "cargo_out": [
         "bottles",
         "cans",
@@ -14974,7 +14974,7 @@
       ]
     },
     "ai_car_pln": {
-      "name": "Ai Car Pln",
+      "name": "AI Automotive",
       "cargo_out": [
         "bob_d30",
         "bus_hood",
@@ -15017,7 +15017,7 @@
       ]
     },
     "ai_car_whs": {
-      "name": "Ai Car Whs",
+      "name": "AI Automotive",
       "cargo_out": [
         "battery",
         "big_tyres",
@@ -15069,7 +15069,7 @@
       ]
     },
     "ali_car_dlr": {
-      "name": "Ali Car Dlr",
+      "name": "Alis Cars",
       "cargo_out": [
         "cars_big",
         "cars_big2",
@@ -15133,7 +15133,7 @@
       ]
     },
     "aml_rail_str": {
-      "name": "Aml Rail Str",
+      "name": "American Lines",
       "cargo_out": [
         "bob_d30",
         "bob_e10e",
@@ -15227,7 +15227,7 @@
       ]
     },
     "aml_rail_wrk": {
-      "name": "Aml Rail Wrk",
+      "name": "American Lines",
       "cargo_out": [
         "bob_e10e",
         "bob_e60",
@@ -15308,7 +15308,7 @@
       ]
     },
     "ant_con_pln": {
-      "name": "Ant Con Pln",
+      "name": "Antlion",
       "cargo_out": [
         "asph_miller",
         "bob_d30",
@@ -15413,7 +15413,7 @@
       ]
     },
     "apa_car_whs": {
-      "name": "Apa Car Whs",
+      "name": "Apade",
       "cargo_out": [
         "battery",
         "bob_d30",
@@ -17390,7 +17390,7 @@
       ]
     },
     "aport_lax": {
-      "name": "Aport Lax",
+      "name": "Angel City Airport",
       "cargo_out": [
         "air_eng2",
         "aircon",
@@ -18146,7 +18146,7 @@
       ]
     },
     "aport_pcc": {
-      "name": "Aport Pcc",
+      "name": "Portland Cargo Central",
       "cargo_out": [
         "air_eng2",
         "aircon",
@@ -18407,7 +18407,7 @@
       ]
     },
     "aport_phx": {
-      "name": "Aport Phx",
+      "name": "Phoenix Freight",
       "cargo_out": [
         "air_eng2",
         "aircon",
@@ -18811,7 +18811,7 @@
       ]
     },
     "aport_ult": {
-      "name": "Aport Ult",
+      "name": "Ultimus",
       "cargo_out": [
         "air_eng2",
         "aircon",
@@ -18898,7 +18898,7 @@
       ]
     },
     "apx_met_scr": {
-      "name": "Apx Met Scr",
+      "name": "Apex Steel",
       "cargo_out": [
         "battery",
         "bob_d30",
@@ -18983,7 +18983,7 @@
       ]
     },
     "apx_met_sml": {
-      "name": "Apx Met Sml",
+      "name": "Apex Steel",
       "cargo_out": [
         "alu_ingot",
         "alu_profile",
@@ -19079,7 +19079,7 @@
       ]
     },
     "apx_met_whs": {
-      "name": "Apx Met Whs",
+      "name": "Apex Steel",
       "cargo_out": [
         "aircon",
         "alu_ingot",
@@ -19149,7 +19149,7 @@
       ]
     },
     "apx_met_wrk": {
-      "name": "Apx Met Wrk",
+      "name": "Apex Steel",
       "cargo_out": [
         "aircon",
         "cars_pick_cr",
@@ -19212,7 +19212,7 @@
       ]
     },
     "aqv_shp_mar": {
-      "name": "Aqv Shp Mar",
+      "name": "Aqua Vista",
       "cargo_out": [
         "boat",
         "boat2",
@@ -19250,7 +19250,7 @@
       ]
     },
     "aro_oil_gst": {
-      "name": "Aro Oil Gst",
+      "name": "Aron",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -19274,7 +19274,7 @@
       ]
     },
     "asu_car_exp": {
-      "name": "Asu Car Exp",
+      "name": "Asuma",
       "cargo_out": [
         "cars_big",
         "cars_big2",
@@ -19303,7 +19303,7 @@
       ]
     },
     "asu_car_pln": {
-      "name": "Asu Car Pln",
+      "name": "Asuma",
       "cargo_out": [
         "bob_d30",
         "cars_big",
@@ -19364,7 +19364,7 @@
       ]
     },
     "ath_trk_dlr": {
-      "name": "Ath Trk Dlr",
+      "name": "American Truck Haulers",
       "cargo_out": [
         "cars_pick_cr",
         "kw_t680",
@@ -19405,7 +19405,7 @@
       ]
     },
     "avs_met_scr": {
-      "name": "Avs Met Scr",
+      "name": "Avalanche Steel",
       "cargo_out": [
         "battery",
         "bob_l95",
@@ -19479,7 +19479,7 @@
       ]
     },
     "avs_met_sml": {
-      "name": "Avs Met Sml",
+      "name": "Avalanche Steel",
       "cargo_out": [
         "alu_ingot",
         "alu_profile",
@@ -19573,7 +19573,7 @@
       ]
     },
     "az_gls_pln": {
-      "name": "Az Gls Pln",
+      "name": "Azure",
       "cargo_out": [
         "bottles",
         "empty_palet",
@@ -19626,7 +19626,7 @@
       ]
     },
     "bit_rd_grg": {
-      "name": "Bit Rd Grg",
+      "name": "Bitumen",
       "cargo_out": [
         "asph_miller",
         "big_tyres",
@@ -19700,7 +19700,7 @@
       ]
     },
     "bit_rd_svc": {
-      "name": "Bit Rd Svc",
+      "name": "Bitumen",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -19818,7 +19818,7 @@
       ]
     },
     "bit_rd_wrk": {
-      "name": "Bit Rd Wrk",
+      "name": "Bitumen",
       "cargo_out": [
         "asph_miller",
         "big_tyres",
@@ -19900,7 +19900,7 @@
       ]
     },
     "blo_frm_str": {
-      "name": "Blo Frm Str",
+      "name": "Bloomscape",
       "cargo_out": [
         "bob_l95",
         "bob_s86",
@@ -19970,7 +19970,7 @@
       ]
     },
     "bm_con_pln": {
-      "name": "Bm Con Pln",
+      "name": "Buildmaster Manufacturing Co.",
       "cargo_out": [
         "aircon",
         "bob_d30",
@@ -20052,7 +20052,7 @@
       ]
     },
     "bn_farm": {
-      "name": "Bn Farm",
+      "name": "Bushnell Farms",
       "cargo_out": [
         "auger_wag",
         "butter",
@@ -20172,7 +20172,7 @@
       ]
     },
     "bn_live_auc": {
-      "name": "Bn Live Auc",
+      "name": "Bushnell Farms",
       "cargo_out": [
         "auger_wag",
         "barley",
@@ -20302,7 +20302,7 @@
       ]
     },
     "cal_car_exp": {
-      "name": "Cal Car Exp",
+      "name": "Caliber Motors",
       "cargo_out": [
         "cars_big",
         "cars_big2",
@@ -20331,7 +20331,7 @@
       ]
     },
     "cal_car_pln": {
-      "name": "Cal Car Pln",
+      "name": "Caliber Motors",
       "cargo_out": [
         "bob_d30",
         "cars_big",
@@ -20391,7 +20391,7 @@
       ]
     },
     "cal_farm_alm": {
-      "name": "Cal Farm Alm",
+      "name": "Calimondo",
       "cargo_out": [
         "almond_box",
         "auger_wag",
@@ -20471,7 +20471,7 @@
       ]
     },
     "ccw_rd_grg": {
-      "name": "Ccw Rd Grg",
+      "name": "Central Civil Works",
       "cargo_out": [
         "asph_miller",
         "big_tyres",
@@ -20572,7 +20572,7 @@
       ]
     },
     "ch_wd_hrv": {
-      "name": "Ch Wd Hrv",
+      "name": "Chuck & Jack's",
       "cargo_out": [
         "bob_l95",
         "bob_s86",
@@ -20631,7 +20631,7 @@
       ]
     },
     "ch_wd_saw": {
-      "name": "Ch Wd Saw",
+      "name": "Chuck & Jack's",
       "cargo_out": [
         "crawler_carr",
         "empty_palet",
@@ -20685,7 +20685,7 @@
       ]
     },
     "cha_el_mkt": {
-      "name": "Cha El Mkt",
+      "name": "Charged",
       "cargo_out": [
         "empty_palet",
         "used_pack",
@@ -20717,7 +20717,7 @@
       ]
     },
     "chm_che_plns": {
-      "name": "Chm Che Plns",
+      "name": "Chemso Ltd.",
       "cargo_out": [
         "ammonia",
         "aromatics",
@@ -20772,7 +20772,7 @@
       ]
     },
     "chm_che_plnt": {
-      "name": "Chm Che Plnt",
+      "name": "Chemso Ltd.",
       "cargo_out": [
         "ammonia",
         "aromatics",
@@ -20850,7 +20850,7 @@
       ]
     },
     "chm_che_str": {
-      "name": "Chm Che Str",
+      "name": "Chemso Ltd.",
       "cargo_out": [
         "ammonia",
         "aromatics",
@@ -20910,7 +20910,7 @@
       ]
     },
     "cm_brx_pln": {
-      "name": "Cm Brx Pln",
+      "name": "Coastline Mining",
       "cargo_out": [
         "big_tyres",
         "bob_d30",
@@ -21053,7 +21053,7 @@
       ]
     },
     "cm_min_plnt": {
-      "name": "Cm Min Plnt",
+      "name": "Coastline Mining",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -21130,7 +21130,7 @@
       ]
     },
     "cm_min_qry": {
-      "name": "Cm Min Qry",
+      "name": "Coastline Mining",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -21266,7 +21266,7 @@
       ]
     },
     "cm_min_qryp": {
-      "name": "Cm Min Qryp",
+      "name": "Coastline Mining",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -21389,7 +21389,7 @@
       ]
     },
     "cm_min_str": {
-      "name": "Cm Min Str",
+      "name": "Coastline Mining",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -21480,7 +21480,7 @@
       ]
     },
     "cm_min_svc": {
-      "name": "Cm Min Svc",
+      "name": "Coastline Mining",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -21605,7 +21605,7 @@
       ]
     },
     "dc_car_dlr": {
-      "name": "Dc Car Dlr",
+      "name": "Drake Cars",
       "cargo_out": [
         "cars_pick_cr",
         "cars_pick_tt",
@@ -21660,7 +21660,7 @@
       ]
     },
     "dg_wd_hrv": {
-      "name": "Dg Wd Hrv",
+      "name": "Deepgrove",
       "cargo_out": [
         "bob_l95",
         "bob_s86",
@@ -21724,7 +21724,7 @@
       ]
     },
     "dg_wd_saw": {
-      "name": "Dg Wd Saw",
+      "name": "Deepgrove",
       "cargo_out": [
         "crawler_carr",
         "ins_panel",
@@ -21770,7 +21770,7 @@
       ]
     },
     "dg_wd_saw1": {
-      "name": "Dg Wd Saw1",
+      "name": "Deepgrove",
       "cargo_out": [
         "crawler_carr",
         "empty_palet",
@@ -21830,7 +21830,7 @@
       ]
     },
     "dmc_car_dlr": {
-      "name": "Dmc Car Dlr",
+      "name": "DeMuro Cars",
       "cargo_out": [
         "cars_pick_cr",
         "cars_pick_tt",
@@ -21867,7 +21867,7 @@
       ]
     },
     "dpw_oil_svc": {
-      "name": "Dpw Oil Svc",
+      "name": "Deep Wells",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -22006,7 +22006,7 @@
       ]
     },
     "drh_mkt": {
-      "name": "Drh Mkt",
+      "name": "Dr. Hammer",
       "cargo_out": [
         "dumpster",
         "empty_palet",
@@ -22048,7 +22048,7 @@
       ]
     },
     "dri_oil_gst": {
-      "name": "Dri Oil Gst",
+      "name": "Driverse",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -22073,7 +22073,7 @@
       ]
     },
     "dw_air_pln": {
-      "name": "Dw Air Pln",
+      "name": "Darwing",
       "cargo_out": [
         "air_eng2",
         "aircraft_eng",
@@ -22140,7 +22140,7 @@
       ]
     },
     "dyn_car_pln": {
-      "name": "Dyn Car Pln",
+      "name": "Dynamix",
       "cargo_out": [
         "big_tyres",
         "conc_barr",
@@ -22203,7 +22203,7 @@
       ]
     },
     "ed_mkt": {
-      "name": "Ed Mkt",
+      "name": "Eddy's",
       "cargo_out": [
         "empty_palet",
         "moving_cont",
@@ -22277,7 +22277,7 @@
       ]
     },
     "eg_che_str": {
-      "name": "Eg Che Str",
+      "name": "Epro Gas",
       "cargo_out": [
         "ammonia",
         "aromatics",
@@ -22363,7 +22363,7 @@
       ]
     },
     "ele_epw_sit": {
-      "name": "Ele Epw Sit",
+      "name": "Elegrid",
       "cargo_out": [
         "boom_lift",
         "boom_lift2",
@@ -22406,7 +22406,7 @@
       ]
     },
     "ele_epw_svc": {
-      "name": "Ele Epw Svc",
+      "name": "Elegrid",
       "cargo_out": [
         "cable",
         "cars_pick_cr",
@@ -22456,7 +22456,7 @@
       ]
     },
     "elm_whs": {
-      "name": "Elm Whs",
+      "name": "Elimax",
       "cargo_out": [
         "aircon",
         "almond_box",
@@ -22640,7 +22640,7 @@
       ]
     },
     "elv_el_pln": {
-      "name": "Elv El Pln",
+      "name": "Electravolt Industries",
       "cargo_out": [
         "battery",
         "bob_d30",
@@ -22696,7 +22696,7 @@
       ]
     },
     "ent_whs": {
-      "name": "Ent Whs",
+      "name": "Enterpriser",
       "cargo_out": [
         "aircon",
         "almond_box",
@@ -22911,7 +22911,7 @@
       ]
     },
     "equ_whs": {
-      "name": "Equ Whs",
+      "name": "Equos Power Transport",
       "cargo_out": [
         "aircon",
         "almond_box",
@@ -23101,7 +23101,7 @@
       ]
     },
     "evg_frm": {
-      "name": "Evg Frm",
+      "name": "Evergreen",
       "cargo_out": [
         "almond_box",
         "auger_wag",
@@ -23246,7 +23246,7 @@
       ]
     },
     "fb_farm_mkt": {
-      "name": "Fb Farm Mkt",
+      "name": "Farmer's Barn",
       "cargo_out": [
         "cattle_equip",
         "dumpster",
@@ -23307,7 +23307,7 @@
       ]
     },
     "fb_farm_pln": {
-      "name": "Fb Farm Pln",
+      "name": "Farmer's Barn",
       "cargo_out": [
         "barley",
         "bob_d30",
@@ -23386,7 +23386,7 @@
       ]
     },
     "ffe_frm_dlr": {
-      "name": "Ffe Frm Dlr",
+      "name": "Field Force Equipment",
       "cargo_out": [
         "auger_wag",
         "beet_harvest",
@@ -23482,7 +23482,7 @@
       ]
     },
     "flv_food_pln": {
-      "name": "Flv Food Pln",
+      "name": "Flavorfair",
       "cargo_out": [
         "almond_box",
         "dry_fruit",
@@ -23565,7 +23565,7 @@
       ]
     },
     "flv_food_str": {
-      "name": "Flv Food Str",
+      "name": "Flavorfair",
       "cargo_out": [
         "barley",
         "corn_b",
@@ -23612,7 +23612,7 @@
       ]
     },
     "frd_epw_sit": {
-      "name": "Frd Epw Sit",
+      "name": "Faraday",
       "cargo_out": [
         "boom_lift",
         "boom_lift2",
@@ -23669,7 +23669,7 @@
       ]
     },
     "frd_epw_svc": {
-      "name": "Frd Epw Svc",
+      "name": "Faraday",
       "cargo_out": [
         "cable",
         "cars_pick_cr",
@@ -23729,7 +23729,7 @@
       ]
     },
     "ftf_food_pln": {
-      "name": "Ftf Food Pln",
+      "name": "Fish Tail Food",
       "cargo_out": [
         "bob_d30",
         "food",
@@ -23782,7 +23782,7 @@
       ]
     },
     "fus_oil_gst": {
-      "name": "Fus Oil Gst",
+      "name": "Fusion",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -23795,7 +23795,7 @@
       ]
     },
     "gal_oil_gst": {
-      "name": "Gal Oil Gst",
+      "name": "Gallon Oil",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -23842,7 +23842,7 @@
       ]
     },
     "gal_oil_ref": {
-      "name": "Gal Oil Ref",
+      "name": "Gallon Oil",
       "cargo_out": [
         "chem_granule",
         "diesel",
@@ -23889,7 +23889,7 @@
       ]
     },
     "gal_oil_sit": {
-      "name": "Gal Oil Sit",
+      "name": "Gallon Oil",
       "cargo_out": [
         "const_house",
         "crude_oil",
@@ -23941,7 +23941,7 @@
       ]
     },
     "gal_oil_str": {
-      "name": "Gal Oil Str",
+      "name": "Gallon Oil",
       "cargo_out": [
         "crude_oil",
         "diesel",
@@ -23977,7 +23977,7 @@
       ]
     },
     "gal_oil_str1": {
-      "name": "Gal Oil Str1",
+      "name": "Gallon Oil",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -24039,7 +24039,7 @@
       ]
     },
     "gal_oil_svc": {
-      "name": "Gal Oil Svc",
+      "name": "Gallon Oil",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -24167,7 +24167,7 @@
       ]
     },
     "gal_oil_well": {
-      "name": "Gal Oil Well",
+      "name": "Gallon Oil",
       "cargo_out": [
         "boom_lift",
         "boom_lift2",
@@ -24221,7 +24221,7 @@
       ]
     },
     "garc_train": {
-      "name": "Garc Train",
+      "name": "GARC",
       "cargo_out": [
         "air_eng2",
         "aircon",
@@ -24635,7 +24635,7 @@
       ]
     },
     "gas_che_str": {
-      "name": "Gas Che Str",
+      "name": "Gastream",
       "cargo_out": [
         "ammonia",
         "aromatics",
@@ -24713,7 +24713,7 @@
       ]
     },
     "gld_frm": {
-      "name": "Gld Frm",
+      "name": "Golden Meadows",
       "cargo_out": [
         "almond_box",
         "auger_wag",
@@ -24842,7 +24842,7 @@
       ]
     },
     "gld_frm_grg": {
-      "name": "Gld Frm Grg",
+      "name": "Golden Meadows",
       "cargo_out": [
         "auger_wag",
         "beet_harvest",
@@ -24950,7 +24950,7 @@
       ]
     },
     "gm_chs_plnt": {
-      "name": "Gm Chs Plnt",
+      "name": "Global Mills",
       "cargo_out": [
         "butter",
         "buttermilk",
@@ -25000,7 +25000,7 @@
       ]
     },
     "gm_food_plnt": {
-      "name": "Gm Food Plnt",
+      "name": "Global Mills",
       "cargo_out": [
         "almond_box",
         "dry_fruit",
@@ -25078,7 +25078,7 @@
       ]
     },
     "gm_food_str": {
-      "name": "Gm Food Str",
+      "name": "Global Mills",
       "cargo_out": [
         "barley",
         "corn_b",
@@ -25127,7 +25127,7 @@
       ]
     },
     "gol_trk_pln": {
-      "name": "Gol Trk Pln",
+      "name": "Goliath",
       "cargo_out": [
         "bob_d30",
         "boom_lift",
@@ -25191,7 +25191,7 @@
       ]
     },
     "gp_farm": {
-      "name": "Gp Farm",
+      "name": "Grand Pastures",
       "cargo_out": [
         "auger_wag",
         "butter",
@@ -25300,7 +25300,7 @@
       ]
     },
     "gp_live_auc": {
-      "name": "Gp Live Auc",
+      "name": "Grand Pastures",
       "cargo_out": [
         "auger_wag",
         "barley",
@@ -25425,7 +25425,7 @@
       ]
     },
     "gpw_rd_grg": {
-      "name": "Gpw Rd Grg",
+      "name": "GPW",
       "cargo_out": [
         "asph_miller",
         "big_tyres",
@@ -25515,7 +25515,7 @@
       ]
     },
     "gre_con_dlr": {
-      "name": "Gre Con Dlr",
+      "name": "Groundbreaker Equipment",
       "cargo_out": [
         "asph_miller",
         "bob_d30",
@@ -25629,7 +25629,7 @@
       ]
     },
     "grp_oil_gst": {
-      "name": "Grp Oil Gst",
+      "name": "GreenPetrol",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -25643,7 +25643,7 @@
       ]
     },
     "gss_air_svc": {
-      "name": "Gss Air Svc",
+      "name": "Global Sky Services",
       "cargo_out": [
         "air_eng2",
         "aircraft_eng",
@@ -25850,7 +25850,7 @@
       ]
     },
     "hau_oil_gst": {
-      "name": "Hau Oil Gst",
+      "name": "Haulett",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -25877,7 +25877,7 @@
       ]
     },
     "hds_met_shp": {
-      "name": "Hds Met Shp",
+      "name": "Haddock Shipyard",
       "cargo_out": [
         "aircon",
         "big_tyres",
@@ -25996,7 +25996,7 @@
       ]
     },
     "hf_wd_pln": {
-      "name": "Hf Wd Pln",
+      "name": "Heartwood Furniture",
       "cargo_out": [
         "furniture",
         "glass_rack",
@@ -26047,7 +26047,7 @@
       ]
     },
     "hms_con_svc": {
-      "name": "Hms Con Svc",
+      "name": "HMS Machinery",
       "cargo_out": [
         "air_eng2",
         "aircraft_eng",
@@ -26295,7 +26295,7 @@
       ]
     },
     "hs_mkt": {
-      "name": "Hs Mkt",
+      "name": "Home Store",
       "cargo_out": [
         "dumpster",
         "empty_palet",
@@ -26373,7 +26373,7 @@
       ]
     },
     "jns_rail_str": {
-      "name": "Jns Rail Str",
+      "name": "Johnson and Smith",
       "cargo_out": [
         "bob_d30",
         "bob_e10e",
@@ -26468,7 +26468,7 @@
       ]
     },
     "jns_rail_wrk": {
-      "name": "Jns Rail Wrk",
+      "name": "Johnson and Smith",
       "cargo_out": [
         "bob_e10e",
         "bob_e60",
@@ -26545,7 +26545,7 @@
       ]
     },
     "kw_trk_dlr": {
-      "name": "Kw Trk Dlr",
+      "name": "Kenworth",
       "cargo_out": [
         "kw_t680"
       ],
@@ -26589,7 +26589,7 @@
       ]
     },
     "kw_trk_pln": {
-      "name": "Kw Trk Pln",
+      "name": "Kenworth",
       "cargo_out": [
         "empty_palet",
         "glass_rack",
@@ -26635,7 +26635,7 @@
       ]
     },
     "lsf_crg_fwd": {
-      "name": "Lsf Crg Fwd",
+      "name": "Lonestar Forwarding",
       "cargo_out": [
         "air_eng2",
         "aircon",
@@ -26992,7 +26992,7 @@
       ]
     },
     "lum_car_dlr": {
-      "name": "Lum Car Dlr",
+      "name": "Lumen auto",
       "cargo_out": [
         "cars_big",
         "cars_big2",
@@ -27053,7 +27053,7 @@
       ]
     },
     "mcc_frm_pln": {
-      "name": "Mcc Frm Pln",
+      "name": "McClane",
       "cargo_out": [
         "auger_wag",
         "beet_harvest",
@@ -27120,7 +27120,7 @@
       ]
     },
     "mcs_con_sit": {
-      "name": "Mcs Con Sit",
+      "name": "Mud Creek slide",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -27211,7 +27211,7 @@
       ]
     },
     "mon_farm": {
-      "name": "Mon Farm",
+      "name": "Mon Coeur",
       "cargo_out": [
         "auger_wag",
         "beverages",
@@ -27293,7 +27293,7 @@
       ]
     },
     "mon_food_pln": {
-      "name": "Mon Food Pln",
+      "name": "Mon Coeur",
       "cargo_out": [
         "beverages",
         "bob_d30",
@@ -27347,7 +27347,7 @@
       ]
     },
     "mr_cot_pln": {
-      "name": "Mr Cot Pln",
+      "name": "Mary's Cotton",
       "cargo_out": [
         "auger_wag",
         "bob_d30",
@@ -27452,7 +27452,7 @@
       ]
     },
     "mwm_wst_whs": {
-      "name": "Mwm Wst Whs",
+      "name": "MWM",
       "cargo_out": [
         "bob_d30",
         "bob_l95",
@@ -27546,7 +27546,7 @@
       ]
     },
     "myr_wd_mkt": {
-      "name": "Myr Wd Mkt",
+      "name": "Myroo",
       "cargo_out": [
         "computers",
         "empty_palet",
@@ -27595,7 +27595,7 @@
       ]
     },
     "naf_oil_gst": {
-      "name": "Naf Oil Gst",
+      "name": "NAF",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -27609,7 +27609,7 @@
       ]
     },
     "nls_rd_grg": {
-      "name": "Nls Rd Grg",
+      "name": "Nielsen Roads",
       "cargo_out": [
         "asph_miller",
         "big_tyres",
@@ -27680,7 +27680,7 @@
       ]
     },
     "nls_rd_svc": {
-      "name": "Nls Rd Svc",
+      "name": "Nielsen Roads",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -27780,7 +27780,7 @@
       ]
     },
     "nls_rd_wrk": {
-      "name": "Nls Rd Wrk",
+      "name": "Nielsen Roads",
       "cargo_out": [
         "asph_miller",
         "big_tyres",
@@ -27880,7 +27880,7 @@
       ]
     },
     "nmq_min_pln1": {
-      "name": "Nmq Min Pln1",
+      "name": "NAMIQ",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -27954,7 +27954,7 @@
       ]
     },
     "nmq_min_pln2": {
-      "name": "Nmq Min Pln2",
+      "name": "NAMIQ",
       "cargo_out": [
         "ammonia",
         "bob_d30",
@@ -28023,7 +28023,7 @@
       ]
     },
     "nmq_min_plnt": {
-      "name": "Nmq Min Plnt",
+      "name": "NAMIQ",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -28098,7 +28098,7 @@
       ]
     },
     "nmq_min_qry": {
-      "name": "Nmq Min Qry",
+      "name": "NAMIQ",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -28246,7 +28246,7 @@
       ]
     },
     "nmq_min_qrya": {
-      "name": "Nmq Min Qrya",
+      "name": "NAMIQ",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -28367,7 +28367,7 @@
       ]
     },
     "nmq_min_qrys": {
-      "name": "Nmq Min Qrys",
+      "name": "NAMIQ",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -28493,7 +28493,7 @@
       ]
     },
     "nmq_min_str": {
-      "name": "Nmq Min Str",
+      "name": "NAMIQ",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -28580,7 +28580,7 @@
       ]
     },
     "nmq_min_svc": {
-      "name": "Nmq Min Svc",
+      "name": "NAMIQ",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -28709,7 +28709,7 @@
       ]
     },
     "oak_port": {
-      "name": "Oak Port",
+      "name": "Oakland Shippers",
       "cargo_out": [
         "almond_box",
         "ammonia",
@@ -28984,7 +28984,7 @@
       ]
     },
     "oh_con_hom": {
-      "name": "Oh Con Hom",
+      "name": "Olthon Homes",
       "cargo_out": [
         "empty_palet",
         "glass_rack",
@@ -29036,7 +29036,7 @@
       ]
     },
     "out_car_pln": {
-      "name": "Out Car Pln",
+      "name": "Outrider",
       "cargo_out": [
         "bob_d30",
         "cars_big",
@@ -29090,7 +29090,7 @@
       ]
     },
     "pcp_car_whs": {
-      "name": "Pcp Car Whs",
+      "name": "Precision Car Parts",
       "cargo_out": [
         "battery",
         "bob_d30",
@@ -29131,7 +29131,7 @@
       ]
     },
     "pet_oil_well": {
-      "name": "Pet Oil Well",
+      "name": "Petrolucent",
       "cargo_out": [
         "boom_lift",
         "boom_lift2",
@@ -29195,7 +29195,7 @@
       ]
     },
     "pho_oil_gst": {
-      "name": "Pho Oil Gst",
+      "name": "Phoenix",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -29230,7 +29230,7 @@
       ]
     },
     "pic_mkt": {
-      "name": "Pic Mkt",
+      "name": "Pickit",
       "cargo_out": [
         "empty_palet",
         "moving_cont",
@@ -29290,7 +29290,7 @@
       ]
     },
     "pio_car_dlr": {
-      "name": "Pio Car Dlr",
+      "name": "Pioneer",
       "cargo_out": [
         "cars_big",
         "cars_big2",
@@ -29340,7 +29340,7 @@
       ]
     },
     "plu_el_mkt": {
-      "name": "Plu El Mkt",
+      "name": "Plugged",
       "cargo_out": [
         "empty_palet",
         "used_pack",
@@ -29363,7 +29363,7 @@
       ]
     },
     "pnp_wd_pln": {
-      "name": "Pnp Wd Pln",
+      "name": "Page & Price Paper",
       "cargo_out": [
         "empty_palet",
         "ind_palet",
@@ -29419,7 +29419,7 @@
       ]
     },
     "pns_con_grg": {
-      "name": "Pns Con Grg",
+      "name": "Plaster & Sons",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -29514,7 +29514,7 @@
       ]
     },
     "pns_con_sit": {
-      "name": "Pns Con Sit",
+      "name": "Plaster & Sons",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -29617,7 +29617,7 @@
       ]
     },
     "pns_con_sit1": {
-      "name": "Pns Con Sit1",
+      "name": "Plaster & Sons",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -29715,7 +29715,7 @@
       ]
     },
     "pns_con_sit2": {
-      "name": "Pns Con Sit2",
+      "name": "Plaster & Sons",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -29806,7 +29806,7 @@
       ]
     },
     "pns_con_sit3": {
-      "name": "Pns Con Sit3",
+      "name": "Plaster & Sons",
       "cargo_out": [
         "boom_lift",
         "boom_lift2",
@@ -29861,7 +29861,7 @@
       ]
     },
     "pns_con_whs": {
-      "name": "Pns Con Whs",
+      "name": "Plaster & Sons",
       "cargo_out": [
         "aircon",
         "cattle_equip",
@@ -31432,7 +31432,7 @@
       ]
     },
     "port_la": {
-      "name": "Port La",
+      "name": "LA Seaport",
       "cargo_out": [
         "almond_box",
         "ammonia",
@@ -32024,7 +32024,7 @@
       ]
     },
     "port_sea": {
-      "name": "Port Sea",
+      "name": "Port of Seattle",
       "cargo_out": [
         "almond_box",
         "ammonia",
@@ -32321,7 +32321,7 @@
       ]
     },
     "port_tac": {
-      "name": "Port Tac",
+      "name": "Port of Tacoma",
       "cargo_out": [
         "almond_box",
         "ammonia",
@@ -32602,7 +32602,7 @@
       ]
     },
     "pt_trk_dlr": {
-      "name": "Pt Trk Dlr",
+      "name": "Peterbilt",
       "cargo_out": [
         "moving_cont",
         "pt_579"
@@ -32648,7 +32648,7 @@
       ]
     },
     "re_train": {
-      "name": "Re Train",
+      "name": "Rail Export",
       "cargo_out": [
         "air_eng2",
         "aircon",
@@ -33074,7 +33074,7 @@
       ]
     },
     "rp_port": {
-      "name": "Rp Port",
+      "name": "Rock Port",
       "cargo_out": [
         "almond_box",
         "asph_miller",
@@ -33384,7 +33384,7 @@
       ]
     },
     "sb_whs": {
-      "name": "Sb Whs",
+      "name": "Starbridge",
       "cargo_out": [
         "aircon",
         "almond_box",
@@ -33571,7 +33571,7 @@
       ]
     },
     "sc_frm": {
-      "name": "Sc Frm",
+      "name": "Sunshine Crops",
       "cargo_out": [
         "almond_box",
         "auger_wag",
@@ -33710,7 +33710,7 @@
       ]
     },
     "sc_frm_grg": {
-      "name": "Sc Frm Grg",
+      "name": "Sunshine Crops",
       "cargo_out": [
         "auger_wag",
         "beet_harvest",
@@ -33821,7 +33821,7 @@
       ]
     },
     "sf_port": {
-      "name": "Sf Port",
+      "name": "Port of SF",
       "cargo_out": [
         "ammonia",
         "battery",
@@ -33999,7 +33999,7 @@
       ]
     },
     "sg_whs": {
-      "name": "Sg Whs",
+      "name": "SellGoods",
       "cargo_out": [
         "aircon",
         "almond_box",
@@ -34194,7 +34194,7 @@
       ]
     },
     "sh_shp_mar": {
-      "name": "Sh Shp Mar",
+      "name": "Sea Horizon",
       "cargo_out": [
         "boat",
         "boat2",
@@ -34231,7 +34231,7 @@
       ]
     },
     "sh_shp_plnt": {
-      "name": "Sh Shp Plnt",
+      "name": "Sea Horizon",
       "cargo_out": [
         "boat",
         "boat2",
@@ -34280,7 +34280,7 @@
       ]
     },
     "sht_mkt": {
-      "name": "Sht Mkt",
+      "name": "Shop Town",
       "cargo_out": [
         "empty_palet",
         "moving_cont",
@@ -34392,7 +34392,7 @@
       ]
     },
     "sil_met_pln": {
-      "name": "Sil Met Pln",
+      "name": "Silverline Corp.",
       "cargo_out": [
         "aircon",
         "bob_d30",
@@ -34523,7 +34523,7 @@
       ]
     },
     "st_met_whs": {
-      "name": "St Met Whs",
+      "name": "Steeler",
       "cargo_out": [
         "aircon",
         "alu_ingot",
@@ -34612,7 +34612,7 @@
       ]
     },
     "st_met_wrk": {
-      "name": "St Met Wrk",
+      "name": "Steeler",
       "cargo_out": [
         "aircon",
         "cars_pick_cr",
@@ -34684,7 +34684,7 @@
       ]
     },
     "stc_car_pln": {
-      "name": "Stc Car Pln",
+      "name": "Steelion Customs",
       "cargo_out": [
         "bob_d30",
         "boom_lift",
@@ -34747,7 +34747,7 @@
       ]
     },
     "swb_sug_plnt": {
-      "name": "Swb Sug Plnt",
+      "name": "Sweetbeets",
       "cargo_out": [
         "bob_d30",
         "forklifts",
@@ -34788,7 +34788,7 @@
       ]
     },
     "syn_che_plne": {
-      "name": "Syn Che Plne",
+      "name": "Syntetico",
       "cargo_out": [
         "ammonia",
         "aromatics",
@@ -34863,7 +34863,7 @@
       ]
     },
     "syn_che_plnt": {
-      "name": "Syn Che Plnt",
+      "name": "Syntetico",
       "cargo_out": [
         "ammonia",
         "aromatics",
@@ -34939,7 +34939,7 @@
       ]
     },
     "syn_che_str": {
-      "name": "Syn Che Str",
+      "name": "Syntetico",
       "cargo_out": [
         "ammonia",
         "aromatics",
@@ -35000,7 +35000,7 @@
       ]
     },
     "tay_con_grg": {
-      "name": "Tay Con Grg",
+      "name": "Taylor Construction Group",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -35094,7 +35094,7 @@
       ]
     },
     "tay_con_sit": {
-      "name": "Tay Con Sit",
+      "name": "Taylor Construction Group",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -35196,7 +35196,7 @@
       ]
     },
     "tay_con_sit1": {
-      "name": "Tay Con Sit1",
+      "name": "Taylor Construction Group",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -35294,7 +35294,7 @@
       ]
     },
     "tay_con_sit2": {
-      "name": "Tay Con Sit2",
+      "name": "Taylor Construction Group",
       "cargo_out": [
         "bob_l95",
         "bob_pa127v",
@@ -35370,7 +35370,7 @@
       ]
     },
     "tay_con_sit3": {
-      "name": "Tay Con Sit3",
+      "name": "Taylor Construction Group",
       "cargo_out": [
         "boom_lift",
         "boom_lift2",
@@ -35424,7 +35424,7 @@
       ]
     },
     "tay_con_whs": {
-      "name": "Tay Con Whs",
+      "name": "Taylor Construction Group",
       "cargo_out": [
         "aircon",
         "cattle_equip",
@@ -35497,7 +35497,7 @@
       ]
     },
     "tch_el_pln": {
-      "name": "Tch El Pln",
+      "name": "Technoma",
       "cargo_out": [
         "aircon",
         "battery",
@@ -35596,7 +35596,7 @@
       ]
     },
     "ter_met_shp": {
-      "name": "Ter Met Shp",
+      "name": "Tera",
       "cargo_out": [
         "aircon",
         "boat",
@@ -35656,7 +35656,7 @@
       ]
     },
     "tid_mkt": {
-      "name": "Tid Mkt",
+      "name": "Tidbit",
       "cargo_out": [
         "empty_palet",
         "moving_cont",
@@ -35719,7 +35719,7 @@
       ]
     },
     "trs_whs": {
-      "name": "Trs Whs",
+      "name": "Terrastore",
       "cargo_out": [
         "aircon",
         "almond_box",
@@ -36038,7 +36038,7 @@
       ]
     },
     "usb_food_pln": {
-      "name": "Usb Food Pln",
+      "name": "US Beverages & Bottling",
       "cargo_out": [
         "beverages",
         "bob_d30",
@@ -36102,7 +36102,7 @@
       ]
     },
     "ven_whs": {
-      "name": "Ven Whs",
+      "name": "Venture",
       "cargo_out": [
         "aircon",
         "almond_box",
@@ -36312,7 +36312,7 @@
       ]
     },
     "vm_car_exp": {
-      "name": "Vm Car Exp",
+      "name": "Voltison",
       "cargo_out": [
         "cars_big",
         "cars_big2",
@@ -36340,7 +36340,7 @@
       ]
     },
     "vm_car_pln": {
-      "name": "Vm Car Pln",
+      "name": "Voltison",
       "cargo_out": [
         "bob_d30",
         "cars_big",
@@ -36390,7 +36390,7 @@
       ]
     },
     "vor_oil_gst": {
-      "name": "Vor Oil Gst",
+      "name": "Vortex",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -36410,7 +36410,7 @@
       ]
     },
     "vor_oil_ref": {
-      "name": "Vor Oil Ref",
+      "name": "Vortex",
       "cargo_out": [
         "chem_granule",
         "diesel",
@@ -36463,7 +36463,7 @@
       ]
     },
     "vor_oil_sit": {
-      "name": "Vor Oil Sit",
+      "name": "Vortex",
       "cargo_out": [
         "const_house",
         "crude_oil",
@@ -36517,7 +36517,7 @@
       ]
     },
     "vor_oil_str": {
-      "name": "Vor Oil Str",
+      "name": "Vortex",
       "cargo_out": [
         "crude_oil",
         "diesel",
@@ -36554,7 +36554,7 @@
       ]
     },
     "vor_oil_str1": {
-      "name": "Vor Oil Str1",
+      "name": "Vortex",
       "cargo_out": [
         "big_tyres",
         "bob_e10e",
@@ -36615,7 +36615,7 @@
       ]
     },
     "vp_epw_pln": {
-      "name": "Vp Epw Pln",
+      "name": "Vitas Power",
       "cargo_out": [
         "circuit_brk",
         "generator_c",
@@ -36664,7 +36664,7 @@
       ]
     },
     "vp_epw_sit": {
-      "name": "Vp Epw Sit",
+      "name": "Vitas Power",
       "cargo_out": [
         "const_house",
         "generator_c",
@@ -36718,7 +36718,7 @@
       ]
     },
     "wac_air_svc": {
-      "name": "Wac Air Svc",
+      "name": "Wingman Aviation Center",
       "cargo_out": [
         "air_eng2",
         "aircraft_eng",
@@ -36778,7 +36778,7 @@
       ]
     },
     "wal_mkt": {
-      "name": "Wal Mkt",
+      "name": "Wallbert",
       "cargo_out": [
         "empty_palet",
         "moving_cont",
@@ -36891,7 +36891,7 @@
       ]
     },
     "wan_car_dlr": {
-      "name": "Wan Car Dlr",
+      "name": "Wanderlust",
       "cargo_out": [
         "cars_big",
         "cars_big2",
@@ -36931,7 +36931,7 @@
       ]
     },
     "wds_wst_whs": {
-      "name": "Wds Wst Whs",
+      "name": "WDS",
       "cargo_out": [
         "bob_d30",
         "bob_l95",
@@ -37006,7 +37006,7 @@
       ]
     },
     "wld_frm_str": {
-      "name": "Wld Frm Str",
+      "name": "Waldens",
       "cargo_out": [
         "bob_l95",
         "bob_s86",
@@ -37084,7 +37084,7 @@
       ]
     },
     "wp_oil_gst": {
-      "name": "Wp Oil Gst",
+      "name": "WP",
       "cargo_out": [],
       "cargo_in": [
         "diesel",
@@ -37100,7 +37100,7 @@
       ]
     },
     "ws_trk_dlr": {
-      "name": "Ws Trk Dlr",
+      "name": "Western Star",
       "cargo_out": [
         "moving_cont",
         "ws_49x"
@@ -37138,7 +37138,7 @@
       ]
     },
     "ws_trk_pln": {
-      "name": "Ws Trk Pln",
+      "name": "Western Star",
       "cargo_out": [
         "empty_palet",
         "glass_rack",
@@ -37186,7 +37186,7 @@
       ]
     },
     "xtm_con_svc": {
-      "name": "Xtm Con Svc",
+      "name": "X-Tech Machinery",
       "cargo_out": [
         "air_eng2",
         "aircraft_eng",
@@ -37423,7 +37423,7 @@
       ]
     },
     "yel_bus_pln": {
-      "name": "Yel Bus Pln",
+      "name": "Yelco Busses",
       "cargo_out": [
         "bob_d30",
         "empty_palet",
