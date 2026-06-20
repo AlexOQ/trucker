@@ -23,9 +23,10 @@ export function normalize(str: string): string {
   return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-// Chain type label for non-single trailers.
+// Configurator-style label per chain_type. Singles carry no chain word (their
+// spec reads as just "{brand} {n}-axle"); for a config-level label that includes
+// singles, use chainConfigLabel().
 // ETS2 emits b_double / hct; ATS emits bdouble, rmdouble, tpdouble, triple, double.
-// Keep keys in sync with TIER_BY_CHAIN_TYPE; utils.test.ts asserts both maps cover the same set.
 export const CHAIN_LABELS: Record<string, string> = {
   hct: 'HCT',
   b_double: 'B-double',
@@ -36,35 +37,28 @@ export const CHAIN_LABELS: Record<string, string> = {
   double: 'Double',
 };
 
-/** Build a human-readable spec string from trailer properties, e.g. "Kassbohrer 3-axle 79t 16.4m" */
+// Chain configurations from lightest to heaviest. Drives ordering of the trailer
+// browser's configuration rows and the URL hash vocabulary. Keep in sync with
+// the chain_type values the parser emits (utils.test.ts asserts it covers
+// CHAIN_LABELS plus 'single').
+export const CHAIN_ORDER = ['single', 'double', 'b_double', 'bdouble', 'tpdouble', 'rmdouble', 'hct', 'triple'];
+
+/** Configurator-style label for a chain configuration, including singles ("Single"). */
+export function chainConfigLabel(chainType: string | undefined): string {
+  if (!chainType || chainType === 'single') return 'Single';
+  return CHAIN_LABELS[chainType] ?? chainType;
+}
+
+/** Build a human-readable spec string from trailer properties, e.g. "Kassbohrer Double 5-axle 79t 16.4m" */
 export function formatTrailerSpec(t: Trailer): string {
   const idParts = t.id.split('.');
   const brandRaw = idParts[0];
   const brand = brandRaw.charAt(0).toUpperCase() + brandRaw.slice(1);
 
   const chainLabel = CHAIN_LABELS[t.chain_type] ?? '';
-
-  // Extract axle count from ID
-  let axleStr = '';
-  const singleMatch = t.id.match(/single_(\d+)/);
-  if (singleMatch) {
-    const num = singleMatch[1];
-    if (num === '41') axleStr = '4+1-axle';
-    else axleStr = `${num.charAt(0)}-axle`;
-    // Check for "+1" patterns like single_4_1 or single_3_1
-    const plusMatch = t.id.match(/single_(\d)_1\b/);
-    if (plusMatch) axleStr = `${plusMatch[1]}+1-axle`;
-  } else if (t.id.includes('ch_')) {
-    const chMatch = t.id.match(/ch_(\d+)/);
-    if (chMatch) axleStr = `${chMatch[1]}-axle`;
-  } else if (chainLabel) {
-    // HCT: hct_3_2_3 -> 3+2+3, hct_3_2s_4 -> 3+2+4
-    const hctMatch = t.id.match(/hct_(\d+)_(\d+)s?_(\d+)/);
-    if (hctMatch) axleStr = `${hctMatch[1]}+${hctMatch[2]}+${hctMatch[3]}-axle`;
-    // Double/b_double: double_3_2 -> 3+2, bdouble_2_2 -> 2+2
-    const dblMatch = t.id.match(/(?:double|bdouble)_(\d+)_(\d+)/);
-    if (!hctMatch && dblMatch) axleStr = `${dblMatch[1]}+${dblMatch[2]}-axle`;
-  }
+  // Axle count is the authoritative `axles` field (total across all units of the
+  // chain). Omitted only for observations-only trailers that lack the field.
+  const axleStr = t.axles ? `${t.axles}-axle` : '';
 
   const isLong = t.id.includes('.long') || t.id.includes('_ln.');
   const lengthLabel = isLong ? 'long' : '';
@@ -129,25 +123,6 @@ export function pickBestTrailer(candidates: Trailer[], fallback: Trailer, lookup
     }
   }
   return bestTrailer;
-}
-
-// ATS `triple` rides in the HCT bucket until the "configurations not tiers"
-// rework replaces this 3-tier scheme; HCT and triple are distinct real
-// configurations, but both live in the heaviest bucket for now.
-// Keep keys in sync with CHAIN_LABELS; utils.test.ts asserts both maps cover the same set.
-export const TIER_BY_CHAIN_TYPE: Record<string, string> = {
-  hct: 'HCT',
-  triple: 'HCT',
-  double: 'Double',
-  b_double: 'Double',
-  bdouble: 'Double',
-  tpdouble: 'Double',
-  rmdouble: 'Double',
-};
-
-export function tierFromChainType(chainType: string | undefined): string {
-  if (!chainType) return 'Standard';
-  return TIER_BY_CHAIN_TYPE[chainType] ?? 'Standard';
 }
 
 /** Convert game ID to display name: "apples_c" -> "Apples C" */
