@@ -87,7 +87,7 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 8. Re-run per game on every game update or DLC — full reseed, no incremental merge needed
 9. After re-parsing, update the manual fields in `public/data/<game>/data-version.json` (`game_version`, `coverage_notes`) and run `npm run gen:data-coverage` to refresh the README table + UI footer (see README "Data Coverage"; `--check` gates this in CI)
 
-**Manual trailer pricing**: the parser can't recover `chain_base` (per-brand/chain constant) or per-chassis `body_fee` from the dealer defs, so `mergeManualPrices()` overlays hand-walked prices from `public/data/<game>/manual-prices.json` (keyed by trailer id: `{price, source_pack, last_verified_game_version}`); without it ~245 trailers price as 0. `--audit-walks` lists trailers needing a walk plus orphaned entries; `--diff` flags real dealer-price shifts to re-verify. Canonical methodology, live walk queue, and contribution steps: `docs/manual-prices-audit.md`.
+**Manual trailer pricing**: the parser can't recover `chain_base` (per-brand/chain constant) or per-chassis `body_fee` from the dealer defs, so `mergeManualPrices()` overlays hand-walked prices from `public/data/<game>/manual-prices.json` (keyed by trailer id: `{price, source_pack, last_verified_game_version}`) — without it many trailers are left unpriced or underestimated. `--audit-walks` lists trailers needing a walk plus orphaned entries; `--diff` flags real dealer-price shifts to re-verify. Canonical methodology, live walk queue, and contribution steps: `docs/manual-prices-audit.md`.
 
 **Diff mode**: `npx tsx scripts/parse-game-defs.ts /path/to/def --diff --game <ets2|ats>`
 - Compares freshly parsed data against existing `game-defs.json` without writing

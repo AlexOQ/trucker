@@ -62,7 +62,7 @@ Own a trailer DLC the maintainer doesn't (Feldbinder, Kögel, Krone, Schwarzmül
    }
    ```
    The key is the trailer id as it appears in `game-defs.json`. Set `last_verified_game_version` to the current `game_version` in `public/data/ets2/data-version.json`. Use the dealer-screen total (all sections cheapest) as `price`.
-3. Verify: `npx tsx scripts/parse-game-defs.ts <def> --game ets2 --audit-walks` — your key should drop off the "needs walk" list with no orphan warnings; `--diff` should show only your price change.
+3. Verify: `npx tsx scripts/parse-game-defs.ts <def> --game ets2 --diff --audit-walks` (the `--diff` makes it audit **without** rewriting `game-defs.json`) — your key should drop off the "needs walk" list with no orphan warnings, and the diff should show only your price change.
 4. Open a PR. Include the `chassis_fee + body_fee + paint_min + chain_base = total` breakdown in the description so the values can be cross-checked.
 
 ## Suspect entries — assumed-identical body/chassis fees, not walked
