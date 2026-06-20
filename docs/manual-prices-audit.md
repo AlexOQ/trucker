@@ -48,6 +48,23 @@ node scripts/all-ties.cjs ets2       # tie groups, NEEDS WALK markers
 node scripts/winners-table.cjs ets2  # one winner per body_type × country-band
 ```
 
+## Contributing a walk
+
+Own a trailer DLC the maintainer doesn't (Feldbinder, Kögel, Krone, Schwarzmüller, Tirsan — see the **Walk queue** below for the live "wanted" list)? You can contribute its prices:
+
+1. In-game, open the dealer for the trailer and set **every** section (chassis / body / paint / wheels / accessories) to its cheapest option. Record the displayed total per `(chassis, body)`, following the methodology above. Body fees scale per chassis, so walk each chassis variant separately.
+2. Add one entry per trailer key to `public/data/ets2/manual-prices.json` under `prices`:
+   ```json
+   "feldbinder.kip.single_3_60.silo_60_3g": {
+     "price": 137050,
+     "source_pack": "feldbinder",
+     "last_verified_game_version": "1.60.1.0"
+   }
+   ```
+   The key is the trailer id as it appears in `game-defs.json`. Set `last_verified_game_version` to the current `game_version` in `public/data/ets2/data-version.json`. Use the dealer-screen total (all sections cheapest) as `price`.
+3. Verify: `npx tsx scripts/parse-game-defs.ts <def> --game ets2 --audit-walks` — your key should drop off the "needs walk" list with no orphan warnings; `--diff` should show only your price change.
+4. Open a PR. Include the `chassis_fee + body_fee + paint_min + chain_base = total` breakdown in the description so the values can be cross-checked.
+
 ## Suspect entries — assumed-identical body/chassis fees, not walked
 
 Pre-existing entries entered assuming a sibling variant has the same price. Likely wrong post-discovery that body fees vary by chassis.

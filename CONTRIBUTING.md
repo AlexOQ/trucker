@@ -31,6 +31,10 @@ When new DLC or updates add content:
 2. Add new entries following the conventions in [DATA.md](DATA.md)
 3. Submit a PR with all related changes
 
+### 4. Contribute Trailer Price Walks
+
+Multi-trailer (HCT/double) and DLC-brand trailer prices are assembled in the in-game customization screen and can't be read from the game files — they're hand-walked into `public/data/<game>/manual-prices.json`. If you own a trailer DLC that's still missing prices, see the walk methodology, the live "wanted" queue, and step-by-step intake in [docs/manual-prices-audit.md](docs/manual-prices-audit.md#contributing-a-walk).
+
 ## Data Contribution Guidelines
 
 ### City Names
