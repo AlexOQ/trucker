@@ -1648,6 +1648,7 @@ function buildFrontendData(
       body_mass: t.body_mass,
       gross_weight_limit: t.gross_weight_limit,
       length: t.length,
+      axles: t.axles,
       chain_type: t.chain_type,
       country_validity: t.country_validity.length > 0 ? t.country_validity : undefined,
       ownable: t.ownable,
@@ -1933,6 +1934,7 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
     if (oldVal.body_type !== newVal.body_type) diffs.push(`body_type: ${oldVal.body_type} → ${newVal.body_type}`);
     if (oldVal.gross_weight_limit !== newVal.gross_weight_limit)
       diffs.push(`gross_weight_limit: ${oldVal.gross_weight_limit} → ${newVal.gross_weight_limit}`);
+    if (oldVal.axles !== newVal.axles) diffs.push(`axles: ${oldVal.axles} → ${newVal.axles}`);
     if (JSON.stringify(oldVal.country_validity) !== JSON.stringify(newVal.country_validity))
       diffs.push(`country_validity changed`);
     // Pricing tracked for re-walk advisory: any non-zero ↔ zero transition or

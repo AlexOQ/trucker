@@ -186,6 +186,7 @@ function buildTrailers(
         body_mass: t.body_mass,
         gross_weight_limit: t.gross_weight_limit,
         length: t.length,
+        axles: t.axles,
         chain_type: t.chain_type,
         country_validity: t.country_validity,
         ownable: t.ownable,
