@@ -58,7 +58,7 @@ Multi-trailer (HCT/double) and DLC-brand trailer prices are assembled in the in-
 
 ## Data Model
 
-The data is **generated**, not maintained as hand-written flat files. Each game has a single `public/data/<game>/game-defs.json` (e.g. `public/data/ets2/game-defs.json`) produced by `scripts/parse-game-defs.ts` from the extracted game `def/` files. It holds cargo, trailers, companies, cities, countries, economy, trucks, and the DLC registry — each section an object keyed by game id (not an array). It's supplemented by three smaller files per game:
+The data is **generated**, not maintained as hand-written flat files. Each game has a single `public/data/<game>/game-defs.json` (e.g. `public/data/ets2/game-defs.json`) produced by `scripts/parse-game-defs.ts` from the extracted game `def/` files. It holds cargo, trailers, companies, cities, countries, economy, trucks, and the DLC registry — the entity sections are objects keyed by game id (the `trucks` section is a list), not the flat per-entity arrays of the old model. ETS2 also ships three smaller supplements (ATS currently has only `game-defs.json`):
 
 - `observations.json` — data parsed from save games (spawn frequencies, unit counts) that validates and fills gaps in the generated defs.
 - `manual-prices.json` — hand-walked trailer prices the parser can't recover (see *Contribute Trailer Price Walks*).
