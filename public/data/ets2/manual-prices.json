@@ -6,1067 +6,1067 @@
     "schmitz.scs.single_2.curtain": {
       "price": 41385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.single_2.curtainp": {
       "price": 41385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.single_3.curtain": {
       "price": 44385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.single_3.curtainp": {
       "price": 44385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.single_3.curtain_ef": {
       "price": 44385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.single_3.curtain_efp": {
       "price": 44385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.single_3sp.curtain": {
       "price": 44385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.single_3sp.curtainp": {
       "price": 44385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.single_3_15.curtain": {
       "price": 49385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.single_3_15.curtainp": {
       "price": 49385,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.double_3_2.curtain": {
       "price": 69625,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.double_3_2.curtainp": {
       "price": 69625,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.hct_3_2_3.curtain": {
       "price": 96415,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.scs.hct_3_2_3.curtainp": {
       "price": 96415,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.sbo.single_2.dryvan": {
       "price": 60050,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.sbo.single_3.dryvan": {
       "price": 63050,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.sbo.single_3_15.dryvan": {
       "price": 68050,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_2_dsl.solid": {
       "price": 42910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_2_dsl.solid_sc": {
       "price": 43910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_2_dsl.light": {
       "price": 47910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_2_dsl.light_sc": {
       "price": 49910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_2_dal.solid": {
       "price": 42910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_2_dal.solid_sc": {
       "price": 43910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_2_dal.light": {
       "price": 47910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_2_dal.light_sc": {
       "price": 49910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_dsl.solid": {
       "price": 46910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_dsl.solid_sc": {
       "price": 47910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_dsl.light": {
       "price": 51910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_dsl.light_sc": {
       "price": 53910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_dal.solid": {
       "price": 46910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_dal.solid_sc": {
       "price": 47910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_dal.light": {
       "price": 51910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_dal.light_sc": {
       "price": 53910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_33_dsl.solid": {
       "price": 46910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_33_dsl.solid_sc": {
       "price": 47910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_33_dsl.light": {
       "price": 51910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_33_dsl.light_sc": {
       "price": 53910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_33_dal.solid": {
       "price": 46910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_33_dal.solid_sc": {
       "price": 47910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_33_dal.light": {
       "price": 51910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.ski.ch_3_33_dal.light_sc": {
       "price": 53910,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.sko.single_2.reefer": {
       "price": 121650,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.sko.single_2sa.reefer": {
       "price": 122650,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.sko.single_3.reefer": {
       "price": 124650,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.sko.single_3sa.reefer": {
       "price": 126650,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.sko.single_3_15.reefer": {
       "price": 129650,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "schmitz.sko.double_3_2.reefer": {
       "price": 206620,
       "source_pack": "schmitz_cargobull",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.scx.hct_3_2_3.curtain": {
       "price": 95600,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.scx.hct_3_2_3.curtainp": {
       "price": 97600,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.shg.singl_3e_20.container": {
       "price": 70165,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.shg.singl_3e_220.container": {
       "price": 70165,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.shg.singl_3e_40.container": {
       "price": 70165,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_2_ln.cont": {
       "price": 97300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_2_ln.low": {
       "price": 96300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_2_ln.low_wood": {
       "price": 98300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_2_sh.cont": {
       "price": 97300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_2_sh.low": {
       "price": 96300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_2_sh.low_wood": {
       "price": 98300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_3_ln.cont": {
       "price": 99300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_3_ln.low": {
       "price": 98300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_3_ln.low_wood": {
       "price": 100300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_3_sh.cont": {
       "price": 99300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_3_sh.low": {
       "price": 98300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.sll.single_3_sh.low_wood": {
       "price": 100300,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.foodtank.single_2.paint": {
       "price": 90700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.foodtank.single_2.chrome": {
       "price": 95700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.foodtank.single_3.paint": {
       "price": 93700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.foodtank.single_3.chrome": {
       "price": 98700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.gastank.single_2.gastank": {
       "price": 98540,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.gastank.single_3.gastank": {
       "price": 101540,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.fueltank.single_2.fueltank": {
       "price": 99540,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.fueltank.single_3.fueltank": {
       "price": 102540,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.livestock.single_3s.str_pnt": {
       "price": 75570,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.livestock.single_3s.str_stl": {
       "price": 75570,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.livestock.single_3b.belly_pnt": {
       "price": 87570,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.livestock.single_3b.belly_stl": {
       "price": 87570,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowbed.single_2s.short": {
       "price": 49560,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowbed.single_3.short": {
       "price": 51560,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowbed.single_3s.short": {
       "price": 52560,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowbed.single_4_ln.long": {
       "price": 58560,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowbed.single_4_sh.short": {
       "price": 58560,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowbed.single_41_ln.long": {
       "price": 60560,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowbed.single_41_sh.short": {
       "price": 60560,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowbed.single_5_ln.long": {
       "price": 60560,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowbed.single_5_sh.short": {
       "price": 60560,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowloader.single_2_ln.long": {
       "price": 53500,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowloader.single_2_sh.short": {
       "price": 53500,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowloader.single_3_ln.long": {
       "price": 55500,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowloader.single_3_sh.short": {
       "price": 55500,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowloader.single_3_1.short": {
       "price": 57500,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowloader.single_4_ln.long": {
       "price": 58500,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowloader.single_4_sh.short": {
       "price": 58500,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.lowloader.single_4_1.short": {
       "price": 59500,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2.flatbed_w": {
       "price": 30700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2.flatbed_s": {
       "price": 35700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2.brick": {
       "price": 36700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2.container": {
       "price": 38700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2.brick_crane": {
       "price": 40700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2a.flatbed_w": {
       "price": 31700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2a.flatbed_s": {
       "price": 36700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2a.brick": {
       "price": 37700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2a.container": {
       "price": 39700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_2a.brick_crane": {
       "price": 41700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3.flatbed_w": {
       "price": 33700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3.flatbed_s": {
       "price": 38700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3.brick": {
       "price": 39700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3.container": {
       "price": 41700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3.brick_crane": {
       "price": 43700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s.flatbed_w": {
       "price": 35700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s.flatbed_s": {
       "price": 40700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s.brick": {
       "price": 41700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s.container": {
       "price": 43700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s.brick_crane": {
       "price": 45700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3sa.flatbed_w": {
       "price": 35700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3sa.flatbed_s": {
       "price": 40700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3sa.brick": {
       "price": 41700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3sa.container": {
       "price": 43700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3sa.brick_crane": {
       "price": 45700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s2.flatbed_w": {
       "price": 37700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s2.flatbed_s": {
       "price": 42700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s2.brick": {
       "price": 43700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s2.container": {
       "price": 45700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_3s2.brick_crane": {
       "price": 47700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_4.flatbed_w": {
       "price": 40700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_4.flatbed_s": {
       "price": 45700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_4.brick": {
       "price": 46700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_4.container": {
       "price": 48700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.single_4.brick_crane": {
       "price": 50700,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.hct_3_2_3.curtain": {
       "price": 93480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.hct_3_2_3.dryvan": {
       "price": 143480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.hct_3_2_3.dryvan_s": {
       "price": 147480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.hct_3_2_3.dryvan_m": {
       "price": 149480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.hct_3_2_3.insulated": {
       "price": 183480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.hct_3_2_3.insulated_s": {
       "price": 187480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.hct_3_2_3.reefer": {
       "price": 203480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.hct_3_2_3.reefer_s": {
       "price": 207480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2_3.flatbed_w": {
       "price": 87480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2_3.flatbed_s": {
       "price": 97480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2_3.brick": {
       "price": 99480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2_3.brick_crane": {
       "price": 103480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2_3.container": {
       "price": 103480,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.log.hct_3_2_3.wood": {
       "price": 107408,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.log.hct_3_2_3.steel": {
       "price": 111408,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.gooseneck.hct_3_2_3.container": {
       "price": 83880,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_1.curtain": {
       "price": 19690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_1.dryvan": {
       "price": 36690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_1.dryvan_s": {
       "price": 38690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_1.dryvan_m": {
       "price": 39690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_1.insulated": {
       "price": 51690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_1.insulated_s": {
       "price": 53690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_1.reefer": {
       "price": 58690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_1.reefer_s": {
       "price": 58690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_3.curtain": {
       "price": 38110,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_3.dryvan": {
       "price": 63110,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_3.dryvan_s": {
       "price": 65110,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_3.dryvan_m": {
       "price": 69110,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_3.insulated": {
       "price": 83110,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_3.insulated_s": {
       "price": 85110,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_3.reefer": {
       "price": 117110,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_3.reefer_s": {
       "price": 119110,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.single_3.reefer_m": {
       "price": 120110,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.bdouble_2_2.curtain": {
       "price": 62800,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.bdouble_2_2.dryvan": {
       "price": 104800,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.bdouble_2_2.dryvan_s": {
       "price": 108800,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.bdouble_2_2.dryvan_m": {
       "price": 116800,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.bdouble_2_2.insulated": {
       "price": 139800,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.bdouble_2_2.insulated_s": {
       "price": 143800,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.bdouble_2_2.reefer": {
       "price": 202800,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.box.bdouble_2_2.reefer_s": {
       "price": 206800,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_3.flatbed_w": {
       "price": 65520,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_3.flatbed_s": {
       "price": 74020,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_3.brick": {
       "price": 76020,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_3.container": {
       "price": 79020,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_3.brick_crane": {
       "price": 80020,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_2.flatbed_w": {
       "price": 60310,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_2.flatbed_s": {
       "price": 68810,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_2.brick": {
       "price": 70810,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_2.container": {
       "price": 73810,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_2.brick_crane": {
       "price": 74810,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_1.flatbed_w": {
       "price": 55100,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_1.flatbed_s": {
       "price": 63600,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_1.brick": {
       "price": 65600,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_1.container": {
       "price": 68600,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.double_3_1.brick_crane": {
       "price": 69600,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.log.bdouble_3_3.wood": {
       "price": 89620,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.log.bdouble_3_3.steel": {
       "price": 92620,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2s_4.flatbed_w": {
       "price": 98690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2s_4.flatbed_s": {
       "price": 108690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2s_4.brick": {
       "price": 110690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2s_4.brick_crane": {
       "price": 114690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.flatbed.hct_3_2s_4.container": {
       "price": 114690,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.scx.single_3_15.curtain": {
       "price": 47410,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.scx.single_3_15.curtainp": {
       "price": 48410,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.chemtank.single_3.paint": {
       "price": 67310,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.chemtank.single_3.chrome": {
       "price": 72310,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.dumper.single_3_10.steel": {
       "price": 56470,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.dumper.single_3_10.alu": {
       "price": 63470,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.log.single_3.wood": {
       "price": 47310,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.log.single_3.steel": {
       "price": 49310,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.silo.single_3_10.silo": {
       "price": 73895,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.silo.bdouble_3_3.silo": {
       "price": 127765,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "scs.silo.hct_3_3_2.silo": {
       "price": 173305,
       "source_pack": "scs_base",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.scx.hct_3s_2_3.curtain": {
       "price": 99600,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "kassbohrer.scx.hct_3s_2_3.curtainp": {
       "price": 101600,
       "source_pack": "kassbohrer",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "wielton.strongm.ch_4_sw.strongm": {
       "price": 68200,
       "source_pack": "wielton",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "wielton.dropsidem.single_3.dropside635": {
       "price": 42830,
       "source_pack": "wielton",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "wielton.dropsidem.single_3.dropside835": {
       "price": 43330,
       "source_pack": "wielton",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "wielton.dropsidem.single_3.dropside1035": {
       "price": 43830,
       "source_pack": "wielton",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "wielton.curtainm.single_3.curtain": {
       "price": 41330,
       "source_pack": "wielton",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "wielton.curtainm.single_3.curtain_sb": {
       "price": 42330,
       "source_pack": "wielton",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "wielton.drym.single_3.drym": {
       "price": 65130,
       "source_pack": "wielton",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "wielton.containerm.single_3_220.container": {
       "price": 35170,
       "source_pack": "wielton",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     },
     "wielton.containerm.single_3_40.container": {
       "price": 38970,
       "source_pack": "wielton",
-      "last_verified_game_version": "1.60.1.0"
+      "last_verified_game_version": "1.59"
     }
   }
 }

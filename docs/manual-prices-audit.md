@@ -28,7 +28,7 @@ Internal body suffixes in the trailer keys don't match what the in-game dealer s
 
 ### Why the parser alone is insufficient
 
-`extractTrailerPricing()` in `parse-game-defs.ts` walks the dealer-accessory entries in the game defs but cannot recover `chain_base` (a per-brand/chain constant) or the per-chassis `body_fee` scaling — both of which are only visible on the live in-game dealer screen. Without `mergeManualPrices()` applying the walked overrides, ~368 trailers price as 0 and another ~70 underestimate by €5k–€55k. The manual walk queue is load-bearing for any trailer that participates in a winner-tie group.
+`extractTrailerPricing()` in `parse-game-defs.ts` walks the dealer-accessory entries in the game defs but cannot recover `chain_base` (a per-brand/chain constant) or the per-chassis `body_fee` scaling — both of which are only visible on the live in-game dealer screen. Without `mergeManualPrices()` applying the walked overrides, ~429 of 514 trailers price as 0 and 29 more underestimate by up to ~€55k; even with the overlay, 245 remain unpriced (DLC packs not yet walked + non-winner variants). The manual walk queue is load-bearing for any trailer that participates in a winner-tie group. (Counts as of the 1.60.1.0 data — re-check with `node scripts/all-ties.cjs ets2`.)
 
 For each trailer key, record the **cheapest configured-trailer total** the dealer screen shows when every selectable section (chassis / body / paint / wheels / accessories) is set to its lowest-priced option. This becomes the entry's `price`.
 
@@ -53,7 +53,8 @@ node scripts/winners-table.cjs ets2  # one winner per body_type × country-band
 Own a trailer DLC the maintainer doesn't (Feldbinder, Kögel, Krone, Schwarzmüller, Tirsan — see the **Walk queue** below for the live "wanted" list)? You can contribute its prices:
 
 1. In-game, open the dealer for the trailer and set **every** section (chassis / body / paint / wheels / accessories) to its cheapest option. Record the displayed total per `(chassis, body)`, following the methodology above. Body fees scale per chassis, so walk each chassis variant separately.
-2. Add one entry per trailer key to `public/data/ets2/manual-prices.json` under `prices`:
+2. Find the exact trailer keys with `node scripts/all-ties.cjs ets2` — it prints each tie group and marks the ones still `[NEEDS WALK]`. Keys match the ids in `game-defs.json`. Walking the cheapest member of a tie group resolves the whole group.
+3. Add one entry per key to `public/data/ets2/manual-prices.json` under `prices`:
    ```json
    "feldbinder.kip.single_3_60.silo_60_3g": {
      "price": 137050,
@@ -61,9 +62,9 @@ Own a trailer DLC the maintainer doesn't (Feldbinder, Kögel, Krone, Schwarzmül
      "last_verified_game_version": "1.60.1.0"
    }
    ```
-   The key is the trailer id as it appears in `game-defs.json`. Set `last_verified_game_version` to the current `game_version` in `public/data/ets2/data-version.json`. Use the dealer-screen total (all sections cheapest) as `price`.
-3. Verify: `npx tsx scripts/parse-game-defs.ts <def> --game ets2 --diff --audit-walks` (the `--diff` makes it audit **without** rewriting `game-defs.json`) — your key should drop off the "needs walk" list with no orphan warnings, and the diff should show only your price change.
-4. Open a PR. Include the `chassis_fee + body_fee + paint_min + chain_base = total` breakdown in the description so the values can be cross-checked.
+   `price` is the dealer-screen total (all sections cheapest). `source_pack` is the brand (advisory only). `last_verified_game_version` is the version you walked in — i.e. the current `game_version` in `public/data/ets2/data-version.json` for a fresh walk; it records when a price was last hand-walked, not when it was last presumed valid.
+4. Verify with `node scripts/all-ties.cjs ets2` again — your tie group should flip from `[NEEDS WALK …]` to `[RESOLVED → <your key> (walked=<price>)]`. (`node scripts/winners-table.cjs ets2` shows the resulting per-body-type winners.)
+5. Open a PR. Include the `chassis_fee + body_fee + paint_min + chain_base = total` breakdown in the description so the values can be cross-checked.
 
 ## Suspect entries — assumed-identical body/chassis fees, not walked
 
