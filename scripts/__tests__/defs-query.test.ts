@@ -96,3 +96,76 @@ describe('defs-query — unknown-id / arg contract (exit non-zero, no stack trac
     expect(r.stdout).toMatch(/Usage:/);
   });
 });
+
+describe.each(GAMES)('defs-query — cargo-search (%s)', (game) => {
+  const d = defs(game);
+  const firstCargoId = Object.keys(d.cargo)[0];
+
+  it('substring matches the record whose id contains the needle', () => {
+    const needle = firstCargoId.slice(0, 3);
+    const r = run(['cargo-search', needle, '--game', game]);
+    expect(r.code).toBe(0);
+    const out = JSON.parse(r.stdout);
+    expect(out.matches.some((m: any) => m.id === firstCargoId)).toBe(true);
+    // every hit really contains the needle in its id or name (no false positives)
+    const re = needle.toLowerCase();
+    expect(
+      out.matches.every(
+        (m: any) =>
+          m.id.toLowerCase().includes(re) || (m.name || '').toLowerCase().includes(re),
+      ),
+    ).toBe(true);
+  });
+
+  it('substring search is case-insensitive', () => {
+    const needle = firstCargoId.slice(0, 3);
+    const lo = JSON.parse(run(['cargo-search', needle.toLowerCase(), '--game', game]).stdout);
+    const hi = JSON.parse(run(['cargo-search', needle.toUpperCase(), '--game', game]).stdout);
+    expect(hi.count).toBe(lo.count);
+  });
+
+  it('/regex/ form matches by anchored pattern', () => {
+    const r = run(['cargo-search', `/^${firstCargoId}$/`, '--game', game]);
+    expect(r.code).toBe(0);
+    const out = JSON.parse(r.stdout);
+    expect(out.count).toBeGreaterThanOrEqual(1);
+    expect(out.matches.some((m: any) => m.id === firstCargoId)).toBe(true);
+  });
+
+  it('a miss returns an empty result (count 0, exit 0) — a search, not an error', () => {
+    const r = run(['cargo-search', 'zzz_no_such_cargo_zzz', '--game', game]);
+    expect(r.code).toBe(0);
+    expect(JSON.parse(r.stdout)).toMatchObject({ count: 0, matches: [] });
+  });
+});
+
+describe('defs-query — cargo-search / dlc arg contract', () => {
+  it('cargo-search without a query exits non-zero', () => {
+    expect(run(['cargo-search']).code).not.toBe(0);
+  });
+
+  it('cargo-search with an invalid regex exits non-zero, no stack trace', () => {
+    const r = run(['cargo-search', '/[/']);
+    expect(r.code).not.toBe(0);
+    expect(r.stderr).toMatch(/defs-query: invalid regex/);
+    expect(r.stderr).not.toMatch(/at .*\(.*:\d+:\d+\)/);
+  });
+
+  it('dlc with no section dumps the whole registry', () => {
+    const r = run(['dlc']);
+    expect(r.code).toBe(0);
+    expect(Object.keys(JSON.parse(r.stdout))).toContain('garage_cities');
+  });
+
+  it('dlc <section> narrows to one section', () => {
+    const r = run(['dlc', 'garage_cities']);
+    expect(r.code).toBe(0);
+    expect(Array.isArray(JSON.parse(r.stdout))).toBe(true);
+  });
+
+  it('dlc <unknown section> exits non-zero with a message', () => {
+    const r = run(['dlc', 'not_a_section']);
+    expect(r.code).not.toBe(0);
+    expect(r.stderr).toMatch(/unknown dlc section/);
+  });
+});
