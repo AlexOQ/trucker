@@ -8,31 +8,38 @@
  * Everything here accesses them as maps (obj[id] / Object.entries) only.
  *
  * Usage:
- *   node scripts/defs-query.cjs <subcommand> <id> [--game ets2|ats]
+ *   node scripts/defs-query.cjs <subcommand> <arg> [--game ets2|ats]
  *
- *   cargo <id>                  cargo record
- *   companies-for-cargo <id>    companies whose cargo_out includes <id>
- *   city <id>                   city record
- *   city-companies <id>         companies present in a city ({companyId:count} map)
+ *   cargo <id>                     cargo record
+ *   companies-for-cargo <id>       companies whose cargo_out includes <id>
+ *   city <id>                      city record
+ *   city-companies <id>            companies present in a city ({companyId:count} map)
+ *   cargo-search <substr|/regex/>  cargo records whose id or name matches
+ *   dlc [section]                  DLC registry (whole, or one section)
  *
  * Output is JSON on stdout. Unknown ids / args exit non-zero with a one-line
- * message on stderr — no stack traces.
+ * message on stderr — no stack traces. `cargo-search` is a SEARCH, so zero
+ * matches is an empty result (exit 0), not an error.
  */
 const fs = require('fs');
 const p = require('path');
 
 const GAMES = ['ets2', 'ats'];
-const SUBCOMMANDS = ['cargo', 'companies-for-cargo', 'city', 'city-companies'];
+const SUBCOMMANDS = ['cargo', 'companies-for-cargo', 'city', 'city-companies', 'cargo-search', 'dlc'];
+// Commands whose positional arg is optional (everything else requires one).
+const OPTIONAL_ARG = new Set(['dlc']);
 
 function usage() {
   return [
-    'Usage: node scripts/defs-query.cjs <subcommand> <id> [--game ets2|ats]',
+    'Usage: node scripts/defs-query.cjs <subcommand> <arg> [--game ets2|ats]',
     '',
     'Subcommands:',
-    '  cargo <id>                cargo record',
-    '  companies-for-cargo <id>  companies whose cargo_out includes <id>',
-    '  city <id>                 city record',
-    '  city-companies <id>       companies present in a city',
+    '  cargo <id>                     cargo record',
+    '  companies-for-cargo <id>       companies whose cargo_out includes <id>',
+    '  city <id>                      city record',
+    '  city-companies <id>            companies present in a city',
+    '  cargo-search <substr|/regex/>  cargo records whose id or name matches',
+    '  dlc [section]                  DLC registry (whole, or one section)',
     '',
     `--game defaults to ${GAMES[0]} (one of: ${GAMES.join(', ')})`,
   ].join('\n');
@@ -62,7 +69,26 @@ function parseArgs(argv) {
     }
   }
   if (!GAMES.includes(game)) die(`unknown game '${game}' (expected one of: ${GAMES.join(', ')})`);
-  return { game, subcommand: positional[0], id: positional[1] };
+  return { game, subcommand: positional[0], arg: positional[1] };
+}
+
+// A cargo-search query is either /regex/flags (JS-literal form — flags honored
+// exactly as written, so `/med|equip/i` is case-insensitive like the ad-hoc
+// one-liner it replaces) or a bare substring (always case-insensitive contains).
+// Returns a predicate over a single string. An unparseable regex dies cleanly.
+function buildMatcher(query) {
+  const m = /^\/(.*)\/([a-z]*)$/.exec(query);
+  if (m) {
+    let rx;
+    try {
+      rx = new RegExp(m[1], m[2]);
+    } catch (e) {
+      die(`invalid regex ${query}: ${e.message}`);
+    }
+    return (s) => rx.test(s);
+  }
+  const needle = query.toLowerCase();
+  return (s) => s.toLowerCase().includes(needle);
 }
 
 function loadDefs(game) {
@@ -116,14 +142,40 @@ const COMMANDS = {
     }));
     emit({ city: id, count: companies.length, companies });
   },
+
+  // Search over the cargo map by id OR name — the id record's `name` is a
+  // distinct token (e.g. id `mat_handler` / name `material_handler`), so both
+  // are matched. A miss returns count 0, not an error (it's a search).
+  'cargo-search'(defs, query) {
+    const matches = buildMatcher(query);
+    const hits = Object.entries(defs.cargo)
+      .filter(([id, c]) => matches(id) || matches(c.name || ''))
+      .map(([id, c]) => ({ id, ...c }))
+      .sort((a, b) => a.id.localeCompare(b.id));
+    emit({ query, count: hits.length, matches: hits });
+  },
+
+  // DLC registry dump: bare `dlc` emits the whole registry; `dlc <section>`
+  // narrows to one keyed section (trailer_dlcs, cargo_dlc_map, garage_cities, …).
+  dlc(defs, section) {
+    if (!has(defs, 'dlc')) die('no dlc section in this game-defs.json');
+    if (!section) {
+      emit(defs.dlc);
+      return;
+    }
+    if (!has(defs.dlc, section)) {
+      die(`unknown dlc section '${section}' (available: ${Object.keys(defs.dlc).join(', ')})`);
+    }
+    emit(defs.dlc[section]);
+  },
 };
 
 function main() {
-  const { game, subcommand, id } = parseArgs(process.argv.slice(2));
+  const { game, subcommand, arg } = parseArgs(process.argv.slice(2));
   if (!subcommand) die(`missing subcommand\n${usage()}`);
   if (!SUBCOMMANDS.includes(subcommand)) die(`unknown subcommand '${subcommand}'\n${usage()}`);
-  if (!id) die(`'${subcommand}' requires an <id>\n${usage()}`);
-  COMMANDS[subcommand](loadDefs(game), id);
+  if (!arg && !OPTIONAL_ARG.has(subcommand)) die(`'${subcommand}' requires an argument\n${usage()}`);
+  COMMANDS[subcommand](loadDefs(game), arg);
 }
 
 main();
