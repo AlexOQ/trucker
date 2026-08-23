@@ -87,7 +87,7 @@ DLC counts below are the trailer-brand / cargo-pack / map-expansion DLCs each ga
 | Game | Version | Refreshed | DLCs (trailer / cargo / map) | Notes |
 |------|---------|-----------|------------------------------|-------|
 | ETS2 | 1.60.1.7 | 2026-06-30 | 27 (8 / 9 / 10) | — |
-| ATS | 1.60.1.8 | 2026-06-30 | 27 (2 / 8 / 17) | Truck cabin/paint catalog not yet populated for ATS. Map-expansion cargo limited to installed states; Special Transport cargo excluded (player-only). |
+| ATS | 1.60.1.8 | 2026-08-23 | 27 (2 / 8 / 17) | Cargo/trailer/truck data diff-verified against a 1.60.1.8 install — zero drift. Cities and companies cover all 20 states, including the 6 with unowned map DLCs. ATS state map DLCs ship no cargo of their own, so there is no shadow cargo. Special Transport cargo excluded (player-only). Trailer prices def-derived only — no ATS dealer walks. Volvo VNR Electric has no paint options. |
 <!-- END data-coverage -->
 
 ## Development

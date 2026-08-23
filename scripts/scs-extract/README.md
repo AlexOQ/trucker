@@ -53,6 +53,8 @@ npx tsx ../parse-game-defs.ts /tmp/ats_def/def --game ats
 
 Each cargo pack defines its cargo in `def/cargo.<dlc>.sii`, an aggregator of
 `@include "cargo/<id>.<dlc>.sui"` lines. The `<id>` tokens are the cargo IDs.
-This is how `ATS_CARGO_DLC_MAP` in `parse-game-defs.ts` was sourced (#243), and
-the same method populates `ATS_MAP_DLC_CARGO` from a `dlc_<state>.scs` once that
-state map DLC is owned.
+This is how `ATS_CARGO_DLC_MAP` in `parse-game-defs.ts` was sourced (#243).
+
+The method does **not** extend to ATS state map DLCs: they ship no `def/cargo`
+tree and no `def/cargo.dlc_<state>.sii` aggregator, so `ATS_MAP_DLC_CARGO` stays
+empty. Verified on 1.60.1.8 across all 13 owned state archives.

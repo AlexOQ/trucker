@@ -104,3 +104,55 @@ Questions to verify once extracted game definition files are received.
 35. [OPEN] How well does this calculated probability match our observed `company_cargo_frequency`?
     - If close: observations become optional validation layer
     - If divergent: game has additional hidden factors (market randomness, player level, etc.)
+
+## In-Game Verification Queue (opened 2026-08-23)
+
+Questions the def files cannot settle — each needs an observation from a running
+game. Recorded from the ATS DLC validation pass; see `docs/ats-state-restrictions.md`
+for the trailer-legality data these sit on top of.
+
+### Both games
+
+44. [OPEN] **Do `mass_limit_per_axle_count` caps apply to AI-driver freight?** Every
+    `def/country/<x>.sui` in both games declares a whole-combination GVW ladder indexed
+    by axle count, and the parser reads none of it — `game-defs.json`'s `countries`
+    section holds only `name`. Units are capped on the trailer's own
+    `gross_trailer_weight_limit` alone (`parse-game-defs.ts`, see Q15), so wherever a
+    country cap is tighter, haul value is overstated.
+    - **ATS spread**: Montana 59,447.9 kg (131,060 lb) down to the federal 36,287.4 kg
+      (80,000 lb) in 10 states. Oklahoma is the sharp case — chain-legal for `rmdouble`,
+      `tpdouble` and `triple` but capped at 90,000 lb.
+    - **ETS2 spread**: Finland 105,000 kg at the top of a 10-rung ladder, Sweden 64,000,
+      Netherlands 60,000, Germany and most others 40,000.
+    - **Test where weight already binds**, or spare payload will absorb the effect:
+      ATS `hopper` (384 of 385 cargo-trailer pairs weight-limited), `bulkfeed` and
+      `foodtank` (100%), `flatbed` (824 pairs); ETS2 `dumper` (519 of 798) and `silo`
+      (98 of 180). Run the same dense load in a high-cap and a low-cap region and
+      compare the units offered.
+    - **Note on indexing**: the ladder is indexed by *total combination* axles, not
+      trailer axles. An 8-axle ETS2 HCT rated 84 t only fits under Finland's ladder at
+      the 11-axle rung (105,000 kg) once a 3-axle tractor is counted.
+
+### ATS
+
+45. [OPEN] **Do the 12 `scs.lowboy.triple_*` rigs appear as ordinary depot board freight?**
+    They are purchasable, carry no `country_validity` (correctly — they are
+    `tr_articulated_6/7/8/9axle` jeep+lowboy+spreader heavy-haul rigs, not road trains),
+    and are the `lowboy` haul-value leader by 31%. If they never spawn as AI-haulable
+    board jobs the optimizer is overrating `lowboy` everywhere. Check a depot board that
+    offers machinery cargo.
+46. [OPEN] **Do California and Illinois actually refuse the `53r`/`53sp`/`53_4o` axle
+    variants?** Data says the restriction costs nothing — all 57 have an unrestricted twin
+    identical in body type, chain type, volume, weight limit and axle count. Low priority;
+    confirms the twin analysis rather than changing anything.
+
+### ETS2
+
+47. [OPEN] **Does a B-double ever out-earn a Double on the same cargo?** Best-per-body-type
+    haul values tie exactly on `container`, `dryvan`, `insulated` and `refrigerated`, and
+    the Double wins `curtainside` and `silo`; `log` is the only body type where a B-double
+    is the best available option, and only because no Double exists for it. On `container`
+    the B-double carries 10,380 kg more usable payload for identical haul value — nothing
+    in that cargo set is dense enough to use it (heaviest full load 34,800 kg against
+    44,120 kg already available). Worth one board comparison to confirm pay tracks haul
+    value rather than capacity.
