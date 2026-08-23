@@ -16,8 +16,14 @@ import { join, basename, dirname } from 'path';
 import { mergeManualPrices } from './merge-manual-prices';
 
 const args = process.argv.slice(2);
-const diffMode = args.includes('--diff');
 const auditWalks = args.includes('--audit-walks');
+// --audit-walks is a read-only report, so it implies --diff. Without this it fell
+// through to the write path and published whatever def tree it was pointed at — which
+// is how a 14-state extract once overwrote the bundled 20-state ATS data. Auditing an
+// extract you have no intention of publishing is the normal case, so the safe reading
+// is the default; pass --write alongside it to genuinely re-publish and then audit.
+const forceWrite = args.includes('--write');
+const diffMode = args.includes('--diff') || (auditWalks && !forceWrite);
 const gameFlagIdx = args.indexOf('--game');
 const rawGame = gameFlagIdx >= 0 ? args[gameFlagIdx + 1] : 'ets2';
 if (!process.env.VITEST && rawGame !== 'ets2' && rawGame !== 'ats') {
@@ -513,12 +519,16 @@ const ATS_CARGO_DLC_MAP: Record<string, string> = {
 
 /** Cargo only available with a specific map expansion (ATS) — "shadow cargo".
  *
- * Empty: only the free Arizona/Nevada state DLCs are installed (both map to null
- * in ATS_STATE_TO_DLC, i.e. base-tier), so no *purchasable* state map DLC is owned
- * to source state-exclusive cargo from. Populate per owned state by reading that
- * state's `dlc_<state>.scs` `def/cargo.dlc_<state>.sii` aggregator (same method as
- * ATS_CARGO_DLC_MAP) and tagging each id with its state DLC id. Grows as map DLCs
- * are bought; see #243. */
+ * Permanently empty: ATS state map DLCs ship no cargo defs at all. Verified against
+ * 13 owned state archives (AR CO ID MT NM OK OR TX UT WA WY + free AZ NV) on
+ * 1.60.1.8 — every `dlc_<state>.scs` contains `def/city` plus per-company `in`/`out`
+ * lists, but zero files under `def/cargo`, and no `def/cargo.dlc_<state>.sii` aggregator
+ * exists for any state. State DLCs extend where existing cargo spawns, never what
+ * cargo exists. Contrast ETS2, where map expansions do add shadow cargo.
+ *
+ * This is a property of how SCS ships ATS map DLCs, not of which ones are owned —
+ * do not re-open on the next state purchase. Re-check only if a state DLC ever
+ * ships a `def/cargo` tree. See #243. */
 const ATS_MAP_DLC_CARGO: Record<string, string> = {};
 
 // ─── Game-aware aliases ─────────────────────────────────────────────
@@ -1529,7 +1539,7 @@ function extractEconomy(): EconomyData {
 // ─── Main ──────────────────────────────────────────────────────────────
 
 function main() {
-  console.log('Parsing ETS2 game definitions from:', defsPath);
+  console.log(`Parsing ${game.toUpperCase()} game definitions from:`, defsPath);
   console.log('');
 
   // Extract all data
@@ -1591,6 +1601,9 @@ function main() {
   const frontendData = buildFrontendData(cargo, trailers, companies, cities, countries, matches, cityCompanyMap, economy, trucks);
 
   if (diffMode) {
+    if (auditWalks && !args.includes('--diff')) {
+      console.log('(--audit-walks is read-only; not writing. Pass --write to publish as well.)\n');
+    }
     runDiff(frontendData);
   } else {
     writeOutput(cargo, trailers, companies, cities, countries, economy, trucks, matches, cityCompanyMap, frontendData);
@@ -1598,6 +1611,7 @@ function main() {
   }
 
   // Audit runs after diff/write — same comparison logic regardless of mode.
+  // Reached read-only unless --write was passed; see the flag block at the top.
   if (auditWalks) {
     runAuditWalks(frontendData);
   }

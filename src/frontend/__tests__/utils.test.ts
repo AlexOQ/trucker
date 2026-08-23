@@ -6,6 +6,8 @@ import {
   formatTrailerSpec,
   escapeHtml,
   chainConfigLabel,
+  foldBestInRegions,
+  buildCargoLabels,
   CHAIN_LABELS,
   CHAIN_ORDER,
 } from '../utils';
@@ -294,7 +296,7 @@ describe('formatTrailerSpec', () => {
       chain_type: 'b_double',
       axles: 4,
     }));
-    expect(spec).toContain('B-double');
+    expect(spec).toContain('B-Double');
     expect(spec).toContain('4-axle');
   });
 
@@ -303,7 +305,7 @@ describe('formatTrailerSpec', () => {
       id: 'scs.box.bdouble_2_2.dryvan',
       chain_type: 'bdouble',
     }));
-    expect(spec).toContain('B-double');
+    expect(spec).toContain('B-Double');
   });
 
   it('labels ATS turnpike-double chain type', () => {
@@ -311,7 +313,7 @@ describe('formatTrailerSpec', () => {
       id: 'scs.box.tp_double_1.dryvan',
       chain_type: 'tpdouble',
     }));
-    expect(spec).toContain('Turnpike-double');
+    expect(spec).toContain('T.P. Double');
   });
 
   it('labels ATS rocky-mountain double chain type', () => {
@@ -319,7 +321,7 @@ describe('formatTrailerSpec', () => {
       id: 'scs.box.rm_double_p.dryvan',
       chain_type: 'rmdouble',
     }));
-    expect(spec).toContain('RM-double');
+    expect(spec).toContain('R.M. Double');
   });
 
   it('labels ATS triple chain type', () => {
@@ -328,6 +330,31 @@ describe('formatTrailerSpec', () => {
       chain_type: 'triple',
     }));
     expect(spec).toContain('Triple');
+  });
+
+  it('labels a lowboy heavy-haul rig "Articulated", not "Triple"', () => {
+    // tr_articulated_9axle: jeep dolly + lowboy + spreader, not a road train.
+    // The axle count already disambiguates the rigs, so "Articulated" suffices here.
+    const spec = formatTrailerSpec(makeTrailer({
+      id: 'scs.lowboy.triple_3_3_3.fullwood',
+      body_type: 'lowboy',
+      chain_type: 'triple',
+      axles: 9,
+    }));
+    expect(spec).toContain('Articulated');
+    expect(spec).not.toContain('Triple');
+    expect(spec).toContain('9-axle');
+  });
+
+  it('still says Triple for a non-lowboy triple of the same axle count', () => {
+    const spec = formatTrailerSpec(makeTrailer({
+      id: 'scs.box.triple_p.dryvan',
+      body_type: 'dryvan',
+      chain_type: 'triple',
+      axles: 9,
+    }));
+    expect(spec).toContain('Triple');
+    expect(spec).not.toContain('Articulated');
   });
 
   it('omits the axle token when axles is absent (observations-only trailer)', () => {
@@ -354,17 +381,46 @@ describe('chainConfigLabel', () => {
   });
 
   it('labels multi-unit configurations via CHAIN_LABELS', () => {
+    // These are the games' own locale strings, not our coinages — see CHAIN_LABELS.
     expect(chainConfigLabel('double')).toBe('Double');
-    expect(chainConfigLabel('b_double')).toBe('B-double');
-    expect(chainConfigLabel('bdouble')).toBe('B-double');
+    expect(chainConfigLabel('b_double')).toBe('B-Double');
+    expect(chainConfigLabel('bdouble')).toBe('B-Double');
     expect(chainConfigLabel('hct')).toBe('HCT');
     expect(chainConfigLabel('triple')).toBe('Triple');
-    expect(chainConfigLabel('tpdouble')).toBe('Turnpike-double');
-    expect(chainConfigLabel('rmdouble')).toBe('RM-double');
+    expect(chainConfigLabel('tpdouble')).toBe('T.P. Double');
+    expect(chainConfigLabel('rmdouble')).toBe('R.M. Double');
   });
 
   it('falls back to the raw chain_type for an unknown configuration', () => {
     expect(chainConfigLabel('mystery')).toBe('mystery');
+  });
+
+  it('labels ATS lowboy multi-chassis rigs as heavy haul, not road trains', () => {
+    // scs.lowboy `double`/`triple` are jeep-dolly rigs, which is why they carry no
+    // country_validity while real LCVs do. The game calls them "Articulated, N Axles";
+    // a config row spans several axle counts, so it carries the bare noun and the
+    // Axles column supplies the range.
+    expect(chainConfigLabel('double', 'lowboy')).toBe('Articulated');
+    expect(chainConfigLabel('triple', 'lowboy')).toBe('Articulated');
+    // Neither may read as a road train — that is the whole point of the override.
+    expect(chainConfigLabel('double', 'lowboy')).not.toBe(chainConfigLabel('double'));
+    expect(chainConfigLabel('triple', 'lowboy')).not.toBe(chainConfigLabel('triple'));
+  });
+
+  it('leaves every other body type on the road-train labels', () => {
+    expect(chainConfigLabel('triple', 'dryvan')).toBe('Triple');
+    expect(chainConfigLabel('double', 'flatbed')).toBe('Double');
+    // Lowboy singles are unaffected, and ETS2 lowboys are all single.
+    expect(chainConfigLabel('single', 'lowboy')).toBe('Single');
+    // Only double/triple are articulated; a lowboy bdouble would not exist, but
+    // if one appeared it should keep the real chain label rather than silently
+    // becoming heavy haul.
+    expect(chainConfigLabel('bdouble', 'lowboy')).toBe('B-Double');
+  });
+
+  it('omitting bodyType keeps the previous labels', () => {
+    expect(chainConfigLabel('triple')).toBe('Triple');
+    expect(chainConfigLabel('double')).toBe('Double');
   });
 
   it('CHAIN_ORDER covers every CHAIN_LABELS key plus single', () => {
@@ -374,6 +430,126 @@ describe('chainConfigLabel', () => {
       expect(CHAIN_ORDER, `${ct} missing from CHAIN_ORDER`).toContain(ct);
     }
     expect(CHAIN_ORDER).toContain('single');
+  });
+});
+
+describe('foldBestInRegions', () => {
+  const ATS = ['arizona', 'california', 'colorado', 'idaho', 'montana', 'nevada',
+    'oklahoma', 'oregon', 'texas', 'utah', 'washington', 'wyoming'];
+
+  // The real ATS dryvan ladder, HVs straight off the trailers page.
+  const DRYVAN = [
+    { chainType: 'single', totalHV: 1020 },
+    { chainType: 'double', totalHV: 1055 },
+    { chainType: 'bdouble', totalHV: 1128 },
+    { chainType: 'rmdouble', totalHV: 1408 },
+    { chainType: 'triple', totalHV: 1590 },
+    { chainType: 'tpdouble', totalHV: 1753 },
+  ];
+  const DRYVAN_VALIDITY = new Map<string, string[]>([
+    ['single', []],
+    ['double', []],
+    ['bdouble', ['idaho', 'montana', 'nevada', 'oregon', 'utah', 'washington', 'wyoming']],
+    ['rmdouble', ['colorado', 'idaho', 'montana', 'nevada', 'oklahoma', 'oregon', 'utah', 'washington', 'wyoming']],
+    ['triple', ['colorado', 'idaho', 'montana', 'nevada', 'oklahoma', 'oregon', 'utah']],
+    ['tpdouble', ['colorado', 'idaho', 'montana', 'nevada', 'oklahoma', 'utah']],
+  ]);
+
+  it('gives each region to its single highest-HV configuration', () => {
+    const f = foldBestInRegions(DRYVAN, DRYVAN_VALIDITY, ATS);
+    expect(f.get('tpdouble')).toEqual(['colorado', 'idaho', 'montana', 'nevada', 'oklahoma', 'utah']);
+    // Triple is legal in 7 states but wins only where tpdouble is not legal.
+    expect(f.get('triple')).toEqual(['oregon']);
+    expect(f.get('rmdouble')).toEqual(['washington', 'wyoming']);
+  });
+
+  it('empties configurations that are legal somewhere but optimal nowhere', () => {
+    const f = foldBestInRegions(DRYVAN, DRYVAN_VALIDITY, ATS);
+    // Every state a bdouble is legal in already has a better rung available.
+    expect(f.get('bdouble')).toEqual([]);
+    expect(f.get('single')).toEqual([]);
+  });
+
+  it('partitions the region set exactly — no region twice, none dropped', () => {
+    const f = foldBestInRegions(DRYVAN, DRYVAN_VALIDITY, ATS);
+    const all = [...f.values()].flat();
+    expect(all.slice().sort()).toEqual(ATS.slice().sort());
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it('leaves the unrestricted remainder to the best config legal everywhere', () => {
+    const f = foldBestInRegions(DRYVAN, DRYVAN_VALIDITY, ATS);
+    expect(f.get('double')).toEqual(['arizona', 'california', 'texas']);
+  });
+
+  it('handles the ETS2 shape — one restricted config over a universal baseline', () => {
+    const regions = ['finland', 'sweden', 'germany', 'poland'];
+    const f = foldBestInRegions(
+      [{ chainType: 'single', totalHV: 100 }, { chainType: 'hct', totalHV: 180 }],
+      new Map([['single', []], ['hct', ['finland', 'sweden']]]),
+      regions,
+    );
+    expect(f.get('hct')).toEqual(['finland', 'sweden']);
+    expect(f.get('single')).toEqual(['germany', 'poland']);
+  });
+
+  it('gives everything to a lone unrestricted configuration', () => {
+    const f = foldBestInRegions(
+      [{ chainType: 'single', totalHV: 10 }],
+      new Map([['single', []]]),
+      ['a', 'b'],
+    );
+    expect(f.get('single')).toEqual(['a', 'b']);
+  });
+
+  it('breaks HV ties toward the lighter configuration', () => {
+    // Equal haul value: the cheaper rig should claim the region, not the heavier.
+    const f = foldBestInRegions(
+      [{ chainType: 'triple', totalHV: 500 }, { chainType: 'single', totalHV: 500 }],
+      new Map([['triple', []], ['single', []]]),
+      ['nevada'],
+    );
+    expect(f.get('single')).toEqual(['nevada']);
+    expect(f.get('triple')).toEqual([]);
+  });
+});
+
+describe('buildCargoLabels', () => {
+  it('leaves unique names alone', () => {
+    const l = buildCargoLabels([{ id: 'cement', name: 'cement' }, { id: 'sand', name: 'sand' }]);
+    expect(l.get('cement')).toBe('cement');
+    expect(l.get('sand')).toBe('sand');
+  });
+
+  it('appends the id only to the names that collide', () => {
+    // grain/grain_b is the real ATS case: one commodity, two forms, different bodies.
+    const l = buildCargoLabels([
+      { id: 'grain', name: 'grain' },
+      { id: 'grain_b', name: 'grain' },
+      { id: 'cement', name: 'cement' },
+    ]);
+    expect(l.get('grain')).toBe('grain (grain)');
+    expect(l.get('grain_b')).toBe('grain (grain_b)');
+    expect(l.get('cement')).toBe('cement');
+  });
+
+  it('disambiguates every member of a collision, not just the later ones', () => {
+    const l = buildCargoLabels([
+      { id: 'transform2', name: 'transformer' },
+      { id: 'transformer', name: 'transformer' },
+    ]);
+    expect(new Set(l.values()).size).toBe(2);
+    for (const v of l.values()) expect(v).toContain('(');
+  });
+
+  it('covers every input id', () => {
+    const ids = ['a', 'b', 'c'];
+    const l = buildCargoLabels(ids.map((id) => ({ id, name: 'same' })));
+    expect([...l.keys()].sort()).toEqual(ids);
+  });
+
+  it('returns an empty map for empty input', () => {
+    expect(buildCargoLabels([]).size).toBe(0);
   });
 });
 

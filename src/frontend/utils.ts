@@ -27,12 +27,17 @@ export function normalize(str: string): string {
 // spec reads as just "{brand} {n}-axle"); for a config-level label that includes
 // singles, use chainConfigLabel().
 // ETS2 emits b_double / hct; ATS emits bdouble, rmdouble, tpdouble, triple, double.
+//
+// These are the games' own strings, not our coinages: both ship a bare chain_type
+// key in locale/<lang>/local.sii, so `rmdouble` reads "R.M. Double" in game and
+// `tpdouble` reads "T.P. Double" — not the "RM-double"/"Turnpike-double" this file
+// used to invent. Verified against ATS en_us and ETS2 en_gb on 1.60.1.8/1.60.1.7.
 export const CHAIN_LABELS: Record<string, string> = {
   hct: 'HCT',
-  b_double: 'B-double',
-  bdouble: 'B-double',
-  rmdouble: 'RM-double',
-  tpdouble: 'Turnpike-double',
+  b_double: 'B-Double',
+  bdouble: 'B-Double',
+  rmdouble: 'R.M. Double',
+  tpdouble: 'T.P. Double',
   triple: 'Triple',
   double: 'Double',
 };
@@ -43,10 +48,95 @@ export const CHAIN_LABELS: Record<string, string> = {
 // CHAIN_LABELS plus 'single').
 export const CHAIN_ORDER = ['single', 'double', 'b_double', 'bdouble', 'tpdouble', 'rmdouble', 'hct', 'triple'];
 
-/** Configurator-style label for a chain configuration, including singles ("Single"). */
-export function chainConfigLabel(chainType: string | undefined): string {
+// chain_type counts chassis units in the chain, which is a road train everywhere
+// except ATS's scs.lowboy: its multi-chassis configurations are heavy-haul rigs —
+// jeep dolly + lowboy (`double`) and jeep dolly + lowboy + spreader (`triple`).
+// Labelling those "Double"/"Triple" reads as an LCV, which is why they carry no
+// country_validity while real doubles and triples do. See docs/ats-state-restrictions.md.
+// ETS2 lowboys are all single, so this never fires outside ATS.
+// The game names these per axle count — tr_articulated_3axle .. tr_articulated_9axle,
+// "Articulated, N Axles". A configuration row spans several axle counts, so it carries
+// the bare noun and the Axles column supplies the range (3-5 for double, 6-9 for triple).
+const ARTICULATED_LABELS: Record<string, string> = {
+  double: 'Articulated',
+  triple: 'Articulated',
+};
+
+function isArticulated(bodyType: string | undefined, chainType: string): boolean {
+  return bodyType === 'lowboy' && chainType in ARTICULATED_LABELS;
+}
+
+/**
+ * Configurator-style label for a chain configuration, including singles ("Single").
+ * Pass `bodyType` so lowboy heavy-haul rigs aren't labelled as road trains.
+ */
+export function chainConfigLabel(chainType: string | undefined, bodyType?: string): string {
   if (!chainType || chainType === 'single') return 'Single';
+  if (isArticulated(bodyType, chainType)) return ARTICULATED_LABELS[chainType];
   return CHAIN_LABELS[chainType] ?? chainType;
+}
+
+/**
+ * Fold a configuration ladder into a region partition.
+ *
+ * A configuration's `country_validity` lists everywhere it is *legal*, which
+ * overlaps heavily: an RM-double is legal in Nevada, but you would never run one
+ * there because a turnpike double is legal too and hauls more. Walking the ladder
+ * highest-HV first and letting each configuration claim only the regions nobody
+ * above it already took turns "legal in" into "best in", and exposes the
+ * configurations that are legal somewhere but optimal nowhere.
+ *
+ * `validity` maps chainType to the regions it is legal in; an empty array means
+ * legal everywhere. Returns chainType to the regions where it wins, sorted.
+ * Ties break toward the lighter configuration via CHAIN_ORDER — equal haul value
+ * makes the cheaper rig the sensible pick.
+ */
+export function foldBestInRegions(
+  configs: readonly { chainType: string; totalHV: number }[],
+  validity: ReadonlyMap<string, readonly string[]>,
+  allRegions: readonly string[],
+): Map<string, string[]> {
+  const claimed = new Set<string>();
+  const out = new Map<string, string[]>();
+
+  const ladder = [...configs].sort((a, b) =>
+    b.totalHV - a.totalHV
+    || CHAIN_ORDER.indexOf(a.chainType) - CHAIN_ORDER.indexOf(b.chainType)
+  );
+
+  for (const c of ladder) {
+    const legal = validity.get(c.chainType) ?? [];
+    const scope = legal.length === 0 ? allRegions : legal;
+    const mine = scope.filter((r) => !claimed.has(r)).sort();
+    for (const r of mine) claimed.add(r);
+    out.set(c.chainType, mine);
+  }
+
+  return out;
+}
+
+/**
+ * Disambiguate cargo whose display names collide.
+ *
+ * The games ship distinct cargo sharing one name — usually a commodity in two
+ * physical forms routed to different trailers (`grain` on dryvans vs `grain_b` on
+ * hoppers), sometimes two sizes of the same item (`boom_lift` 3.9 t vs `boom_lift2`
+ * 12 t). 11 such names in ATS, 27 in ETS2. They are distinct cargo and must stay
+ * distinct — collapsing them would empty the hopper/silo/bulkfeed profiles — but
+ * rendering them as two identical rows makes a board reading impossible to match to
+ * an id. Returns cargoId -> label, appending the id only where a name is shared.
+ */
+export function buildCargoLabels(
+  cargo: readonly { id: string; name: string }[],
+): Map<string, string> {
+  const seen = new Map<string, number>();
+  for (const c of cargo) seen.set(c.name, (seen.get(c.name) ?? 0) + 1);
+
+  const labels = new Map<string, string>();
+  for (const c of cargo) {
+    labels.set(c.id, (seen.get(c.name) ?? 0) > 1 ? `${c.name} (${c.id})` : c.name);
+  }
+  return labels;
 }
 
 /** Build a human-readable spec string from trailer properties, e.g. "Kassbohrer Double 5-axle 79t 16.4m" */
@@ -55,7 +145,9 @@ export function formatTrailerSpec(t: Trailer): string {
   const brandRaw = idParts[0];
   const brand = brandRaw.charAt(0).toUpperCase() + brandRaw.slice(1);
 
-  const chainLabel = CHAIN_LABELS[t.chain_type] ?? '';
+  const chainLabel = isArticulated(t.body_type, t.chain_type)
+    ? 'Articulated'
+    : CHAIN_LABELS[t.chain_type] ?? '';
   // Axle count is the authoritative `axles` field (total across all units of the
   // chain). Omitted only for observations-only trailers that lack the field.
   const axleStr = t.axles ? `${t.axles}-axle` : '';

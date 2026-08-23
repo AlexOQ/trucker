@@ -1,5 +1,5 @@
 {
   "game_version": "1.60.1.8",
-  "refreshed_at": "2026-06-30",
-  "coverage_notes": "Truck cabin/paint catalog not yet populated for ATS. Map-expansion cargo limited to installed states; Special Transport cargo excluded (player-only)."
+  "refreshed_at": "2026-08-23",
+  "coverage_notes": "Cargo/trailer/truck data diff-verified against a 1.60.1.8 install — zero drift. Cities and companies cover all 20 states, including the 6 with unowned map DLCs. ATS state map DLCs ship no cargo of their own, so there is no shadow cargo. Special Transport cargo excluded (player-only). Trailer prices def-derived only — no ATS dealer walks. Volvo VNR Electric has no paint options."
 }

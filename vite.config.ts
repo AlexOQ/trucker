@@ -22,6 +22,13 @@ function servePublicAtRoot(): Plugin {
           // Rewrite /trucker/foo to /trucker/public/foo
           const path = req.url.replace('/trucker/', '/trucker/public/')
           req.url = path === '/trucker/public/' ? '/trucker/public/index.html' : path
+
+          // publicDir is false, so Vite resolves public/css/*.css as a source
+          // module and serves it as JS — a <link rel=stylesheet> then fails the
+          // MIME check and the page renders unstyled. `?direct` asks Vite for the
+          // raw text/css instead. Dev only; the build copies css via
+          // viteStaticCopy and never goes through here.
+          if (req.url.endsWith('.css')) req.url += '?direct'
         }
         next()
       })

@@ -5,10 +5,17 @@
 
 import { initPageData, initGameSelector } from './page-init';
 import { normalize, type AllData, type Lookups, type Company, type Trailer } from './data';
-import { escapeHtml } from './utils';
+import { escapeHtml, buildCargoLabels } from './utils';
 
 let data: AllData | null = null;
 let lookups: Lookups | null = null;
+// Rebuilt on load — collisions differ per game (11 names in ATS, 27 in ETS2).
+let cargoLabels: Map<string, string> = new Map();
+
+/** Display label for a cargo, carrying its id only when the name is ambiguous. */
+function cargoLabel(id: string): string {
+  return cargoLabels.get(id) ?? id;
+}
 
 const content = document.getElementById('content') as HTMLElement;
 const cargoDetail = document.getElementById('cargo-detail') as HTMLElement;
@@ -139,7 +146,7 @@ function renderCargoList(filter = ''): void {
                   return `
                     <a href="#cargo-${cargo.id}" class="card-link" data-cargo-id="${cargo.id}">
                       <div class="${cardClasses}">
-                        <div class="card-title">${cargo.name}</div>
+                        <div class="card-title">${cargoLabel(cargo.id)}</div>
                         <div class="card-subtitle">
                           €${cargo.value.toLocaleString()} · ${stats.providerCount} providers
                           ${cargo.excluded ? ' · No Trailer' : ''}
@@ -192,7 +199,7 @@ function showCargoDetail(cargoId: string): void {
 
   detailContent.innerHTML = `
     <div class="detail-header">
-      <h2>${cargo.name}</h2>
+      <h2>${cargoLabel(cargo.id)}</h2>
       <div class="subtitle">
         €${cargo.value.toLocaleString()} per job
         ${cargo.excluded ? ' · No Trailer Choice' : ''}
@@ -319,6 +326,7 @@ async function init(): Promise<void> {
     const page = await initPageData();
     data = page.data;
     lookups = page.lookups;
+    cargoLabels = buildCargoLabels(page.data.cargo);
 
     renderCargoList();
 
