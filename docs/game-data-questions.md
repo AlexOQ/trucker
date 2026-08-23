@@ -214,7 +214,7 @@ for the trailer-legality data these sit on top of.
       says at all. Aligning is cosmetic and untaken.
 
 49. [ANSWERED] **Does `units = floor(volume / cargo_volume)`, weight-capped, match the game?**
-    - **Answer**: Yes, exactly. Five in-game loads read off quick-job and freight boards
+    - **Answer**: Yes, exactly. Eight in-game loads read off quick-job and freight boards
       on 2026-08-23, each divided by the `game-defs.json` unit mass, landed on a whole
       number with no rounding slack:
 
@@ -225,6 +225,9 @@ for the trailer-legality data these sit on top of.
     | 46,309 lb barley | `barley` | 28 | `lodeking.distinction.single_40ra.hopper` (51.85 m³) |
     | 90,000 lb scraper | `scraper` | 1 | articulated lowboy triple |
     | 60,000 lb tamping machine | `tamp_machine` | 1 | articulated lowboy |
+    | 35,862 lb propane | `propane` | 33 | gastank |
+    | 36,376 lb LPG | `lpg_t` | 30 | gastank |
+    | 45,000 lb motor grader | `motor_grader` | 1 | dropdeck |
 
     - Cargo masses are exact to the pound (`motor_grader` 20,411.7 kg = 45,000 lb).
     - Machinery is always 1 unit, so for `lowboy`/`dropdeck` the trailer weight limit
