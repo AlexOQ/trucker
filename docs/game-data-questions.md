@@ -113,7 +113,18 @@ for the trailer-legality data these sit on top of.
 
 ### Both games
 
-44. [OPEN] **Do `mass_limit_per_axle_count` caps apply to AI-driver freight?** Every
+44. [ANSWERED — NO] **Do `mass_limit_per_axle_count` caps apply to freight?**
+    - **Answer**: No. Observed 2026-08-23 at HMS Machinery, San Francisco (California,
+      cap 36,287.4 kg / 80,000 lb whole combination): an ordinary non-Special-Transport
+      board job offered a `scraper` at 90,000 lb = 40,823.3 kg. The **cargo alone exceeds
+      the entire state combination cap by 4,536 kg**, before any truck or trailer. The
+      ladder therefore does not constrain job generation, and the parser is right to
+      ignore it. No backfill needed; `countries` can keep holding only `name`.
+    - Corollary: the "EV overstated in low-cap states" concern is void. Oklahoma,
+      Idaho, Colorado and Oregon rankings need no correction.
+    - Original question and predictions retained below for provenance.
+
+    ~~[OPEN] Do `mass_limit_per_axle_count` caps apply to AI-driver freight?~~ Every
     `def/country/<x>.sui` in both games declares a whole-combination GVW ladder indexed
     by axle count, and the parser reads none of it — `game-defs.json`'s `countries`
     section holds only `name`. Units are capped on the trailer's own
@@ -145,7 +156,16 @@ for the trailer-legality data these sit on top of.
 
 ### ATS
 
-45. [OPEN] **Do the 12 `scs.lowboy.triple_*` rigs appear as ordinary depot board freight?**
+45. [ANSWERED — YES] **Do the 12 `scs.lowboy.triple_*` rigs appear as ordinary depot board freight?**
+    - **Answer**: Yes. Settled by the same San Francisco observation. A `scraper` masses
+      40,823.4 kg, and exactly 12 trailers in the game have the payload to carry it —
+      all 12 are the articulated lowboy triples, no single- or double-chassis trailer
+      qualifies. The job was offered as ordinary board freight with Special Transport
+      excluded, so those rigs are AI-haulable and the optimizer is right to include them.
+      The `lowboy` haul-value figure is not inflated.
+    - Original question retained below for provenance.
+
+    ~~[OPEN] Do the 12 lowboy rigs appear as ordinary board freight?~~
     They are purchasable, carry no `country_validity` (correctly — they are
     `tr_articulated_6/7/8/9axle` jeep+lowboy+spreader heavy-haul rigs, not road trains),
     and are the `lowboy` haul-value leader by 31%. If they never spawn as AI-haulable
@@ -192,3 +212,25 @@ for the trailer-legality data these sit on top of.
       Double", "Turnpike-double" vs "Turnpike Double", "Double" vs "STAA Double"), and the
       lowboy label invented in this branch ("Jeep dolly + spreader") is not what the game
       says at all. Aligning is cosmetic and untaken.
+
+49. [ANSWERED] **Does `units = floor(volume / cargo_volume)`, weight-capped, match the game?**
+    - **Answer**: Yes, exactly. Five in-game loads read off quick-job and freight boards
+      on 2026-08-23, each divided by the `game-defs.json` unit mass, landed on a whole
+      number with no rounding slack:
+
+    | in-game load | cargo | units | trailer implied |
+    |---|---|--:|---|
+    | 10,780 lb wood shavings | `wshavings` | 30 | `scs.bottomdumper.double` (30.58 m³) |
+    | 25,322 lb batteries | `battery` | 22 | `scs.box.single_28.dryvan` (57.45 m³) |
+    | 46,309 lb barley | `barley` | 28 | `lodeking.distinction.single_40ra.hopper` (51.85 m³) |
+    | 90,000 lb scraper | `scraper` | 1 | articulated lowboy triple |
+    | 60,000 lb tamping machine | `tamp_machine` | 1 | articulated lowboy |
+
+    - Cargo masses are exact to the pound (`motor_grader` 20,411.7 kg = 45,000 lb).
+    - Machinery is always 1 unit, so for `lowboy`/`dropdeck` the trailer weight limit
+      gates *which* cargo is haulable at all, not how many units — matching the parser's
+      `weightUnits <= 0 -> skip` branch.
+    - Watch for display-name collisions when matching a board reading to a cargo id:
+      11 in ATS, 27 in ETS2. `crawler_tractor` is both `tractor_c` (55,500 lb) and
+      `tractor_c2` (35,000 lb); `transformer` is 3,856 kg in one and 56,019 kg in the
+      other. Match on mass, not name.

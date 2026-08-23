@@ -114,25 +114,22 @@ Tiers are **not** strictly ordered. CO/OK lose `bdouble`, so they trail WA/WY on
 
 New Mexico is the only non-LCV state above the federal 80,000 lb — its whole ladder is raised (43,200 / 64,800 / 87,061 lb, against the federal 40,000 / 60,000 / 80,000).
 
-These caps sit *below* some trailers' own `gross_weight_limit`, and the optimizer caps units on the trailer's own limit only (`parse-game-defs.ts:1418`) — so where the state cap is tighter, units and therefore EV are overstated.
+These caps sit *below* some trailers' own `gross_weight_limit`, which looked like a
+modelling gap — but **the game does not apply them to freight**, so it is not one.
 
-Discounting `lowboy` (heavy haul runs on permits, which is precisely what these caps do not cover), the conflict is narrow and concentrated in the low-cap LCV states:
+Measured 2026-08-23 at HMS Machinery, San Francisco. California's ladder tops out at
+36,287.4 kg (80,000 lb) for the whole combination. An ordinary board job — Special
+Transport excluded — offered a `scraper` at 90,000 lb: **40,823.3 kg of cargo alone,
+4,536 kg over the entire state cap before adding a truck or trailer.**
 
-| state | cap | trailers over | worst excess |
-|---|--:|--:|--:|
-| Oklahoma | 40,823 | 57 | +14,677 kg |
-| Idaho | 47,854 | 36 | +7,646 kg |
-| Colorado | 49,895 | 15 | +5,605 kg |
-| Oregon | 47,854 | 14 | +2,146 kg |
-| all Standard states | 36,287 | 1–2 | +2,013 kg |
-| NV · UT · MT · WY · WA | — | 0 | — |
-
-Oklahoma is the sharp case: chain-legal for `rmdouble`, `tpdouble` and `triple`, but capped at 90,000 lb — well under what those trailers are rated to carry. Nevada, Utah, Montana, Wyoming and Washington have no conflict at all, so their LCV advantage is real as modelled.
-
-**Unverified in game**: whether ATS enforces these caps on AI-driver freight at all. Measure before modelling — tracked as Q44 in `docs/game-data-questions.md`, which also carries the ETS2 half (Finland reaches 105,000 kg) and the body types where weight already binds.
+So `mass_limit_per_axle_count` governs the player's own overweight/permit handling, not
+job generation. The parser is right to read only `name` from `countries`, units are
+correctly capped on the trailer's own limit alone, and rankings in the low-cap LCV states
+(Oklahoma 90,000 lb, Idaho and Oregon 105,500) need no correction. See Q44 in
+`docs/game-data-questions.md`.
 
 ## Caveats
 
-**`chain_type: triple` on a lowboy is not a road train.** Resolved from the defs — see the table above. No data change warranted, and the 31% `lowboy` haul-value contribution these rigs make is legitimate.
+**`chain_type: triple` on a lowboy is not a road train.** Resolved from the defs — see the table above — and confirmed in game: a `scraper` (40,823.4 kg) can be carried by exactly 12 trailers, all of them articulated lowboy triples, and it was observed as ordinary non-Special-Transport board freight. Those rigs are AI-haulable, so the 31% `lowboy` haul-value contribution is legitimate and no data change is warranted (Q45).
 
 **`ATS_COUNTRY_DISPLAY_NAMES`** was empty until 2026-08-23, so the trailer browser rendered state validity as raw ids (`new_mexico`). Now populated for all 20 states.
