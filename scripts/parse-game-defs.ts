@@ -16,8 +16,14 @@ import { join, basename, dirname } from 'path';
 import { mergeManualPrices } from './merge-manual-prices';
 
 const args = process.argv.slice(2);
-const diffMode = args.includes('--diff');
 const auditWalks = args.includes('--audit-walks');
+// --audit-walks is a read-only report, so it implies --diff. Without this it fell
+// through to the write path and published whatever def tree it was pointed at — which
+// is how a 14-state extract once overwrote the bundled 20-state ATS data. Auditing an
+// extract you have no intention of publishing is the normal case, so the safe reading
+// is the default; pass --write alongside it to genuinely re-publish and then audit.
+const forceWrite = args.includes('--write');
+const diffMode = args.includes('--diff') || (auditWalks && !forceWrite);
 const gameFlagIdx = args.indexOf('--game');
 const rawGame = gameFlagIdx >= 0 ? args[gameFlagIdx + 1] : 'ets2';
 if (!process.env.VITEST && rawGame !== 'ets2' && rawGame !== 'ats') {
@@ -1595,6 +1601,9 @@ function main() {
   const frontendData = buildFrontendData(cargo, trailers, companies, cities, countries, matches, cityCompanyMap, economy, trucks);
 
   if (diffMode) {
+    if (auditWalks && !args.includes('--diff')) {
+      console.log('(--audit-walks is read-only; not writing. Pass --write to publish as well.)\n');
+    }
     runDiff(frontendData);
   } else {
     writeOutput(cargo, trailers, companies, cities, countries, economy, trucks, matches, cityCompanyMap, frontendData);
@@ -1602,6 +1611,7 @@ function main() {
   }
 
   // Audit runs after diff/write — same comparison logic regardless of mode.
+  // Reached read-only unless --write was passed; see the flag block at the top.
   if (auditWalks) {
     runAuditWalks(frontendData);
   }
