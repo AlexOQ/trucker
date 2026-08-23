@@ -132,6 +132,16 @@ for the trailer-legality data these sit on top of.
     - **Note on indexing**: the ladder is indexed by *total combination* axles, not
       trailer axles. An 8-axle ETS2 HCT rated 84 t only fits under Finland's ladder at
       the 11-axle rung (105,000 kg) once a 3-axle tractor is counted.
+    - **Field target (ATS)** — haul `cement` with a Turnpike Double drybulk
+      (`scs.drybulk.tpdouble.drybulk`, 5 axles, 55,500 kg, legal in both states):
+      - Oklahoma pickup: Ardmore or Guymon, `tay_con_whs`
+      - Montana pickup: Butte or Bozeman, `nmq_min_pln1` / `nmq_min_str`
+      - **Report the units/tonnage on the load.** No state cap -> 28 units in both.
+        Cap applied -> roughly 12 in Oklahoma and 25 in Montana. A 2x gap either way,
+        so a single reading in each state settles it.
+      - Independent second run: `soybean_b` on `scs.grainhopper.triple_p.grainhopper`
+        (Clinton or Enid OK `gm_food_str`, vs Billings MT `bn_live_auc`). No cap -> 45
+        units; cap -> about 22 in Oklahoma, 45 in Montana.
 
 ### ATS
 
@@ -139,12 +149,19 @@ for the trailer-legality data these sit on top of.
     They are purchasable, carry no `country_validity` (correctly — they are
     `tr_articulated_6/7/8/9axle` jeep+lowboy+spreader heavy-haul rigs, not road trains),
     and are the `lowboy` haul-value leader by 31%. If they never spawn as AI-haulable
-    board jobs the optimizer is overrating `lowboy` everywhere. Check a depot board that
-    offers machinery cargo.
+    board jobs the optimizer is overrating `lowboy` everywhere.
+    - **Field target** — Alamosa CO, Albuquerque NM or Bakersfield CA, company
+      `hms_con_svc` (70 of the 80 lowboy-haulable machinery cargoes each); Amarillo TX or
+      Enid OK, `xtm_con_svc`. **Report whether any ordinary board job offers a 6-9 axle
+      Articulated lowboy**, or whether those rigs only ever appear in Special Transport /
+      heavy-cargo missions.
 46. [OPEN] **Do California and Illinois actually refuse the `53r`/`53sp`/`53_4o` axle
     variants?** Data says the restriction costs nothing — all 57 have an unrestricted twin
     identical in body type, chain type, volume, weight limit and axle count. Low priority;
     confirms the twin analysis rather than changing anything.
+    - **Field target** — Modesto, `18w_trl_svc` (18 Wheels), the only trailer dealer in
+      California. **Report which axle configurations are offered for a 53 ft dry van**
+      and whether a spread-axle / rear-slid variant is missing.
 
 ### ETS2
 
@@ -156,3 +173,22 @@ for the trailer-legality data these sit on top of.
     in that cargo set is dense enough to use it (heaviest full load 34,800 kg against
     44,120 kg already available). Worth one board comparison to confirm pay tracks haul
     value rather than capacity.
+    - **Field target** — Hamburg `rt_log` (Germany) or Barcelona `rt_log` (Spain), both
+      of which export all 45 container cargoes haulable by either trailer, in countries
+      where doubles are legal. Take the same cargo once with a Double and once with a
+      B-double and report units and pay. Prediction: identical.
+
+48. [ANSWERED] What does the game itself call each `chain_type`? Settled from
+    `locale.scs` `locale/en_us`, no in-game check needed.
+    - `tr_articulated_3axle` … `tr_articulated_9axle` -> "Articulated, N Axles"
+      (`scs.lowboy` only)
+    - `tr_double_staa` -> "STAA Double"; `tr_double_staa_pup` -> "STAA Double Pup"
+    - `tr_b_double` -> "B-Double"; `tr_rm_double` -> "Rocky Mountain Double"
+    - `tr_tp_double` -> "Turnpike Double"; `tr_triple` -> "Triple"; `tr_triple_pup` ->
+      "Triple Pup"
+    - Chassis: `chassis_jeep_3axle` -> "Jeep, 3 Axles"; `chassis_spreader_3axle` ->
+      "Spreader, 3 Axles"
+    - `CHAIN_LABELS` in `utils.ts` does not match these ("RM-double" vs "Rocky Mountain
+      Double", "Turnpike-double" vs "Turnpike Double", "Double" vs "STAA Double"), and the
+      lowboy label invented in this branch ("Jeep dolly + spreader") is not what the game
+      says at all. Aligning is cosmetic and untaken.
