@@ -27,12 +27,17 @@ export function normalize(str: string): string {
 // spec reads as just "{brand} {n}-axle"); for a config-level label that includes
 // singles, use chainConfigLabel().
 // ETS2 emits b_double / hct; ATS emits bdouble, rmdouble, tpdouble, triple, double.
+//
+// These are the games' own strings, not our coinages: both ship a bare chain_type
+// key in locale/<lang>/local.sii, so `rmdouble` reads "R.M. Double" in game and
+// `tpdouble` reads "T.P. Double" — not the "RM-double"/"Turnpike-double" this file
+// used to invent. Verified against ATS en_us and ETS2 en_gb on 1.60.1.8/1.60.1.7.
 export const CHAIN_LABELS: Record<string, string> = {
   hct: 'HCT',
-  b_double: 'B-double',
-  bdouble: 'B-double',
-  rmdouble: 'RM-double',
-  tpdouble: 'Turnpike-double',
+  b_double: 'B-Double',
+  bdouble: 'B-Double',
+  rmdouble: 'R.M. Double',
+  tpdouble: 'T.P. Double',
   triple: 'Triple',
   double: 'Double',
 };
@@ -45,14 +50,16 @@ export const CHAIN_ORDER = ['single', 'double', 'b_double', 'bdouble', 'tpdouble
 
 // chain_type counts chassis units in the chain, which is a road train everywhere
 // except ATS's scs.lowboy: its multi-chassis configurations are heavy-haul rigs —
-// jeep dolly + lowboy (`double`) and jeep dolly + lowboy + spreader (`triple`),
-// named tr_articulated_3axle … tr_articulated_9axle in the defs. Labelling those
-// "Double"/"Triple" reads as an LCV, which is why they carry no country_validity
-// while real doubles and triples do. See docs/ats-state-restrictions.md.
+// jeep dolly + lowboy (`double`) and jeep dolly + lowboy + spreader (`triple`).
+// Labelling those "Double"/"Triple" reads as an LCV, which is why they carry no
+// country_validity while real doubles and triples do. See docs/ats-state-restrictions.md.
 // ETS2 lowboys are all single, so this never fires outside ATS.
+// The game names these per axle count — tr_articulated_3axle .. tr_articulated_9axle,
+// "Articulated, N Axles". A configuration row spans several axle counts, so it carries
+// the bare noun and the Axles column supplies the range (3-5 for double, 6-9 for triple).
 const ARTICULATED_LABELS: Record<string, string> = {
-  double: 'Jeep dolly',
-  triple: 'Jeep dolly + spreader',
+  double: 'Articulated',
+  triple: 'Articulated',
 };
 
 function isArticulated(bodyType: string | undefined, chainType: string): boolean {

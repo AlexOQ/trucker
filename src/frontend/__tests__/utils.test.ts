@@ -296,7 +296,7 @@ describe('formatTrailerSpec', () => {
       chain_type: 'b_double',
       axles: 4,
     }));
-    expect(spec).toContain('B-double');
+    expect(spec).toContain('B-Double');
     expect(spec).toContain('4-axle');
   });
 
@@ -305,7 +305,7 @@ describe('formatTrailerSpec', () => {
       id: 'scs.box.bdouble_2_2.dryvan',
       chain_type: 'bdouble',
     }));
-    expect(spec).toContain('B-double');
+    expect(spec).toContain('B-Double');
   });
 
   it('labels ATS turnpike-double chain type', () => {
@@ -313,7 +313,7 @@ describe('formatTrailerSpec', () => {
       id: 'scs.box.tp_double_1.dryvan',
       chain_type: 'tpdouble',
     }));
-    expect(spec).toContain('Turnpike-double');
+    expect(spec).toContain('T.P. Double');
   });
 
   it('labels ATS rocky-mountain double chain type', () => {
@@ -321,7 +321,7 @@ describe('formatTrailerSpec', () => {
       id: 'scs.box.rm_double_p.dryvan',
       chain_type: 'rmdouble',
     }));
-    expect(spec).toContain('RM-double');
+    expect(spec).toContain('R.M. Double');
   });
 
   it('labels ATS triple chain type', () => {
@@ -381,13 +381,14 @@ describe('chainConfigLabel', () => {
   });
 
   it('labels multi-unit configurations via CHAIN_LABELS', () => {
+    // These are the games' own locale strings, not our coinages — see CHAIN_LABELS.
     expect(chainConfigLabel('double')).toBe('Double');
-    expect(chainConfigLabel('b_double')).toBe('B-double');
-    expect(chainConfigLabel('bdouble')).toBe('B-double');
+    expect(chainConfigLabel('b_double')).toBe('B-Double');
+    expect(chainConfigLabel('bdouble')).toBe('B-Double');
     expect(chainConfigLabel('hct')).toBe('HCT');
     expect(chainConfigLabel('triple')).toBe('Triple');
-    expect(chainConfigLabel('tpdouble')).toBe('Turnpike-double');
-    expect(chainConfigLabel('rmdouble')).toBe('RM-double');
+    expect(chainConfigLabel('tpdouble')).toBe('T.P. Double');
+    expect(chainConfigLabel('rmdouble')).toBe('R.M. Double');
   });
 
   it('falls back to the raw chain_type for an unknown configuration', () => {
@@ -395,12 +396,15 @@ describe('chainConfigLabel', () => {
   });
 
   it('labels ATS lowboy multi-chassis rigs as heavy haul, not road trains', () => {
-    // scs.lowboy `double`/`triple` are jeep-dolly rigs (tr_articulated_Naxle),
-    // which is why they carry no country_validity while real LCVs do.
-    expect(chainConfigLabel('double', 'lowboy')).toBe('Jeep dolly');
-    expect(chainConfigLabel('triple', 'lowboy')).toBe('Jeep dolly + spreader');
-    // Distinct labels — the trailer browser lists both configs under one body type.
-    expect(chainConfigLabel('double', 'lowboy')).not.toBe(chainConfigLabel('triple', 'lowboy'));
+    // scs.lowboy `double`/`triple` are jeep-dolly rigs, which is why they carry no
+    // country_validity while real LCVs do. The game calls them "Articulated, N Axles";
+    // a config row spans several axle counts, so it carries the bare noun and the
+    // Axles column supplies the range.
+    expect(chainConfigLabel('double', 'lowboy')).toBe('Articulated');
+    expect(chainConfigLabel('triple', 'lowboy')).toBe('Articulated');
+    // Neither may read as a road train — that is the whole point of the override.
+    expect(chainConfigLabel('double', 'lowboy')).not.toBe(chainConfigLabel('double'));
+    expect(chainConfigLabel('triple', 'lowboy')).not.toBe(chainConfigLabel('triple'));
   });
 
   it('leaves every other body type on the road-train labels', () => {
@@ -411,7 +415,7 @@ describe('chainConfigLabel', () => {
     // Only double/triple are articulated; a lowboy bdouble would not exist, but
     // if one appeared it should keep the real chain label rather than silently
     // becoming heavy haul.
-    expect(chainConfigLabel('bdouble', 'lowboy')).toBe('B-double');
+    expect(chainConfigLabel('bdouble', 'lowboy')).toBe('B-Double');
   });
 
   it('omitting bodyType keeps the previous labels', () => {

@@ -208,10 +208,28 @@ for the trailer-legality data these sit on top of.
       "Triple Pup"
     - Chassis: `chassis_jeep_3axle` -> "Jeep, 3 Axles"; `chassis_spreader_3axle` ->
       "Spreader, 3 Axles"
-    - `CHAIN_LABELS` in `utils.ts` does not match these ("RM-double" vs "Rocky Mountain
-      Double", "Turnpike-double" vs "Turnpike Double", "Double" vs "STAA Double"), and the
-      lowboy label invented in this branch ("Jeep dolly + spreader") is not what the game
-      says at all. Aligning is cosmetic and untaken.
+    - **Both games also ship a bare `chain_type` key**, which is the canonical label for a
+      configuration row and supersedes the per-configuration `tr_*` names above:
+
+    | chain_type | ATS `en_us` | ETS2 `en_gb` |
+    |---|---|---|
+    | `single` | "Single" | "Single" |
+    | `double` | "Double" | "Double" |
+    | `b_double` / `bdouble` | "B-Double" | "B-Double" |
+    | `rmdouble` | "R.M. Double" | — |
+    | `tpdouble` | "T.P. Double" | — |
+    | `triple` | "Triple" | — |
+    | `hct` | — | "HCT" |
+
+    - `CHAIN_LABELS` in `utils.ts` now uses exactly these. Three were wrong before and are
+      fixed: "RM-double" -> "R.M. Double", "Turnpike-double" -> "T.P. Double", "B-double"
+      -> "B-Double". The lowboy override renders "Articulated" (the game names those per
+      axle count, `tr_articulated_3axle` .. `_9axle`, and a config row spans a range, so
+      the Axles column carries the number).
+    - Method, for re-deriving after a patch: extract `locale/<lang>` from `locale.scs`
+      with `scripts/scs-extract`, then pair the `key[]` / `val[]` arrays in `local.sii`
+      and friends. Cargo display names live under `cn_<token>` and cover all 264 ATS
+      cargo; chain types are bare keys.
 
 49. [ANSWERED] **Does `units = floor(volume / cargo_volume)`, weight-capped, match the game?**
     - **Answer**: Yes, exactly. Eight in-game loads read off quick-job and freight boards
