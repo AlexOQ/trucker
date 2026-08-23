@@ -170,12 +170,35 @@ const ETS2_COUNTRY_DISPLAY_NAMES: Record<string, string> = {
   uk: 'United Kingdom',          // United Kingdom (same)
 };
 
-// ─── ATS Display Names (stubs — ATS uses English natively) ──────────
+// ─── ATS Display Names ──────────────────────────────────────────────
 
+// Stub: ATS city names are already English in the defs, so no overrides needed.
 const ATS_CITY_DISPLAY_NAMES: Record<string, string> = {};
 
+// State ids are snake_case (`new_mexico`), so trailer state-validity lists render
+// raw without this map. Keys are the `country` field of ATS cities, which is also
+// what `country_validity` entries on trailers reference.
 const ATS_COUNTRY_DISPLAY_NAMES: Record<string, string> = {
-  // ATS uses US states as "countries" — display names if needed
+  arizona: 'Arizona',
+  arkansas: 'Arkansas',
+  california: 'California',
+  colorado: 'Colorado',
+  idaho: 'Idaho',
+  illinois: 'Illinois',
+  iowa: 'Iowa',
+  kansas: 'Kansas',
+  louisiana: 'Louisiana',
+  missouri: 'Missouri',
+  montana: 'Montana',
+  nebraska: 'Nebraska',
+  nevada: 'Nevada',
+  new_mexico: 'New Mexico',
+  oklahoma: 'Oklahoma',
+  oregon: 'Oregon',
+  texas: 'Texas',
+  utah: 'Utah',
+  washington: 'Washington',
+  wyoming: 'Wyoming',
 };
 
 // ─── Game-Aware Exports ─────────────────────────────────────────────

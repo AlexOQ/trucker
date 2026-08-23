@@ -11,7 +11,7 @@ import {
   pickBestTrailer, trailerTotalHV, formatTrailerSpec,
   type AllData, type Lookups, type Cargo, type Trailer,
 } from './data';
-import { escapeHtml, chainConfigLabel, CHAIN_ORDER } from './utils';
+import { escapeHtml, chainConfigLabel, CHAIN_ORDER, foldBestInRegions } from './utils';
 import { COUNTRY_DISPLAY_NAMES } from './display-names';
 import { getRegionTerms } from './game';
 
@@ -37,7 +37,8 @@ interface ChainConfigSummary {
   bestSpec: string;
   totalHV: number;
   variants: Trailer[];
-  countries: string;
+  countries: string;      // where this config is LEGAL (may overlap other configs)
+  bestIn: string;         // where this config is the BEST choice (partition, no overlap)
   axleRange: string;      // axle counts available in this config, e.g. '3' or '8–10'
 }
 
@@ -89,6 +90,47 @@ function configCountries(trailers: Trailer[]): string {
     }
   }
   return allCountries ? 'All' : [...countrySet].sort().map(c => COUNTRY_DISPLAY_NAMES[c] ?? c).join(', ');
+}
+
+/** Every region in the game, unfiltered — the universe an unrestricted config covers. */
+function allRegions(): string[] {
+  const defs = data?.gameDefs?.countries;
+  if (defs && Object.keys(defs).length > 0) return Object.keys(defs);
+  // Fallback for observations-only data: derive from the cities we do have.
+  return [...new Set((data?.cities ?? []).map((c) => c.country).filter(Boolean))];
+}
+
+/**
+ * Resolve each configuration's "best in" region list and render it onto the
+ * summaries. Configurations optimal nowhere get an em dash — they are legal
+ * somewhere (see `countries`) but always beaten there by a heavier rung.
+ */
+function applyBestIn(configs: ChainConfigSummary[], configMap: Map<string, Trailer[]>): void {
+  const regions = allRegions();
+  const validity = new Map<string, string[]>();
+  for (const [ct, variants] of configMap) {
+    const set = new Set<string>();
+    let unrestricted = false;
+    for (const t of variants) {
+      if (!t.country_validity || t.country_validity.length === 0) unrestricted = true;
+      else for (const c of t.country_validity) set.add(c);
+    }
+    validity.set(ct, unrestricted ? [] : [...set]);
+  }
+
+  const folded = foldBestInRegions(configs, validity, regions);
+  for (const c of configs) {
+    const mine = folded.get(c.chainType) ?? [];
+    if (mine.length === 0) {
+      c.bestIn = '—';
+    } else if ((validity.get(c.chainType) ?? []).length === 0) {
+      // Unrestricted: naming every region is noise, and which ones are left
+      // depends on what the rungs above already claimed.
+      c.bestIn = mine.length === regions.length ? 'Everywhere' : 'Everywhere else';
+    } else {
+      c.bestIn = mine.map((r) => COUNTRY_DISPLAY_NAMES[r] ?? r).join(', ');
+    }
+  }
 }
 
 /** Axle-count range across a configuration's variants, e.g. '3' or '8–10'. */
@@ -150,15 +192,18 @@ function buildBodyTypes(): BodyTypeSummary[] {
       );
       return {
         chainType: ct,
-        label: chainConfigLabel(ct),
+        label: chainConfigLabel(ct, bt),
         best,
         bestSpec: formatTrailerSpec(best),
         totalHV: trailerTotalHV(best, lookups!),
         variants,
         countries: configCountries(variants),
+        bestIn: '',   // filled by applyBestIn() once the whole ladder is known
         axleRange: axleRange(variants),
       };
     });
+
+    applyBestIn(configs, configMap);
 
     // Headline trailer: the single configuration (the baseline every region has),
     // or the lightest available configuration if a body type has no singles.
@@ -298,7 +343,7 @@ function showBodyType(bodyType: string): void {
 
     <div class="table-section">
       <h2>Chain Configurations</h2>
-      <p class="table-hint">Best trailer per configuration. Click to see all variants.</p>
+      <p class="table-hint">Best trailer per configuration, heaviest-hauling first in the ${getRegionTerms().plural.toLowerCase()} where it wins. A configuration marked — is legal somewhere but always beaten there; hover it to see where it is legal. Click a row to see all variants.</p>
       <table>
         <thead>
           <tr>
@@ -310,7 +355,7 @@ function showBodyType(bodyType: string): void {
             <th>Length</th>
             <th>GWL</th>
             <th class="tooltip" data-tooltip="Number of ownable trailer models">Variants</th>
-            <th>${getRegionTerms().plural}</th>
+            <th class="tooltip" data-tooltip="Where this configuration is the highest-hauling option available. Each ${getRegionTerms().singular.toLowerCase()} appears once, against its best configuration.">Best In</th>
           </tr>
         </thead>
         <tbody>
@@ -324,7 +369,7 @@ function showBodyType(bodyType: string): void {
               <td class="amount">${c.best.length}</td>
               <td class="amount">${Math.round(c.best.gross_weight_limit / 1000)}t</td>
               <td class="amount">${c.variants.length}</td>
-              <td>${c.countries}</td>
+              <td title="Legal in: ${escapeHtml(c.countries)}">${c.bestIn}</td>
             </tr>
           `).join('')}
         </tbody>

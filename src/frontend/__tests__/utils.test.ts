@@ -6,6 +6,7 @@ import {
   formatTrailerSpec,
   escapeHtml,
   chainConfigLabel,
+  foldBestInRegions,
   CHAIN_LABELS,
   CHAIN_ORDER,
 } from '../utils';
@@ -330,6 +331,31 @@ describe('formatTrailerSpec', () => {
     expect(spec).toContain('Triple');
   });
 
+  it('labels a lowboy heavy-haul rig "Articulated", not "Triple"', () => {
+    // tr_articulated_9axle: jeep dolly + lowboy + spreader, not a road train.
+    // The axle count already disambiguates the rigs, so "Articulated" suffices here.
+    const spec = formatTrailerSpec(makeTrailer({
+      id: 'scs.lowboy.triple_3_3_3.fullwood',
+      body_type: 'lowboy',
+      chain_type: 'triple',
+      axles: 9,
+    }));
+    expect(spec).toContain('Articulated');
+    expect(spec).not.toContain('Triple');
+    expect(spec).toContain('9-axle');
+  });
+
+  it('still says Triple for a non-lowboy triple of the same axle count', () => {
+    const spec = formatTrailerSpec(makeTrailer({
+      id: 'scs.box.triple_p.dryvan',
+      body_type: 'dryvan',
+      chain_type: 'triple',
+      axles: 9,
+    }));
+    expect(spec).toContain('Triple');
+    expect(spec).not.toContain('Articulated');
+  });
+
   it('omits the axle token when axles is absent (observations-only trailer)', () => {
     const spec = formatTrailerSpec(makeTrailer({ axles: undefined }));
     expect(spec).toBe('Scs 40t 13.6m');
@@ -367,6 +393,31 @@ describe('chainConfigLabel', () => {
     expect(chainConfigLabel('mystery')).toBe('mystery');
   });
 
+  it('labels ATS lowboy multi-chassis rigs as heavy haul, not road trains', () => {
+    // scs.lowboy `double`/`triple` are jeep-dolly rigs (tr_articulated_Naxle),
+    // which is why they carry no country_validity while real LCVs do.
+    expect(chainConfigLabel('double', 'lowboy')).toBe('Jeep dolly');
+    expect(chainConfigLabel('triple', 'lowboy')).toBe('Jeep dolly + spreader');
+    // Distinct labels — the trailer browser lists both configs under one body type.
+    expect(chainConfigLabel('double', 'lowboy')).not.toBe(chainConfigLabel('triple', 'lowboy'));
+  });
+
+  it('leaves every other body type on the road-train labels', () => {
+    expect(chainConfigLabel('triple', 'dryvan')).toBe('Triple');
+    expect(chainConfigLabel('double', 'flatbed')).toBe('Double');
+    // Lowboy singles are unaffected, and ETS2 lowboys are all single.
+    expect(chainConfigLabel('single', 'lowboy')).toBe('Single');
+    // Only double/triple are articulated; a lowboy bdouble would not exist, but
+    // if one appeared it should keep the real chain label rather than silently
+    // becoming heavy haul.
+    expect(chainConfigLabel('bdouble', 'lowboy')).toBe('B-double');
+  });
+
+  it('omitting bodyType keeps the previous labels', () => {
+    expect(chainConfigLabel('triple')).toBe('Triple');
+    expect(chainConfigLabel('double')).toBe('Double');
+  });
+
   it('CHAIN_ORDER covers every CHAIN_LABELS key plus single', () => {
     // Drift guard: a chain_type with a label but no ordering entry would sort to
     // the end of the configuration list silently. This fails on any such gap.
@@ -374,6 +425,87 @@ describe('chainConfigLabel', () => {
       expect(CHAIN_ORDER, `${ct} missing from CHAIN_ORDER`).toContain(ct);
     }
     expect(CHAIN_ORDER).toContain('single');
+  });
+});
+
+describe('foldBestInRegions', () => {
+  const ATS = ['arizona', 'california', 'colorado', 'idaho', 'montana', 'nevada',
+    'oklahoma', 'oregon', 'texas', 'utah', 'washington', 'wyoming'];
+
+  // The real ATS dryvan ladder, HVs straight off the trailers page.
+  const DRYVAN = [
+    { chainType: 'single', totalHV: 1020 },
+    { chainType: 'double', totalHV: 1055 },
+    { chainType: 'bdouble', totalHV: 1128 },
+    { chainType: 'rmdouble', totalHV: 1408 },
+    { chainType: 'triple', totalHV: 1590 },
+    { chainType: 'tpdouble', totalHV: 1753 },
+  ];
+  const DRYVAN_VALIDITY = new Map<string, string[]>([
+    ['single', []],
+    ['double', []],
+    ['bdouble', ['idaho', 'montana', 'nevada', 'oregon', 'utah', 'washington', 'wyoming']],
+    ['rmdouble', ['colorado', 'idaho', 'montana', 'nevada', 'oklahoma', 'oregon', 'utah', 'washington', 'wyoming']],
+    ['triple', ['colorado', 'idaho', 'montana', 'nevada', 'oklahoma', 'oregon', 'utah']],
+    ['tpdouble', ['colorado', 'idaho', 'montana', 'nevada', 'oklahoma', 'utah']],
+  ]);
+
+  it('gives each region to its single highest-HV configuration', () => {
+    const f = foldBestInRegions(DRYVAN, DRYVAN_VALIDITY, ATS);
+    expect(f.get('tpdouble')).toEqual(['colorado', 'idaho', 'montana', 'nevada', 'oklahoma', 'utah']);
+    // Triple is legal in 7 states but wins only where tpdouble is not legal.
+    expect(f.get('triple')).toEqual(['oregon']);
+    expect(f.get('rmdouble')).toEqual(['washington', 'wyoming']);
+  });
+
+  it('empties configurations that are legal somewhere but optimal nowhere', () => {
+    const f = foldBestInRegions(DRYVAN, DRYVAN_VALIDITY, ATS);
+    // Every state a bdouble is legal in already has a better rung available.
+    expect(f.get('bdouble')).toEqual([]);
+    expect(f.get('single')).toEqual([]);
+  });
+
+  it('partitions the region set exactly — no region twice, none dropped', () => {
+    const f = foldBestInRegions(DRYVAN, DRYVAN_VALIDITY, ATS);
+    const all = [...f.values()].flat();
+    expect(all.slice().sort()).toEqual(ATS.slice().sort());
+    expect(new Set(all).size).toBe(all.length);
+  });
+
+  it('leaves the unrestricted remainder to the best config legal everywhere', () => {
+    const f = foldBestInRegions(DRYVAN, DRYVAN_VALIDITY, ATS);
+    expect(f.get('double')).toEqual(['arizona', 'california', 'texas']);
+  });
+
+  it('handles the ETS2 shape — one restricted config over a universal baseline', () => {
+    const regions = ['finland', 'sweden', 'germany', 'poland'];
+    const f = foldBestInRegions(
+      [{ chainType: 'single', totalHV: 100 }, { chainType: 'hct', totalHV: 180 }],
+      new Map([['single', []], ['hct', ['finland', 'sweden']]]),
+      regions,
+    );
+    expect(f.get('hct')).toEqual(['finland', 'sweden']);
+    expect(f.get('single')).toEqual(['germany', 'poland']);
+  });
+
+  it('gives everything to a lone unrestricted configuration', () => {
+    const f = foldBestInRegions(
+      [{ chainType: 'single', totalHV: 10 }],
+      new Map([['single', []]]),
+      ['a', 'b'],
+    );
+    expect(f.get('single')).toEqual(['a', 'b']);
+  });
+
+  it('breaks HV ties toward the lighter configuration', () => {
+    // Equal haul value: the cheaper rig should claim the region, not the heavier.
+    const f = foldBestInRegions(
+      [{ chainType: 'triple', totalHV: 500 }, { chainType: 'single', totalHV: 500 }],
+      new Map([['triple', []], ['single', []]]),
+      ['nevada'],
+    );
+    expect(f.get('single')).toEqual(['nevada']);
+    expect(f.get('triple')).toEqual([]);
   });
 });
 

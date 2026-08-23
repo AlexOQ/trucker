@@ -43,10 +43,69 @@ export const CHAIN_LABELS: Record<string, string> = {
 // CHAIN_LABELS plus 'single').
 export const CHAIN_ORDER = ['single', 'double', 'b_double', 'bdouble', 'tpdouble', 'rmdouble', 'hct', 'triple'];
 
-/** Configurator-style label for a chain configuration, including singles ("Single"). */
-export function chainConfigLabel(chainType: string | undefined): string {
+// chain_type counts chassis units in the chain, which is a road train everywhere
+// except ATS's scs.lowboy: its multi-chassis configurations are heavy-haul rigs —
+// jeep dolly + lowboy (`double`) and jeep dolly + lowboy + spreader (`triple`),
+// named tr_articulated_3axle … tr_articulated_9axle in the defs. Labelling those
+// "Double"/"Triple" reads as an LCV, which is why they carry no country_validity
+// while real doubles and triples do. See docs/ats-state-restrictions.md.
+// ETS2 lowboys are all single, so this never fires outside ATS.
+const ARTICULATED_LABELS: Record<string, string> = {
+  double: 'Jeep dolly',
+  triple: 'Jeep dolly + spreader',
+};
+
+function isArticulated(bodyType: string | undefined, chainType: string): boolean {
+  return bodyType === 'lowboy' && chainType in ARTICULATED_LABELS;
+}
+
+/**
+ * Configurator-style label for a chain configuration, including singles ("Single").
+ * Pass `bodyType` so lowboy heavy-haul rigs aren't labelled as road trains.
+ */
+export function chainConfigLabel(chainType: string | undefined, bodyType?: string): string {
   if (!chainType || chainType === 'single') return 'Single';
+  if (isArticulated(bodyType, chainType)) return ARTICULATED_LABELS[chainType];
   return CHAIN_LABELS[chainType] ?? chainType;
+}
+
+/**
+ * Fold a configuration ladder into a region partition.
+ *
+ * A configuration's `country_validity` lists everywhere it is *legal*, which
+ * overlaps heavily: an RM-double is legal in Nevada, but you would never run one
+ * there because a turnpike double is legal too and hauls more. Walking the ladder
+ * highest-HV first and letting each configuration claim only the regions nobody
+ * above it already took turns "legal in" into "best in", and exposes the
+ * configurations that are legal somewhere but optimal nowhere.
+ *
+ * `validity` maps chainType to the regions it is legal in; an empty array means
+ * legal everywhere. Returns chainType to the regions where it wins, sorted.
+ * Ties break toward the lighter configuration via CHAIN_ORDER — equal haul value
+ * makes the cheaper rig the sensible pick.
+ */
+export function foldBestInRegions(
+  configs: readonly { chainType: string; totalHV: number }[],
+  validity: ReadonlyMap<string, readonly string[]>,
+  allRegions: readonly string[],
+): Map<string, string[]> {
+  const claimed = new Set<string>();
+  const out = new Map<string, string[]>();
+
+  const ladder = [...configs].sort((a, b) =>
+    b.totalHV - a.totalHV
+    || CHAIN_ORDER.indexOf(a.chainType) - CHAIN_ORDER.indexOf(b.chainType)
+  );
+
+  for (const c of ladder) {
+    const legal = validity.get(c.chainType) ?? [];
+    const scope = legal.length === 0 ? allRegions : legal;
+    const mine = scope.filter((r) => !claimed.has(r)).sort();
+    for (const r of mine) claimed.add(r);
+    out.set(c.chainType, mine);
+  }
+
+  return out;
 }
 
 /** Build a human-readable spec string from trailer properties, e.g. "Kassbohrer Double 5-axle 79t 16.4m" */
@@ -55,7 +114,9 @@ export function formatTrailerSpec(t: Trailer): string {
   const brandRaw = idParts[0];
   const brand = brandRaw.charAt(0).toUpperCase() + brandRaw.slice(1);
 
-  const chainLabel = CHAIN_LABELS[t.chain_type] ?? '';
+  const chainLabel = isArticulated(t.body_type, t.chain_type)
+    ? 'Articulated'
+    : CHAIN_LABELS[t.chain_type] ?? '';
   // Axle count is the authoritative `axles` field (total across all units of the
   // chain). Omitted only for observations-only trailers that lack the field.
   const axleStr = t.axles ? `${t.axles}-axle` : '';
