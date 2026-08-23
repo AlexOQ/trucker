@@ -7,6 +7,7 @@ import {
   escapeHtml,
   chainConfigLabel,
   foldBestInRegions,
+  buildCargoLabels,
   CHAIN_LABELS,
   CHAIN_ORDER,
 } from '../utils';
@@ -506,6 +507,45 @@ describe('foldBestInRegions', () => {
     );
     expect(f.get('single')).toEqual(['nevada']);
     expect(f.get('triple')).toEqual([]);
+  });
+});
+
+describe('buildCargoLabels', () => {
+  it('leaves unique names alone', () => {
+    const l = buildCargoLabels([{ id: 'cement', name: 'cement' }, { id: 'sand', name: 'sand' }]);
+    expect(l.get('cement')).toBe('cement');
+    expect(l.get('sand')).toBe('sand');
+  });
+
+  it('appends the id only to the names that collide', () => {
+    // grain/grain_b is the real ATS case: one commodity, two forms, different bodies.
+    const l = buildCargoLabels([
+      { id: 'grain', name: 'grain' },
+      { id: 'grain_b', name: 'grain' },
+      { id: 'cement', name: 'cement' },
+    ]);
+    expect(l.get('grain')).toBe('grain (grain)');
+    expect(l.get('grain_b')).toBe('grain (grain_b)');
+    expect(l.get('cement')).toBe('cement');
+  });
+
+  it('disambiguates every member of a collision, not just the later ones', () => {
+    const l = buildCargoLabels([
+      { id: 'transform2', name: 'transformer' },
+      { id: 'transformer', name: 'transformer' },
+    ]);
+    expect(new Set(l.values()).size).toBe(2);
+    for (const v of l.values()) expect(v).toContain('(');
+  });
+
+  it('covers every input id', () => {
+    const ids = ['a', 'b', 'c'];
+    const l = buildCargoLabels(ids.map((id) => ({ id, name: 'same' })));
+    expect([...l.keys()].sort()).toEqual(ids);
+  });
+
+  it('returns an empty map for empty input', () => {
+    expect(buildCargoLabels([]).size).toBe(0);
   });
 });
 

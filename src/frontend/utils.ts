@@ -108,6 +108,30 @@ export function foldBestInRegions(
   return out;
 }
 
+/**
+ * Disambiguate cargo whose display names collide.
+ *
+ * The games ship distinct cargo sharing one name — usually a commodity in two
+ * physical forms routed to different trailers (`grain` on dryvans vs `grain_b` on
+ * hoppers), sometimes two sizes of the same item (`boom_lift` 3.9 t vs `boom_lift2`
+ * 12 t). 11 such names in ATS, 27 in ETS2. They are distinct cargo and must stay
+ * distinct — collapsing them would empty the hopper/silo/bulkfeed profiles — but
+ * rendering them as two identical rows makes a board reading impossible to match to
+ * an id. Returns cargoId -> label, appending the id only where a name is shared.
+ */
+export function buildCargoLabels(
+  cargo: readonly { id: string; name: string }[],
+): Map<string, string> {
+  const seen = new Map<string, number>();
+  for (const c of cargo) seen.set(c.name, (seen.get(c.name) ?? 0) + 1);
+
+  const labels = new Map<string, string>();
+  for (const c of cargo) {
+    labels.set(c.id, (seen.get(c.name) ?? 0) > 1 ? `${c.name} (${c.id})` : c.name);
+  }
+  return labels;
+}
+
 /** Build a human-readable spec string from trailer properties, e.g. "Kassbohrer Double 5-axle 79t 16.4m" */
 export function formatTrailerSpec(t: Trailer): string {
   const idParts = t.id.split('.');
