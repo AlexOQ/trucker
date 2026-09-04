@@ -13,6 +13,8 @@ export interface MinCostConfig {
   engine: Engine;
   transmission: Transmission;
   paint: Paint | null;        // null when truck has no priced paint
+  /** Required kit from the cheapest dealer preset (interior, wheels, mirrors…); 0 on pre-preset data. */
+  kit: number;
   total: number;
   /** Max unlock across selected components — level required to buy this config. */
   levelFloor: number;
@@ -101,11 +103,12 @@ export function computeMinCost(truck: Truck): MinCostConfig | null {
   if (!cc || !engine || !transmission) return null;
 
   const paint = cheapest(truck.paints ?? []);
+  const kit = truck.kit_price ?? 0;
   const total = cc.cabin.price + cc.chassis.price + engine.price + transmission.price
-    + (paint?.price ?? 0);
+    + (paint?.price ?? 0) + kit;
   const levelFloor = Math.max(
     cc.cabin.unlock, cc.chassis.unlock, engine.unlock, transmission.unlock,
     paint?.unlock ?? 0,
   );
-  return { cabin: cc.cabin, chassis: cc.chassis, engine, transmission, paint, total, levelFloor };
+  return { cabin: cc.cabin, chassis: cc.chassis, engine, transmission, paint, kit, total, levelFloor };
 }

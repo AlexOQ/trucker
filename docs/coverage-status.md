@@ -1,60 +1,57 @@
-# Manual-price coverage — ETS2 + ATS
+# Trailer & truck price coverage — ETS2 + ATS
 
-Snapshot as of **game version 1.59** (2026-05-11).
+Snapshot as of **2026-09-04** (ETS2 1.60.1.7, ATS 1.60.1.8).
 
-## What "coverage" means here
+## How prices are sourced
 
-Three DLC categories in ETS2/ATS, but only one needs manual data work:
+Prices are read from the game defs by `scripts/parse-game-defs.ts` and match the
+dealer screen to the euro:
 
-| DLC type | Examples | Adds | Manual walks needed? |
-|---|---|---|---|
-| Map | Going East, Scandinavia, Iberia, etc. | Cities + map-tied "shadow" cargo | No — parser reads game-defs correctly |
-| Cargo pack | High Power, Heavy Cargo, JCB, etc. | New cargo IDs | No — parser reads cargo defs correctly |
-| Trailer brand | Feldbinder, Wielton, Kogel, etc. | New ownable trailers | **Yes** — parser misreads prices |
+- **Dealer presets** (`def/vehicle/trailer_dealer`, `def/vehicle/truck_dealer`)
+  list every accessory on every unit of a combination; the sum of those parts'
+  `price` fields is the sticker price. Paint prices live in `@include`d settings
+  files, which the parser inlines before reading.
+- **Non-preset trailer configurations** (`trailer_owned/<brand>/configurations/`)
+  are priced by walking from the brand's presets the way the upgrade shop does:
+  keep accessories that still fit, swap chassis and body, re-count wheels per
+  axle, add the new `defaults[]`, fill `require[]` with the cheapest suitable
+  part. The trailer's price is the cheapest such walk.
+- **Trucks** carry the exact preset prices plus `kit_price` — the required parts
+  (interior, wheels, mirrors, lights…) every build pays beyond cabin, chassis,
+  engine, transmission and paint — which the trucks page adds to its min-cost
+  build.
 
-All map + cargo DLCs are considered data-complete as soon as their content lands in `game-defs.json`. The walk effort below is exclusively trailer-brand DLCs.
+Verified 2026-09-04 against nine owned ETS2 trailer combinations (SCS, Kässbohrer,
+Schmitz; single, double, B-double, HCT) and a MAN TGX build: every SCS receipt
+exact, the two brand-DLC receipts differing only by the owner's livery choice.
 
-A "winner" = trailer that wins the highest-hv slot for at least one (country, body_type) pair under the all-DLC-assumed-owned model. The optimizer needs walked prices for every winner-tie member to pick correctly; this table tracks per-brand coverage of the displayed winners.
-
-Live regeneration:
-```
-node scripts/winners-table.cjs ets2
-node scripts/winners-table.cjs ats
-```
+There is no hand-walked price file any more. `manual-prices.json` and its audit
+doc were retired with this change.
 
 ## ETS2
 
-| Brand | Winners | Walked | Parser-priced | MISSING | DLC required | Owned? |
-|---|---|---|---|---|---|---|
-| **scs** (base) | 22 | **22 ✅** | 0 | 0 | — | always |
-| schmitz | 3 | **3 ✅** | 0 | 0 | Schmitz Cargobull | yes |
-| kassbohrer | 3 | **3 ✅** | 0 | 0 | Kässbohrer | yes |
-| wielton | 4 | 0 | 1 | 3 | Wielton | — |
-| feldbinder | 3 | 0 | 0 | 3 | Feldbinder | — |
-| kogel | 1 | 0 | 1 | 0 | Kögel | — |
-| schwmuller | 1 | 0 | 1 | 0 | Schwarzmüller | — |
-| **Totals** | **37** | **28** | **3** | **6** | | |
+508 of 514 trailer definitions priced. The 6 unpriced ids have no configuration
+in the def tree (`kassbohrer.scx.*_17.*`, `krone.ecoolliner.single_3.reefer`,
+`krone.edryliner.single_3.dryvan`); they are not buildable at the dealer.
 
-**SCS no-DLC fallback coverage** (the set a player with no DLC trailer packs would see): **35/35 walked ✅**. Any non-DLC player gets accurate prices across every body_type × country band.
-
-**Tie-only DLC trailers** (don't beat SCS on hv but participate in winner-tie groups — need walked prices when DLC owned for correct tie-breaking): tracked in `manual-prices-audit.md` walk queue (24 chassis, 33 body prices).
+Live check:
+```
+node scripts/winners-table.cjs ets2
+node scripts/all-ties.cjs ets2
+```
 
 ## ATS
 
-| Brand | Winners | Walked | Parser-priced | MISSING |
-|---|---|---|---|---|
-| **scs** (base) | 50 | 0 | 0 | 50 |
-| lodeking | 1 | 0 | 0 | 1 |
-| **Totals** | **51** | **0** | **0** | **51** |
+Re-priced from a 1.60.1.8 install with `--prices-only`, which patches prices and
+truck presets into the bundled `game-defs.json` without touching the 20-state
+city set.
 
-ATS has **no walked prices yet** — `public/data/ats/manual-prices.json` does not exist. The parser-derived prices are unreliable (see `feedback_trucker_parser_prices_unreliable`); every winner needs hand-walking via the ATS dealer screen.
+```
+node scripts/winners-table.cjs ats
+```
 
 ## Optimizer notes
 
 - Multi-body trailer model: `optimizer.ts` picks profiles (body_type sets) rather than bare body_types, so trailers with `extra_body_types` correctly compete in multiple pools (see `OptimalFleetEntry.bodyTypes`, `bestJobProfile`).
 - `multi-body-overrides.json` (ETS2 only currently) declares trailers that serve more than one body_type; the optimizer credits them across all listed slots.
-
-## What's next
-
-- **ETS2**: closed for owned-DLC scope. Future walks gated on Wielton / Feldbinder / Kögel / Krone / Schwarzmüller / Tirsan purchase.
-- **ATS**: needs first walk session — see `manual-prices-audit.md` methodology (chain_base derivation, per-chassis body fee scaling).
+- Tied-hv trailers resolve to the cheapest priced one; unpriced trailers lose ties.

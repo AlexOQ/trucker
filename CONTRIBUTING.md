@@ -20,16 +20,16 @@ Example:
 For simple fixes, edit the data and submit a PR:
 
 1. Fork the repository
-2. Edit the relevant file under `public/data/<game>/`. Note: `game-defs.json` is **generated** by the parser — don't hand-edit it (a reparse overwrites your change). The hand-editable supplements are `observations.json`, `manual-prices.json`, and `multi-body-overrides.json`. Trailer prices have a dedicated path — see *Contribute Trailer Price Walks* below.
+2. Edit the relevant file under `public/data/<game>/`. Note: `game-defs.json` is **generated** by the parser — don't hand-edit it (a reparse overwrites your change). The hand-editable supplements are `observations.json` and `multi-body-overrides.json`. Trailer prices have a dedicated path — see *Contribute Trailer Price Walks* below.
 3. Submit a pull request with a clear description
 
 ### 3. Add New Content
 
 When a game update or new DLC adds content, the data is **regenerated**, not hand-edited: extract the game's `def/` folder and re-run the parser (`scripts/parse-game-defs.ts`). See the **Game Data Pipeline** in [CLAUDE.md](CLAUDE.md) for the full procedure, then submit a PR with the regenerated `game-defs.json` plus any updated supplements.
 
-### 4. Contribute Trailer Price Walks
+### 4. Prices
 
-Multi-trailer (HCT/double) and DLC-brand trailer prices are assembled in the in-game customization screen and can't be read from the game files — they're hand-walked into `public/data/<game>/manual-prices.json`. If you own a trailer DLC that's still missing prices, see the walk methodology, the live "wanted" queue, and step-by-step intake in [docs/manual-prices-audit.md](docs/manual-prices-audit.md#contributing-a-walk).
+Trailer and truck prices are read from the game's dealer presets and configuration files by the parser and match the dealer screen to the euro, so there is nothing to hand-enter. If a price looks wrong, open an issue with the in-game dealer total and the trailer/truck configuration; the fix is a parser change, not a data edit.
 
 ## Data Contribution Guidelines
 
@@ -61,7 +61,6 @@ Multi-trailer (HCT/double) and DLC-brand trailer prices are assembled in the in-
 The data is **generated**, not maintained as hand-written flat files. Each game has a single `public/data/<game>/game-defs.json` (e.g. `public/data/ets2/game-defs.json`) produced by `scripts/parse-game-defs.ts` from the extracted game `def/` files. It holds cargo, trailers, companies, cities, countries, economy, trucks, and the DLC registry — the entity sections are objects keyed by game id (the `trucks` section is a list), not the flat per-entity arrays of the old model. ETS2 also ships three smaller supplements (ATS currently has only `game-defs.json`):
 
 - `observations.json` — data parsed from save games (spawn frequencies, unit counts) that validates and fills gaps in the generated defs.
-- `manual-prices.json` — hand-walked trailer prices the parser can't recover (see *Contribute Trailer Price Walks*).
 - `multi-body-overrides.json` — trailers that physically haul more than their primary `body_type`.
 
 For the authoritative schema and how it's generated, see the **Data Model** and **Game Data Pipeline** sections of [CLAUDE.md](CLAUDE.md). A cargo entry, for example, is keyed by its game id:

@@ -4,10 +4,6 @@ const p = require('path');
 const game = process.argv[2] || 'ets2';
 const root = p.join(__dirname, '..', 'public', 'data', game);
 const defs = JSON.parse(fs.readFileSync(p.join(root, 'game-defs.json'), 'utf8'));
-const manualPath = p.join(root, 'manual-prices.json');
-const manual = fs.existsSync(manualPath)
-  ? JSON.parse(fs.readFileSync(manualPath, 'utf8')).prices || {}
-  : {};
 
 const trailers = defs.trailers;
 const cargo = defs.cargo;
@@ -72,9 +68,8 @@ function fmtCountries(set) {
   return `${set.size}: ${list.join(',')}`;
 }
 function priceStatus(tid) {
-  if (manual[tid]) return `walked=${manual[tid].price}`;
   const p = trailers[tid].price || 0;
-  if (p > 0) return `parser=${p}`;
+  if (p > 0) return `dealer=${p}`;
   return '— MISSING —';
 }
 
@@ -103,13 +98,12 @@ console.log(`\n\n# Brand summary (winners only)`);
 const brands = {};
 for (const [tid] of Object.entries(wins)) {
   const b = tid.split('.')[0];
-  brands[b] = brands[b] || { count: 0, walked: 0, parser: 0, missing: 0 };
+  brands[b] = brands[b] || { count: 0, priced: 0, missing: 0 };
   brands[b].count++;
-  if (manual[tid]) brands[b].walked++;
-  else if ((trailers[tid].price || 0) > 0) brands[b].parser++;
+  if ((trailers[tid].price || 0) > 0) brands[b].priced++;
   else brands[b].missing++;
 }
 const sorted = Object.entries(brands).sort((a, b) => b[1].count - a[1].count);
 for (const [b, s] of sorted) {
-  console.log(`  ${b.padEnd(14)} winners=${String(s.count).padStart(2)}  walked=${s.walked}  parser-priced=${s.parser}  MISSING=${s.missing}`);
+  console.log(`  ${b.padEnd(14)} winners=${String(s.count).padStart(2)}  priced=${s.priced}  MISSING=${s.missing}`);
 }

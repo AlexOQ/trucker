@@ -161,9 +161,16 @@ describe('computeMinCost', () => {
     ],
   });
 
+  it('adds the dealer kit_price on top of the component floor', () => {
+    const r = computeMinCost({ ...baseTruck, kit_price: 45535 })!;
+    expect(r.kit).toBe(45535);
+    expect(r.total).toBe(51600 + 45535);
+  });
+
   it('sums the cheapest valid combination', () => {
     const r = computeMinCost(baseTruck)!;
-    // 15000 + 25000 + 5000 + 4000 + 2600 = 51600
+    // 15000 + 25000 + 5000 + 4000 + 2600 = 51600 (no kit on pre-preset data)
+    expect(r.kit).toBe(0);
     expect(r.total).toBe(51600);
     expect(r.engine.id).toBe('eng_b');
     expect(r.paint?.id).toBe('p_b');

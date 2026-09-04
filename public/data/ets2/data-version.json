@@ -1,5 +1,5 @@
 {
   "game_version": "1.60.1.7",
-  "refreshed_at": "2026-06-30",
-  "coverage_notes": ""
+  "refreshed_at": "2026-09-04",
+  "coverage_notes": "Trailer and truck prices read from the dealer presets and configuration walks (exact to the dealer screen, 2026-09-04)"
 }

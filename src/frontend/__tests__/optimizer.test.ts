@@ -496,9 +496,9 @@ describe('optimizer', () => {
     });
 
     // Tied-hv fixture: N single-body dryvan trailers with identical specs (→ identical
-    // totalHV), differing only in price + priceWalked tier. Exercises the tiebreaker
-    // in getProfileTrailerInfoForCountry through computeOptimalFleet.
-    const buildTiedDryvanFixture = (rigs: Array<{ id: string; price: number; walked: boolean }>) => {
+    // totalHV), differing only in price. Exercises the tiebreaker in
+    // getProfileTrailerInfoForCountry through computeOptimalFleet.
+    const buildTiedDryvanFixture = (rigs: Array<{ id: string; price: number }>) => {
       const data = createMockData();
       const spec = {
         body_type: 'dryvan' as const,
@@ -510,7 +510,7 @@ describe('optimizer', () => {
         rigs.map((r) => [r.id, { name: r.id, ...spec, price: r.price }]),
       );
       data.trailers = rigs.map((r) => ({
-        id: r.id, name: r.id, ...spec, price: r.price, priceWalked: r.walked,
+        id: r.id, name: r.id, ...spec, price: r.price,
       }));
       data.gameDefs.cargo_trailers = { electronics: rigs.map((r) => r.id) };
       data.gameDefs.cargo_trailer_units = {
@@ -525,21 +525,21 @@ describe('optimizer', () => {
       return fleet!.drivers[0].trailerId;
     };
 
-    it('walked-priced trailer beats cheaper parser-priced sibling at tied hv', () => {
+    it('priced trailer beats an unpriced sibling at tied hv', () => {
       clearTrailerInfoCache();
       const data = buildTiedDryvanFixture([
-        { id: 'box_parser', price: 21000, walked: false },
-        { id: 'box_walked', price: 70000, walked: true },
+        { id: 'box_unpriced', price: 0 },
+        { id: 'box_priced', price: 70000 },
       ]);
-      expect(winnerOf(data)).toBe('box_walked');
+      expect(winnerOf(data)).toBe('box_priced');
     });
 
-    it('lowest priced wins among same-tier (all walked) tied trailers', () => {
+    it('lowest priced wins among tied trailers', () => {
       clearTrailerInfoCache();
       const data = buildTiedDryvanFixture([
-        { id: 'box_a', price: 50000, walked: true },
-        { id: 'box_b', price: 80000, walked: true },
-        { id: 'box_c', price: 30000, walked: true },
+        { id: 'box_a', price: 50000 },
+        { id: 'box_b', price: 80000 },
+        { id: 'box_c', price: 30000 },
       ]);
       expect(winnerOf(data)).toBe('box_c');
     });

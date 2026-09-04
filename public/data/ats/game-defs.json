@@ -5036,8 +5036,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38045,
+      "level_floor": 11
     },
     "lodeking.bril_drop.single_48.dropdeck_alw": {
       "name": "Lodeking Bril Drop Single 48 Dropdeck Alw",
@@ -5050,8 +5050,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28000,
-      "level_floor": 10
+      "price": 33545,
+      "level_floor": 11
     },
     "lodeking.bril_drop.single_53_3.dropdeck_alw": {
       "name": "Lodeking Bril Drop Single 53 3 Dropdeck Alw",
@@ -5064,8 +5064,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43145,
+      "level_floor": 15
     },
     "lodeking.bril_drop.single_53.dropdeck_alw": {
       "name": "Lodeking Bril Drop Single 53 Dropdeck Alw",
@@ -5098,8 +5098,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40645,
+      "level_floor": 13
     },
     "lodeking.bril_flat.single_48_3.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 48 3 Flatbed Alw",
@@ -5112,8 +5112,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44775,
+      "level_floor": 11
     },
     "lodeking.bril_flat.single_48f.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 48f Flatbed Alw",
@@ -5126,8 +5126,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37310,
+      "level_floor": 11
     },
     "lodeking.bril_flat.single_48r.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 48r Flatbed Alw",
@@ -5140,8 +5140,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 27000,
-      "level_floor": 10
+      "price": 37310,
+      "level_floor": 11
     },
     "lodeking.bril_flat.single_48sp.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 48sp Flatbed Alw",
@@ -5154,8 +5154,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40210,
+      "level_floor": 11
     },
     "lodeking.bril_flat.single_53_3.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 53 3 Flatbed Alw",
@@ -5168,8 +5168,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49875,
+      "level_floor": 15
     },
     "lodeking.bril_flat.single_53_4o.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 53 4o Flatbed Alw",
@@ -5202,8 +5202,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 55240,
+      "level_floor": 16
     },
     "lodeking.bril_flat.single_53_4w.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 53 4w Flatbed Alw",
@@ -5216,8 +5216,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 54840,
+      "level_floor": 16
     },
     "lodeking.bril_flat.single_53f.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 53f Flatbed Alw",
@@ -5230,8 +5230,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44410,
+      "level_floor": 13
     },
     "lodeking.bril_flat.single_53r.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 53r Flatbed Alw",
@@ -5264,8 +5264,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44410,
+      "level_floor": 13
     },
     "lodeking.bril_flat.single_53sp.flatbed_alw": {
       "name": "Lodeking Bril Flat Single 53sp Flatbed Alw",
@@ -5298,8 +5298,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 45310,
+      "level_floor": 14
     },
     "lodeking.distinction.singl_50_3al.hopper": {
       "name": "Lodeking Distinction Singl 50 3al Hopper",
@@ -5312,8 +5312,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 87675,
+      "level_floor": 17
     },
     "lodeking.distinction.singl_50_3sl.hopper": {
       "name": "Lodeking Distinction Singl 50 3sl Hopper",
@@ -5326,8 +5326,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 87275,
+      "level_floor": 17
     },
     "lodeking.distinction.single_40ra.hopper": {
       "name": "Lodeking Distinction Single 40ra Hopper",
@@ -5340,7 +5340,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 46000,
+      "price": 65510,
       "level_floor": 9
     },
     "lodeking.distinction.single_40rs.hopper": {
@@ -5354,8 +5354,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 65110,
+      "level_floor": 9
     },
     "lodeking.distinction.single_50_3a.hopper": {
       "name": "Lodeking Distinction Single 50 3a Hopper",
@@ -5368,8 +5368,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 86175,
+      "level_floor": 15
     },
     "lodeking.distinction.single_50_3s.hopper": {
       "name": "Lodeking Distinction Single 50 3s Hopper",
@@ -5382,8 +5382,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 85775,
+      "level_floor": 15
     },
     "lodeking.force_drop.single_48_3.dropdeck_f": {
       "name": "Lodeking Force Drop Single 48 3 Dropdeck F",
@@ -5396,8 +5396,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33045,
+      "level_floor": 11
     },
     "lodeking.force_drop.single_48_3.dropdeck_hw": {
       "name": "Lodeking Force Drop Single 48 3 Dropdeck Hw",
@@ -5410,8 +5410,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35545,
+      "level_floor": 11
     },
     "lodeking.force_drop.single_48.dropdeck_f": {
       "name": "Lodeking Force Drop Single 48 Dropdeck F",
@@ -5424,8 +5424,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 23000,
-      "level_floor": 9
+      "price": 28545,
+      "level_floor": 11
     },
     "lodeking.force_drop.single_48.dropdeck_hw": {
       "name": "Lodeking Force Drop Single 48 Dropdeck Hw",
@@ -5438,8 +5438,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 31045,
+      "level_floor": 11
     },
     "lodeking.force_drop.single_53_3.dropdeck_f": {
       "name": "Lodeking Force Drop Single 53 3 Dropdeck F",
@@ -5452,8 +5452,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38145,
+      "level_floor": 15
     },
     "lodeking.force_drop.single_53_3.dropdeck_hw": {
       "name": "Lodeking Force Drop Single 53 3 Dropdeck Hw",
@@ -5466,8 +5466,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40645,
+      "level_floor": 15
     },
     "lodeking.force_drop.single_53_4.dropdeck_f": {
       "name": "Lodeking Force Drop Single 53 4 Dropdeck F",
@@ -5480,8 +5480,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "lodeking.force_drop.single_53_4.dropdeck_hw": {
       "name": "Lodeking Force Drop Single 53 4 Dropdeck Hw",
@@ -5494,8 +5494,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "lodeking.force_drop.single_53.dropdeck_f": {
       "name": "Lodeking Force Drop Single 53 Dropdeck F",
@@ -5508,8 +5508,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35645,
+      "level_floor": 13
     },
     "lodeking.force_drop.single_53.dropdeck_hw": {
       "name": "Lodeking Force Drop Single 53 Dropdeck Hw",
@@ -5522,8 +5522,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38145,
+      "level_floor": 13
     },
     "lodeking.force_flat.single_48_3.flatbed_f": {
       "name": "Lodeking Force Flat Single 48 3 Flatbed F",
@@ -5536,8 +5536,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40275,
+      "level_floor": 11
     },
     "lodeking.force_flat.single_48_3.flatbed_hw": {
       "name": "Lodeking Force Flat Single 48 3 Flatbed Hw",
@@ -5550,8 +5550,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42575,
+      "level_floor": 11
     },
     "lodeking.force_flat.single_48f.flatbed_f": {
       "name": "Lodeking Force Flat Single 48f Flatbed F",
@@ -5564,8 +5564,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 32810,
+      "level_floor": 11
     },
     "lodeking.force_flat.single_48f.flatbed_hw": {
       "name": "Lodeking Force Flat Single 48f Flatbed Hw",
@@ -5578,8 +5578,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35110,
+      "level_floor": 11
     },
     "lodeking.force_flat.single_48r.flatbed_f": {
       "name": "Lodeking Force Flat Single 48r Flatbed F",
@@ -5592,8 +5592,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 22000,
-      "level_floor": 9
+      "price": 32810,
+      "level_floor": 11
     },
     "lodeking.force_flat.single_48r.flatbed_hw": {
       "name": "Lodeking Force Flat Single 48r Flatbed Hw",
@@ -5606,8 +5606,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35110,
+      "level_floor": 11
     },
     "lodeking.force_flat.single_48sp.flatbed_f": {
       "name": "Lodeking Force Flat Single 48sp Flatbed F",
@@ -5620,8 +5620,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35710,
+      "level_floor": 11
     },
     "lodeking.force_flat.single_48sp.flatbed_hw": {
       "name": "Lodeking Force Flat Single 48sp Flatbed Hw",
@@ -5634,8 +5634,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38010,
+      "level_floor": 11
     },
     "lodeking.force_flat.single_53_3.flatbed_f": {
       "name": "Lodeking Force Flat Single 53 3 Flatbed F",
@@ -5648,8 +5648,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44875,
+      "level_floor": 15
     },
     "lodeking.force_flat.single_53_3.flatbed_hw": {
       "name": "Lodeking Force Flat Single 53 3 Flatbed Hw",
@@ -5662,8 +5662,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 47375,
+      "level_floor": 15
     },
     "lodeking.force_flat.single_53_4o.flatbed_f": {
       "name": "Lodeking Force Flat Single 53 4o Flatbed F",
@@ -5696,8 +5696,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 50240,
+      "level_floor": 16
     },
     "lodeking.force_flat.single_53_4o.flatbed_hw": {
       "name": "Lodeking Force Flat Single 53 4o Flatbed Hw",
@@ -5730,8 +5730,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52740,
+      "level_floor": 16
     },
     "lodeking.force_flat.single_53_4w.flatbed_f": {
       "name": "Lodeking Force Flat Single 53 4w Flatbed F",
@@ -5744,8 +5744,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49840,
+      "level_floor": 16
     },
     "lodeking.force_flat.single_53_4w.flatbed_hw": {
       "name": "Lodeking Force Flat Single 53 4w Flatbed Hw",
@@ -5758,8 +5758,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52340,
+      "level_floor": 16
     },
     "lodeking.force_flat.single_53f.flatbed_f": {
       "name": "Lodeking Force Flat Single 53f Flatbed F",
@@ -5772,8 +5772,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 39410,
+      "level_floor": 13
     },
     "lodeking.force_flat.single_53f.flatbed_hw": {
       "name": "Lodeking Force Flat Single 53f Flatbed Hw",
@@ -5786,8 +5786,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41910,
+      "level_floor": 13
     },
     "lodeking.force_flat.single_53r.flatbed_f": {
       "name": "Lodeking Force Flat Single 53r Flatbed F",
@@ -5820,8 +5820,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 39410,
+      "level_floor": 13
     },
     "lodeking.force_flat.single_53r.flatbed_hw": {
       "name": "Lodeking Force Flat Single 53r Flatbed Hw",
@@ -5854,8 +5854,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41910,
+      "level_floor": 13
     },
     "lodeking.force_flat.single_53sp.flatbed_f": {
       "name": "Lodeking Force Flat Single 53sp Flatbed F",
@@ -5888,8 +5888,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40310,
+      "level_floor": 14
     },
     "lodeking.force_flat.single_53sp.flatbed_hw": {
       "name": "Lodeking Force Flat Single 53sp Flatbed Hw",
@@ -5922,8 +5922,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42810,
+      "level_floor": 14
     },
     "lodeking.prestige.bdouble_3_2.hopper": {
       "name": "Lodeking Prestige Bdouble 3 2 Hopper",
@@ -5945,8 +5945,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 122505,
+      "level_floor": 20
     },
     "lodeking.prestige.bdouble_3_2l.hopper": {
       "name": "Lodeking Prestige Bdouble 3 2l Hopper",
@@ -5968,8 +5968,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 124505,
+      "level_floor": 21
     },
     "lodeking.prestige.single_45_3.hopper": {
       "name": "Lodeking Prestige Single 45 3 Hopper",
@@ -5982,8 +5982,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 52000,
-      "level_floor": 9
+      "price": 76175,
+      "level_floor": 11
     },
     "lodeking.prestige.single_45_3l.hopper": {
       "name": "Lodeking Prestige Single 45 3l Hopper",
@@ -5996,8 +5996,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 77175,
+      "level_floor": 11
     },
     "lodeking.renow_drop.single_48_3.dropdeck_alw": {
       "name": "Lodeking Renow Drop Single 48 3 Dropdeck Alw",
@@ -6010,8 +6010,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38045,
+      "level_floor": 11
     },
     "lodeking.renow_drop.single_48_3.dropdeck_f": {
       "name": "Lodeking Renow Drop Single 48 3 Dropdeck F",
@@ -6024,8 +6024,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33045,
+      "level_floor": 11
     },
     "lodeking.renow_drop.single_48_3.dropdeck_hw": {
       "name": "Lodeking Renow Drop Single 48 3 Dropdeck Hw",
@@ -6038,8 +6038,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35545,
+      "level_floor": 11
     },
     "lodeking.renow_drop.single_48.dropdeck_alw": {
       "name": "Lodeking Renow Drop Single 48 Dropdeck Alw",
@@ -6052,8 +6052,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28000,
-      "level_floor": 10
+      "price": 33545,
+      "level_floor": 11
     },
     "lodeking.renow_drop.single_48.dropdeck_f": {
       "name": "Lodeking Renow Drop Single 48 Dropdeck F",
@@ -6066,8 +6066,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 28545,
+      "level_floor": 11
     },
     "lodeking.renow_drop.single_48.dropdeck_hw": {
       "name": "Lodeking Renow Drop Single 48 Dropdeck Hw",
@@ -6080,8 +6080,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 31045,
+      "level_floor": 11
     },
     "lodeking.renow_drop.single_53_3.dropdeck_alw": {
       "name": "Lodeking Renow Drop Single 53 3 Dropdeck Alw",
@@ -6094,8 +6094,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43145,
+      "level_floor": 15
     },
     "lodeking.renow_drop.single_53_3.dropdeck_f": {
       "name": "Lodeking Renow Drop Single 53 3 Dropdeck F",
@@ -6108,8 +6108,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38145,
+      "level_floor": 15
     },
     "lodeking.renow_drop.single_53_3.dropdeck_hw": {
       "name": "Lodeking Renow Drop Single 53 3 Dropdeck Hw",
@@ -6122,8 +6122,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40645,
+      "level_floor": 15
     },
     "lodeking.renow_drop.single_53_4.dropdeck_alw": {
       "name": "Lodeking Renow Drop Single 53 4 Dropdeck Alw",
@@ -6136,8 +6136,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "lodeking.renow_drop.single_53_4.dropdeck_f": {
       "name": "Lodeking Renow Drop Single 53 4 Dropdeck F",
@@ -6150,8 +6150,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "lodeking.renow_drop.single_53_4.dropdeck_hw": {
       "name": "Lodeking Renow Drop Single 53 4 Dropdeck Hw",
@@ -6164,8 +6164,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "lodeking.renow_drop.single_53.dropdeck_alw": {
       "name": "Lodeking Renow Drop Single 53 Dropdeck Alw",
@@ -6178,8 +6178,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40645,
+      "level_floor": 13
     },
     "lodeking.renow_drop.single_53.dropdeck_f": {
       "name": "Lodeking Renow Drop Single 53 Dropdeck F",
@@ -6192,8 +6192,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35645,
+      "level_floor": 13
     },
     "lodeking.renow_drop.single_53.dropdeck_hw": {
       "name": "Lodeking Renow Drop Single 53 Dropdeck Hw",
@@ -6206,8 +6206,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38145,
+      "level_floor": 13
     },
     "lodeking.renow_flat.single_48_3.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 48 3 Flatbed Alw",
@@ -6220,8 +6220,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44775,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48_3.flatbed_f": {
       "name": "Lodeking Renow Flat Single 48 3 Flatbed F",
@@ -6234,8 +6234,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40275,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48_3.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 48 3 Flatbed Hw",
@@ -6248,8 +6248,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42575,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48f.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 48f Flatbed Alw",
@@ -6262,8 +6262,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37310,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48f.flatbed_f": {
       "name": "Lodeking Renow Flat Single 48f Flatbed F",
@@ -6276,8 +6276,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 32810,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48f.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 48f Flatbed Hw",
@@ -6290,8 +6290,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35110,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48r.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 48r Flatbed Alw",
@@ -6304,8 +6304,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 27000,
-      "level_floor": 10
+      "price": 37310,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48r.flatbed_f": {
       "name": "Lodeking Renow Flat Single 48r Flatbed F",
@@ -6318,8 +6318,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 32810,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48r.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 48r Flatbed Hw",
@@ -6332,8 +6332,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35110,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48sp.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 48sp Flatbed Alw",
@@ -6346,8 +6346,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40210,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48sp.flatbed_f": {
       "name": "Lodeking Renow Flat Single 48sp Flatbed F",
@@ -6360,8 +6360,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35710,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_48sp.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 48sp Flatbed Hw",
@@ -6374,8 +6374,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38010,
+      "level_floor": 11
     },
     "lodeking.renow_flat.single_53_3.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 53 3 Flatbed Alw",
@@ -6388,8 +6388,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49875,
+      "level_floor": 15
     },
     "lodeking.renow_flat.single_53_3.flatbed_f": {
       "name": "Lodeking Renow Flat Single 53 3 Flatbed F",
@@ -6402,8 +6402,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44875,
+      "level_floor": 15
     },
     "lodeking.renow_flat.single_53_3.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 53 3 Flatbed Hw",
@@ -6416,8 +6416,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 47375,
+      "level_floor": 15
     },
     "lodeking.renow_flat.single_53_4o.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 53 4o Flatbed Alw",
@@ -6450,8 +6450,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 55240,
+      "level_floor": 16
     },
     "lodeking.renow_flat.single_53_4o.flatbed_f": {
       "name": "Lodeking Renow Flat Single 53 4o Flatbed F",
@@ -6484,8 +6484,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 50240,
+      "level_floor": 16
     },
     "lodeking.renow_flat.single_53_4o.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 53 4o Flatbed Hw",
@@ -6518,8 +6518,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52740,
+      "level_floor": 16
     },
     "lodeking.renow_flat.single_53_4w.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 53 4w Flatbed Alw",
@@ -6532,8 +6532,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 54840,
+      "level_floor": 16
     },
     "lodeking.renow_flat.single_53_4w.flatbed_f": {
       "name": "Lodeking Renow Flat Single 53 4w Flatbed F",
@@ -6546,8 +6546,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49840,
+      "level_floor": 16
     },
     "lodeking.renow_flat.single_53_4w.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 53 4w Flatbed Hw",
@@ -6560,8 +6560,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52340,
+      "level_floor": 16
     },
     "lodeking.renow_flat.single_53f.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 53f Flatbed Alw",
@@ -6574,8 +6574,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44410,
+      "level_floor": 13
     },
     "lodeking.renow_flat.single_53f.flatbed_f": {
       "name": "Lodeking Renow Flat Single 53f Flatbed F",
@@ -6588,8 +6588,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 39410,
+      "level_floor": 13
     },
     "lodeking.renow_flat.single_53f.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 53f Flatbed Hw",
@@ -6602,8 +6602,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41910,
+      "level_floor": 13
     },
     "lodeking.renow_flat.single_53r.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 53r Flatbed Alw",
@@ -6636,8 +6636,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44410,
+      "level_floor": 13
     },
     "lodeking.renow_flat.single_53r.flatbed_f": {
       "name": "Lodeking Renow Flat Single 53r Flatbed F",
@@ -6670,8 +6670,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 39410,
+      "level_floor": 13
     },
     "lodeking.renow_flat.single_53r.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 53r Flatbed Hw",
@@ -6704,8 +6704,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41910,
+      "level_floor": 13
     },
     "lodeking.renow_flat.single_53sp.flatbed_alw": {
       "name": "Lodeking Renow Flat Single 53sp Flatbed Alw",
@@ -6738,8 +6738,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 45310,
+      "level_floor": 14
     },
     "lodeking.renow_flat.single_53sp.flatbed_f": {
       "name": "Lodeking Renow Flat Single 53sp Flatbed F",
@@ -6772,8 +6772,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40310,
+      "level_floor": 14
     },
     "lodeking.renow_flat.single_53sp.flatbed_hw": {
       "name": "Lodeking Renow Flat Single 53sp Flatbed Hw",
@@ -6806,8 +6806,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42810,
+      "level_floor": 14
     },
     "prestige.bril_drop.single_48_3.dropdeck_alw": {
       "name": "Prestige Bril Drop Single 48 3 Dropdeck Alw",
@@ -6820,8 +6820,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38045,
+      "level_floor": 11
     },
     "prestige.bril_drop.single_48.dropdeck_alw": {
       "name": "Prestige Bril Drop Single 48 Dropdeck Alw",
@@ -6834,8 +6834,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28000,
-      "level_floor": 10
+      "price": 33545,
+      "level_floor": 11
     },
     "prestige.bril_drop.single_53_3.dropdeck_alw": {
       "name": "Prestige Bril Drop Single 53 3 Dropdeck Alw",
@@ -6848,8 +6848,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43145,
+      "level_floor": 15
     },
     "prestige.bril_drop.single_53.dropdeck_alw": {
       "name": "Prestige Bril Drop Single 53 Dropdeck Alw",
@@ -6882,8 +6882,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40645,
+      "level_floor": 13
     },
     "prestige.bril_flat.single_48_3.flatbed_alw": {
       "name": "Prestige Bril Flat Single 48 3 Flatbed Alw",
@@ -6896,8 +6896,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44775,
+      "level_floor": 11
     },
     "prestige.bril_flat.single_48f.flatbed_alw": {
       "name": "Prestige Bril Flat Single 48f Flatbed Alw",
@@ -6910,8 +6910,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37310,
+      "level_floor": 11
     },
     "prestige.bril_flat.single_48r.flatbed_alw": {
       "name": "Prestige Bril Flat Single 48r Flatbed Alw",
@@ -6924,8 +6924,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 27000,
-      "level_floor": 10
+      "price": 37310,
+      "level_floor": 11
     },
     "prestige.bril_flat.single_48sp.flatbed_alw": {
       "name": "Prestige Bril Flat Single 48sp Flatbed Alw",
@@ -6938,8 +6938,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40210,
+      "level_floor": 11
     },
     "prestige.bril_flat.single_53_3.flatbed_alw": {
       "name": "Prestige Bril Flat Single 53 3 Flatbed Alw",
@@ -6952,8 +6952,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49875,
+      "level_floor": 15
     },
     "prestige.bril_flat.single_53_4o.flatbed_alw": {
       "name": "Prestige Bril Flat Single 53 4o Flatbed Alw",
@@ -6986,8 +6986,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 55240,
+      "level_floor": 16
     },
     "prestige.bril_flat.single_53_4w.flatbed_alw": {
       "name": "Prestige Bril Flat Single 53 4w Flatbed Alw",
@@ -7000,8 +7000,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 54840,
+      "level_floor": 16
     },
     "prestige.bril_flat.single_53f.flatbed_alw": {
       "name": "Prestige Bril Flat Single 53f Flatbed Alw",
@@ -7014,8 +7014,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44410,
+      "level_floor": 13
     },
     "prestige.bril_flat.single_53r.flatbed_alw": {
       "name": "Prestige Bril Flat Single 53r Flatbed Alw",
@@ -7048,8 +7048,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44410,
+      "level_floor": 13
     },
     "prestige.bril_flat.single_53sp.flatbed_alw": {
       "name": "Prestige Bril Flat Single 53sp Flatbed Alw",
@@ -7082,8 +7082,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 45310,
+      "level_floor": 14
     },
     "prestige.distinction.singl_50_3al.hopper": {
       "name": "Prestige Distinction Singl 50 3al Hopper",
@@ -7096,8 +7096,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 87675,
+      "level_floor": 17
     },
     "prestige.distinction.singl_50_3sl.hopper": {
       "name": "Prestige Distinction Singl 50 3sl Hopper",
@@ -7110,8 +7110,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 87275,
+      "level_floor": 17
     },
     "prestige.distinction.single_40ra.hopper": {
       "name": "Prestige Distinction Single 40ra Hopper",
@@ -7124,7 +7124,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 46000,
+      "price": 65510,
       "level_floor": 9
     },
     "prestige.distinction.single_40rs.hopper": {
@@ -7138,8 +7138,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 65110,
+      "level_floor": 9
     },
     "prestige.distinction.single_50_3a.hopper": {
       "name": "Prestige Distinction Single 50 3a Hopper",
@@ -7152,8 +7152,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 86175,
+      "level_floor": 15
     },
     "prestige.distinction.single_50_3s.hopper": {
       "name": "Prestige Distinction Single 50 3s Hopper",
@@ -7166,8 +7166,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 85775,
+      "level_floor": 15
     },
     "prestige.force_drop.single_48_3.dropdeck_f": {
       "name": "Prestige Force Drop Single 48 3 Dropdeck F",
@@ -7180,8 +7180,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33045,
+      "level_floor": 11
     },
     "prestige.force_drop.single_48_3.dropdeck_hw": {
       "name": "Prestige Force Drop Single 48 3 Dropdeck Hw",
@@ -7194,8 +7194,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35545,
+      "level_floor": 11
     },
     "prestige.force_drop.single_48.dropdeck_f": {
       "name": "Prestige Force Drop Single 48 Dropdeck F",
@@ -7208,8 +7208,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 23000,
-      "level_floor": 9
+      "price": 28545,
+      "level_floor": 11
     },
     "prestige.force_drop.single_48.dropdeck_hw": {
       "name": "Prestige Force Drop Single 48 Dropdeck Hw",
@@ -7222,8 +7222,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 31045,
+      "level_floor": 11
     },
     "prestige.force_drop.single_53_3.dropdeck_f": {
       "name": "Prestige Force Drop Single 53 3 Dropdeck F",
@@ -7236,8 +7236,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38145,
+      "level_floor": 15
     },
     "prestige.force_drop.single_53_3.dropdeck_hw": {
       "name": "Prestige Force Drop Single 53 3 Dropdeck Hw",
@@ -7250,8 +7250,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40645,
+      "level_floor": 15
     },
     "prestige.force_drop.single_53_4.dropdeck_f": {
       "name": "Prestige Force Drop Single 53 4 Dropdeck F",
@@ -7264,8 +7264,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "prestige.force_drop.single_53_4.dropdeck_hw": {
       "name": "Prestige Force Drop Single 53 4 Dropdeck Hw",
@@ -7278,8 +7278,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "prestige.force_drop.single_53.dropdeck_f": {
       "name": "Prestige Force Drop Single 53 Dropdeck F",
@@ -7292,8 +7292,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35645,
+      "level_floor": 13
     },
     "prestige.force_drop.single_53.dropdeck_hw": {
       "name": "Prestige Force Drop Single 53 Dropdeck Hw",
@@ -7306,8 +7306,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38145,
+      "level_floor": 13
     },
     "prestige.force_flat.single_48_3.flatbed_f": {
       "name": "Prestige Force Flat Single 48 3 Flatbed F",
@@ -7320,8 +7320,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40275,
+      "level_floor": 11
     },
     "prestige.force_flat.single_48_3.flatbed_hw": {
       "name": "Prestige Force Flat Single 48 3 Flatbed Hw",
@@ -7334,8 +7334,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42575,
+      "level_floor": 11
     },
     "prestige.force_flat.single_48f.flatbed_f": {
       "name": "Prestige Force Flat Single 48f Flatbed F",
@@ -7348,8 +7348,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 32810,
+      "level_floor": 11
     },
     "prestige.force_flat.single_48f.flatbed_hw": {
       "name": "Prestige Force Flat Single 48f Flatbed Hw",
@@ -7362,8 +7362,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35110,
+      "level_floor": 11
     },
     "prestige.force_flat.single_48r.flatbed_f": {
       "name": "Prestige Force Flat Single 48r Flatbed F",
@@ -7376,8 +7376,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 22000,
-      "level_floor": 9
+      "price": 32810,
+      "level_floor": 11
     },
     "prestige.force_flat.single_48r.flatbed_hw": {
       "name": "Prestige Force Flat Single 48r Flatbed Hw",
@@ -7390,8 +7390,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35110,
+      "level_floor": 11
     },
     "prestige.force_flat.single_48sp.flatbed_f": {
       "name": "Prestige Force Flat Single 48sp Flatbed F",
@@ -7404,8 +7404,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35710,
+      "level_floor": 11
     },
     "prestige.force_flat.single_48sp.flatbed_hw": {
       "name": "Prestige Force Flat Single 48sp Flatbed Hw",
@@ -7418,8 +7418,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38010,
+      "level_floor": 11
     },
     "prestige.force_flat.single_53_3.flatbed_f": {
       "name": "Prestige Force Flat Single 53 3 Flatbed F",
@@ -7432,8 +7432,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44875,
+      "level_floor": 15
     },
     "prestige.force_flat.single_53_3.flatbed_hw": {
       "name": "Prestige Force Flat Single 53 3 Flatbed Hw",
@@ -7446,8 +7446,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 47375,
+      "level_floor": 15
     },
     "prestige.force_flat.single_53_4o.flatbed_f": {
       "name": "Prestige Force Flat Single 53 4o Flatbed F",
@@ -7480,8 +7480,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 50240,
+      "level_floor": 16
     },
     "prestige.force_flat.single_53_4o.flatbed_hw": {
       "name": "Prestige Force Flat Single 53 4o Flatbed Hw",
@@ -7514,8 +7514,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52740,
+      "level_floor": 16
     },
     "prestige.force_flat.single_53_4w.flatbed_f": {
       "name": "Prestige Force Flat Single 53 4w Flatbed F",
@@ -7528,8 +7528,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49840,
+      "level_floor": 16
     },
     "prestige.force_flat.single_53_4w.flatbed_hw": {
       "name": "Prestige Force Flat Single 53 4w Flatbed Hw",
@@ -7542,8 +7542,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52340,
+      "level_floor": 16
     },
     "prestige.force_flat.single_53f.flatbed_f": {
       "name": "Prestige Force Flat Single 53f Flatbed F",
@@ -7556,8 +7556,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 39410,
+      "level_floor": 13
     },
     "prestige.force_flat.single_53f.flatbed_hw": {
       "name": "Prestige Force Flat Single 53f Flatbed Hw",
@@ -7570,8 +7570,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41910,
+      "level_floor": 13
     },
     "prestige.force_flat.single_53r.flatbed_f": {
       "name": "Prestige Force Flat Single 53r Flatbed F",
@@ -7604,8 +7604,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 39410,
+      "level_floor": 13
     },
     "prestige.force_flat.single_53r.flatbed_hw": {
       "name": "Prestige Force Flat Single 53r Flatbed Hw",
@@ -7638,8 +7638,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41910,
+      "level_floor": 13
     },
     "prestige.force_flat.single_53sp.flatbed_f": {
       "name": "Prestige Force Flat Single 53sp Flatbed F",
@@ -7672,8 +7672,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40310,
+      "level_floor": 14
     },
     "prestige.force_flat.single_53sp.flatbed_hw": {
       "name": "Prestige Force Flat Single 53sp Flatbed Hw",
@@ -7706,8 +7706,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42810,
+      "level_floor": 14
     },
     "prestige.renow_drop.single_48_3.dropdeck_alw": {
       "name": "Prestige Renow Drop Single 48 3 Dropdeck Alw",
@@ -7720,8 +7720,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38045,
+      "level_floor": 11
     },
     "prestige.renow_drop.single_48_3.dropdeck_f": {
       "name": "Prestige Renow Drop Single 48 3 Dropdeck F",
@@ -7734,8 +7734,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33045,
+      "level_floor": 11
     },
     "prestige.renow_drop.single_48_3.dropdeck_hw": {
       "name": "Prestige Renow Drop Single 48 3 Dropdeck Hw",
@@ -7748,8 +7748,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35545,
+      "level_floor": 11
     },
     "prestige.renow_drop.single_48.dropdeck_alw": {
       "name": "Prestige Renow Drop Single 48 Dropdeck Alw",
@@ -7762,8 +7762,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28000,
-      "level_floor": 10
+      "price": 33545,
+      "level_floor": 11
     },
     "prestige.renow_drop.single_48.dropdeck_f": {
       "name": "Prestige Renow Drop Single 48 Dropdeck F",
@@ -7776,8 +7776,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 28545,
+      "level_floor": 11
     },
     "prestige.renow_drop.single_48.dropdeck_hw": {
       "name": "Prestige Renow Drop Single 48 Dropdeck Hw",
@@ -7790,8 +7790,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 31045,
+      "level_floor": 11
     },
     "prestige.renow_drop.single_53_3.dropdeck_alw": {
       "name": "Prestige Renow Drop Single 53 3 Dropdeck Alw",
@@ -7804,8 +7804,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43145,
+      "level_floor": 15
     },
     "prestige.renow_drop.single_53_3.dropdeck_f": {
       "name": "Prestige Renow Drop Single 53 3 Dropdeck F",
@@ -7818,8 +7818,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38145,
+      "level_floor": 15
     },
     "prestige.renow_drop.single_53_3.dropdeck_hw": {
       "name": "Prestige Renow Drop Single 53 3 Dropdeck Hw",
@@ -7832,8 +7832,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40645,
+      "level_floor": 15
     },
     "prestige.renow_drop.single_53_4.dropdeck_alw": {
       "name": "Prestige Renow Drop Single 53 4 Dropdeck Alw",
@@ -7846,8 +7846,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "prestige.renow_drop.single_53_4.dropdeck_f": {
       "name": "Prestige Renow Drop Single 53 4 Dropdeck F",
@@ -7860,8 +7860,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "prestige.renow_drop.single_53_4.dropdeck_hw": {
       "name": "Prestige Renow Drop Single 53 4 Dropdeck Hw",
@@ -7874,8 +7874,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34607,
+      "level_floor": 16
     },
     "prestige.renow_drop.single_53.dropdeck_alw": {
       "name": "Prestige Renow Drop Single 53 Dropdeck Alw",
@@ -7888,8 +7888,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40645,
+      "level_floor": 13
     },
     "prestige.renow_drop.single_53.dropdeck_f": {
       "name": "Prestige Renow Drop Single 53 Dropdeck F",
@@ -7902,8 +7902,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35645,
+      "level_floor": 13
     },
     "prestige.renow_drop.single_53.dropdeck_hw": {
       "name": "Prestige Renow Drop Single 53 Dropdeck Hw",
@@ -7916,8 +7916,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38145,
+      "level_floor": 13
     },
     "prestige.renow_flat.single_48_3.flatbed_alw": {
       "name": "Prestige Renow Flat Single 48 3 Flatbed Alw",
@@ -7930,8 +7930,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44775,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48_3.flatbed_f": {
       "name": "Prestige Renow Flat Single 48 3 Flatbed F",
@@ -7944,8 +7944,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40275,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48_3.flatbed_hw": {
       "name": "Prestige Renow Flat Single 48 3 Flatbed Hw",
@@ -7958,8 +7958,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42575,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48f.flatbed_alw": {
       "name": "Prestige Renow Flat Single 48f Flatbed Alw",
@@ -7972,8 +7972,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37310,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48f.flatbed_f": {
       "name": "Prestige Renow Flat Single 48f Flatbed F",
@@ -7986,8 +7986,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 32810,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48f.flatbed_hw": {
       "name": "Prestige Renow Flat Single 48f Flatbed Hw",
@@ -8000,8 +8000,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35110,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48r.flatbed_alw": {
       "name": "Prestige Renow Flat Single 48r Flatbed Alw",
@@ -8014,8 +8014,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 27000,
-      "level_floor": 10
+      "price": 37310,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48r.flatbed_f": {
       "name": "Prestige Renow Flat Single 48r Flatbed F",
@@ -8028,8 +8028,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 32810,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48r.flatbed_hw": {
       "name": "Prestige Renow Flat Single 48r Flatbed Hw",
@@ -8042,8 +8042,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35110,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48sp.flatbed_alw": {
       "name": "Prestige Renow Flat Single 48sp Flatbed Alw",
@@ -8056,8 +8056,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40210,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48sp.flatbed_f": {
       "name": "Prestige Renow Flat Single 48sp Flatbed F",
@@ -8070,8 +8070,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35710,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_48sp.flatbed_hw": {
       "name": "Prestige Renow Flat Single 48sp Flatbed Hw",
@@ -8084,8 +8084,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38010,
+      "level_floor": 11
     },
     "prestige.renow_flat.single_53_3.flatbed_alw": {
       "name": "Prestige Renow Flat Single 53 3 Flatbed Alw",
@@ -8098,8 +8098,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49875,
+      "level_floor": 15
     },
     "prestige.renow_flat.single_53_3.flatbed_f": {
       "name": "Prestige Renow Flat Single 53 3 Flatbed F",
@@ -8112,8 +8112,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44875,
+      "level_floor": 15
     },
     "prestige.renow_flat.single_53_3.flatbed_hw": {
       "name": "Prestige Renow Flat Single 53 3 Flatbed Hw",
@@ -8126,8 +8126,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 47375,
+      "level_floor": 15
     },
     "prestige.renow_flat.single_53_4o.flatbed_alw": {
       "name": "Prestige Renow Flat Single 53 4o Flatbed Alw",
@@ -8160,8 +8160,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 55240,
+      "level_floor": 16
     },
     "prestige.renow_flat.single_53_4o.flatbed_f": {
       "name": "Prestige Renow Flat Single 53 4o Flatbed F",
@@ -8194,8 +8194,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 50240,
+      "level_floor": 16
     },
     "prestige.renow_flat.single_53_4o.flatbed_hw": {
       "name": "Prestige Renow Flat Single 53 4o Flatbed Hw",
@@ -8228,8 +8228,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52740,
+      "level_floor": 16
     },
     "prestige.renow_flat.single_53_4w.flatbed_alw": {
       "name": "Prestige Renow Flat Single 53 4w Flatbed Alw",
@@ -8242,8 +8242,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 54840,
+      "level_floor": 16
     },
     "prestige.renow_flat.single_53_4w.flatbed_f": {
       "name": "Prestige Renow Flat Single 53 4w Flatbed F",
@@ -8256,8 +8256,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49840,
+      "level_floor": 16
     },
     "prestige.renow_flat.single_53_4w.flatbed_hw": {
       "name": "Prestige Renow Flat Single 53 4w Flatbed Hw",
@@ -8270,8 +8270,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52340,
+      "level_floor": 16
     },
     "prestige.renow_flat.single_53f.flatbed_alw": {
       "name": "Prestige Renow Flat Single 53f Flatbed Alw",
@@ -8284,8 +8284,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44410,
+      "level_floor": 13
     },
     "prestige.renow_flat.single_53f.flatbed_f": {
       "name": "Prestige Renow Flat Single 53f Flatbed F",
@@ -8298,8 +8298,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 39410,
+      "level_floor": 13
     },
     "prestige.renow_flat.single_53f.flatbed_hw": {
       "name": "Prestige Renow Flat Single 53f Flatbed Hw",
@@ -8312,8 +8312,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41910,
+      "level_floor": 13
     },
     "prestige.renow_flat.single_53r.flatbed_alw": {
       "name": "Prestige Renow Flat Single 53r Flatbed Alw",
@@ -8346,8 +8346,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44410,
+      "level_floor": 13
     },
     "prestige.renow_flat.single_53r.flatbed_f": {
       "name": "Prestige Renow Flat Single 53r Flatbed F",
@@ -8380,8 +8380,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 39410,
+      "level_floor": 13
     },
     "prestige.renow_flat.single_53r.flatbed_hw": {
       "name": "Prestige Renow Flat Single 53r Flatbed Hw",
@@ -8414,8 +8414,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41910,
+      "level_floor": 13
     },
     "prestige.renow_flat.single_53sp.flatbed_alw": {
       "name": "Prestige Renow Flat Single 53sp Flatbed Alw",
@@ -8448,8 +8448,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 45310,
+      "level_floor": 14
     },
     "prestige.renow_flat.single_53sp.flatbed_f": {
       "name": "Prestige Renow Flat Single 53sp Flatbed F",
@@ -8482,8 +8482,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40310,
+      "level_floor": 14
     },
     "prestige.renow_flat.single_53sp.flatbed_hw": {
       "name": "Prestige Renow Flat Single 53sp Flatbed Hw",
@@ -8516,8 +8516,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42810,
+      "level_floor": 14
     },
     "scs.bottomdumper.double.horizontal": {
       "name": "Scs Bottomdumper Double Horizontal",
@@ -8530,8 +8530,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 84000,
+      "level_floor": 17
     },
     "scs.bottomdumper.double.vertical": {
       "name": "Scs Bottomdumper Double Vertical",
@@ -8544,8 +8544,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 94000,
+      "level_floor": 17
     },
     "scs.bottomdumper.rm_double.horizontal": {
       "name": "Scs Bottomdumper Rm Double Horizontal",
@@ -8569,8 +8569,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 104120,
+      "level_floor": 18
     },
     "scs.bottomdumper.rm_double.vertical": {
       "name": "Scs Bottomdumper Rm Double Vertical",
@@ -8594,8 +8594,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 114120,
+      "level_floor": 18
     },
     "scs.bottomdumper.rm_double2.horizontal": {
       "name": "Scs Bottomdumper Rm Double2 Horizontal",
@@ -8619,8 +8619,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 109200,
+      "level_floor": 18
     },
     "scs.bottomdumper.rm_double2.vertical": {
       "name": "Scs Bottomdumper Rm Double2 Vertical",
@@ -8644,8 +8644,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 119200,
+      "level_floor": 18
     },
     "scs.bottomdumper.single_28.horizontal": {
       "name": "Scs Bottomdumper Single 28 Horizontal",
@@ -8658,7 +8658,7 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 31000,
+      "price": 37740,
       "level_floor": 7
     },
     "scs.bottomdumper.single_28.vertical": {
@@ -8672,8 +8672,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42740,
+      "level_floor": 8
     },
     "scs.bottomdumper.single_40.horizontal": {
       "name": "Scs Bottomdumper Single 40 Horizontal",
@@ -8686,8 +8686,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 57860,
+      "level_floor": 8
     },
     "scs.bottomdumper.single_40.vertical": {
       "name": "Scs Bottomdumper Single 40 Vertical",
@@ -8700,8 +8700,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 62860,
+      "level_floor": 8
     },
     "scs.bottomdumper.single_45_3.horizontal": {
       "name": "Scs Bottomdumper Single 45 3 Horizontal",
@@ -8714,7 +8714,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 50000,
+      "price": 62940,
       "level_floor": 10
     },
     "scs.bottomdumper.single_45_3.vertical": {
@@ -8728,8 +8728,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 67940,
+      "level_floor": 10
     },
     "scs.bottomdumper.tpdouble_6.horizontal": {
       "name": "Scs Bottomdumper Tpdouble 6 Horizontal",
@@ -8750,8 +8750,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 127480,
+      "level_floor": 19
     },
     "scs.bottomdumper.tpdouble_6.vertical": {
       "name": "Scs Bottomdumper Tpdouble 6 Vertical",
@@ -8772,8 +8772,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 137480,
+      "level_floor": 19
     },
     "scs.box.bdouble_2_2.dryvan": {
       "name": "Scs Box Bdouble 2 2 Dryvan",
@@ -8795,8 +8795,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 105140,
+      "level_floor": 18
     },
     "scs.box.bdouble_2_2.insulated": {
       "name": "Scs Box Bdouble 2 2 Insulated",
@@ -8818,8 +8818,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 125140,
+      "level_floor": 18
     },
     "scs.box.bdouble_2_2.reefer": {
       "name": "Scs Box Bdouble 2 2 Reefer",
@@ -8841,8 +8841,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 189140,
+      "level_floor": 18
     },
     "scs.box.bdouble_3_2.dryvan": {
       "name": "Scs Box Bdouble 3 2 Dryvan",
@@ -8864,8 +8864,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 109800,
+      "level_floor": 20
     },
     "scs.box.bdouble_3_2.insulated": {
       "name": "Scs Box Bdouble 3 2 Insulated",
@@ -8887,8 +8887,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 129800,
+      "level_floor": 20
     },
     "scs.box.bdouble_3_2.reefer": {
       "name": "Scs Box Bdouble 3 2 Reefer",
@@ -8910,8 +8910,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 193800,
+      "level_floor": 20
     },
     "scs.box.double_p.dryvan": {
       "name": "Scs Box Double P Dryvan",
@@ -8924,8 +8924,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 90960,
+      "level_floor": 17
     },
     "scs.box.double_p.insulated": {
       "name": "Scs Box Double P Insulated",
@@ -8938,8 +8938,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 110960,
+      "level_floor": 17
     },
     "scs.box.double_p.reefer": {
       "name": "Scs Box Double P Reefer",
@@ -8952,8 +8952,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 174960,
+      "level_floor": 17
     },
     "scs.box.rm_double_p.dryvan": {
       "name": "Scs Box Rm Double P Dryvan",
@@ -8977,8 +8977,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 111780,
+      "level_floor": 19
     },
     "scs.box.rm_double_p.insulated": {
       "name": "Scs Box Rm Double P Insulated",
@@ -9002,8 +9002,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 141780,
+      "level_floor": 19
     },
     "scs.box.rm_double_p.reefer": {
       "name": "Scs Box Rm Double P Reefer",
@@ -9027,8 +9027,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 205780,
+      "level_floor": 19
     },
     "scs.box.single_28.dryvan": {
       "name": "Scs Box Single 28 Dryvan",
@@ -9041,7 +9041,7 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 31000,
+      "price": 41380,
       "level_floor": 5
     },
     "scs.box.single_28.insulated": {
@@ -9055,8 +9055,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 51380,
+      "level_floor": 11
     },
     "scs.box.single_28.reefer": {
       "name": "Scs Box Single 28 Reefer",
@@ -9069,8 +9069,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83380,
+      "level_floor": 15
     },
     "scs.box.single_32_2.dryvan": {
       "name": "Scs Box Single 32 2 Dryvan",
@@ -9083,8 +9083,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 54100,
+      "level_floor": 7
     },
     "scs.box.single_32_2.insulated": {
       "name": "Scs Box Single 32 2 Insulated",
@@ -9097,8 +9097,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 64100,
+      "level_floor": 11
     },
     "scs.box.single_32_2.reefer": {
       "name": "Scs Box Single 32 2 Reefer",
@@ -9111,8 +9111,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 96100,
+      "level_floor": 15
     },
     "scs.box.single_32.dryvan": {
       "name": "Scs Box Single 32 Dryvan",
@@ -9125,8 +9125,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49440,
+      "level_floor": 5
     },
     "scs.box.single_32.insulated": {
       "name": "Scs Box Single 32 Insulated",
@@ -9139,8 +9139,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 59440,
+      "level_floor": 11
     },
     "scs.box.single_32.reefer": {
       "name": "Scs Box Single 32 Reefer",
@@ -9153,8 +9153,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 91440,
+      "level_floor": 15
     },
     "scs.box.single_45.dryvan": {
       "name": "Scs Box Single 45 Dryvan",
@@ -9167,8 +9167,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61700,
+      "level_floor": 5
     },
     "scs.box.single_45.insulated": {
       "name": "Scs Box Single 45 Insulated",
@@ -9181,8 +9181,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 81700,
+      "level_floor": 11
     },
     "scs.box.single_45.reefer": {
       "name": "Scs Box Single 45 Reefer",
@@ -9195,8 +9195,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 113700,
+      "level_floor": 15
     },
     "scs.box.single_45f.dryvan": {
       "name": "Scs Box Single 45f Dryvan",
@@ -9209,8 +9209,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61700,
+      "level_floor": 5
     },
     "scs.box.single_45f.insulated": {
       "name": "Scs Box Single 45f Insulated",
@@ -9223,8 +9223,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 81700,
+      "level_floor": 11
     },
     "scs.box.single_45f.reefer": {
       "name": "Scs Box Single 45f Reefer",
@@ -9237,8 +9237,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 113700,
+      "level_floor": 15
     },
     "scs.box.single_45r.dryvan": {
       "name": "Scs Box Single 45r Dryvan",
@@ -9251,8 +9251,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61700,
+      "level_floor": 5
     },
     "scs.box.single_45r.insulated": {
       "name": "Scs Box Single 45r Insulated",
@@ -9265,8 +9265,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 81700,
+      "level_floor": 11
     },
     "scs.box.single_45r.reefer": {
       "name": "Scs Box Single 45r Reefer",
@@ -9279,8 +9279,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 113700,
+      "level_floor": 15
     },
     "scs.box.single_45sp.dryvan": {
       "name": "Scs Box Single 45sp Dryvan",
@@ -9293,8 +9293,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 62200,
+      "level_floor": 6
     },
     "scs.box.single_45sp.insulated": {
       "name": "Scs Box Single 45sp Insulated",
@@ -9307,8 +9307,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 82200,
+      "level_floor": 11
     },
     "scs.box.single_45sp.reefer": {
       "name": "Scs Box Single 45sp Reefer",
@@ -9321,8 +9321,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 114200,
+      "level_floor": 15
     },
     "scs.box.single_48.dryvan": {
       "name": "Scs Box Single 48 Dryvan",
@@ -9335,8 +9335,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 68740,
+      "level_floor": 9
     },
     "scs.box.single_48.insulated": {
       "name": "Scs Box Single 48 Insulated",
@@ -9349,8 +9349,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 88740,
+      "level_floor": 11
     },
     "scs.box.single_48.reefer": {
       "name": "Scs Box Single 48 Reefer",
@@ -9363,8 +9363,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 120740,
+      "level_floor": 15
     },
     "scs.box.single_48f.dryvan": {
       "name": "Scs Box Single 48f Dryvan",
@@ -9377,8 +9377,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 68740,
+      "level_floor": 9
     },
     "scs.box.single_48f.insulated": {
       "name": "Scs Box Single 48f Insulated",
@@ -9391,8 +9391,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 88740,
+      "level_floor": 11
     },
     "scs.box.single_48f.reefer": {
       "name": "Scs Box Single 48f Reefer",
@@ -9405,8 +9405,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 120740,
+      "level_floor": 15
     },
     "scs.box.single_48r.dryvan": {
       "name": "Scs Box Single 48r Dryvan",
@@ -9419,8 +9419,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 68740,
+      "level_floor": 9
     },
     "scs.box.single_48r.insulated": {
       "name": "Scs Box Single 48r Insulated",
@@ -9433,8 +9433,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 88740,
+      "level_floor": 11
     },
     "scs.box.single_48r.reefer": {
       "name": "Scs Box Single 48r Reefer",
@@ -9447,8 +9447,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 120740,
+      "level_floor": 15
     },
     "scs.box.single_48sp.dryvan": {
       "name": "Scs Box Single 48sp Dryvan",
@@ -9461,8 +9461,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 69240,
+      "level_floor": 10
     },
     "scs.box.single_48sp.insulated": {
       "name": "Scs Box Single 48sp Insulated",
@@ -9475,8 +9475,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 89240,
+      "level_floor": 11
     },
     "scs.box.single_48sp.reefer": {
       "name": "Scs Box Single 48sp Reefer",
@@ -9489,8 +9489,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 121240,
+      "level_floor": 15
     },
     "scs.box.single_53_3.dryvan": {
       "name": "Scs Box Single 53 3 Dryvan",
@@ -9503,8 +9503,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 82960,
+      "level_floor": 15
     },
     "scs.box.single_53_3.insulated": {
       "name": "Scs Box Single 53 3 Insulated",
@@ -9517,8 +9517,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 102960,
+      "level_floor": 15
     },
     "scs.box.single_53_3.reefer": {
       "name": "Scs Box Single 53 3 Reefer",
@@ -9531,7 +9531,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 97000,
+      "price": 134960,
       "level_floor": 15
     },
     "scs.box.single_53_4.dryvan": {
@@ -9545,8 +9545,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 88020,
+      "level_floor": 16
     },
     "scs.box.single_53_4.insulated": {
       "name": "Scs Box Single 53 4 Insulated",
@@ -9559,8 +9559,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 108020,
+      "level_floor": 16
     },
     "scs.box.single_53_4.reefer": {
       "name": "Scs Box Single 53 4 Reefer",
@@ -9573,8 +9573,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 140020,
+      "level_floor": 16
     },
     "scs.box.single_53_4s.dryvan": {
       "name": "Scs Box Single 53 4s Dryvan",
@@ -9587,8 +9587,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 89020,
+      "level_floor": 18
     },
     "scs.box.single_53_4s.insulated": {
       "name": "Scs Box Single 53 4s Insulated",
@@ -9601,8 +9601,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 109020,
+      "level_floor": 18
     },
     "scs.box.single_53_4s.reefer": {
       "name": "Scs Box Single 53 4s Reefer",
@@ -9615,8 +9615,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 141020,
+      "level_floor": 18
     },
     "scs.box.single_53.dryvan": {
       "name": "Scs Box Single 53 Dryvan",
@@ -9629,8 +9629,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 77800,
+      "level_floor": 13
     },
     "scs.box.single_53.insulated": {
       "name": "Scs Box Single 53 Insulated",
@@ -9643,8 +9643,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 97800,
+      "level_floor": 13
     },
     "scs.box.single_53.reefer": {
       "name": "Scs Box Single 53 Reefer",
@@ -9657,8 +9657,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 129800,
+      "level_floor": 15
     },
     "scs.box.single_53f.dryvan": {
       "name": "Scs Box Single 53f Dryvan",
@@ -9671,8 +9671,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 77800,
+      "level_floor": 13
     },
     "scs.box.single_53f.insulated": {
       "name": "Scs Box Single 53f Insulated",
@@ -9685,7 +9685,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 85000,
+      "price": 97800,
       "level_floor": 13
     },
     "scs.box.single_53f.reefer": {
@@ -9699,8 +9699,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 129800,
+      "level_floor": 15
     },
     "scs.box.single_53r.dryvan": {
       "name": "Scs Box Single 53r Dryvan",
@@ -9733,8 +9733,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 77800,
+      "level_floor": 13
     },
     "scs.box.single_53r.insulated": {
       "name": "Scs Box Single 53r Insulated",
@@ -9767,8 +9767,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 97800,
+      "level_floor": 13
     },
     "scs.box.single_53r.reefer": {
       "name": "Scs Box Single 53r Reefer",
@@ -9801,8 +9801,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 129800,
+      "level_floor": 15
     },
     "scs.box.tp_double_1.dryvan": {
       "name": "Scs Box Tp Double 1 Dryvan",
@@ -9823,8 +9823,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 132100,
+      "level_floor": 19
     },
     "scs.box.tp_double_1.insulated": {
       "name": "Scs Box Tp Double 1 Insulated",
@@ -9845,8 +9845,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 172100,
+      "level_floor": 19
     },
     "scs.box.tp_double_1.reefer": {
       "name": "Scs Box Tp Double 1 Reefer",
@@ -9867,8 +9867,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 236100,
+      "level_floor": 19
     },
     "scs.box.tp_double_2.dryvan": {
       "name": "Scs Box Tp Double 2 Dryvan",
@@ -9889,8 +9889,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 135260,
+      "level_floor": 19
     },
     "scs.box.tp_double_2.insulated": {
       "name": "Scs Box Tp Double 2 Insulated",
@@ -9911,8 +9911,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 175260,
+      "level_floor": 19
     },
     "scs.box.tp_double_2.reefer": {
       "name": "Scs Box Tp Double 2 Reefer",
@@ -9933,8 +9933,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 239260,
+      "level_floor": 19
     },
     "scs.box.triple_p.dryvan": {
       "name": "Scs Box Triple P Dryvan",
@@ -9956,8 +9956,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 140540,
+      "level_floor": 17
     },
     "scs.box.triple_p.insulated": {
       "name": "Scs Box Triple P Insulated",
@@ -9979,7 +9979,7 @@
         "utah"
       ],
       "ownable": true,
-      "price": 128000,
+      "price": 170540,
       "level_floor": 17
     },
     "scs.box.triple_p.reefer": {
@@ -10002,8 +10002,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 266540,
+      "level_floor": 17
     },
     "scs.bulkfeed.single_45_3.bulkfeed": {
       "name": "Scs Bulkfeed Single 45 3 Bulkfeed",
@@ -10016,8 +10016,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61860,
+      "level_floor": 10
     },
     "scs.bulkfeed.single_45_3a.bulkfeed": {
       "name": "Scs Bulkfeed Single 45 3a Bulkfeed",
@@ -10030,8 +10030,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61860,
+      "level_floor": 10
     },
     "scs.bulkfeed.single_45_3s.bulkfeed": {
       "name": "Scs Bulkfeed Single 45 3s Bulkfeed",
@@ -10044,8 +10044,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 62860,
+      "level_floor": 12
     },
     "scs.bulkfeed.single_45r.bulkfeed": {
       "name": "Scs Bulkfeed Single 45r Bulkfeed",
@@ -10058,7 +10058,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 49000,
+      "price": 57700,
       "level_floor": 9
     },
     "scs.bulkfeed.single_45sp.bulkfeed": {
@@ -10072,8 +10072,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 58200,
+      "level_floor": 9
     },
     "scs.chemtank.single_43r.deepdrop": {
       "name": "Scs Chemtank Single 43r Deepdrop",
@@ -10086,8 +10086,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 55940,
+      "level_floor": 11
     },
     "scs.chemtank.single_43r.dshape": {
       "name": "Scs Chemtank Single 43r Dshape",
@@ -10100,7 +10100,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 46000,
+      "price": 54940,
       "level_floor": 11
     },
     "scs.chemtank.single_48_3.deepdrop": {
@@ -10114,8 +10114,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 71100,
+      "level_floor": 11
     },
     "scs.chemtank.single_48_3.dshape": {
       "name": "Scs Chemtank Single 48 3 Dshape",
@@ -10128,8 +10128,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 70100,
+      "level_floor": 11
     },
     "scs.chemtank.single_53_4.deepdrop": {
       "name": "Scs Chemtank Single 53 4 Deepdrop",
@@ -10142,8 +10142,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 84760,
+      "level_floor": 16
     },
     "scs.chemtank.single_53_4.dshape": {
       "name": "Scs Chemtank Single 53 4 Dshape",
@@ -10156,8 +10156,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83760,
+      "level_floor": 16
     },
     "scs.chemtank.single_53_4s.deepdrop": {
       "name": "Scs Chemtank Single 53 4s Deepdrop",
@@ -10170,8 +10170,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 85760,
+      "level_floor": 18
     },
     "scs.chemtank.single_53_4s.dshape": {
       "name": "Scs Chemtank Single 53 4s Dshape",
@@ -10184,8 +10184,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 84760,
+      "level_floor": 18
     },
     "scs.chipvan.single_48_3.bellyvan": {
       "name": "Scs Chipvan Single 48 3 Bellyvan",
@@ -10198,8 +10198,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83900,
+      "level_floor": 13
     },
     "scs.chipvan.single_48_3.mfloor": {
       "name": "Scs Chipvan Single 48 3 Mfloor",
@@ -10212,8 +10212,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78900,
+      "level_floor": 11
     },
     "scs.chipvan.single_48_3.van": {
       "name": "Scs Chipvan Single 48 3 Van",
@@ -10226,7 +10226,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 56000,
+      "price": 68740,
       "level_floor": 9
     },
     "scs.chipvan.single_48.bellyvan": {
@@ -10240,8 +10240,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78740,
+      "level_floor": 13
     },
     "scs.chipvan.single_48.mfloor": {
       "name": "Scs Chipvan Single 48 Mfloor",
@@ -10254,8 +10254,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 73740,
+      "level_floor": 11
     },
     "scs.chipvan.single_48.van": {
       "name": "Scs Chipvan Single 48 Van",
@@ -10268,8 +10268,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 68740,
+      "level_floor": 9
     },
     "scs.chipvan.single_48f.bellyvan": {
       "name": "Scs Chipvan Single 48f Bellyvan",
@@ -10282,8 +10282,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78740,
+      "level_floor": 13
     },
     "scs.chipvan.single_48f.mfloor": {
       "name": "Scs Chipvan Single 48f Mfloor",
@@ -10296,8 +10296,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 73740,
+      "level_floor": 11
     },
     "scs.chipvan.single_48f.van": {
       "name": "Scs Chipvan Single 48f Van",
@@ -10310,8 +10310,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 68740,
+      "level_floor": 9
     },
     "scs.chipvan.single_48r.bellyvan": {
       "name": "Scs Chipvan Single 48r Bellyvan",
@@ -10324,8 +10324,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78740,
+      "level_floor": 13
     },
     "scs.chipvan.single_48r.mfloor": {
       "name": "Scs Chipvan Single 48r Mfloor",
@@ -10338,8 +10338,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 73740,
+      "level_floor": 11
     },
     "scs.chipvan.single_48r.van": {
       "name": "Scs Chipvan Single 48r Van",
@@ -10352,8 +10352,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 68740,
+      "level_floor": 9
     },
     "scs.chipvan.single_48sp.bellyvan": {
       "name": "Scs Chipvan Single 48sp Bellyvan",
@@ -10366,8 +10366,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 79240,
+      "level_floor": 13
     },
     "scs.chipvan.single_48sp.mfloor": {
       "name": "Scs Chipvan Single 48sp Mfloor",
@@ -10380,8 +10380,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 74240,
+      "level_floor": 11
     },
     "scs.chipvan.single_48sp.van": {
       "name": "Scs Chipvan Single 48sp Van",
@@ -10394,8 +10394,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 69240,
+      "level_floor": 10
     },
     "scs.dropdeck.single_48_3.curtain": {
       "name": "Scs Dropdeck Single 48 3 Curtain",
@@ -10408,8 +10408,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43780,
+      "level_floor": 12
     },
     "scs.dropdeck.single_48_3.dropdeck_alu": {
       "name": "Scs Dropdeck Single 48 3 Dropdeck Alu",
@@ -10422,8 +10422,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35780,
+      "level_floor": 11
     },
     "scs.dropdeck.single_48_3.dropdeck_w": {
       "name": "Scs Dropdeck Single 48 3 Dropdeck W",
@@ -10436,8 +10436,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 31280,
+      "level_floor": 11
     },
     "scs.dropdeck.single_48f.curtain": {
       "name": "Scs Dropdeck Single 48f Curtain",
@@ -10450,8 +10450,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41280,
+      "level_floor": 12
     },
     "scs.dropdeck.single_48f.dropdeck_alu": {
       "name": "Scs Dropdeck Single 48f Dropdeck Alu",
@@ -10464,8 +10464,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33280,
+      "level_floor": 10
     },
     "scs.dropdeck.single_48f.dropdeck_w": {
       "name": "Scs Dropdeck Single 48f Dropdeck W",
@@ -10478,8 +10478,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 28780,
+      "level_floor": 9
     },
     "scs.dropdeck.single_48r.curtain": {
       "name": "Scs Dropdeck Single 48r Curtain",
@@ -10492,8 +10492,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41280,
+      "level_floor": 12
     },
     "scs.dropdeck.single_48r.dropdeck_alu": {
       "name": "Scs Dropdeck Single 48r Dropdeck Alu",
@@ -10506,8 +10506,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33280,
+      "level_floor": 10
     },
     "scs.dropdeck.single_48r.dropdeck_w": {
       "name": "Scs Dropdeck Single 48r Dropdeck W",
@@ -10520,7 +10520,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 24000,
+      "price": 28780,
       "level_floor": 9
     },
     "scs.dropdeck.single_48sp.curtain": {
@@ -10534,8 +10534,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41780,
+      "level_floor": 12
     },
     "scs.dropdeck.single_48sp.dropdeck_alu": {
       "name": "Scs Dropdeck Single 48sp Dropdeck Alu",
@@ -10548,8 +10548,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33780,
+      "level_floor": 10
     },
     "scs.dropdeck.single_48sp.dropdeck_w": {
       "name": "Scs Dropdeck Single 48sp Dropdeck W",
@@ -10562,8 +10562,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 29280,
+      "level_floor": 10
     },
     "scs.dropdeck.single_53_3.curtain": {
       "name": "Scs Dropdeck Single 53 3 Curtain",
@@ -10576,8 +10576,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49840,
+      "level_floor": 15
     },
     "scs.dropdeck.single_53_3.dropdeck_alu": {
       "name": "Scs Dropdeck Single 53 3 Dropdeck Alu",
@@ -10590,8 +10590,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40840,
+      "level_floor": 15
     },
     "scs.dropdeck.single_53_3.dropdeck_w": {
       "name": "Scs Dropdeck Single 53 3 Dropdeck W",
@@ -10604,8 +10604,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35840,
+      "level_floor": 15
     },
     "scs.dropdeck.single_53_4.curtain": {
       "name": "Scs Dropdeck Single 53 4 Curtain",
@@ -10618,8 +10618,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 51840,
+      "level_floor": 16
     },
     "scs.dropdeck.single_53_4.dropdeck_alu": {
       "name": "Scs Dropdeck Single 53 4 Dropdeck Alu",
@@ -10632,8 +10632,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42840,
+      "level_floor": 16
     },
     "scs.dropdeck.single_53_4.dropdeck_w": {
       "name": "Scs Dropdeck Single 53 4 Dropdeck W",
@@ -10646,8 +10646,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37840,
+      "level_floor": 16
     },
     "scs.dropdeck.single_53f.curtain": {
       "name": "Scs Dropdeck Single 53f Curtain",
@@ -10660,8 +10660,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 47340,
+      "level_floor": 13
     },
     "scs.dropdeck.single_53f.dropdeck_alu": {
       "name": "Scs Dropdeck Single 53f Dropdeck Alu",
@@ -10674,8 +10674,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38340,
+      "level_floor": 13
     },
     "scs.dropdeck.single_53f.dropdeck_w": {
       "name": "Scs Dropdeck Single 53f Dropdeck W",
@@ -10688,8 +10688,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33340,
+      "level_floor": 13
     },
     "scs.dropdeck.single_53r.curtain": {
       "name": "Scs Dropdeck Single 53r Curtain",
@@ -10722,8 +10722,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 47340,
+      "level_floor": 13
     },
     "scs.dropdeck.single_53r.dropdeck_alu": {
       "name": "Scs Dropdeck Single 53r Dropdeck Alu",
@@ -10756,8 +10756,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38340,
+      "level_floor": 13
     },
     "scs.dropdeck.single_53r.dropdeck_w": {
       "name": "Scs Dropdeck Single 53r Dropdeck W",
@@ -10790,8 +10790,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33340,
+      "level_floor": 13
     },
     "scs.dropdeck.single_53sp.curtain": {
       "name": "Scs Dropdeck Single 53sp Curtain",
@@ -10824,8 +10824,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 47840,
+      "level_floor": 14
     },
     "scs.dropdeck.single_53sp.dropdeck_alu": {
       "name": "Scs Dropdeck Single 53sp Dropdeck Alu",
@@ -10858,8 +10858,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38840,
+      "level_floor": 14
     },
     "scs.dropdeck.single_53sp.dropdeck_w": {
       "name": "Scs Dropdeck Single 53sp Dropdeck W",
@@ -10892,8 +10892,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33840,
+      "level_floor": 14
     },
     "scs.drybulk.bdouble_3_2.drybulk": {
       "name": "Scs Drybulk Bdouble 3 2 Drybulk",
@@ -10915,8 +10915,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 109820,
+      "level_floor": 20
     },
     "scs.drybulk.double.drybulk": {
       "name": "Scs Drybulk Double Drybulk",
@@ -10929,8 +10929,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 62200,
+      "level_floor": 17
     },
     "scs.drybulk.rmdouble_5.drybulk": {
       "name": "Scs Drybulk Rmdouble 5 Drybulk",
@@ -10954,8 +10954,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 94380,
+      "level_floor": 19
     },
     "scs.drybulk.rmdouble.drybulk": {
       "name": "Scs Drybulk Rmdouble Drybulk",
@@ -10979,8 +10979,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 90360,
+      "level_floor": 19
     },
     "scs.drybulk.single_22.drybulk": {
       "name": "Scs Drybulk Single 22 Drybulk",
@@ -10993,8 +10993,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 26940,
+      "level_floor": 9
     },
     "scs.drybulk.single_32.drybulk": {
       "name": "Scs Drybulk Single 32 Drybulk",
@@ -11007,8 +11007,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 48000,
+      "level_floor": 9
     },
     "scs.drybulk.single_42_3.drybulk": {
       "name": "Scs Drybulk Single 42 3 Drybulk",
@@ -11021,7 +11021,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 46000,
+      "price": 60120,
       "level_floor": 10
     },
     "scs.drybulk.single_42.drybulk": {
@@ -11035,8 +11035,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 56100,
+      "level_floor": 9
     },
     "scs.drybulk.single_48_3.drybulk": {
       "name": "Scs Drybulk Single 48 3 Drybulk",
@@ -11049,8 +11049,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 72180,
+      "level_floor": 11
     },
     "scs.drybulk.single_48_4.drybulk": {
       "name": "Scs Drybulk Single 48 4 Drybulk",
@@ -11063,8 +11063,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 76200,
+      "level_floor": 13
     },
     "scs.drybulk.single_48.drybulk": {
       "name": "Scs Drybulk Single 48 Drybulk",
@@ -11077,8 +11077,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 66660,
+      "level_floor": 11
     },
     "scs.drybulk.tpdouble.drybulk": {
       "name": "Scs Drybulk Tpdouble Drybulk",
@@ -11099,8 +11099,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 132000,
+      "level_floor": 19
     },
     "scs.dumper.bdouble_2_2.side": {
       "name": "Scs Dumper Bdouble 2 2 Side",
@@ -11122,8 +11122,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 121020,
+      "level_floor": 18
     },
     "scs.dumper.bdouble_3_3.side": {
       "name": "Scs Dumper Bdouble 3 3 Side",
@@ -11145,8 +11145,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 140700,
+      "level_floor": 19
     },
     "scs.dumper.single_30.end": {
       "name": "Scs Dumper Single 30 End",
@@ -11159,8 +11159,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 36000,
-      "level_floor": 7
+      "price": 46820,
+      "level_floor": 9
     },
     "scs.dumper.single_30.floor": {
       "name": "Scs Dumper Single 30 Floor",
@@ -11173,8 +11173,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 50920,
+      "level_floor": 9
     },
     "scs.dumper.single_30.side": {
       "name": "Scs Dumper Single 30 Side",
@@ -11187,8 +11187,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 56820,
+      "level_floor": 11
     },
     "scs.dumper.single_36_3.end": {
       "name": "Scs Dumper Single 36 3 End",
@@ -11201,8 +11201,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61840,
+      "level_floor": 10
     },
     "scs.dumper.single_36_3.floor": {
       "name": "Scs Dumper Single 36 3 Floor",
@@ -11215,8 +11215,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 65940,
+      "level_floor": 10
     },
     "scs.dumper.single_36_3.side": {
       "name": "Scs Dumper Single 36 3 Side",
@@ -11229,8 +11229,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 71840,
+      "level_floor": 11
     },
     "scs.dumper.single_36.end": {
       "name": "Scs Dumper Single 36 End",
@@ -11243,8 +11243,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 56820,
+      "level_floor": 9
     },
     "scs.dumper.single_36.floor": {
       "name": "Scs Dumper Single 36 Floor",
@@ -11257,8 +11257,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 60920,
+      "level_floor": 9
     },
     "scs.dumper.single_36.side": {
       "name": "Scs Dumper Single 36 Side",
@@ -11271,8 +11271,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 66820,
+      "level_floor": 11
     },
     "scs.dumper.tpdouble_6.side": {
       "name": "Scs Dumper Tpdouble 6 Side",
@@ -11293,8 +11293,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 125400,
+      "level_floor": 19
     },
     "scs.flatbed.bdouble_2_2.curtain": {
       "name": "Scs Flatbed Bdouble 2 2 Curtain",
@@ -11316,8 +11316,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 74080,
+      "level_floor": 18
     },
     "scs.flatbed.bdouble_2_2.flatbed": {
       "name": "Scs Flatbed Bdouble 2 2 Flatbed",
@@ -11339,8 +11339,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 56580,
+      "level_floor": 18
     },
     "scs.flatbed.bdouble_2_2.flatbed_a": {
       "name": "Scs Flatbed Bdouble 2 2 Flatbed A",
@@ -11362,8 +11362,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 63080,
+      "level_floor": 18
     },
     "scs.flatbed.bdouble_3_2.curtain": {
       "name": "Scs Flatbed Bdouble 3 2 Curtain",
@@ -11385,8 +11385,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78740,
+      "level_floor": 20
     },
     "scs.flatbed.bdouble_3_2.flatbed": {
       "name": "Scs Flatbed Bdouble 3 2 Flatbed",
@@ -11408,8 +11408,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61240,
+      "level_floor": 20
     },
     "scs.flatbed.bdouble_3_2.flatbed_a": {
       "name": "Scs Flatbed Bdouble 3 2 Flatbed A",
@@ -11431,8 +11431,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 67740,
+      "level_floor": 20
     },
     "scs.flatbed.double.curtain": {
       "name": "Scs Flatbed Double Curtain",
@@ -11445,8 +11445,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 62520,
+      "level_floor": 17
     },
     "scs.flatbed.double.flatbed": {
       "name": "Scs Flatbed Double Flatbed",
@@ -11459,7 +11459,7 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 35000,
+      "price": 46520,
       "level_floor": 17
     },
     "scs.flatbed.double.flatbed_a": {
@@ -11473,8 +11473,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52520,
+      "level_floor": 17
     },
     "scs.flatbed.double_p.curtain": {
       "name": "Scs Flatbed Double P Curtain",
@@ -11487,8 +11487,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 62960,
+      "level_floor": 17
     },
     "scs.flatbed.double_p.flatbed": {
       "name": "Scs Flatbed Double P Flatbed",
@@ -11501,8 +11501,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 46960,
+      "level_floor": 17
     },
     "scs.flatbed.double_p.flatbed_a": {
       "name": "Scs Flatbed Double P Flatbed A",
@@ -11515,8 +11515,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52960,
+      "level_floor": 17
     },
     "scs.flatbed.rm_double.curtain": {
       "name": "Scs Flatbed Rm Double Curtain",
@@ -11540,7 +11540,7 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 58000,
+      "price": 78340,
       "level_floor": 19
     },
     "scs.flatbed.rm_double.flatbed": {
@@ -11565,8 +11565,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 58340,
+      "level_floor": 19
     },
     "scs.flatbed.rm_double.flatbed_a": {
       "name": "Scs Flatbed Rm Double Flatbed A",
@@ -11590,8 +11590,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 65340,
+      "level_floor": 19
     },
     "scs.flatbed.rm_double_p.curtain": {
       "name": "Scs Flatbed Rm Double P Curtain",
@@ -11615,8 +11615,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78780,
+      "level_floor": 19
     },
     "scs.flatbed.rm_double_p.flatbed": {
       "name": "Scs Flatbed Rm Double P Flatbed",
@@ -11640,8 +11640,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 58780,
+      "level_floor": 19
     },
     "scs.flatbed.rm_double_p.flatbed_a": {
       "name": "Scs Flatbed Rm Double P Flatbed A",
@@ -11665,8 +11665,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 65780,
+      "level_floor": 19
     },
     "scs.flatbed.single_28.curtain": {
       "name": "Scs Flatbed Single 28 Curtain",
@@ -11679,8 +11679,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 27380,
+      "level_floor": 12
     },
     "scs.flatbed.single_28.flatbed": {
       "name": "Scs Flatbed Single 28 Flatbed",
@@ -11693,8 +11693,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 19380,
+      "level_floor": 8
     },
     "scs.flatbed.single_28.flatbed_a": {
       "name": "Scs Flatbed Single 28 Flatbed A",
@@ -11707,8 +11707,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 22380,
+      "level_floor": 10
     },
     "scs.flatbed.single_32_2.curtain": {
       "name": "Scs Flatbed Single 32 2 Curtain",
@@ -11721,8 +11721,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37040,
+      "level_floor": 12
     },
     "scs.flatbed.single_32_2.flatbed": {
       "name": "Scs Flatbed Single 32 2 Flatbed",
@@ -11735,8 +11735,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 27540,
+      "level_floor": 8
     },
     "scs.flatbed.single_32_2.flatbed_a": {
       "name": "Scs Flatbed Single 32 2 Flatbed A",
@@ -11749,8 +11749,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 31040,
+      "level_floor": 10
     },
     "scs.flatbed.single_32.curtain": {
       "name": "Scs Flatbed Single 32 Curtain",
@@ -11763,8 +11763,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 32380,
+      "level_floor": 12
     },
     "scs.flatbed.single_32.flatbed": {
       "name": "Scs Flatbed Single 32 Flatbed",
@@ -11777,8 +11777,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 22880,
+      "level_floor": 8
     },
     "scs.flatbed.single_32.flatbed_a": {
       "name": "Scs Flatbed Single 32 Flatbed A",
@@ -11791,8 +11791,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 26380,
+      "level_floor": 10
     },
     "scs.flatbed.single_45_3.curtain": {
       "name": "Scs Flatbed Single 45 3 Curtain",
@@ -11805,8 +11805,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 46860,
+      "level_floor": 12
     },
     "scs.flatbed.single_45_3.flatbed": {
       "name": "Scs Flatbed Single 45 3 Flatbed",
@@ -11819,8 +11819,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34860,
+      "level_floor": 10
     },
     "scs.flatbed.single_45_3.flatbed_a": {
       "name": "Scs Flatbed Single 45 3 Flatbed A",
@@ -11833,8 +11833,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38860,
+      "level_floor": 10
     },
     "scs.flatbed.single_45f.curtain": {
       "name": "Scs Flatbed Single 45f Curtain",
@@ -11847,8 +11847,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42700,
+      "level_floor": 12
     },
     "scs.flatbed.single_45f.flatbed": {
       "name": "Scs Flatbed Single 45f Flatbed",
@@ -11861,8 +11861,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 30700,
+      "level_floor": 8
     },
     "scs.flatbed.single_45f.flatbed_a": {
       "name": "Scs Flatbed Single 45f Flatbed A",
@@ -11875,8 +11875,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34700,
+      "level_floor": 10
     },
     "scs.flatbed.single_45r.curtain": {
       "name": "Scs Flatbed Single 45r Curtain",
@@ -11889,8 +11889,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42700,
+      "level_floor": 12
     },
     "scs.flatbed.single_45r.flatbed": {
       "name": "Scs Flatbed Single 45r Flatbed",
@@ -11903,7 +11903,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 22000,
+      "price": 30700,
       "level_floor": 8
     },
     "scs.flatbed.single_45r.flatbed_a": {
@@ -11917,8 +11917,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 34700,
+      "level_floor": 10
     },
     "scs.flatbed.single_45sp.curtain": {
       "name": "Scs Flatbed Single 45sp Curtain",
@@ -11931,8 +11931,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43200,
+      "level_floor": 12
     },
     "scs.flatbed.single_45sp.flatbed": {
       "name": "Scs Flatbed Single 45sp Flatbed",
@@ -11945,8 +11945,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 31200,
+      "level_floor": 9
     },
     "scs.flatbed.single_45sp.flatbed_a": {
       "name": "Scs Flatbed Single 45sp Flatbed A",
@@ -11959,8 +11959,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35200,
+      "level_floor": 10
     },
     "scs.flatbed.single_48_3.curtain": {
       "name": "Scs Flatbed Single 48 3 Curtain",
@@ -11973,8 +11973,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 50860,
+      "level_floor": 12
     },
     "scs.flatbed.single_48_3.flatbed": {
       "name": "Scs Flatbed Single 48 3 Flatbed",
@@ -11987,8 +11987,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38360,
+      "level_floor": 11
     },
     "scs.flatbed.single_48_3.flatbed_a": {
       "name": "Scs Flatbed Single 48 3 Flatbed A",
@@ -12001,8 +12001,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42860,
+      "level_floor": 11
     },
     "scs.flatbed.single_48f.curtain": {
       "name": "Scs Flatbed Single 48f Curtain",
@@ -12015,8 +12015,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 45700,
+      "level_floor": 12
     },
     "scs.flatbed.single_48f.flatbed": {
       "name": "Scs Flatbed Single 48f Flatbed",
@@ -12029,8 +12029,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33200,
+      "level_floor": 9
     },
     "scs.flatbed.single_48f.flatbed_a": {
       "name": "Scs Flatbed Single 48f Flatbed A",
@@ -12043,8 +12043,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37700,
+      "level_floor": 10
     },
     "scs.flatbed.single_48r.curtain": {
       "name": "Scs Flatbed Single 48r Curtain",
@@ -12057,7 +12057,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 37000,
+      "price": 45700,
       "level_floor": 12
     },
     "scs.flatbed.single_48r.flatbed": {
@@ -12071,8 +12071,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33200,
+      "level_floor": 9
     },
     "scs.flatbed.single_48r.flatbed_a": {
       "name": "Scs Flatbed Single 48r Flatbed A",
@@ -12085,8 +12085,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37700,
+      "level_floor": 10
     },
     "scs.flatbed.single_48sp.curtain": {
       "name": "Scs Flatbed Single 48sp Curtain",
@@ -12099,8 +12099,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 46200,
+      "level_floor": 12
     },
     "scs.flatbed.single_48sp.flatbed": {
       "name": "Scs Flatbed Single 48sp Flatbed",
@@ -12113,8 +12113,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33700,
+      "level_floor": 10
     },
     "scs.flatbed.single_48sp.flatbed_a": {
       "name": "Scs Flatbed Single 48sp Flatbed A",
@@ -12127,8 +12127,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38200,
+      "level_floor": 10
     },
     "scs.flatbed.single_53_3.curtain": {
       "name": "Scs Flatbed Single 53 3 Curtain",
@@ -12141,8 +12141,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 56960,
+      "level_floor": 15
     },
     "scs.flatbed.single_53_3.flatbed": {
       "name": "Scs Flatbed Single 53 3 Flatbed",
@@ -12155,8 +12155,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42960,
+      "level_floor": 15
     },
     "scs.flatbed.single_53_3.flatbed_a": {
       "name": "Scs Flatbed Single 53 3 Flatbed A",
@@ -12169,8 +12169,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 47960,
+      "level_floor": 15
     },
     "scs.flatbed.single_53_4.curtain": {
       "name": "Scs Flatbed Single 53 4 Curtain",
@@ -12183,8 +12183,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 62020,
+      "level_floor": 16
     },
     "scs.flatbed.single_53_4.flatbed": {
       "name": "Scs Flatbed Single 53 4 Flatbed",
@@ -12197,8 +12197,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 48020,
+      "level_floor": 16
     },
     "scs.flatbed.single_53_4.flatbed_a": {
       "name": "Scs Flatbed Single 53 4 Flatbed A",
@@ -12211,8 +12211,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 53020,
+      "level_floor": 16
     },
     "scs.flatbed.single_53_4a.curtain": {
       "name": "Scs Flatbed Single 53 4a Curtain",
@@ -12245,8 +12245,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 64020,
+      "level_floor": 19
     },
     "scs.flatbed.single_53_4a.flatbed": {
       "name": "Scs Flatbed Single 53 4a Flatbed",
@@ -12279,8 +12279,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 50020,
+      "level_floor": 19
     },
     "scs.flatbed.single_53_4a.flatbed_a": {
       "name": "Scs Flatbed Single 53 4a Flatbed A",
@@ -12313,8 +12313,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 55020,
+      "level_floor": 19
     },
     "scs.flatbed.single_53_4s.curtain": {
       "name": "Scs Flatbed Single 53 4s Curtain",
@@ -12327,8 +12327,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 63020,
+      "level_floor": 18
     },
     "scs.flatbed.single_53_4s.flatbed": {
       "name": "Scs Flatbed Single 53 4s Flatbed",
@@ -12341,8 +12341,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49020,
+      "level_floor": 18
     },
     "scs.flatbed.single_53_4s.flatbed_a": {
       "name": "Scs Flatbed Single 53 4s Flatbed A",
@@ -12355,8 +12355,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 54020,
+      "level_floor": 18
     },
     "scs.flatbed.single_53f.curtain": {
       "name": "Scs Flatbed Single 53f Curtain",
@@ -12369,8 +12369,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 51800,
+      "level_floor": 13
     },
     "scs.flatbed.single_53f.flatbed": {
       "name": "Scs Flatbed Single 53f Flatbed",
@@ -12383,8 +12383,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37800,
+      "level_floor": 13
     },
     "scs.flatbed.single_53f.flatbed_a": {
       "name": "Scs Flatbed Single 53f Flatbed A",
@@ -12397,8 +12397,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42800,
+      "level_floor": 13
     },
     "scs.flatbed.single_53r.curtain": {
       "name": "Scs Flatbed Single 53r Curtain",
@@ -12431,8 +12431,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 51800,
+      "level_floor": 13
     },
     "scs.flatbed.single_53r.flatbed": {
       "name": "Scs Flatbed Single 53r Flatbed",
@@ -12465,8 +12465,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37800,
+      "level_floor": 13
     },
     "scs.flatbed.single_53r.flatbed_a": {
       "name": "Scs Flatbed Single 53r Flatbed A",
@@ -12499,8 +12499,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 42800,
+      "level_floor": 13
     },
     "scs.flatbed.single_53sp.curtain": {
       "name": "Scs Flatbed Single 53sp Curtain",
@@ -12533,8 +12533,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 52300,
+      "level_floor": 14
     },
     "scs.flatbed.single_53sp.flatbed": {
       "name": "Scs Flatbed Single 53sp Flatbed",
@@ -12567,8 +12567,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 38300,
+      "level_floor": 14
     },
     "scs.flatbed.single_53sp.flatbed_a": {
       "name": "Scs Flatbed Single 53sp Flatbed A",
@@ -12601,8 +12601,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43300,
+      "level_floor": 14
     },
     "scs.flatbed.tp_double_1.curtain": {
       "name": "Scs Flatbed Tp Double 1 Curtain",
@@ -12623,8 +12623,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 94100,
+      "level_floor": 19
     },
     "scs.flatbed.tp_double_1.flatbed": {
       "name": "Scs Flatbed Tp Double 1 Flatbed",
@@ -12645,8 +12645,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 70100,
+      "level_floor": 19
     },
     "scs.flatbed.tp_double_1.flatbed_a": {
       "name": "Scs Flatbed Tp Double 1 Flatbed A",
@@ -12667,8 +12667,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78100,
+      "level_floor": 19
     },
     "scs.flatbed.tp_double_2.curtain": {
       "name": "Scs Flatbed Tp Double 2 Curtain",
@@ -12689,8 +12689,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 97260,
+      "level_floor": 19
     },
     "scs.flatbed.tp_double_2.flatbed": {
       "name": "Scs Flatbed Tp Double 2 Flatbed",
@@ -12711,8 +12711,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 73260,
+      "level_floor": 19
     },
     "scs.flatbed.tp_double_2.flatbed_a": {
       "name": "Scs Flatbed Tp Double 2 Flatbed A",
@@ -12733,8 +12733,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 81260,
+      "level_floor": 19
     },
     "scs.flatbed.triple.curtain": {
       "name": "Scs Flatbed Triple Curtain",
@@ -12756,8 +12756,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 97660,
+      "level_floor": 17
     },
     "scs.flatbed.triple.flatbed": {
       "name": "Scs Flatbed Triple Flatbed",
@@ -12779,8 +12779,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 73660,
+      "level_floor": 17
     },
     "scs.flatbed.triple.flatbed_a": {
       "name": "Scs Flatbed Triple Flatbed A",
@@ -12802,8 +12802,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 82660,
+      "level_floor": 17
     },
     "scs.flatbed.triple_p.curtain": {
       "name": "Scs Flatbed Triple P Curtain",
@@ -12825,8 +12825,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 98540,
+      "level_floor": 17
     },
     "scs.flatbed.triple_p.flatbed": {
       "name": "Scs Flatbed Triple P Flatbed",
@@ -12848,8 +12848,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 74540,
+      "level_floor": 17
     },
     "scs.flatbed.triple_p.flatbed_a": {
       "name": "Scs Flatbed Triple P Flatbed A",
@@ -12871,8 +12871,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83540,
+      "level_floor": 17
     },
     "scs.foodtank.double.foodtank": {
       "name": "Scs Foodtank Double Foodtank",
@@ -12885,8 +12885,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83320,
+      "level_floor": 17
     },
     "scs.foodtank.double_p.foodtank": {
       "name": "Scs Foodtank Double P Foodtank",
@@ -12899,8 +12899,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83760,
+      "level_floor": 17
     },
     "scs.foodtank.rm_double.foodtank": {
       "name": "Scs Foodtank Rm Double Foodtank",
@@ -12924,8 +12924,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 101140,
+      "level_floor": 19
     },
     "scs.foodtank.rm_double_p.foodtank": {
       "name": "Scs Foodtank Rm Double P Foodtank",
@@ -12949,8 +12949,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 101580,
+      "level_floor": 19
     },
     "scs.foodtank.single_28.foodtank": {
       "name": "Scs Foodtank Single 28 Foodtank",
@@ -12963,8 +12963,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37780,
+      "level_floor": 11
     },
     "scs.foodtank.single_43r.foodtank": {
       "name": "Scs Foodtank Single 43r Foodtank",
@@ -12977,7 +12977,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 46000,
+      "price": 55100,
       "level_floor": 11
     },
     "scs.foodtank.single_48_3.foodtank": {
@@ -12991,8 +12991,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 70700,
+      "level_floor": 11
     },
     "scs.foodtank.single_48sp.foodtank": {
       "name": "Scs Foodtank Single 48sp Foodtank",
@@ -13005,8 +13005,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 66040,
+      "level_floor": 11
     },
     "scs.foodtank.single_53_4.foodtank": {
       "name": "Scs Foodtank Single 53 4 Foodtank",
@@ -13019,8 +13019,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 84020,
+      "level_floor": 16
     },
     "scs.foodtank.single_53_4s.foodtank": {
       "name": "Scs Foodtank Single 53 4s Foodtank",
@@ -13033,8 +13033,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 85020,
+      "level_floor": 18
     },
     "scs.foodtank.tp_double_1.foodtank": {
       "name": "Scs Foodtank Tp Double 1 Foodtank",
@@ -13055,8 +13055,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 118900,
+      "level_floor": 19
     },
     "scs.foodtank.tp_double_2.foodtank": {
       "name": "Scs Foodtank Tp Double 2 Foodtank",
@@ -13077,8 +13077,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 122060,
+      "level_floor": 19
     },
     "scs.foodtank.triple.foodtank": {
       "name": "Scs Foodtank Triple Foodtank",
@@ -13100,8 +13100,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 128860,
+      "level_floor": 17
     },
     "scs.foodtank.triple_p.foodtank": {
       "name": "Scs Foodtank Triple P Foodtank",
@@ -13123,8 +13123,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 129740,
+      "level_floor": 17
     },
     "scs.fueltank.bdouble_3_2.fueltank": {
       "name": "Scs Fueltank Bdouble 3 2 Fueltank",
@@ -13146,8 +13146,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 101140,
+      "level_floor": 20
     },
     "scs.fueltank.double.fueltank": {
       "name": "Scs Fueltank Double Fueltank",
@@ -13160,8 +13160,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83320,
+      "level_floor": 17
     },
     "scs.fueltank.double_p.fueltank": {
       "name": "Scs Fueltank Double P Fueltank",
@@ -13174,8 +13174,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83760,
+      "level_floor": 17
     },
     "scs.fueltank.rm_double.fueltank": {
       "name": "Scs Fueltank Rm Double Fueltank",
@@ -13199,8 +13199,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 101980,
+      "level_floor": 19
     },
     "scs.fueltank.rm_double_p.fueltank": {
       "name": "Scs Fueltank Rm Double P Fueltank",
@@ -13224,8 +13224,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 102420,
+      "level_floor": 19
     },
     "scs.fueltank.single_28.fueltank": {
       "name": "Scs Fueltank Single 28 Fueltank",
@@ -13238,8 +13238,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 37780,
+      "level_floor": 11
     },
     "scs.fueltank.single_32.fueltank": {
       "name": "Scs Fueltank Single 32 Fueltank",
@@ -13252,8 +13252,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 46440,
+      "level_floor": 11
     },
     "scs.fueltank.single_43r.fueltank": {
       "name": "Scs Fueltank Single 43r Fueltank",
@@ -13266,7 +13266,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 46000,
+      "price": 54940,
       "level_floor": 11
     },
     "scs.fueltank.single_43r.fueltank4": {
@@ -13280,8 +13280,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 55940,
+      "level_floor": 11
     },
     "scs.fueltank.single_48_3.fueltank": {
       "name": "Scs Fueltank Single 48 3 Fueltank",
@@ -13294,8 +13294,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 70100,
+      "level_floor": 11
     },
     "scs.fueltank.single_48_3.fueltank4": {
       "name": "Scs Fueltank Single 48 3 Fueltank4",
@@ -13308,8 +13308,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 71100,
+      "level_floor": 11
     },
     "scs.fueltank.single_53_4.fueltank": {
       "name": "Scs Fueltank Single 53 4 Fueltank",
@@ -13322,8 +13322,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83760,
+      "level_floor": 16
     },
     "scs.fueltank.single_53_4.fueltank4": {
       "name": "Scs Fueltank Single 53 4 Fueltank4",
@@ -13336,8 +13336,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 84760,
+      "level_floor": 16
     },
     "scs.fueltank.single_53_4s.fueltank": {
       "name": "Scs Fueltank Single 53 4s Fueltank",
@@ -13350,8 +13350,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 84760,
+      "level_floor": 18
     },
     "scs.fueltank.single_53_4s.fueltank4": {
       "name": "Scs Fueltank Single 53 4s Fueltank4",
@@ -13364,8 +13364,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 85760,
+      "level_floor": 18
     },
     "scs.fueltank.tpdouble_5.fueltank": {
       "name": "Scs Fueltank Tpdouble 5 Fueltank",
@@ -13386,8 +13386,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 120580,
+      "level_floor": 19
     },
     "scs.fueltank.tpdouble_6.fueltank": {
       "name": "Scs Fueltank Tpdouble 6 Fueltank",
@@ -13408,8 +13408,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 123740,
+      "level_floor": 19
     },
     "scs.fueltank.triple.fueltank": {
       "name": "Scs Fueltank Triple Fueltank",
@@ -13431,8 +13431,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 128860,
+      "level_floor": 17
     },
     "scs.fueltank.triple_p.fueltank": {
       "name": "Scs Fueltank Triple P Fueltank",
@@ -13454,8 +13454,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 129740,
+      "level_floor": 17
     },
     "scs.gastank.bdouble_3_2.gastank": {
       "name": "Scs Gastank Bdouble 3 2 Gastank",
@@ -13477,8 +13477,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 109020,
+      "level_floor": 20
     },
     "scs.gastank.single_32.gastank": {
       "name": "Scs Gastank Single 32 Gastank",
@@ -13491,8 +13491,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49020,
+      "level_floor": 11
     },
     "scs.gastank.single_43.gastank": {
       "name": "Scs Gastank Single 43 Gastank",
@@ -13505,7 +13505,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 46000,
+      "price": 57620,
       "level_floor": 11
     },
     "scs.gastank.single_48_3.gastank": {
@@ -13519,8 +13519,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 73200,
+      "level_floor": 11
     },
     "scs.gastank.single_53_4.gastank": {
       "name": "Scs Gastank Single 53 4 Gastank",
@@ -13533,8 +13533,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 87680,
+      "level_floor": 16
     },
     "scs.gastank.single_53_4s.gastank": {
       "name": "Scs Gastank Single 53 4s Gastank",
@@ -13547,8 +13547,8 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 88680,
+      "level_floor": 18
     },
     "scs.gooseneck.bdouble_3_2.container": {
       "name": "Scs Gooseneck Bdouble 3 2 Container",
@@ -13570,8 +13570,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 57460,
+      "level_floor": 20
     },
     "scs.gooseneck.bdouble_3_3.container": {
       "name": "Scs Gooseneck Bdouble 3 3 Container",
@@ -13593,8 +13593,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 62120,
+      "level_floor": 20
     },
     "scs.gooseneck.rmdouble.container": {
       "name": "Scs Gooseneck Rmdouble Container",
@@ -13618,8 +13618,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61500,
+      "level_floor": 19
     },
     "scs.gooseneck.single_32_3.container": {
       "name": "Scs Gooseneck Single 32 3 Container",
@@ -13632,8 +13632,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 30060,
+      "level_floor": 10
     },
     "scs.gooseneck.single_32.container": {
       "name": "Scs Gooseneck Single 32 Container",
@@ -13646,8 +13646,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 25400,
+      "level_floor": 10
     },
     "scs.gooseneck.single_32e.container": {
       "name": "Scs Gooseneck Single 32e Container",
@@ -13660,8 +13660,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 31400,
+      "level_floor": 14
     },
     "scs.gooseneck.single_40_3.container": {
       "name": "Scs Gooseneck Single 40 3 Container",
@@ -13674,8 +13674,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 32060,
+      "level_floor": 10
     },
     "scs.gooseneck.single_40.container": {
       "name": "Scs Gooseneck Single 40 Container",
@@ -13688,7 +13688,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 19000,
+      "price": 27900,
       "level_floor": 10
     },
     "scs.gooseneck.single_40e.container": {
@@ -13702,8 +13702,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 31400,
+      "level_floor": 14
     },
     "scs.gooseneck.single_45_3.container": {
       "name": "Scs Gooseneck Single 45 3 Container",
@@ -13716,8 +13716,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 35060,
+      "level_floor": 11
     },
     "scs.gooseneck.single_45.container": {
       "name": "Scs Gooseneck Single 45 Container",
@@ -13730,8 +13730,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 29900,
+      "level_floor": 10
     },
     "scs.gooseneck.single_48sp.container": {
       "name": "Scs Gooseneck Single 48sp Container",
@@ -13744,8 +13744,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33400,
+      "level_floor": 13
     },
     "scs.gooseneck.single_53_3.container": {
       "name": "Scs Gooseneck Single 53 3 Container",
@@ -13778,8 +13778,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 39060,
+      "level_floor": 15
     },
     "scs.gooseneck.single_53_4.container": {
       "name": "Scs Gooseneck Single 53 4 Container",
@@ -13812,8 +13812,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43720,
+      "level_floor": 16
     },
     "scs.gooseneck.single_53.container": {
       "name": "Scs Gooseneck Single 53 Container",
@@ -13826,8 +13826,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33900,
+      "level_floor": 13
     },
     "scs.gooseneck.single_53f.container": {
       "name": "Scs Gooseneck Single 53f Container",
@@ -13840,8 +13840,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33900,
+      "level_floor": 13
     },
     "scs.gooseneck.single_53r.container": {
       "name": "Scs Gooseneck Single 53r Container",
@@ -13874,8 +13874,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 33900,
+      "level_floor": 13
     },
     "scs.gooseneck.tp_double_1.container": {
       "name": "Scs Gooseneck Tp Double 1 Container",
@@ -13896,8 +13896,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 64000,
+      "level_floor": 19
     },
     "scs.gooseneck.tp_double_2.container": {
       "name": "Scs Gooseneck Tp Double 2 Container",
@@ -13918,8 +13918,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 67160,
+      "level_floor": 19
     },
     "scs.grainhopper.bdouble_3_2.grainhopper": {
       "name": "Scs Grainhopper Bdouble 3 2 Grainhopper",
@@ -13941,8 +13941,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 105740,
+      "level_floor": 20
     },
     "scs.grainhopper.double_p.grainhopper": {
       "name": "Scs Grainhopper Double P Grainhopper",
@@ -13955,8 +13955,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 90960,
+      "level_floor": 17
     },
     "scs.grainhopper.double_p2.grainhopper": {
       "name": "Scs Grainhopper Double P2 Grainhopper",
@@ -13969,8 +13969,8 @@
       "axles": 4,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 98620,
+      "level_floor": 17
     },
     "scs.grainhopper.rm_double_p.grainhopper": {
       "name": "Scs Grainhopper Rm Double P Grainhopper",
@@ -13994,8 +13994,8 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 108280,
+      "level_floor": 19
     },
     "scs.grainhopper.single_28_2.grainhopper": {
       "name": "Scs Grainhopper Single 28 2 Grainhopper",
@@ -14008,8 +14008,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 49040,
+      "level_floor": 9
     },
     "scs.grainhopper.single_28.grainhopper": {
       "name": "Scs Grainhopper Single 28 Grainhopper",
@@ -14022,8 +14022,8 @@
       "axles": 1,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 41380,
+      "level_floor": 9
     },
     "scs.grainhopper.single_40r.belt": {
       "name": "Scs Grainhopper Single 40r Belt",
@@ -14036,8 +14036,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61700,
+      "level_floor": 11
     },
     "scs.grainhopper.single_40r.grainhopper": {
       "name": "Scs Grainhopper Single 40r Grainhopper",
@@ -14050,7 +14050,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 46000,
+      "price": 58700,
       "level_floor": 9
     },
     "scs.grainhopper.single_50_3.belt": {
@@ -14064,8 +14064,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 81960,
+      "level_floor": 15
     },
     "scs.grainhopper.single_50_3.grainhopper": {
       "name": "Scs Grainhopper Single 50 3 Grainhopper",
@@ -14078,8 +14078,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78960,
+      "level_floor": 15
     },
     "scs.grainhopper.single_50_3a.belt": {
       "name": "Scs Grainhopper Single 50 3a Belt",
@@ -14092,8 +14092,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 81960,
+      "level_floor": 15
     },
     "scs.grainhopper.single_50_3a.grainhopper": {
       "name": "Scs Grainhopper Single 50 3a Grainhopper",
@@ -14106,8 +14106,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78960,
+      "level_floor": 15
     },
     "scs.grainhopper.single_50_3s.belt": {
       "name": "Scs Grainhopper Single 50 3s Belt",
@@ -14120,8 +14120,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83460,
+      "level_floor": 17
     },
     "scs.grainhopper.single_50_3s.grainhopper": {
       "name": "Scs Grainhopper Single 50 3s Grainhopper",
@@ -14134,8 +14134,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 80460,
+      "level_floor": 17
     },
     "scs.grainhopper.single_50sp.belt": {
       "name": "Scs Grainhopper Single 50sp Belt",
@@ -14148,8 +14148,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 76800,
+      "level_floor": 13
     },
     "scs.grainhopper.single_50sp.grainhopper": {
       "name": "Scs Grainhopper Single 50sp Grainhopper",
@@ -14162,8 +14162,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 73800,
+      "level_floor": 13
     },
     "scs.grainhopper.tp_double_1.grainhopper": {
       "name": "Scs Grainhopper Tp Double 1 Grainhopper",
@@ -14184,8 +14184,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 125600,
+      "level_floor": 19
     },
     "scs.grainhopper.tp_double_2.grainhopper": {
       "name": "Scs Grainhopper Tp Double 2 Grainhopper",
@@ -14206,8 +14206,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 128760,
+      "level_floor": 19
     },
     "scs.grainhopper.triple_p.grainhopper": {
       "name": "Scs Grainhopper Triple P Grainhopper",
@@ -14229,8 +14229,8 @@
         "utah"
       ],
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 140540,
+      "level_floor": 17
     },
     "scs.livestock.single_48_3.belly": {
       "name": "Scs Livestock Single 48 3 Belly",
@@ -14243,8 +14243,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83100,
+      "level_floor": 14
     },
     "scs.livestock.single_48_3.straight": {
       "name": "Scs Livestock Single 48 3 Straight",
@@ -14257,8 +14257,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 73100,
+      "level_floor": 12
     },
     "scs.livestock.single_48f.belly": {
       "name": "Scs Livestock Single 48f Belly",
@@ -14271,8 +14271,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78040,
+      "level_floor": 14
     },
     "scs.livestock.single_48f.straight": {
       "name": "Scs Livestock Single 48f Straight",
@@ -14285,7 +14285,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 56000,
+      "price": 68040,
       "level_floor": 12
     },
     "scs.livestock.single_48sp.belly": {
@@ -14299,8 +14299,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 77540,
+      "level_floor": 14
     },
     "scs.livestock.single_48sp.straight": {
       "name": "Scs Livestock Single 48sp Straight",
@@ -14313,8 +14313,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 67540,
+      "level_floor": 12
     },
     "scs.log.single_40_3.log_4": {
       "name": "Scs Log Single 40 3 Log 4",
@@ -14327,8 +14327,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 46860,
+      "level_floor": 10
     },
     "scs.log.single_40_3.log_6": {
       "name": "Scs Log Single 40 3 Log 6",
@@ -14341,8 +14341,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 47860,
+      "level_floor": 11
     },
     "scs.log.single_40r.log_4": {
       "name": "Scs Log Single 40r Log 4",
@@ -14355,7 +14355,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 34000,
+      "price": 42700,
       "level_floor": 10
     },
     "scs.log.single_40r.log_6": {
@@ -14369,8 +14369,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43700,
+      "level_floor": 11
     },
     "scs.log.single_40sp.log_4": {
       "name": "Scs Log Single 40sp Log 4",
@@ -14383,8 +14383,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43200,
+      "level_floor": 10
     },
     "scs.log.single_40sp.log_6": {
       "name": "Scs Log Single 40sp Log 6",
@@ -14397,8 +14397,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 44200,
+      "level_floor": 11
     },
     "scs.lowboy.double_2_1.fullwood": {
       "name": "Scs Lowboy Double 2 1 Fullwood",
@@ -14411,8 +14411,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 50900,
+      "level_floor": 17
     },
     "scs.lowboy.double_2_1.wood": {
       "name": "Scs Lowboy Double 2 1 Wood",
@@ -14425,8 +14425,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 48400,
+      "level_floor": 17
     },
     "scs.lowboy.double_2_1.wood_alu": {
       "name": "Scs Lowboy Double 2 1 Wood Alu",
@@ -14439,8 +14439,8 @@
       "axles": 3,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 53400,
+      "level_floor": 17
     },
     "scs.lowboy.double_2_2.fullwood": {
       "name": "Scs Lowboy Double 2 2 Fullwood",
@@ -14453,8 +14453,8 @@
       "axles": 4,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 60060,
+      "level_floor": 17
     },
     "scs.lowboy.double_2_2.wood": {
       "name": "Scs Lowboy Double 2 2 Wood",
@@ -14467,8 +14467,8 @@
       "axles": 4,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 57560,
+      "level_floor": 17
     },
     "scs.lowboy.double_2_2.wood_alu": {
       "name": "Scs Lowboy Double 2 2 Wood Alu",
@@ -14481,8 +14481,8 @@
       "axles": 4,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 62560,
+      "level_floor": 17
     },
     "scs.lowboy.double_2_3.fullwood": {
       "name": "Scs Lowboy Double 2 3 Fullwood",
@@ -14495,8 +14495,8 @@
       "axles": 5,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 67720,
+      "level_floor": 17
     },
     "scs.lowboy.double_2_3.wood": {
       "name": "Scs Lowboy Double 2 3 Wood",
@@ -14509,7 +14509,7 @@
       "axles": 5,
       "chain_type": "double",
       "ownable": true,
-      "price": 43000,
+      "price": 65220,
       "level_floor": 17
     },
     "scs.lowboy.double_2_3.wood_alu": {
@@ -14523,8 +14523,8 @@
       "axles": 5,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 70220,
+      "level_floor": 17
     },
     "scs.lowboy.double_3_1.fullwood": {
       "name": "Scs Lowboy Double 3 1 Fullwood",
@@ -14537,8 +14537,8 @@
       "axles": 4,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 58560,
+      "level_floor": 17
     },
     "scs.lowboy.double_3_1.wood": {
       "name": "Scs Lowboy Double 3 1 Wood",
@@ -14551,8 +14551,8 @@
       "axles": 4,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 56060,
+      "level_floor": 17
     },
     "scs.lowboy.double_3_1.wood_alu": {
       "name": "Scs Lowboy Double 3 1 Wood Alu",
@@ -14565,8 +14565,8 @@
       "axles": 4,
       "chain_type": "double",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 61060,
+      "level_floor": 17
     },
     "scs.lowboy.single_45.fullwood": {
       "name": "Scs Lowboy Single 45 Fullwood",
@@ -14579,8 +14579,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 40800,
+      "level_floor": 13
     },
     "scs.lowboy.single_45.wood": {
       "name": "Scs Lowboy Single 45 Wood",
@@ -14593,7 +14593,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28000,
+      "price": 38300,
       "level_floor": 12
     },
     "scs.lowboy.single_45.wood_alu": {
@@ -14607,8 +14607,8 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 43300,
+      "level_floor": 14
     },
     "scs.lowboy.single_50_3.fullwood": {
       "name": "Scs Lowboy Single 50 3 Fullwood",
@@ -14621,8 +14621,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 48460,
+      "level_floor": 15
     },
     "scs.lowboy.single_50_3.wood": {
       "name": "Scs Lowboy Single 50 3 Wood",
@@ -14635,8 +14635,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 45960,
+      "level_floor": 15
     },
     "scs.lowboy.single_50_3.wood_alu": {
       "name": "Scs Lowboy Single 50 3 Wood Alu",
@@ -14649,8 +14649,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 50960,
+      "level_floor": 15
     },
     "scs.lowboy.triple_2_2_2.fullwood": {
       "name": "Scs Lowboy Triple 2 2 2 Fullwood",
@@ -14663,8 +14663,8 @@
       "axles": 6,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 75820,
+      "level_floor": 19
     },
     "scs.lowboy.triple_2_2_2.wood": {
       "name": "Scs Lowboy Triple 2 2 2 Wood",
@@ -14677,8 +14677,8 @@
       "axles": 6,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 73320,
+      "level_floor": 19
     },
     "scs.lowboy.triple_2_2_2.wood_alu": {
       "name": "Scs Lowboy Triple 2 2 2 Wood Alu",
@@ -14691,8 +14691,8 @@
       "axles": 6,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 78320,
+      "level_floor": 19
     },
     "scs.lowboy.triple_2_3_2.fullwood": {
       "name": "Scs Lowboy Triple 2 3 2 Fullwood",
@@ -14705,8 +14705,8 @@
       "axles": 7,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 83480,
+      "level_floor": 19
     },
     "scs.lowboy.triple_2_3_2.wood": {
       "name": "Scs Lowboy Triple 2 3 2 Wood",
@@ -14719,8 +14719,8 @@
       "axles": 7,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 80980,
+      "level_floor": 19
     },
     "scs.lowboy.triple_2_3_2.wood_alu": {
       "name": "Scs Lowboy Triple 2 3 2 Wood Alu",
@@ -14733,8 +14733,8 @@
       "axles": 7,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 85980,
+      "level_floor": 19
     },
     "scs.lowboy.triple_3_3_2.fullwood": {
       "name": "Scs Lowboy Triple 3 3 2 Fullwood",
@@ -14747,8 +14747,8 @@
       "axles": 8,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 89140,
+      "level_floor": 20
     },
     "scs.lowboy.triple_3_3_2.wood": {
       "name": "Scs Lowboy Triple 3 3 2 Wood",
@@ -14761,8 +14761,8 @@
       "axles": 8,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 86640,
+      "level_floor": 20
     },
     "scs.lowboy.triple_3_3_2.wood_alu": {
       "name": "Scs Lowboy Triple 3 3 2 Wood Alu",
@@ -14775,8 +14775,8 @@
       "axles": 8,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 91640,
+      "level_floor": 20
     },
     "scs.lowboy.triple_3_3_3.fullwood": {
       "name": "Scs Lowboy Triple 3 3 3 Fullwood",
@@ -14789,8 +14789,8 @@
       "axles": 9,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 94800,
+      "level_floor": 20
     },
     "scs.lowboy.triple_3_3_3.wood": {
       "name": "Scs Lowboy Triple 3 3 3 Wood",
@@ -14803,8 +14803,8 @@
       "axles": 9,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 92300,
+      "level_floor": 20
     },
     "scs.lowboy.triple_3_3_3.wood_alu": {
       "name": "Scs Lowboy Triple 3 3 3 Wood Alu",
@@ -14817,8 +14817,8 @@
       "axles": 9,
       "chain_type": "triple",
       "ownable": true,
-      "price": 0,
-      "level_floor": 0
+      "price": 97300,
+      "level_floor": 20
     }
   },
   "companies": {
@@ -102001,6 +102001,64 @@
           "price": 4500,
           "unlock": 0
         }
+      ],
+      "kit_price": 37695,
+      "presets": [
+        {
+          "id": "freightliner_cascadia_2019_0",
+          "price": 122595,
+          "unlock": 0,
+          "cabin": "day",
+          "chassis": "6x2_short_120",
+          "engine": "dd13_370",
+          "transmission": "10_speed",
+          "paint": "color3_a",
+          "kit": 37695
+        },
+        {
+          "id": "freightliner_cascadia_2019_1",
+          "price": 136560,
+          "unlock": 9,
+          "cabin": "day",
+          "chassis": "6x4_short_160",
+          "engine": "dd13_400_idp",
+          "transmission": "dt12_da",
+          "paint": "color19_a",
+          "kit": 42580
+        },
+        {
+          "id": "freightliner_cascadia_2019_2",
+          "price": 152440,
+          "unlock": 13,
+          "cabin": "sleeper_48",
+          "chassis": "6x2_mid_200",
+          "engine": "x15_450",
+          "transmission": "13_speed",
+          "paint": "color9_b",
+          "kit": 44610
+        },
+        {
+          "id": "freightliner_cascadia_2019_3",
+          "price": 189090,
+          "unlock": 28,
+          "cabin": "sleeper_72_xt",
+          "chassis": "6x4_long_240",
+          "engine": "dd15_505",
+          "transmission": "dt12_oa",
+          "paint": "color12_c",
+          "kit": 59640
+        },
+        {
+          "id": "freightliner_cascadia_2019_4",
+          "price": 201465,
+          "unlock": 28,
+          "cabin": "sleeper_72_rr",
+          "chassis": "6x4_long_240",
+          "engine": "dd16_600",
+          "transmission": "dt12_oa",
+          "paint": "color1_d",
+          "kit": 64035
+        }
       ]
     },
     {
@@ -102284,6 +102342,64 @@
           "name": "@@pj_custom_colour@@",
           "price": 4500,
           "unlock": 0
+        }
+      ],
+      "kit_price": 42170,
+      "presets": [
+        {
+          "id": "cascadia2024_day",
+          "price": 129420,
+          "unlock": 10,
+          "cabin": "day",
+          "chassis": "6x2_short_120",
+          "engine": "dd13_370",
+          "transmission": "dt12_he",
+          "paint": "color5_a",
+          "kit": 42170
+        },
+        {
+          "id": "cascadia2024_48",
+          "price": 172510,
+          "unlock": 18,
+          "cabin": "sleeper_48",
+          "chassis": "6x2_mid_200",
+          "engine": "dd15_505",
+          "transmission": "dt12_ohe",
+          "paint": "color11_b",
+          "kit": 56380
+        },
+        {
+          "id": "cascadia2024_72xt",
+          "price": 188800,
+          "unlock": 20,
+          "cabin": "sleeper_72_xt",
+          "chassis": "6x2_long_200",
+          "engine": "dd15_505",
+          "transmission": "dt12_ohe",
+          "paint": "color8_c",
+          "kit": 60110
+        },
+        {
+          "id": "cascadia2024_72rr_2",
+          "price": 189130,
+          "unlock": 25,
+          "cabin": "sleeper_72_rr",
+          "chassis": "6x2_long_200",
+          "engine": "dd15_505",
+          "transmission": "dt12_ohe",
+          "paint": "color20_d",
+          "kit": 58840
+        },
+        {
+          "id": "cascadia2024_72rr",
+          "price": 195120,
+          "unlock": 25,
+          "cabin": "sleeper_72_rr",
+          "chassis": "6x4_long_240",
+          "engine": "dd15_505",
+          "transmission": "dt12_ohe",
+          "paint": "color20_d",
+          "kit": 59580
         }
       ]
     },
@@ -102987,6 +103103,42 @@
           "price": 3900,
           "unlock": 0
         }
+      ],
+      "kit_price": 36895,
+      "presets": [
+        {
+          "id": "lonestar0",
+          "price": 122195,
+          "unlock": 0,
+          "cabin": "day",
+          "chassis": "6x2_short_70",
+          "engine": "x15_400",
+          "transmission": "10_speed",
+          "paint": "color2",
+          "kit": 36895
+        },
+        {
+          "id": "lonestar1",
+          "price": 183200,
+          "unlock": 18,
+          "cabin": "hirise",
+          "chassis": "6x4_mid_140",
+          "engine": "x15_565",
+          "transmission": "18_speed",
+          "paint": "color10",
+          "kit": 59720
+        },
+        {
+          "id": "lonestar2",
+          "price": 205035,
+          "unlock": 25,
+          "cabin": "skyrise",
+          "chassis": "6x4_long_140",
+          "engine": "x15_605",
+          "transmission": "18_speed_retarder",
+          "paint": "color11",
+          "kit": 62855
+        }
       ]
     },
     {
@@ -103386,6 +103538,42 @@
           "name": "@@pj_silver@@",
           "price": 3900,
           "unlock": 0
+        }
+      ],
+      "kit_price": 33655,
+      "presets": [
+        {
+          "id": "intnational_lt_0",
+          "price": 118855,
+          "unlock": 0,
+          "cabin": "day",
+          "chassis": "6x2_short",
+          "engine": "x15_400",
+          "transmission": "eaton_fam15810b",
+          "paint": "color1",
+          "kit": 33655
+        },
+        {
+          "id": "intnational_lt_1",
+          "price": 155510,
+          "unlock": 13,
+          "cabin": "hirise",
+          "chassis": "6x4_mid",
+          "engine": "a26_475",
+          "transmission": "18_speed",
+          "paint": "color5",
+          "kit": 43010
+        },
+        {
+          "id": "intnational_lt_2",
+          "price": 186025,
+          "unlock": 24,
+          "cabin": "skyrise",
+          "chassis": "6x4_long",
+          "engine": "x15_565",
+          "transmission": "18_speed",
+          "paint": "color13",
+          "kit": 54435
         }
       ]
     },
@@ -104191,6 +104379,64 @@
           "price": 25000,
           "unlock": 0
         }
+      ],
+      "kit_price": 31245,
+      "presets": [
+        {
+          "id": "kenworth_1.t680",
+          "price": 116145,
+          "unlock": 0,
+          "cabin": "duty",
+          "chassis": "short_6x2",
+          "engine": "isx12",
+          "transmission": "10_speed",
+          "paint": "color1",
+          "kit": 31245
+        },
+        {
+          "id": "kenworth_0.t680",
+          "price": 138910,
+          "unlock": 13,
+          "cabin": "standard",
+          "chassis": "long",
+          "engine": "isx12",
+          "transmission": "13_speed",
+          "paint": "color4",
+          "kit": 35060
+        },
+        {
+          "id": "kenworth_2.t680",
+          "price": 140605,
+          "unlock": 10,
+          "cabin": "duty",
+          "chassis": "short",
+          "engine": "mx",
+          "transmission": "13_speed",
+          "paint": "color8",
+          "kit": 43365
+        },
+        {
+          "id": "kenworth_3.t680",
+          "price": 162295,
+          "unlock": 18,
+          "cabin": "standard",
+          "chassis": "long",
+          "engine": "mx",
+          "transmission": "allison_retarder",
+          "paint": "color7",
+          "kit": 42905
+        },
+        {
+          "id": "kenworth_4.t680",
+          "price": 170160,
+          "unlock": 20,
+          "cabin": "exclusive",
+          "chassis": "long",
+          "engine": "isx15",
+          "transmission": "18_speed_retarder",
+          "paint": "color6",
+          "kit": 43320
+        }
       ]
     },
     {
@@ -104461,6 +104707,53 @@
           "name": "@@pj_custom_metallic_colour@@",
           "price": 8400,
           "unlock": 0
+        }
+      ],
+      "kit_price": 39870,
+      "presets": [
+        {
+          "id": "kenworth_t680_2022_dc",
+          "price": 127170,
+          "unlock": 5,
+          "cabin": "day",
+          "chassis": "day_179_6x4",
+          "engine": "x12_350",
+          "transmission": "10_speed",
+          "paint": "color3_a",
+          "kit": 39870
+        },
+        {
+          "id": "kenworth_t680_2022_s52",
+          "price": 173935,
+          "unlock": 20,
+          "cabin": "s52m",
+          "chassis": "s52_206_6x4",
+          "engine": "mx13_510",
+          "transmission": "tx12",
+          "paint": "color1_b",
+          "kit": 55235
+        },
+        {
+          "id": "kenworth_t680_2022_signature",
+          "price": 190395,
+          "unlock": 20,
+          "cabin": "s76h",
+          "chassis": "s76_224_6x4",
+          "engine": "mx13_430",
+          "transmission": "tx12",
+          "paint": "color7m_c",
+          "kit": 66925
+        },
+        {
+          "id": "kenworth_t680_2022_s76",
+          "price": 197835,
+          "unlock": 25,
+          "cabin": "s76h",
+          "chassis": "s76_230_6x4",
+          "engine": "mx13_510",
+          "transmission": "tx12",
+          "paint": "color11m_c",
+          "kit": 65625
         }
       ]
     },
@@ -104943,6 +105236,75 @@
           "price": 2800,
           "unlock": 0
         }
+      ],
+      "kit_price": 36625,
+      "presets": [
+        {
+          "id": "kw_w900_short_cheap",
+          "price": 121525,
+          "unlock": 0,
+          "cabin": "day",
+          "chassis": "6x2_short",
+          "engine": "isx12",
+          "transmission": "10_speed",
+          "paint": "color9",
+          "kit": 36625
+        },
+        {
+          "id": "kw_w900_short",
+          "price": 147780,
+          "unlock": 21,
+          "cabin": "day",
+          "chassis": "6x4_short",
+          "engine": "mx",
+          "transmission": "13_speed",
+          "paint": "color3",
+          "kit": 54640
+        },
+        {
+          "id": "kw_w900_mid",
+          "price": 164115,
+          "unlock": 21,
+          "cabin": "s72",
+          "chassis": "6x4_mid",
+          "engine": "mx",
+          "transmission": "13_speed",
+          "paint": "color4",
+          "kit": 54985
+        },
+        {
+          "id": "kw_w900_long",
+          "price": 193490,
+          "unlock": 23,
+          "cabin": "s86",
+          "chassis": "6x4_long",
+          "engine": "isx15_600",
+          "transmission": "18_speed_retarder",
+          "paint": "color2",
+          "kit": 60610
+        },
+        {
+          "id": "kw_w900_legacy",
+          "price": 206645,
+          "unlock": 17,
+          "cabin": "s72f",
+          "chassis": "6x4_mid",
+          "engine": "isx15_600",
+          "transmission": "18_speed",
+          "paint": "vit_ed_met_d",
+          "kit": 60495
+        },
+        {
+          "id": "kw_w900_100anniversary",
+          "price": 213190,
+          "unlock": 23,
+          "cabin": "s86",
+          "chassis": "6x4_long_100y",
+          "engine": "isx15_600",
+          "transmission": "18_speed_retarder",
+          "paint": "kw100th_c",
+          "kit": 56110
+        }
       ]
     },
     {
@@ -105395,6 +105757,75 @@
           "price": 2900,
           "unlock": 0
         }
+      ],
+      "kit_price": 34255,
+      "presets": [
+        {
+          "id": "mack_anthem_0",
+          "price": 119155,
+          "unlock": 0,
+          "cabin": "day",
+          "chassis": "6x2_short_72",
+          "engine": "mp7_345",
+          "transmission": "10_speed",
+          "paint": "color1",
+          "kit": 34255
+        },
+        {
+          "id": "mack_anthem_1",
+          "price": 134060,
+          "unlock": 8,
+          "cabin": "day",
+          "chassis": "6x4_short_93",
+          "engine": "mp7_395",
+          "transmission": "mdrive_at2612f",
+          "paint": "color7",
+          "kit": 41840
+        },
+        {
+          "id": "mack_anthem_2",
+          "price": 157980,
+          "unlock": 17,
+          "cabin": "sleeper_48",
+          "chassis": "6x2_mid_117",
+          "engine": "mp8_415",
+          "transmission": "mdrive_ato2612f",
+          "paint": "color6",
+          "kit": 49550
+        },
+        {
+          "id": "mack_anthem_3",
+          "price": 173640,
+          "unlock": 25,
+          "cabin": "sleeper_70",
+          "chassis": "6x4_long_142",
+          "engine": "mp8_445",
+          "transmission": "mdrive_ato2612f",
+          "paint": "color1",
+          "kit": 47810
+        },
+        {
+          "id": "mack_anthem_black",
+          "price": 190720,
+          "unlock": 22,
+          "cabin": "sleeper_70",
+          "chassis": "6x4_long_117_black",
+          "engine": "mp8_505",
+          "transmission": "18_speed_retarder",
+          "paint": "color2",
+          "kit": 62120
+        },
+        {
+          "id": "mack_anthem_4",
+          "price": 201410,
+          "unlock": 25,
+          "cabin": "sleeper_70",
+          "chassis": "6x4_long_142",
+          "engine": "mp8_505",
+          "transmission": "18_speed_retarder",
+          "paint": "color3",
+          "kit": 68910
+        }
       ]
     },
     {
@@ -105739,6 +106170,42 @@
           "name": "@@pj_blue_metallic@@",
           "price": 6900,
           "unlock": 0
+        }
+      ],
+      "kit_price": 35275,
+      "presets": [
+        {
+          "id": "mack_pinnacle_day",
+          "price": 120275,
+          "unlock": 0,
+          "cabin": "day",
+          "chassis": "6x2_short",
+          "engine": "mp8_415",
+          "transmission": "10_speed",
+          "paint": "color5",
+          "kit": 35275
+        },
+        {
+          "id": "mack_pinnacle_48s",
+          "price": 162680,
+          "unlock": 13,
+          "cabin": "sleeper_48",
+          "chassis": "6x4_mid",
+          "engine": "mp8_445",
+          "transmission": "mdrive_ato2612f",
+          "paint": "color7",
+          "kit": 51960
+        },
+        {
+          "id": "mack_pinnacle_70s",
+          "price": 196665,
+          "unlock": 23,
+          "cabin": "sleeper_70",
+          "chassis": "6x4_long",
+          "engine": "mp8_505",
+          "transmission": "18_speed_retarder",
+          "paint": "color2",
+          "kit": 66165
         }
       ]
     },
@@ -106588,6 +107055,64 @@
           "price": 25000,
           "unlock": 0
         }
+      ],
+      "kit_price": 33215,
+      "presets": [
+        {
+          "id": "peterbilt_0.389",
+          "price": 118215,
+          "unlock": 0,
+          "cabin": "duty",
+          "chassis": "short_6x2",
+          "engine": "isx12",
+          "transmission": "10_speed",
+          "paint": "color1",
+          "kit": 33215
+        },
+        {
+          "id": "peterbilt_1.389",
+          "price": 140725,
+          "unlock": 13,
+          "cabin": "standard",
+          "chassis": "long",
+          "engine": "isx12",
+          "transmission": "13_speed",
+          "paint": "color5",
+          "kit": 36875
+        },
+        {
+          "id": "peterbilt_2.389",
+          "price": 158545,
+          "unlock": 13,
+          "cabin": "standard",
+          "chassis": "long",
+          "engine": "mx",
+          "transmission": "13_speed",
+          "paint": "color4",
+          "kit": 49515
+        },
+        {
+          "id": "peterbilt_4.389",
+          "price": 170610,
+          "unlock": 20,
+          "cabin": "exclusive",
+          "chassis": "long",
+          "engine": "mx_500",
+          "transmission": "18_speed_retarder",
+          "paint": "color3",
+          "kit": 44250
+        },
+        {
+          "id": "peterbilt_3.389",
+          "price": 183870,
+          "unlock": 20,
+          "cabin": "exclusive",
+          "chassis": "long",
+          "engine": "isx15",
+          "transmission": "18_speed_retarder",
+          "paint": "color7",
+          "kit": 57030
+        }
       ]
     },
     {
@@ -107337,6 +107862,64 @@
           "name": "@@pj_age_of_steam@@",
           "price": 24500,
           "unlock": 0
+        }
+      ],
+      "kit_price": 27606,
+      "presets": [
+        {
+          "id": "peterbilt_4.579",
+          "price": 112506,
+          "unlock": 0,
+          "cabin": "duty",
+          "chassis": "short_6x2",
+          "engine": "isx12",
+          "transmission": "10_speed",
+          "paint": "color2",
+          "kit": 27606
+        },
+        {
+          "id": "peterbilt_3.579",
+          "price": 139341,
+          "unlock": 13,
+          "cabin": "standard",
+          "chassis": "long",
+          "engine": "isx12",
+          "transmission": "13_speed",
+          "paint": "color5",
+          "kit": 35491
+        },
+        {
+          "id": "peterbilt_1.579",
+          "price": 155866,
+          "unlock": 13,
+          "cabin": "standard",
+          "chassis": "long",
+          "engine": "mx",
+          "transmission": "13_speed_retarder",
+          "paint": "color4",
+          "kit": 43516
+        },
+        {
+          "id": "peterbilt_2.579",
+          "price": 162211,
+          "unlock": 20,
+          "cabin": "exclusive",
+          "chassis": "long",
+          "engine": "mx",
+          "transmission": "allison",
+          "paint": "color3",
+          "kit": 42951
+        },
+        {
+          "id": "peterbilt_0.579",
+          "price": 178921,
+          "unlock": 20,
+          "cabin": "exclusive",
+          "chassis": "long",
+          "engine": "isx15",
+          "transmission": "18_speed_retarder",
+          "paint": "color8",
+          "kit": 52081
         }
       ]
     },
@@ -108457,6 +109040,42 @@
           "price": 4500,
           "unlock": 0
         }
+      ],
+      "kit_price": 39805,
+      "presets": [
+        {
+          "id": "volvo_vnl2018_300",
+          "price": 126705,
+          "unlock": 0,
+          "cabin": "day",
+          "chassis": "6x2_s",
+          "engine": "x15_400",
+          "transmission": "10_speed",
+          "paint": "color3",
+          "kit": 39805
+        },
+        {
+          "id": "volvo_vnl2018_740",
+          "price": 164900,
+          "unlock": 13,
+          "cabin": "s740",
+          "chassis": "6x4_m",
+          "engine": "d13_425tc",
+          "transmission": "ishift_at2612g",
+          "paint": "color14",
+          "kit": 52880
+        },
+        {
+          "id": "volvo_vnl2018_860",
+          "price": 194200,
+          "unlock": 23,
+          "cabin": "s860",
+          "chassis": "6x4_l",
+          "engine": "d13_455tc",
+          "transmission": "ishift_ato2612g",
+          "paint": "color1",
+          "kit": 67270
+        }
       ]
     },
     {
@@ -108659,6 +109278,42 @@
           "name": "@@pj_custom_metallic_colour@@",
           "price": 8400,
           "unlock": 0
+        }
+      ],
+      "kit_price": 41505,
+      "presets": [
+        {
+          "id": "volvo_vnl2025_300",
+          "price": 128515,
+          "unlock": 0,
+          "cabin": "dc",
+          "chassis": "dc_190_6x2m",
+          "engine": "d13_405tc",
+          "transmission": "ishift_at2612g",
+          "paint": "color10_a",
+          "kit": 41505
+        },
+        {
+          "id": "volvo_vnl2025_440",
+          "price": 169915,
+          "unlock": 17,
+          "cabin": "42m",
+          "chassis": "42_194_6x4",
+          "engine": "d13_455tc",
+          "transmission": "ishift_at2612g",
+          "paint": "color3_b",
+          "kit": 54535
+        },
+        {
+          "id": "volvo_vnl2025_860",
+          "price": 191775,
+          "unlock": 25,
+          "cabin": "74h",
+          "chassis": "74_220_6x4",
+          "engine": "d13_500tc",
+          "transmission": "ishift_at2612g",
+          "paint": "color1_d",
+          "kit": 63605
         }
       ]
     },
@@ -109487,6 +110142,64 @@
           "price": 2800,
           "unlock": 0
         }
+      ],
+      "kit_price": 33935,
+      "presets": [
+        {
+          "id": "49x_0",
+          "price": 118835,
+          "unlock": 0,
+          "cabin": "day",
+          "chassis": "6x2_short_75",
+          "engine": "dd13_370",
+          "transmission": "10_speed",
+          "paint": "color8",
+          "kit": 33935
+        },
+        {
+          "id": "49x_1",
+          "price": 147600,
+          "unlock": 13,
+          "cabin": "day_sb",
+          "chassis": "6x4_short_100_sb",
+          "engine": "dd15_455",
+          "transmission": "dt12_dc",
+          "paint": "color3",
+          "kit": 51960
+        },
+        {
+          "id": "49x_2",
+          "price": 153690,
+          "unlock": 10,
+          "cabin": "s48",
+          "chassis": "6x2_mid_100",
+          "engine": "x15_500",
+          "transmission": "13_speed",
+          "paint": "color2",
+          "kit": 43440
+        },
+        {
+          "id": "49x_3",
+          "price": 174050,
+          "unlock": 18,
+          "cabin": "s48_sb",
+          "chassis": "6x4_mid_125_sb",
+          "engine": "dd16_560",
+          "transmission": "dt12_oc",
+          "paint": "color6",
+          "kit": 54740
+        },
+        {
+          "id": "49x_4",
+          "price": 191960,
+          "unlock": 28,
+          "cabin": "s72",
+          "chassis": "6x4_long_150",
+          "engine": "dd16_600",
+          "transmission": "dt12_oc",
+          "paint": "color3",
+          "kit": 57330
+        }
       ]
     },
     {
@@ -109989,6 +110702,31 @@
           "name": "@@pj_custom_colour@@",
           "price": 4500,
           "unlock": 0
+        }
+      ],
+      "kit_price": 32705,
+      "presets": [
+        {
+          "id": "westernstar_57x_day",
+          "price": 118515,
+          "unlock": 0,
+          "cabin": "day",
+          "chassis": "6x2_short",
+          "engine": "dd13_370",
+          "transmission": "dt12_db_dhl",
+          "paint": "color3_a",
+          "kit": 32705
+        },
+        {
+          "id": "westernstar_57x_s72",
+          "price": 188670,
+          "unlock": 25,
+          "cabin": "sleeper_72_rr",
+          "chassis": "6x4_long",
+          "engine": "dd16_600",
+          "transmission": "dt12_oa",
+          "paint": "color11_d",
+          "kit": 57100
         }
       ]
     }
