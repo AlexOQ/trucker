@@ -59,15 +59,8 @@ export interface Trailer {
   chain_type: string;
   country_validity?: string[];
   ownable: boolean;
-  /** Total purchase price across all accessories, rounded UP to nearest 1000. 0 if no dealer data. */
+  /** Dealer price with default parts, exact: cheapest preset or configuration walk in the defs. 0 if unpriced. */
   price: number;
-  /**
-   * True when `price` came from a hand-walked entry in manual-prices.json (full
-   * configured cost). False/undefined when from parser, which reads only a
-   * chain_base-adjacent field and is unreliable. Tiebreaker uses this to prefer
-   * walked over parser-priced regardless of nominal value.
-   */
-  priceWalked?: boolean;
   /** Max accessory unlock level — level at which the trailer becomes available. 0 if no dealer data. */
   level_floor: number;
 }
@@ -128,6 +121,19 @@ export interface GameDefs {
   dlc?: DlcSection;
   trucks: Array<{
     id: string;
+    /**
+     * Cheapest "required kit" across the dealer presets: interior, wheels,
+     * mirrors, bumpers, lights and the other parts every build carries beyond
+     * cabin/chassis/engine/transmission/paint. Added to the min-cost total.
+     * Absent on snapshots parsed before dealer presets were read.
+     */
+    kit_price?: number;
+    /** Dealer presets, cheapest first — exact sticker prices as sold. */
+    presets?: Array<{
+      id: string; price: number; unlock: number;
+      cabin: string; chassis: string; engine: string; transmission: string; paint: string;
+      kit: number;
+    }>;
     brand: string;
     model: string;
     engines: Array<{
@@ -217,23 +223,6 @@ export interface MultiBodyOverrides {
   overrides: Record<string, MultiBodyOverrideEntry>;
 }
 
-/**
- * Manual trailer-price walks — see public/data/<game>/manual-prices.json.
- * Frontend-side mirror of `scripts/types/manual-prices.ts`. Loaded at runtime
- * by `loader.ts` and applied to trailer.price + priceWalked, so walks show up
- * without needing to re-run the parser against the def/ folder.
- */
-export interface ManualPriceEntry {
-  price: number;
-  source_pack?: string;
-  last_verified_game_version?: string;
-  notes?: string;
-}
-export interface ManualPricesFile {
-  game: 'ets2' | 'ats';
-  schema_version: 1;
-  prices: Record<string, ManualPriceEntry>;
-}
 
 /**
  * Per-game data provenance — see public/data/<game>/data-version.json.

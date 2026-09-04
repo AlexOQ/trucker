@@ -12,10 +12,6 @@ const p = require('path');
 const game = process.argv[2] || 'ets2';
 const root = p.join(__dirname, '..', 'public', 'data', game);
 const defs = JSON.parse(fs.readFileSync(p.join(root, 'game-defs.json'), 'utf8'));
-const manualPath = p.join(root, 'manual-prices.json');
-const manual = fs.existsSync(manualPath)
-  ? JSON.parse(fs.readFileSync(manualPath, 'utf8')).prices || {}
-  : {};
 const trailers = defs.trailers, cargo = defs.cargo;
 const cargoTrailers = defs.cargo_trailers;
 const cargoTrailerUnits = defs.cargo_trailer_units;
@@ -43,14 +39,9 @@ const totalHV = tid => {
   }
   return h;
 };
-// Parser-derived prices are unreliable — appear to encode chain_base only,
-// not the full configured trailer cost. Treat as untrusted (priceOf returns 0)
-// so the roll-up only marks slots as resolved when a real walk is on file.
-// See feedback_trucker_parser_prices_unreliable memory.
-const priceOf = tid => manual[tid]?.price ?? 0;
-const priceSrc = tid => manual[tid]
-  ? 'walked'
-  : (trailers[tid]?.price > 0 ? 'parser-untrusted' : '—');
+// Prices are exact dealer sums read off the presets/configurations by the parser.
+const priceOf = tid => trailers[tid]?.price ?? 0;
+const priceSrc = tid => (trailers[tid]?.price > 0 ? 'dealer' : '—');
 
 // Per (country, bt) → ranked candidates
 function candidates(country, bt) {

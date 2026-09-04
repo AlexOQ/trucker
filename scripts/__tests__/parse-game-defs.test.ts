@@ -3,7 +3,6 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import {
   buildAtsCityDlcMap,
-  roundPriceUpToThousand,
   deriveTrailerIdFromDefName,
   buildCompanyNameMap,
   formatCompanyName,
@@ -46,28 +45,6 @@ describe('buildAtsCityDlcMap', () => {
     // exactly one DLC key present; california/arizona contribute nothing
     expect(Object.keys(result)).toHaveLength(1);
     expect(Object.values(result)[0]).toEqual(['denver']);
-  });
-});
-
-describe('roundPriceUpToThousand', () => {
-  it('rounds 0 to 0', () => {
-    expect(roundPriceUpToThousand(0)).toBe(0);
-  });
-
-  it('rounds non-zero sub-1000 sums up to 1000', () => {
-    expect(roundPriceUpToThousand(1)).toBe(1000);
-    expect(roundPriceUpToThousand(999)).toBe(1000);
-  });
-
-  it('leaves exact multiples of 1000 in place (no spurious round-up)', () => {
-    expect(roundPriceUpToThousand(1000)).toBe(1000);
-    expect(roundPriceUpToThousand(34000)).toBe(34000);
-  });
-
-  it('rounds anything past a thousand boundary up to the next thousand', () => {
-    expect(roundPriceUpToThousand(1001)).toBe(2000);
-    expect(roundPriceUpToThousand(33500)).toBe(34000);
-    expect(roundPriceUpToThousand(1234567)).toBe(1235000);
   });
 });
 

@@ -46,8 +46,8 @@ function renderTruckList(filter = ''): void {
       <h2>Cheapest configurations</h2>
       <p class="subtitle">
         Minimum-cost build per truck: cheapest valid cabin + chassis pair,
-        cheapest engine / transmission / paint. Cosmetic accessories excluded —
-        AI drivers don't need them.
+        cheapest engine / transmission / paint, plus the required kit the
+        dealer charges on every build (interior, wheels, mirrors, lights).
       </p>
       <table>
         <thead>
@@ -61,6 +61,7 @@ function renderTruckList(filter = ''): void {
             <th class="num">Engine</th>
             <th class="num">Trans</th>
             <th class="num">Paint</th>
+            <th class="num">Kit</th>
           </tr>
         </thead>
         <tbody>
@@ -75,6 +76,7 @@ function renderTruckList(filter = ''): void {
               <td class="num">${currency}${config.engine.price.toLocaleString()}</td>
               <td class="num">${currency}${config.transmission.price.toLocaleString()}</td>
               <td class="num">${config.paint ? `${currency}${config.paint.price.toLocaleString()}` : '—'}</td>
+              <td class="num">${config.kit ? `${currency}${config.kit.toLocaleString()}` : '—'}</td>
             </tr>
           `).join('')}
         </tbody>
@@ -147,6 +149,7 @@ function showTruckDetail(truckId: string): void {
       <div class="stat"><div class="stat-value">${currency}${config.engine.price.toLocaleString()}</div><div class="stat-label">Engine</div></div>
       <div class="stat"><div class="stat-value">${currency}${config.transmission.price.toLocaleString()}</div><div class="stat-label">Transmission</div></div>
       <div class="stat"><div class="stat-value">${config.paint ? `${currency}${config.paint.price.toLocaleString()}` : '—'}</div><div class="stat-label">Paint${config.paint ? ` · ${escapeHtml(displayName(config.paint.name))}` : ''}</div></div>
+      <div class="stat"><div class="stat-value">${config.kit ? `${currency}${config.kit.toLocaleString()}` : '—'}</div><div class="stat-label">Required kit · interior, wheels, mirrors, lights</div></div>
     </div>
 
     ${componentTable('Cabins', (truck.cabins ?? []).filter(isSelectable), config.cabin.id, [

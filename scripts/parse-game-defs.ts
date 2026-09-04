@@ -5,25 +5,25 @@
 // Usage:
 //   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--game ets2|ats]                  # Parse and write
 //   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --diff [--game ets2|ats]           # Diff against existing, don't write
-//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --audit-walks [--diff]             # Surface trailers needing a manual-price walk
-// --audit-walks emits 4 sections: new SKUs without a walked price, walked
-// trailers whose attributes changed (re-verify), and orphan entries in
-// manual-prices.json / multi-body-overrides.json. Combine with --diff to audit
-// without writing game-defs.json.
+//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --prices-only [--game ets2|ats]    # Re-price trailers + trucks in the existing game-defs.json, touch nothing else
+//
+// Prices are read straight off the dealer presets (def/vehicle/trailer_dealer,
+// def/vehicle/truck_dealer): a preset lists every accessory unit on every
+// trailer/vehicle in the combination, and the sum of those parts' `price`
+// fields IS the dealer price — verified to the euro on 9 owned trailer
+// combinations and a truck (2026-09-04). Paint prices live in `@include`d
+// settings files, so accessory files are read with includes inlined.
+//
+// --prices-only exists for partial-ownership def trees (an ATS install missing
+// state DLCs): it patches only trailers.price / level_floor and
+// trucks.kit_price / presets by id, so the bundled city set is never touched.
 
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, mkdirSync } from 'fs';
-import { join, basename, dirname } from 'path';
-import { mergeManualPrices } from './merge-manual-prices';
+import { join, dirname } from 'path';
 
 const args = process.argv.slice(2);
-const auditWalks = args.includes('--audit-walks');
-// --audit-walks is a read-only report, so it implies --diff. Without this it fell
-// through to the write path and published whatever def tree it was pointed at — which
-// is how a 14-state extract once overwrote the bundled 20-state ATS data. Auditing an
-// extract you have no intention of publishing is the normal case, so the safe reading
-// is the default; pass --write alongside it to genuinely re-publish and then audit.
-const forceWrite = args.includes('--write');
-const diffMode = args.includes('--diff') || (auditWalks && !forceWrite);
+const diffMode = args.includes('--diff');
+const pricesOnly = args.includes('--prices-only');
 const gameFlagIdx = args.indexOf('--game');
 const rawGame = gameFlagIdx >= 0 ? args[gameFlagIdx + 1] : 'ets2';
 if (!process.env.VITEST && rawGame !== 'ets2' && rawGame !== 'ats') {
@@ -35,19 +35,17 @@ if (!process.env.VITEST && rawGame !== 'ets2' && rawGame !== 'ats') {
 const game = (rawGame === 'ats' ? 'ats' : 'ets2') as 'ets2' | 'ats';
 const rawDefsPath = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--game');
 if (!process.env.VITEST && (!rawDefsPath || !existsSync(rawDefsPath))) {
-  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff] [--audit-walks] [--game ets2|ats]');
+  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff | --prices-only] [--game ets2|ats]');
   console.error('  --diff         Compare against existing game-defs.json without writing');
-  console.error('  --audit-walks  Emit advisory of trailers needing a manual-price walk (new SKUs, attribute changes, stale overrides)');
+  console.error('  --prices-only  Patch only trailer prices and truck presets into the existing game-defs.json');
   console.error('  --game <id>    Target game (default: ets2). Routes I/O to public/data/<id>/game-defs.json');
-  console.error('Example: npx tsx scripts/parse-game-defs.ts /tmp/ets2-1.60-defs --game ets2 --diff --audit-walks');
+  console.error('Example: npx tsx scripts/parse-game-defs.ts /tmp/ets2-1.60-defs --game ets2 --diff');
   process.exit(1);
 }
 // Same VITEST safety: defsPath is only consumed inside main()/runDiff which
 // are gated; cast to string for the file-reading helpers.
 const defsPath: string = rawDefsPath ?? '';
 const gameDefsPath = join(process.cwd(), 'public', 'data', game, 'game-defs.json');
-const manualPricesPath = join(process.cwd(), 'public', 'data', game, 'manual-prices.json');
-const multiBodyOverridesPath = join(process.cwd(), 'public', 'data', game, 'multi-body-overrides.json');
 
 // ─── SII/SUI Parser ────────────────────────────────────────────────────
 
@@ -155,6 +153,35 @@ function parseSiiFile(content: string): ParsedUnit[] {
   }
 
   return units;
+}
+
+/**
+ * Read a .sii/.sui file with every `@include "x.sui"` line replaced by the
+ * included file's text (recursively). SCS keeps accessory prices in shared
+ * settings fragments — e.g. `paint_job/color.sii` carries no `price:` itself,
+ * it includes `color_settings.sui` which does — so a price read without
+ * include expansion silently drops every paint job, and with it the per-unit
+ * constant that used to look like an unrecoverable "chain fee".
+ *
+ * Include paths are relative to the including file's directory, or absolute
+ * (`/def/...`) relative to `archiveRoot` (the parent of the def/ folder).
+ */
+const includeCache = new Map<string, string>();
+export function readSiiWithIncludes(absPath: string, archiveRoot: string, depth = 0): string {
+  const cached = includeCache.get(absPath);
+  if (cached !== undefined) return cached;
+  if (!existsSync(absPath) || depth > 8) {
+    includeCache.set(absPath, '');
+    return '';
+  }
+  const text = readFileSync(absPath, 'utf-8').replace(/^[ \t]*@include\s+"([^"]+)"[^\n]*$/gm, (_m, inc: string) => {
+    const target = inc.startsWith('/')
+      ? join(archiveRoot, inc.replace(/^\//, ''))
+      : join(dirname(absPath), inc);
+    return readSiiWithIncludes(target, archiveRoot, depth + 1);
+  });
+  includeCache.set(absPath, text);
+  return text;
 }
 
 function readAllSiiFiles(dir: string, ext = '.sui'): ParsedUnit[] {
@@ -818,7 +845,7 @@ interface TrailerData {
   chain_type: string;
   country_validity: string[];
   ownable: boolean;
-  /** Total purchase price across all accessories, rounded UP to nearest 1000. 0 if no dealer data found. */
+  /** Dealer price: exact sum of every accessory on every unit in the dealer preset. 0 if no dealer data found. */
   price: number;
   /** Max accessory unlock level — level at which the trailer becomes available. 0 if no dealer data found. */
   level_floor: number;
@@ -829,112 +856,333 @@ interface TrailerPricing {
   level_floor: number;
 }
 
-/** Round up to nearest 1000 per #251 spec. */
-export function roundPriceUpToThousand(total: number): number {
-  return Math.ceil(total / 1000) * 1000;
-}
-
 /** Strip leading `trailer_def.` prefix; anchored — never strips mid-name. */
 export function deriveTrailerIdFromDefName(name: string): string {
   return name.replace(/^trailer_def\./, '');
 }
 
 /**
- * Aggregate per-trailer dealer pricing. One dealer .sii file → one trailer_def;
- * accessories sum across all trailer blocks (parent + slave chains for
- * double/b_double/triple). Same shape as extractTrucks().
+ * Price every ownable trailer configuration the way the dealer does.
+ *
+ * Two sources combine:
+ *   - `def/vehicle/trailer_dealer/**` — the presets on the dealer lot. Each file
+ *     lists every accessory unit on every trailer in the combination (parent +
+ *     slave chain); the sum of those parts is the sticker price to the euro.
+ *   - `def/vehicle/trailer_owned/<brand>/configurations/` — every chassis set
+ *     (`<variant>.sii`, chassis[] per unit) and body set (`<variant>/<body>.sii`,
+ *     trailer_definition + body[] per unit) the upgrade shop can build.
+ *
+ * A non-preset configuration is priced by *walking* from a preset of the same
+ * brand, which is what the upgrade shop does: keep the preset's accessories
+ * that still fit (paint, bumpers, markers, mudflaps…), swap chassis and body,
+ * re-count wheels per axle, add the new chassis/body `defaults[]`, and fill any
+ * still-missing `require[]` type with the cheapest suitable part. The price is
+ * the cheapest such walk across the brand's presets (the preset itself
+ * included), i.e. the least you can pay for that configuration with default
+ * parts. Verified to the euro on 7 owned SCS combinations; the two brand-DLC
+ * receipts differ only by the owner's livery choice (17–21k per unit).
  */
 function extractTrailerPricing(): Map<string, TrailerPricing> {
   const pricing = new Map<string, TrailerPricing>();
+  const ownedDir = join(defsPath, 'vehicle', 'trailer_owned');
   const dealerDir = join(defsPath, 'vehicle', 'trailer_dealer');
-  if (!existsSync(dealerDir)) return pricing;
-
-  // Resolve absolute `/def/...` data_path values relative to the extracted
-  // archive root (the parent directory of `defsPath`).
+  if (!existsSync(ownedDir)) return pricing;
   const archiveRoot = dirname(defsPath);
+  const abs = (defPath: string) => join(archiveRoot, defPath.replace(/^\//, ''));
+  const WHEEL = new Set(['r_tire', 'r_disc', 'r_hub', 'r_nuts', 'f_tire', 'f_disc', 'f_hub', 'f_nuts']);
+  const arr = (v: unknown): string[] => (Array.isArray(v) ? (v as string[]) : []);
 
-  function walkSiiFiles(dir: string): string[] {
-    const out: string[] = [];
-    if (!existsSync(dir)) return out;
-    for (const entry of readdirSync(dir)) {
-      const full = join(dir, entry);
-      if (statSync(full).isDirectory()) {
-        out.push(...walkSiiFiles(full));
-      } else if (entry.endsWith('.sii') || entry.endsWith('.sui')) {
-        out.push(full);
-      }
-    }
-    return out;
-  }
+  // Accessory type from a def path: wheels by trailer_wheel/<type>, addons by
+  // accessory/<type>, else the parent folder (chassis, body, paint_job).
+  const partType = (p: string): string => {
+    const parts = p.split('/');
+    const w = parts.indexOf('trailer_wheel');
+    if (w >= 0) return parts[w + 1];
+    const a = parts.indexOf('accessory');
+    if (a >= 0) return parts[a + 1];
+    return parts[parts.length - 2];
+  };
 
-  const accessoryFileCache = new Map<string, ParsedUnit[]>();
-  function loadAccessoryFile(absPath: string): ParsedUnit[] {
-    const cached = accessoryFileCache.get(absPath);
+  interface Part { price: number; unlock: number; name: string; defaults: string[]; require: string[]; suitable_for: string[]; axles: number; }
+  const partCache = new Map<string, Part>();
+  const part = (defPath: string): Part => {
+    const cached = partCache.get(defPath);
     if (cached) return cached;
-    if (!existsSync(absPath)) {
-      accessoryFileCache.set(absPath, []);
-      return [];
+    const u = parseSiiFile(readSiiWithIncludes(abs(defPath), archiveRoot))[0];
+    const p: Part = {
+      price: typeof u?.props.price === 'number' ? u.props.price : 0,
+      unlock: typeof u?.props.unlock === 'number' ? u.props.unlock : 0,
+      name: u?.name ?? '',
+      defaults: arr(u?.props.defaults),
+      require: arr(u?.props.require),
+      suitable_for: arr(u?.props.suitable_for),
+      axles: arr(u?.props.residual_travel).length,
+    };
+    partCache.set(defPath, p);
+    return p;
+  };
+
+  // Dealer presets: ordered unit chain (parent → slaves) with each unit's parts.
+  interface Preset { tdef: string; units: string[][]; total: number; }
+  const presets: Preset[] = [];
+  for (const file of walkSiiFiles(dealerDir)) {
+    const units = parseSiiFile(readFileSync(file, 'utf-8'));
+    const dataPath = new Map<string, string>();
+    for (const u of units) {
+      if (u.type.endsWith('accessory') && typeof u.props.data_path === 'string') {
+        dataPath.set(u.name.replace(/^\./, ''), u.props.data_path);
+      }
     }
-    const parsed = parseSiiFile(readFileSync(absPath, 'utf-8'));
-    accessoryFileCache.set(absPath, parsed);
-    return parsed;
+    const trailers = units.filter(u => u.type === 'trailer');
+    const slaves = new Set(trailers.map(t => t.props.slave_trailer).filter(v => typeof v === 'string'));
+    let cur = trailers.find(t => !slaves.has(t.name));
+    const chain: string[][] = [];
+    while (cur) {
+      chain.push(arr(cur.props.accessories).map(r => dataPath.get(r.replace(/^\./, ''))).filter((p): p is string => !!p));
+      const next = cur.props.slave_trailer;
+      cur = typeof next === 'string' ? trailers.find(t => t.name === next) : undefined;
+    }
+    const head = trailers.find(t => !slaves.has(t.name));
+    const tdef = typeof head?.props.trailer_definition === 'string' ? head.props.trailer_definition : '';
+    const total = chain.flat().reduce((sum, p) => sum + part(p).price, 0);
+    if (!tdef || total === 0) continue;
+    presets.push({ tdef: deriveTrailerIdFromDefName(tdef), units: chain, total });
   }
 
-  for (const dealerFile of walkSiiFiles(dealerDir)) {
-    const units = parseSiiFile(readFileSync(dealerFile, 'utf-8'));
+  // Cheapest suitable accessory of a type within a brand folder.
+  const accessoryDir = (brandDir: string, type: string) => join(brandDir, 'accessory', type);
+  const cheapestSuitable = (brandDir: string, type: string, names: Set<string>): string | null => {
+    let best: { price: number; path: string } | null = null;
+    for (const f of walkSiiFiles(accessoryDir(brandDir, type))) {
+      const defPath = '/' + f.slice(archiveRoot.length + 1).split('\\').join('/');
+      const p = part(defPath);
+      if (p.suitable_for.length > 0 && !p.suitable_for.some(n => names.has(n))) continue;
+      if (!best || p.price < best.price) best = { price: p.price, path: defPath };
+    }
+    return best?.path ?? null;
+  };
 
-    // First pass: find the trailer_def reference and collect accessory refs
-    // across all trailer blocks. Refs look like ".data" / ".chassis" — we
-    // strip the leading dot to match against vehicle_accessory unit names.
-    let trailerDefName = '';
-    const accessoryRefs = new Set<string>();
+  for (const brand of readdirSync(ownedDir)) {
+    const brandDir = join(ownedDir, brand);
+    const confDir = join(brandDir, 'configurations');
+    if (!statSync(brandDir).isDirectory() || !existsSync(confDir)) continue;
+    const brandDef = '/def/vehicle/trailer_owned/' + brand;
+    const data = parseSiiFile(readSiiWithIncludes(join(brandDir, 'data.sii'), archiveRoot))[0];
+    const fallback = new Map<string, string>();
+    for (const e of arr(data?.props.fallback)) {
+      const [type, file] = e.split('|');
+      if (type && file) fallback.set(type, file);
+    }
+    const dataRequire = arr(data?.props.require);
+    const brandPresets = presets.filter(p => p.tdef.startsWith(brand + '.'));
 
-    for (const unit of units) {
-      if (unit.type !== 'trailer') continue;
-      if (!trailerDefName && typeof unit.props.trailer_definition === 'string') {
-        trailerDefName = unit.props.trailer_definition;
-      }
-      const accs = unit.props.accessories;
-      if (Array.isArray(accs)) {
-        for (const ref of accs) {
-          accessoryRefs.add(String(ref).replace(/^\./, ''));
+    // Chassis sets: configurations/<variant>[.dlc_x].sii
+    const chassisSets = new Map<string, string[]>();
+    for (const f of readdirSync(confDir)) {
+      if (!f.endsWith('.sii')) continue;
+      const variant = f.replace(/\.sii$/, '').replace(/\.dlc_[a-z0-9_]+$/, '');
+      const u = parseSiiFile(readFileSync(join(confDir, f), 'utf-8')).find(x => x.type === 'trailer_configuration');
+      if (u) chassisSets.set(variant, arr(u.props.chassis));
+    }
+
+    // Body sets: configurations/<variant>/<body>[.dlc_x].sii → one trailer_def each
+    for (const variant of readdirSync(confDir)) {
+      const vDir = join(confDir, variant);
+      if (!statSync(vDir).isDirectory()) continue;
+      const chassisList = chassisSets.get(variant);
+      if (!chassisList || chassisList.length === 0) continue;
+      for (const bf of readdirSync(vDir)) {
+        if (!bf.endsWith('.sii')) continue;
+        const bs = parseSiiFile(readFileSync(join(vDir, bf), 'utf-8')).find(x => x.type === 'trailer_body_set');
+        if (!bs || typeof bs.props.trailer_definition !== 'string') continue;
+        const trailerId = deriveTrailerIdFromDefName(bs.props.trailer_definition);
+        const bodyList = arr(bs.props.body);
+
+        let best: TrailerPricing | null = null;
+        const consider = (price: number, level_floor: number) => {
+          if (price > 0 && (!best || price < best.price)) best = { price, level_floor };
+        };
+        for (const preset of brandPresets) {
+          if (preset.tdef === trailerId) {
+            consider(preset.total, Math.max(0, ...preset.units.flat().map(p => part(p).unlock)));
+          }
+          // Walk this configuration from the preset.
+          let total = 0;
+          let unlock = 0;
+          for (let i = 0; i < chassisList.length; i++) {
+            const chassisPath = chassisList[i];
+            const bodyPath = bodyList[i] ?? '';
+            const chassis = part(chassisPath);
+            const body = bodyPath ? part(bodyPath) : null;
+            const names = new Set([chassis.name, ...(body ? [body.name] : [])]);
+            const base = preset.units[i] ?? null;
+            const parts: string[] = [chassisPath, ...(bodyPath ? [bodyPath] : [])];
+            const have = new Set(['chassis', 'body']);
+            // Wheels: the base unit's wheel parts (or the brand fallback), one set per axle.
+            const wheelSet = new Map<string, string>();
+            for (const p of base ?? preset.units[0] ?? []) {
+              const t = partType(p);
+              if (WHEEL.has(t) && !wheelSet.has(t)) wheelSet.set(t, p);
+            }
+            if (wheelSet.size === 0) {
+              for (const [t, f] of fallback) if (WHEEL.has(t)) wheelSet.set(t, `/def/vehicle/trailer_wheel/${t}/${f}`);
+            }
+            for (const [t, p] of wheelSet) {
+              for (let a = 0; a < chassis.axles; a++) parts.push(p);
+              have.add(t);
+            }
+            // New chassis/body defaults always win.
+            for (const d of [...chassis.defaults, ...(body?.defaults ?? [])]) {
+              const t = partType(d);
+              if (!have.has(t)) { parts.push(d); have.add(t); }
+            }
+            // Inherit the base unit's remaining accessories when they still fit.
+            for (const p of base ?? []) {
+              const t = partType(p);
+              if (have.has(t) || WHEEL.has(t) || t === 'chassis' || t === 'body' || p.endsWith('/data.sii')) continue;
+              const bp = part(p);
+              if (bp.suitable_for.length > 0 && !bp.suitable_for.some(n => names.has(n))) continue;
+              parts.push(p);
+              have.add(t);
+            }
+            if (!have.has('paint_job') && fallback.has('paint_job')) {
+              parts.push(`${brandDef}/paint_job/${fallback.get('paint_job')}`);
+              have.add('paint_job');
+            }
+            for (const rt of new Set([...dataRequire, ...chassis.require, ...(body?.require ?? [])])) {
+              if (have.has(rt)) continue;
+              const p = cheapestSuitable(brandDir, rt, names);
+              if (p) { parts.push(p); have.add(rt); }
+            }
+            for (const p of parts) {
+              const pp = part(p);
+              total += pp.price;
+              if (pp.unlock > unlock) unlock = pp.unlock;
+            }
+          }
+          consider(total, unlock);
         }
+        if (best) pricing.set(trailerId, best);
       }
     }
-
-    if (!trailerDefName || accessoryRefs.size === 0) continue;
-    const trailerId = deriveTrailerIdFromDefName(trailerDefName);
-
-    // Second pass: resolve each ref to a vehicle_accessory's data_path, load
-    // that accessory's .sii file, and pull `price` + `unlock` from any unit
-    // inside it (typically there's exactly one).
-    let totalPrice = 0;
-    let maxUnlock = 0;
-
-    for (const unit of units) {
-      if (unit.type !== 'vehicle_accessory') continue;
-      const localName = unit.name.replace(/^\./, '');
-      if (!accessoryRefs.has(localName)) continue;
-
-      const dataPath = unit.props.data_path;
-      if (typeof dataPath !== 'string') continue;
-
-      const accFile = join(archiveRoot, dataPath.replace(/^\//, ''));
-      const accUnits = loadAccessoryFile(accFile);
-      for (const accUnit of accUnits) {
-        const price = typeof accUnit.props.price === 'number' ? accUnit.props.price : 0;
-        const unlock = typeof accUnit.props.unlock === 'number' ? accUnit.props.unlock : 0;
-        totalPrice += price;
-        if (unlock > maxUnlock) maxUnlock = unlock;
-      }
-    }
-
-    if (totalPrice === 0 && maxUnlock === 0) continue;
-
-    pricing.set(trailerId, { price: roundPriceUpToThousand(totalPrice), level_floor: maxUnlock });
   }
 
   return pricing;
+}
+
+/** Sum `price` / max `unlock` across every unit in one accessory file, includes inlined. */
+const accessoryPriceCache = new Map<string, { price: number; unlock: number }>();
+function accessoryPriceUnlock(absPath: string, archiveRoot: string): { price: number; unlock: number } {
+  const cached = accessoryPriceCache.get(absPath);
+  if (cached) return cached;
+  let price = 0;
+  let unlock = 0;
+  for (const unit of parseSiiFile(readSiiWithIncludes(absPath, archiveRoot))) {
+    if (typeof unit.props.price === 'number') price += unit.props.price;
+    if (typeof unit.props.unlock === 'number' && unit.props.unlock > unlock) unlock = unit.props.unlock;
+  }
+  const out = { price, unlock };
+  accessoryPriceCache.set(absPath, out);
+  return out;
+}
+
+/** Recursive .sii listing (shared by the dealer walkers). */
+function walkSiiFiles(dir: string): string[] {
+  const out: string[] = [];
+  if (!existsSync(dir)) return out;
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) out.push(...walkSiiFiles(full));
+    else if (entry.endsWith('.sii') || entry.endsWith('.sui')) out.push(full);
+  }
+  return out;
+}
+
+// ─── Truck Dealer Presets ─────────────────────────────────────────────
+
+interface TruckPreset {
+  /** Dealer preset file stem, e.g. "man_tgx_euro6_0". */
+  id: string;
+  /** Exact dealer price: sum of every accessory in the preset. */
+  price: number;
+  /** Highest unlock level among the preset's parts. */
+  unlock: number;
+  /** File stems of the five configurable parts, e.g. cabin "xl_cab". */
+  cabin: string;
+  chassis: string;
+  engine: string;
+  transmission: string;
+  paint: string;
+  /**
+   * Everything the dealer charges beyond those five: interior, wheels, mirrors,
+   * bumpers, badges, lights, steering wheel… The part of the price the
+   * min-cost builder used to leave out (~45k on a MAN TGX).
+   */
+  kit: number;
+}
+
+interface TruckPricing {
+  presets: TruckPreset[];
+  /** Cheapest required kit across presets — added to the component floor. */
+  kit_price: number;
+}
+
+/**
+ * Price every dealer preset under def/vehicle/truck_dealer (the *_uk mirrors
+ * are the same trucks right-hand-drive and are skipped). Keyed by truck folder
+ * id (e.g. "man.tgx_euro6"), derived from the preset's data.sii path.
+ */
+function extractTruckPricing(): Map<string, TruckPricing> {
+  const out = new Map<string, TruckPricing>();
+  const dealerDir = join(defsPath, 'vehicle', 'truck_dealer');
+  if (!existsSync(dealerDir)) return out;
+  const archiveRoot = dirname(defsPath);
+  const CONFIGURABLE = new Set(['cabin', 'chassis', 'engine', 'transmission', 'paint_job']);
+
+  for (const file of walkSiiFiles(dealerDir)) {
+    const units = parseSiiFile(readFileSync(file, 'utf-8'));
+    const vehicle = units.find(u => u.type === 'vehicle');
+    if (!vehicle || !Array.isArray(vehicle.props.accessories)) continue;
+    const refs = new Set((vehicle.props.accessories as string[]).map(r => r.replace(/^\./, '')));
+
+    let truckId = '';
+    let total = 0;
+    let unlock = 0;
+    let configurable = 0;
+    const parts: Record<string, string> = {};
+    for (const unit of units) {
+      if (!unit.type.endsWith('accessory') || !refs.has(unit.name.replace(/^\./, ''))) continue;
+      const dataPath = unit.props.data_path;
+      if (typeof dataPath !== 'string') continue;
+      const m = dataPath.match(/^\/def\/vehicle\/truck\/([^/]+)\/(?:([^/]+)\/)?([^/]+)\.sii$/);
+      if (m && !truckId) truckId = m[1];
+      const { price, unlock: u } = accessoryPriceUnlock(join(archiveRoot, dataPath.replace(/^\//, '')), archiveRoot);
+      total += price;
+      if (u > unlock) unlock = u;
+      if (m && m[2] && CONFIGURABLE.has(m[2])) {
+        configurable += price;
+        parts[m[2]] = m[3];
+      }
+    }
+    if (!truckId || total === 0) continue;
+    const preset: TruckPreset = {
+      id: file.replace(/^.*\//, '').replace(/\.sii$/, ''),
+      price: total,
+      unlock,
+      cabin: parts.cabin ?? '',
+      chassis: parts.chassis ?? '',
+      engine: parts.engine ?? '',
+      transmission: parts.transmission ?? '',
+      paint: parts.paint_job ?? '',
+      kit: total - configurable,
+    };
+    const entry = out.get(truckId) ?? { presets: [], kit_price: Number.POSITIVE_INFINITY };
+    entry.presets.push(preset);
+    if (preset.kit < entry.kit_price) entry.kit_price = preset.kit;
+    out.set(truckId, entry);
+  }
+  for (const entry of out.values()) entry.presets.sort((a, b) => a.price - b.price);
+  return out;
 }
 
 function extractTrailers(): TrailerData[] {
@@ -1236,6 +1484,10 @@ interface TruckData {
   chassis: TruckChassis[];
   cabins: TruckCabin[];
   paints: TruckPaint[];
+  /** Dealer presets, cheapest first. Empty when the def tree has no truck_dealer folder. */
+  presets: TruckPreset[];
+  /** Cheapest required kit across presets (see TruckPreset.kit). 0 when unpriced. */
+  kit_price: number;
 }
 
 function extractTrucks(): TruckData[] {
@@ -1243,6 +1495,7 @@ function extractTrucks(): TruckData[] {
   if (!existsSync(truckDir)) return [];
 
   const trucks: TruckData[] = [];
+  const pricing = extractTruckPricing();
 
   for (const truckFolder of readdirSync(truckDir)) {
     const truckPath = join(truckDir, truckFolder);
@@ -1261,6 +1514,8 @@ function extractTrucks(): TruckData[] {
       chassis: [],
       cabins: [],
       paints: [],
+      presets: pricing.get(truckFolder)?.presets ?? [],
+      kit_price: pricing.get(truckFolder)?.kit_price ?? 0,
     };
 
     // Engines
@@ -1551,22 +1806,14 @@ function main() {
   const parsedTrailers = extractTrailers();
   console.log(`  Found ${parsedTrailers.length} trailer definitions`);
 
-  // Load-bearing: parser cannot recover chain_base or per-chassis body fees.
-  // See docs/manual-prices-audit.md → "Why the parser alone is insufficient".
-  const manualMerge = mergeManualPrices(parsedTrailers, manualPricesPath, game);
-  const trailers = manualMerge.trailers;
-  if (manualMerge.applied > 0) {
-    console.log(`  Applied ${manualMerge.applied} manual price overrides from ${basename(manualPricesPath)}`);
-  }
-  if (manualMerge.unknownIds.length > 0) {
-    console.warn(`  ${manualMerge.unknownIds.length} manual price entries reference unknown trailer ids:`);
-    for (const id of manualMerge.unknownIds) console.warn(`    - ${id}`);
-  }
-  if (manualMerge.overrides.length > 0) {
-    console.log(`  ${manualMerge.overrides.length} manual price entries override parser-derived prices (manual wins — dealer stock):`);
-    for (const c of manualMerge.overrides) {
-      console.log(`    - ${c.id}: parser=${c.parserPrice} → manual=${c.manualPrice}`);
-    }
+  const trailers = parsedTrailers;
+  const pricedTrailers = trailers.filter(t => t.price > 0).length;
+  console.log(`  Priced ${pricedTrailers} of ${trailers.length} from dealer presets`);
+
+  if (pricesOnly) {
+    console.log('Extracting trucks...');
+    patchPrices(trailers, extractTrucks());
+    return;
   }
 
   console.log('Extracting companies...');
@@ -1601,20 +1848,48 @@ function main() {
   const frontendData = buildFrontendData(cargo, trailers, companies, cities, countries, matches, cityCompanyMap, economy, trucks);
 
   if (diffMode) {
-    if (auditWalks && !args.includes('--diff')) {
-      console.log('(--audit-walks is read-only; not writing. Pass --write to publish as well.)\n');
-    }
     runDiff(frontendData);
   } else {
     writeOutput(cargo, trailers, companies, cities, countries, economy, trucks, matches, cityCompanyMap, frontendData);
     printSummary(cargo, trailers, companies, cities, countries, trucks, matches, cityCompanyMap);
   }
+}
 
-  // Audit runs after diff/write — same comparison logic regardless of mode.
-  // Reached read-only unless --write was passed; see the flag block at the top.
-  if (auditWalks) {
-    runAuditWalks(frontendData);
+/**
+ * --prices-only: rewrite trailer prices and truck presets inside the existing
+ * game-defs.json by id, leaving every other section (cities included) as is.
+ * Ids the def tree doesn't know keep their current values.
+ */
+function patchPrices(trailers: TrailerData[], trucks: TruckData[]): void {
+  if (!existsSync(gameDefsPath)) {
+    console.error(`No ${gameDefsPath} to patch — run a full parse first.`);
+    process.exit(1);
   }
+  const data = JSON.parse(readFileSync(gameDefsPath, 'utf-8')) as {
+    trailers: Record<string, { price: number; level_floor: number }>;
+    trucks: Array<{ id: string; kit_price?: number; presets?: TruckPreset[] }>;
+  };
+  let trailerHits = 0;
+  let changed = 0;
+  for (const t of trailers) {
+    const cur = data.trailers[t.id];
+    if (!cur) continue;
+    trailerHits++;
+    if (cur.price !== t.price || cur.level_floor !== t.level_floor) changed++;
+    cur.price = t.price;
+    cur.level_floor = t.level_floor;
+  }
+  let truckHits = 0;
+  const byId = new Map(trucks.map(t => [t.id, t]));
+  for (const tr of data.trucks) {
+    const fresh = byId.get(tr.id);
+    if (!fresh || fresh.presets.length === 0) continue;
+    truckHits++;
+    tr.kit_price = fresh.kit_price;
+    tr.presets = fresh.presets;
+  }
+  writeFileSync(gameDefsPath, JSON.stringify(data, null, 2));
+  console.log(`  Patched ${trailerHits} trailers (${changed} price/level changes) and ${truckHits} trucks in ${gameDefsPath}`);
 }
 
 // ─── Frontend Data Builder ────────────────────────────────────────────
@@ -1713,6 +1988,7 @@ function buildFrontendData(
       id: t.id, brand: t.brand, model: t.model,
       engines: t.engines, transmissions: t.transmissions, chassis: t.chassis,
       cabins: t.cabins, paints: t.paints,
+      kit_price: t.kit_price, presets: t.presets,
     })),
     // DLC registry — single source of truth for frontend
     dlc: {
@@ -1792,113 +2068,6 @@ function printSummary(
 }
 
 // ─── Audit Walks Mode ─────────────────────────────────────────────────
-
-/**
- * Emit an advisory of trailers needing a manual-price walk.
- *
- * Compares newly parsed data against existing game-defs.json, manual-prices.json,
- * and multi-body-overrides.json. Surfaces four classes of problem after a
- * game-update reparse:
- *
- *   1. NEW SKUs that don't yet have a walked price (and have parser=0).
- *   2. EXISTING walked trailers whose underlying physical attributes changed
- *      (volume / GWL / body_type / chain_type / masses) since the walk —
- *      price may still be valid but the walk is worth re-confirming.
- *   3. manual-prices entries whose trailer id no longer exists in parsed data
- *      (deleted SKUs — clean these up).
- *   4. multi-body-overrides entries whose trailer id no longer exists.
- */
-function runAuditWalks(newData: ReturnType<typeof buildFrontendData>): void {
-  console.log('\n=== AUDIT WALKS ===');
-  console.log(`Game: ${game}`);
-
-  const manualPrices = existsSync(manualPricesPath)
-    ? (JSON.parse(readFileSync(manualPricesPath, 'utf-8')).prices ?? {}) as Record<string, { price: number }>
-    : {};
-  const multiBody = existsSync(multiBodyOverridesPath)
-    ? (JSON.parse(readFileSync(multiBodyOverridesPath, 'utf-8')).overrides ?? {}) as Record<string, string[]>
-    : {};
-  const existing: { trailers?: Record<string, Record<string, unknown>> } = existsSync(gameDefsPath)
-    ? JSON.parse(readFileSync(gameDefsPath, 'utf-8'))
-    : {};
-  const oldTrailers = existing.trailers ?? {};
-  const newTrailers = newData.trailers;
-
-  // 1. NEW SKUs without manual price (and parser couldn't fill it either)
-  const newWithoutPrice: Array<{ id: string; bt: string; chain: string }> = [];
-  for (const [id, t] of Object.entries(newTrailers)) {
-    if (!t.ownable) continue;
-    if (id in oldTrailers) continue; // existing SKU; covered by class 2
-    if (id in manualPrices) continue; // already walked
-    if ((t.price ?? 0) > 0) continue; // parser priced it (rare but skip)
-    newWithoutPrice.push({ id, bt: t.body_type, chain: t.chain_type });
-  }
-
-  // 2. Walked trailers whose physical attributes drifted
-  const walkedChanged: Array<{ id: string; diffs: string[] }> = [];
-  const walkedFields: Array<keyof typeof newTrailers[string]> = [
-    'body_type', 'chain_type', 'volume', 'gross_weight_limit', 'chassis_mass', 'body_mass', 'length',
-  ];
-  for (const id of Object.keys(manualPrices)) {
-    const oldT = oldTrailers[id];
-    const newT = newTrailers[id];
-    if (!oldT || !newT) continue; // missing handled below
-    const diffs: string[] = [];
-    for (const field of walkedFields) {
-      if (oldT[field] !== newT[field]) {
-        diffs.push(`${field}: ${oldT[field]} → ${newT[field]}`);
-      }
-    }
-    if (diffs.length > 0) walkedChanged.push({ id, diffs });
-  }
-
-  // 3. Manual-price entries pointing to missing IDs
-  const orphanPrices = Object.keys(manualPrices).filter((id) => !(id in newTrailers));
-
-  // 4. Multi-body overrides pointing to missing IDs
-  const orphanOverrides = Object.keys(multiBody).filter((id) => !(id in newTrailers));
-
-  // ── Report ──
-  console.log(`\nNEW TRAILERS WITHOUT MANUAL PRICE (${newWithoutPrice.length}):`);
-  if (newWithoutPrice.length === 0) {
-    console.log('  (none)');
-  } else {
-    for (const { id, bt, chain } of newWithoutPrice) {
-      console.log(`  ${id}  body=${bt}  chain=${chain}`);
-    }
-  }
-
-  console.log(`\nWALKED TRAILERS WITH ATTRIBUTE CHANGES (${walkedChanged.length}):`);
-  if (walkedChanged.length === 0) {
-    console.log('  (none — all walked SKUs unchanged)');
-  } else {
-    for (const { id, diffs } of walkedChanged) {
-      console.log(`  ${id}`);
-      for (const d of diffs) console.log(`    ${d}`);
-    }
-  }
-
-  console.log(`\nMANUAL PRICES POINTING TO MISSING TRAILER IDs (${orphanPrices.length}):`);
-  if (orphanPrices.length === 0) {
-    console.log('  (none)');
-  } else {
-    for (const id of orphanPrices) console.log(`  ${id}`);
-    console.log('  Remove these from manual-prices.json.');
-  }
-
-  console.log(`\nMULTI-BODY OVERRIDES POINTING TO MISSING TRAILER IDs (${orphanOverrides.length}):`);
-  if (orphanOverrides.length === 0) {
-    console.log('  (none)');
-  } else {
-    for (const id of orphanOverrides) console.log(`  ${id}`);
-    console.log('  Remove these from multi-body-overrides.json.');
-  }
-
-  const total = newWithoutPrice.length + walkedChanged.length + orphanPrices.length + orphanOverrides.length;
-  console.log(`\nAudit total: ${total} item(s) needing attention.`);
-}
-
-// ─── Diff Mode ────────────────────────────────────────────────────────
 
 interface DiffChange {
   category: 'clean' | 'needs_input';

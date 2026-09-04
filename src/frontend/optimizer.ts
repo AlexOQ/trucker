@@ -535,7 +535,7 @@ export function clearTrailerInfoCache(): void {
  * sorted body-type set of at least one ownable trailer valid here. Multi-body
  * trailers contribute >1-sized profiles via `extra_body_types`.
  *
- * Also returns the best (cheapest among walked > parser > unpriced) trailer
+ * Also returns the best (cheapest priced, unpriced last) trailer
  * realizing each profile — for display purposes after the optimizer picks.
  */
 export function getProfileTrailerInfoForCountry(
@@ -597,18 +597,11 @@ export function computeProfileTrailerInfoForCountry(
       continue;
     }
     if (totalHV === existing.totalHV) {
-      // Tiebreaker: walked > parser > unpriced, then lowest price within tier.
-      // Parser prices are chain_base only and unreliable, so any walked sibling beats them.
-      const curWalked = existing.trailer.priceWalked === true;
-      const newWalked = t.priceWalked === true;
+      // Tiebreaker: priced beats unpriced, then lowest dealer price.
       const curPriced = existing.trailer.price > 0;
       const newPriced = t.price > 0;
-      if (newWalked && !curWalked) {
+      if (newPriced && (!curPriced || t.price < existing.trailer.price)) {
         bestByProfile.set(key, { trailer: t, bodyTypes, totalHV });
-      } else if (newWalked === curWalked) {
-        if (newPriced && (!curPriced || t.price < existing.trailer.price)) {
-          bestByProfile.set(key, { trailer: t, bodyTypes, totalHV });
-        }
       }
     }
   }
