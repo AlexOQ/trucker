@@ -62,46 +62,57 @@ describe('mergeCarriedCities', () => {
   const existing = {
     cities: {
       houston: { name: 'Houston', country: 'texas' },
+      galveston: { name: 'Galveston', country: 'texas' },
       chicago: { name: 'Chicago', country: 'illinois' },
       peoria: { name: 'Peoria', country: 'illinois' },
     },
     countries: { texas: { name: 'Texas' }, illinois: { name: 'Illinois' } },
     companies: {
       port_hou: { name: 'Houston Cargo Terminal', cargo_out: ['rails'], cargo_in: [], cities: ['houston'] },
-      wal_mkt: { name: 'Wallbert', cargo_out: ['cans'], cargo_in: ['cans'], cities: ['chicago', 'houston'] },
+      wal_mkt: { name: 'Wallbert', cargo_out: ['cans'], cargo_in: ['cans'], cities: ['chicago', 'galveston', 'houston'] },
       aport_ord: { name: 'Aport Ord', cargo_out: ['cars_big'], cargo_in: [], cities: ['chicago'] },
-      gone_co: { name: 'Gone', cargo_out: ['cans'], cargo_in: [], cities: ['houston'] },
+      gone_co: { name: 'Gone', cargo_out: ['cans'], cargo_in: [], cities: ['chicago'] },
     },
   };
-  // A tree from an install without the Illinois DLC: Illinois cities and the
-  // placements in them are missing; everything else is fresh 1.61 data.
+  // A tree from an install without the Illinois DLC, on a game version that
+  // removed Galveston: Illinois cities and the placements in them are missing
+  // because the DLC is unowned; Galveston is missing because it is gone.
   const fresh = {
     cities: [{ id: 'houston', name: 'Houston', country: 'texas', population: 0 }],
     countries: [{ id: 'texas', name: 'Texas' }, { id: 'south_dakota', name: 'South Dakota' }],
     companies: [
       { id: 'port_hou', name: 'Houston Cargo Terminal', cargo_out: ['rails', 'truss'], cargo_in: [], cities: ['houston'] },
-      { id: 'wal_mkt', name: 'Wallbert', cargo_out: ['cans'], cargo_in: ['cans'], cities: [] as string[] },
+      { id: 'wal_mkt', name: 'Wallbert', cargo_out: ['cans'], cargo_in: ['cans'], cities: ['houston'] },
       { id: 'aport_ord', name: 'Chicago International Airport', cargo_out: [], cargo_in: ['dryvan'], cities: [] as string[] },
+      { id: 'new_co', name: 'New', cargo_out: ['truss'], cargo_in: [], cities: ['houston'] },
     ],
   };
   const merged = mergeCarriedCities(fresh, existing);
+  const byId = Object.fromEntries(merged.companies.map(c => [c.id, c]));
 
-  it('carries forward only the cities the tree lacks, plus their countries', () => {
+  it('carries forward only the cities of states the tree has no city for, plus their countries', () => {
     expect(merged.cities.map(c => c.id).sort()).toEqual(['chicago', 'houston', 'peoria']);
     expect(merged.cities.find(c => c.id === 'peoria')).toMatchObject({ name: 'Peoria', country: 'illinois' });
     expect(merged.countries.map(c => c.id).sort()).toEqual(['illinois', 'south_dakota', 'texas']);
     expect(merged.carried).toEqual({ cities: 2, countries: 1, placements: 2 });
   });
 
+  it('drops a city missing from a state the tree does have, and the placements in it', () => {
+    expect(merged.cities.find(c => c.id === 'galveston')).toBeUndefined();
+    expect(byId.wal_mkt.cities).toEqual(['chicago', 'houston']);
+  });
+
   it('takes company cargo and name fresh but restores placements in carried cities', () => {
-    const byId = Object.fromEntries(merged.companies.map(c => [c.id, c]));
     expect(byId.port_hou.cargo_out).toEqual(['rails', 'truss']);
-    expect(byId.wal_mkt.cities).toEqual(['chicago']); // houston placement really gone
     expect(byId.aport_ord).toMatchObject({ name: 'Chicago International Airport', cargo_in: ['dryvan'], cities: ['chicago'] });
   });
 
-  it('does not resurrect a company the tree no longer defines', () => {
-    expect(merged.companies.find(c => c.id === 'gone_co')).toBeUndefined();
+  it('passes a company new to the tree through untouched', () => {
+    expect(byId.new_co).toEqual(fresh.companies[3]);
+  });
+
+  it('does not resurrect a company the tree no longer defines, even with a placement in a carried city', () => {
+    expect(byId.gone_co).toBeUndefined();
   });
 });
 
@@ -296,8 +307,7 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
     });
 
     // Company names come from the def `name` field, not formatCompanyName(id)
-    // (ETS2 #267; ATS #289, natively since the 1.61 --keep-cities reparse).
-    // Only a minority of companies lack a def name file and fall back to the
+    // (#267, #289). Only a minority of companies lack a def name file and fall back to the
     // id, so the localized majority guards against a regression silently reverting
     // every name to titlecase(id).
     it('most company names are def strings, not mechanical title-case of the id (#267, #289)', () => {

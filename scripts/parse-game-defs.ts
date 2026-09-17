@@ -21,7 +21,7 @@
 // cover that tree:
 //   --prices-only  patches only trailers.price / level_floor and
 //                  trucks.kit_price / presets by id; nothing else is touched.
-//   --keep-cities  is a full parse that carries the cities the tree lacks
+//   --keep-cities  is a full parse that carries the unowned states' cities
 //                  (and their countries and company placements) forward from
 //                  the existing game-defs.json — see mergeCarriedCities().
 //                  Combine with --diff to review only the real changes.
@@ -1901,16 +1901,20 @@ interface CityScope {
 /**
  * Merge for --keep-cities. Everything the def tree knows is taken fresh; only
  * what it cannot see is carried forward from the existing file:
- *   - cities absent from the tree (the unowned map DLCs' cities), and the
- *     countries those sit in;
+ *   - cities of states the tree has NO city for (an unowned map DLC ships a
+ *     whole state; a state with any city in the tree is owned, so a city of
+ *     it missing from the tree is a real removal and is not carried), and the
+ *     countries those cities sit in;
  *   - each company's placements in those carried cities — a company is
- *     otherwise taken fresh, so a real removal from an owned city still lands.
- * A company with no placement left after the merge is a real removal and is
- * dropped by the caller. Pure; the I/O wrapper is carryForwardCities().
+ *     otherwise taken fresh, so a placement gone from an owned city stays gone.
+ * A company with no placement left after the merge is dropped by the caller.
+ * Pure; the I/O wrapper is carryForwardCities().
  */
 export function mergeCarriedCities(fresh: CityScope, existing: CarriedDefs): CityScope & { carried: { cities: number; countries: number; placements: number } } {
   const freshCityIds = new Set(fresh.cities.map(c => c.id));
-  const carriedCityIds = Object.keys(existing.cities).filter(id => !freshCityIds.has(id));
+  const freshStates = new Set(fresh.cities.map(c => c.country));
+  const carriedCityIds = Object.keys(existing.cities)
+    .filter(id => !freshCityIds.has(id) && !freshStates.has(existing.cities[id].country));
   const carriedCitySet = new Set(carriedCityIds);
   const cities = [
     ...fresh.cities,
