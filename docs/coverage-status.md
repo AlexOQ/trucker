@@ -1,6 +1,7 @@
 # Trailer & truck price coverage — ETS2 + ATS
 
-Snapshot as of **2026-09-04** (ETS2 1.60.1.7, ATS 1.60.1.8).
+Game versions and refresh dates: README "Data Coverage" (generated from
+`public/data/<game>/data-version.json`).
 
 ## How prices are sourced
 

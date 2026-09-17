@@ -21,7 +21,7 @@
 // cover that tree:
 //   --prices-only  patches only trailers.price / level_floor and
 //                  trucks.kit_price / presets by id; nothing else is touched.
-//   --keep-cities  is a full parse that carries the unowned states' cities
+//   --keep-cities  is a full parse that carries the unowned map DLCs' cities
 //                  (and their countries and company placements) forward from
 //                  the existing game-defs.json — see mergeCarriedCities().
 //                  Combine with --diff to review only the real changes.
@@ -558,8 +558,9 @@ const ATS_CARGO_DLC_MAP: Record<string, string> = {
  *
  * Permanently empty: ATS state map DLCs ship no cargo defs at all. Verified against
  * 13 owned state archives (AR CO ID MT NM OK OR TX UT WA WY + free AZ NV) on
- * 1.60.1.8 — every `dlc_<state>.scs` contains `def/city` plus per-company `in`/`out`
- * lists, but zero files under `def/cargo`, and no `def/cargo.dlc_<state>.sii` aggregator
+ * 1.60.1.8 — every `dlc_<state>.scs` contains `def/city` plus per-company `editor/`
+ * placements (company defs and their `in`/`out` lists are base-only, `def.scs`),
+ * but zero files under `def/cargo`, and no `def/cargo.dlc_<state>.sii` aggregator
  * exists for any state. State DLCs extend where existing cargo spawns, never what
  * cargo exists. Contrast ETS2, where map expansions do add shadow cargo.
  *
@@ -1890,6 +1891,7 @@ interface CarriedDefs {
   cities: Record<string, { name: string; country: string }>;
   countries: Record<string, { name: string }>;
   companies: Record<string, { name: string; cargo_out: string[]; cargo_in: string[]; cities: string[] }>;
+  dlc: { city_dlc_map: Record<string, string[]> };
 }
 
 interface CityScope {
@@ -1901,20 +1903,27 @@ interface CityScope {
 /**
  * Merge for --keep-cities. Everything the def tree knows is taken fresh; only
  * what it cannot see is carried forward from the existing file:
- *   - cities of states the tree has NO city for (an unowned map DLC ships a
- *     whole state; a state with any city in the tree is owned, so a city of
- *     it missing from the tree is a real removal and is not carried), and the
- *     countries those cities sit in;
+ *   - cities of a map DLC the tree has NO city of, per the existing file's
+ *     dlc.city_dlc_map (an unowned DLC is absent whole; a DLC with any city in
+ *     the tree is owned, and a base-game city is always in the tree, so a city
+ *     missing from either is a real removal and is not carried), and the
+ *     countries those cities sit in when the tree lacks them;
  *   - each company's placements in those carried cities — a company is
  *     otherwise taken fresh, so a placement gone from an owned city stays gone.
+ * Keyed on the DLC rather than the country because ETS2 map DLCs split a
+ * country with the base game (France: 4 base cities, 32 in Vive la France).
  * A company with no placement left after the merge is dropped by the caller.
  * Pure; the I/O wrapper is carryForwardCities().
  */
 export function mergeCarriedCities(fresh: CityScope, existing: CarriedDefs): CityScope & { carried: { cities: number; countries: number; placements: number } } {
   const freshCityIds = new Set(fresh.cities.map(c => c.id));
-  const freshStates = new Set(fresh.cities.map(c => c.country));
-  const carriedCityIds = Object.keys(existing.cities)
-    .filter(id => !freshCityIds.has(id) && !freshStates.has(existing.cities[id].country));
+  const cityDlc = new Map<string, string>();
+  for (const [dlc, ids] of Object.entries(existing.dlc.city_dlc_map)) for (const id of ids) cityDlc.set(id, dlc);
+  const dlcInTree = new Set([...freshCityIds].map(id => cityDlc.get(id)).filter((d): d is string => d !== undefined));
+  const carriedCityIds = Object.keys(existing.cities).filter(id => {
+    const dlc = cityDlc.get(id);
+    return !freshCityIds.has(id) && dlc !== undefined && !dlcInTree.has(dlc);
+  });
   const carriedCitySet = new Set(carriedCityIds);
   const cities = [
     ...fresh.cities,
@@ -1922,9 +1931,8 @@ export function mergeCarriedCities(fresh: CityScope, existing: CarriedDefs): Cit
   ].sort((a, b) => a.name.localeCompare(b.name));
 
   const freshCountryIds = new Set(fresh.countries.map(c => c.id));
-  const carriedCountries = Object.entries(existing.countries)
-    .filter(([id]) => !freshCountryIds.has(id))
-    .map(([id, c]) => ({ id, name: c.name }));
+  const carriedCountryIds = [...new Set(carriedCityIds.map(id => existing.cities[id].country))].filter(id => !freshCountryIds.has(id));
+  const carriedCountries = carriedCountryIds.map(id => ({ id, name: existing.countries[id].name }));
   const countries = [...fresh.countries, ...carriedCountries].sort((a, b) => a.name.localeCompare(b.name));
 
   let placements = 0;
