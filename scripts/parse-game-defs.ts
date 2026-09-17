@@ -1858,6 +1858,7 @@ function main() {
     ({ companies, cities, countries } = carryForwardCities({ companies, cities, countries }));
   }
   companies = companies.filter(co => co.cities.length > 0);
+  console.log(`  ${companies.length} companies with placements`);
 
   console.log('Extracting economy data...');
   const economy = extractEconomy();

@@ -14277,7 +14277,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 85370,
+      "price": 88970,
       "level_floor": 14
     },
     "scs.livestock.single_3b.belly_stl": {
@@ -14291,7 +14291,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 85370,
+      "price": 88970,
       "level_floor": 14
     },
     "scs.livestock.single_3s.str_pnt": {
@@ -14305,8 +14305,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 75170,
-      "level_floor": 12
+      "price": 74770,
+      "level_floor": 13
     },
     "scs.livestock.single_3s.str_stl": {
       "name": "Scs Livestock Single 3s Str Stl",
@@ -14319,7 +14319,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 75170,
+      "price": 73870,
       "level_floor": 12
     },
     "scs.log.bdouble_3_3.steel": {
@@ -35617,7 +35617,6 @@
         "wrk_cloth"
       ],
       "cities": [
-        "amsterdam",
         "bialystok",
         "dortmund",
         "duisburg",
@@ -35668,6 +35667,7 @@
         "volvo_l250h"
       ],
       "cities": [
+        "amsterdam",
         "banja_luka",
         "koln",
         "linz",
@@ -146487,7 +146487,7 @@
     },
     "amsterdam": {
       "daf_dlr": 1,
-      "itcc": 1,
+      "itcc_scrap": 1,
       "ns_oil": 1,
       "primel": 1,
       "stokes": 1,

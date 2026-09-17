@@ -1,5 +1,5 @@
 {
-  "game_version": "1.60.1.7",
-  "refreshed_at": "2026-09-04",
-  "coverage_notes": "Trailer and truck prices read from the dealer presets and configuration walks (exact to the dealer screen, 2026-09-04)"
+  "game_version": "1.61.1.0",
+  "refreshed_at": "2026-09-17",
+  "coverage_notes": "Full reparse of a 1.61.1.0 install (all map and trailer DLCs owned); livestock trailer prices moved with the rework, ids and capacities did not"
 }
