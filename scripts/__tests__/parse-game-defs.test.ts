@@ -4,6 +4,7 @@ import { join } from 'path';
 import {
   buildAtsCityDlcMap,
   mergeCarriedCities,
+  parseSiiFile,
   deriveTrailerIdFromDefName,
   buildCompanyNameMap,
   formatCompanyName,
@@ -130,6 +131,32 @@ describe('mergeCarriedCities', () => {
   });
 });
 
+describe('parseSiiFile', () => {
+  it('closes a unit on a property line that ends in a brace, so the next unit keeps its own props', () => {
+    // def/vehicle/trailer_dealer/scs/scs_box_refer_double.sii writes the head
+    // unit as `slave_trailer: .second}`; read as an open unit, the slave's
+    // accessories[] overwrite the head's by index and one unit gets priced.
+    const units = parseSiiFile([
+      'SiiNunit', '{',
+      'trailer : .scs.box', '{',
+      '\taccessories[]: .head_chassis',
+      '\tslave_trailer: .second}',
+      'trailer : .second', '{',
+      '\taccessories[]: .slave_chassis',
+      '}', '}',
+    ].join('\n'));
+    expect(units.map(u => u.name)).toEqual(['.scs.box', '.second']);
+    expect(units[0].props).toEqual({ accessories: ['.head_chassis'], slave_trailer: '.second' });
+    expect(units[1].props).toEqual({ accessories: ['.slave_chassis'] });
+  });
+
+  it('does not treat a brace inside a quoted value as a close', () => {
+    const units = parseSiiFile(['x : .a', '{', '\tname: "curly}"', '\tprice: 5', '}'].join('\n'));
+    expect(units).toHaveLength(1);
+    expect(units[0].props).toEqual({ name: 'curly}', price: 5 });
+  });
+});
+
 describe('deriveTrailerIdFromDefName', () => {
   it('strips the leading "trailer_def." prefix', () => {
     expect(deriveTrailerIdFromDefName('trailer_def.feldbinder.eut.silo')).toBe('feldbinder.eut.silo');
@@ -222,6 +249,17 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
     it('every city_dlc_map value is a city id in cities (a misspelt id gates nothing)', () => {
       const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
       const orphans = Object.values(data.dlc.city_dlc_map as Record<string, string[]>).flat().filter(id => !(id in data.cities));
+      expect(orphans).toEqual([]);
+    });
+
+    it('every non-excluded cargo has at least one ownable trailer that carries a unit of it', () => {
+      const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
+      const trailers = data.trailers as Record<string, { ownable: boolean }>;
+      const units = data.cargo_trailer_units as Record<string, Record<string, number>>;
+      const orphans = Object.entries(data.cargo as Record<string, { excluded: boolean }>)
+        .filter(([, c]) => !c.excluded)
+        .filter(([id]) => !Object.entries(units[id] ?? {}).some(([t, n]) => trailers[t]?.ownable && n >= 1))
+        .map(([id]) => id);
       expect(orphans).toEqual([]);
     });
 
