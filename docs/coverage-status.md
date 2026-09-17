@@ -42,9 +42,9 @@ node scripts/all-ties.cjs ets2
 
 ## ATS
 
-Re-priced from a 1.60.1.8 install with `--prices-only`, which patches prices and
-truck presets into the bundled `game-defs.json` without touching the 20-state
-city set.
+Full reparse of a 1.61.1.4 install with `--keep-cities`: the 14 owned states
+parse fresh, the 6 unowned states' cities and company placements carry forward
+from the previous `game-defs.json` (see the parser header for the mode).
 
 ```
 node scripts/winners-table.cjs ats

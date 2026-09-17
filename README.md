@@ -87,7 +87,7 @@ DLC counts below are the trailer-brand / cargo-pack / map-expansion DLCs each ga
 | Game | Version | Refreshed | DLCs (trailer / cargo / map) | Notes |
 |------|---------|-----------|------------------------------|-------|
 | ETS2 | 1.60.1.7 | 2026-09-04 | 27 (8 / 9 / 10) | Trailer and truck prices read from the dealer presets and configuration walks (exact to the dealer screen, 2026-09-04) |
-| ATS | 1.60.1.8 | 2026-09-04 | 27 (2 / 8 / 17) | Prices re-read from a 1.60.1.8 install with --prices-only (dealer presets + configuration walks); cities untouched |
+| ATS | 1.61.1.4 | 2026-09-17 | 27 (2 / 8 / 17) | Full reparse of a 1.61.1.4 install with --keep-cities; the 6 unowned states’ cities carried forward from 1.60.1.8 |
 <!-- END data-coverage -->
 
 ## Development

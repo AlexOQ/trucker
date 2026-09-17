@@ -3,6 +3,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import {
   buildAtsCityDlcMap,
+  mergeCarriedCities,
   deriveTrailerIdFromDefName,
   buildCompanyNameMap,
   formatCompanyName,
@@ -13,7 +14,7 @@ describe('buildAtsCityDlcMap', () => {
     expect(buildAtsCityDlcMap([])).toEqual({});
   });
 
-  it('omits cities whose country is not in ATS_STATE_TO_DLC (base-game state)', () => {
+  it('omits cities whose state maps to null (base-game state)', () => {
     // California is the ATS base game (no DLC) — its cities must not appear.
     const result = buildAtsCityDlcMap([
       { id: 'los_angeles', country: 'california' },
@@ -45,6 +46,62 @@ describe('buildAtsCityDlcMap', () => {
     // exactly one DLC key present; california/arizona contribute nothing
     expect(Object.keys(result)).toHaveLength(1);
     expect(Object.values(result)[0]).toEqual(['denver']);
+  });
+
+  it('throws on a state absent from ATS_STATE_TO_DLC instead of treating it as base game', () => {
+    // country/ defs ship ahead of a state DLC (south_dakota in 1.61); an
+    // unmapped state must fail the parse, not publish its cities to everyone.
+    expect(() => buildAtsCityDlcMap([
+      { id: 'denver', country: 'colorado' },
+      { id: 'sioux_falls', country: 'south_dakota' },
+    ])).toThrow(/south_dakota/);
+  });
+});
+
+describe('mergeCarriedCities', () => {
+  const existing = {
+    cities: {
+      houston: { name: 'Houston', country: 'texas' },
+      chicago: { name: 'Chicago', country: 'illinois' },
+      peoria: { name: 'Peoria', country: 'illinois' },
+    },
+    countries: { texas: { name: 'Texas' }, illinois: { name: 'Illinois' } },
+    companies: {
+      port_hou: { name: 'Houston Cargo Terminal', cargo_out: ['rails'], cargo_in: [], cities: ['houston'] },
+      wal_mkt: { name: 'Wallbert', cargo_out: ['cans'], cargo_in: ['cans'], cities: ['chicago', 'houston'] },
+      aport_ord: { name: 'Aport Ord', cargo_out: ['cars_big'], cargo_in: [], cities: ['chicago'] },
+      gone_co: { name: 'Gone', cargo_out: ['cans'], cargo_in: [], cities: ['houston'] },
+    },
+  };
+  // A tree from an install without the Illinois DLC: Illinois cities and the
+  // placements in them are missing; everything else is fresh 1.61 data.
+  const fresh = {
+    cities: [{ id: 'houston', name: 'Houston', country: 'texas', population: 0 }],
+    countries: [{ id: 'texas', name: 'Texas' }, { id: 'south_dakota', name: 'South Dakota' }],
+    companies: [
+      { id: 'port_hou', name: 'Houston Cargo Terminal', cargo_out: ['rails', 'truss'], cargo_in: [], cities: ['houston'] },
+      { id: 'wal_mkt', name: 'Wallbert', cargo_out: ['cans'], cargo_in: ['cans'], cities: [] as string[] },
+      { id: 'aport_ord', name: 'Chicago International Airport', cargo_out: [], cargo_in: ['dryvan'], cities: [] as string[] },
+    ],
+  };
+  const merged = mergeCarriedCities(fresh, existing);
+
+  it('carries forward only the cities the tree lacks, plus their countries', () => {
+    expect(merged.cities.map(c => c.id).sort()).toEqual(['chicago', 'houston', 'peoria']);
+    expect(merged.cities.find(c => c.id === 'peoria')).toMatchObject({ name: 'Peoria', country: 'illinois' });
+    expect(merged.countries.map(c => c.id).sort()).toEqual(['illinois', 'south_dakota', 'texas']);
+    expect(merged.carried).toEqual({ cities: 2, countries: 1, placements: 2 });
+  });
+
+  it('takes company cargo and name fresh but restores placements in carried cities', () => {
+    const byId = Object.fromEntries(merged.companies.map(c => [c.id, c]));
+    expect(byId.port_hou.cargo_out).toEqual(['rails', 'truss']);
+    expect(byId.wal_mkt.cities).toEqual(['chicago']); // houston placement really gone
+    expect(byId.aport_ord).toMatchObject({ name: 'Chicago International Airport', cargo_in: ['dryvan'], cities: ['chicago'] });
+  });
+
+  it('does not resurrect a company the tree no longer defines', () => {
+    expect(merged.companies.find(c => c.id === 'gone_co')).toBeUndefined();
   });
 });
 
@@ -238,10 +295,9 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
       }
     });
 
-    // Company names come from the def `name` field, not formatCompanyName(id).
-    // ETS2 localized on reparse (#267); ATS via the targeted backfill (#289,
-    // scripts/backfill-company-names.cjs) since ATS can't be reparsed locally.
-    // Both: only a minority of companies lack a def name file and fall back to the
+    // Company names come from the def `name` field, not formatCompanyName(id)
+    // (ETS2 #267; ATS #289, natively since the 1.61 --keep-cities reparse).
+    // Only a minority of companies lack a def name file and fall back to the
     // id, so the localized majority guards against a regression silently reverting
     // every name to titlecase(id).
     it('most company names are def strings, not mechanical title-case of the id (#267, #289)', () => {
