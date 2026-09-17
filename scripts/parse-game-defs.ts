@@ -66,7 +66,7 @@ interface ParsedUnit {
   sourceFile?: string; // filename this unit was parsed from (for DLC tracking)
 }
 
-function parseSiiFile(content: string): ParsedUnit[] {
+export function parseSiiFile(content: string): ParsedUnit[] {
   const units: ParsedUnit[] = [];
   const lines = content.split('\n');
 
@@ -114,8 +114,13 @@ function parseSiiFile(content: string): ParsedUnit[] {
       continue;
     }
 
-    // Property: "key: value" or "key[]: value" or "key[N]: value"
-    const propMatch = line.match(/^\t*(\w+)(\[\d*\])?\s*:\s*(.+)$/);
+    // Property: "key: value" or "key[]: value" or "key[N]: value". A property
+    // line may also close its unit — SCS writes `slave_trailer: .second}` in
+    // the double-reefer dealer preset — so a trailing brace is honoured after
+    // the property is recorded, or the next unit's parts overwrite this one's.
+    const closesUnit = line.length > 1 && line.endsWith('}') && !line.endsWith('"}');
+    const propLine = closesUnit ? line.slice(0, -1).trim() : line;
+    const propMatch = propLine.match(/^\t*(\w+)(\[\d*\])?\s*:\s*(.+)$/);
     if (propMatch) {
       const key = propMatch[1];
       const isArray = propMatch[2] !== undefined;
@@ -158,6 +163,13 @@ function parseSiiFile(content: string): ParsedUnit[] {
         else if (value === 'false') currentUnit.props[key] = false;
         else if (/^-?\d+(\.\d+)?$/.test(value)) currentUnit.props[key] = parseFloat(value);
         else currentUnit.props[key] = value;
+      }
+    }
+    if (closesUnit) {
+      braceDepth--;
+      if (braceDepth === 0) {
+        units.push(currentUnit);
+        currentUnit = null;
       }
     }
   }
@@ -897,8 +909,10 @@ export function deriveTrailerIdFromDefName(name: string): string {
  * A non-preset configuration is priced by *walking* from a preset of the same
  * brand, which is what the upgrade shop does: keep the preset's accessories
  * that still fit (paint, bumpers, markers, mudflaps…), swap chassis and body,
- * re-count wheels per axle, add the new chassis/body `defaults[]`, and fill any
- * still-missing `require[]` type with the cheapest suitable part. The price is
+ * re-count wheels per axle, add the new chassis/body `defaults[]` (an unchanged
+ * chassis/body re-defaults a slot only where the default is cheaper than the
+ * fitted part), and fill any still-missing `require[]` type with the cheapest
+ * suitable part. The price is
  * the cheapest such walk across the brand's presets (the preset itself
  * included), i.e. the least you can pay for that configuration with default
  * parts. Verified to the euro on 7 owned SCS combinations; the two brand-DLC
@@ -1036,10 +1050,15 @@ function extractTrailerPricing(): Map<string, TrailerPricing> {
             const bodyPath = bodyList[i] ?? '';
             const chassis = part(chassisPath);
             const body = bodyPath ? part(bodyPath) : null;
+            // Names of every fitted part, grown as parts are added: an accessory's
+            // `suitable_for[]` may name a bumper as readily as a chassis.
             const names = new Set([chassis.name, ...(body ? [body.name] : [])]);
             const base = preset.units[i] ?? null;
             const parts: string[] = [chassisPath, ...(bodyPath ? [bodyPath] : [])];
             const have = new Set(['chassis', 'body']);
+            const baseOf = (t: string) => (base ?? []).find(p => partType(p) === t);
+            const chassisChanged = baseOf('chassis') !== chassisPath;
+            const bodyChanged = !!body && baseOf('body') !== bodyPath;
             // Wheels: the base unit's wheel parts (or the brand fallback), one set per axle.
             const wheelSet = new Map<string, string>();
             for (const p of base ?? preset.units[0] ?? []) {
@@ -1053,10 +1072,21 @@ function extractTrailerPricing(): Map<string, TrailerPricing> {
               for (let a = 0; a < chassis.axles; a++) parts.push(p);
               have.add(t);
             }
-            // New chassis/body defaults always win.
-            for (const d of [...chassis.defaults, ...(body?.defaults ?? [])]) {
+            // A swapped-in chassis/body brings its defaults. An unchanged one only
+            // re-defaults a slot where the default is cheaper than what the preset
+            // fitted there — the least you can pay — never dearer (the livestock
+            // chassis defaults a €2,400 chrome front over the preset's €1,200 paint).
+            const fitted = new Map<string, string>();
+            for (const p of base ?? []) {
+              const t = partType(p);
+              if (!WHEEL.has(t) && t !== 'chassis' && t !== 'body' && !p.endsWith('/data.sii')) fitted.set(t, p);
+            }
+            const defaultsOf = (changed: boolean, ds: string[]) => changed
+              ? ds
+              : ds.filter(d => { const f = fitted.get(partType(d)); return !f || part(d).price < part(f).price; });
+            for (const d of [...defaultsOf(chassisChanged, chassis.defaults), ...defaultsOf(bodyChanged, body?.defaults ?? [])]) {
               const t = partType(d);
-              if (!have.has(t)) { parts.push(d); have.add(t); }
+              if (!have.has(t)) { parts.push(d); have.add(t); names.add(part(d).name); }
             }
             // Inherit the base unit's remaining accessories when they still fit.
             for (const p of base ?? []) {
@@ -1066,6 +1096,7 @@ function extractTrailerPricing(): Map<string, TrailerPricing> {
               if (bp.suitable_for.length > 0 && !bp.suitable_for.some(n => names.has(n))) continue;
               parts.push(p);
               have.add(t);
+              names.add(bp.name);
             }
             if (!have.has('paint_job') && fallback.has('paint_job')) {
               parts.push(`${brandDef}/paint_job/${fallback.get('paint_job')}`);

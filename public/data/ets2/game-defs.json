@@ -10843,7 +10843,7 @@
         "sweden"
       ],
       "ownable": true,
-      "price": 88380,
+      "price": 203020,
       "level_floor": 23
     },
     "scs.box.double_3_3.reefer_s": {
@@ -14277,7 +14277,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 88970,
+      "price": 89370,
       "level_floor": 14
     },
     "scs.livestock.single_3b.belly_stl": {
@@ -14291,7 +14291,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 88970,
+      "price": 89370,
       "level_floor": 14
     },
     "scs.livestock.single_3s.str_pnt": {
@@ -14305,8 +14305,8 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 74770,
-      "level_floor": 13
+      "price": 73870,
+      "level_floor": 12
     },
     "scs.livestock.single_3s.str_stl": {
       "name": "Scs Livestock Single 3s Str Stl",
