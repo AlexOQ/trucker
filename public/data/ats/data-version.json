@@ -1,5 +1,5 @@
 {
-  "game_version": "1.60.1.8",
-  "refreshed_at": "2026-09-04",
-  "coverage_notes": "Prices re-read from a 1.60.1.8 install with --prices-only (dealer presets + configuration walks); cities untouched"
+  "game_version": "1.61.1.4",
+  "refreshed_at": "2026-09-17",
+  "coverage_notes": "Full reparse of a 1.61.1.4 install with --keep-cities; the 6 unowned states’ cities carried forward from 1.60.1.8"
 }

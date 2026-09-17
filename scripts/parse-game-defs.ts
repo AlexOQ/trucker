@@ -6,6 +6,7 @@
 //   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--game ets2|ats]                  # Parse and write
 //   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --diff [--game ets2|ats]           # Diff against existing, don't write
 //   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --prices-only [--game ets2|ats]    # Re-price trailers + trucks in the existing game-defs.json, touch nothing else
+//   npx tsx scripts/parse-game-defs.ts <path-to-def-folder> --keep-cities [--game ets2|ats]    # Full parse, carrying cities the tree lacks forward from the existing game-defs.json
 //
 // Prices are read straight off the dealer presets (def/vehicle/trailer_dealer,
 // def/vehicle/truck_dealer): a preset lists every accessory unit on every
@@ -14,9 +15,16 @@
 // combinations and a truck (2026-09-04). Paint prices live in `@include`d
 // settings files, so accessory files are read with includes inlined.
 //
-// --prices-only exists for partial-ownership def trees (an ATS install missing
-// state DLCs): it patches only trailers.price / level_floor and
-// trucks.kit_price / presets by id, so the bundled city set is never touched.
+// Partial-ownership def trees (an ATS install missing state DLCs) carry every
+// cargo, trailer, truck and company def — only the unowned states' city defs
+// and the company editor/ placements in those cities are absent. Two modes
+// cover that tree:
+//   --prices-only  patches only trailers.price / level_floor and
+//                  trucks.kit_price / presets by id; nothing else is touched.
+//   --keep-cities  is a full parse that carries the unowned map DLCs' cities
+//                  (and their countries and company placements) forward from
+//                  the existing game-defs.json — see mergeCarriedCities().
+//                  Combine with --diff to review only the real changes.
 
 import { readFileSync, readdirSync, writeFileSync, existsSync, statSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
@@ -24,6 +32,7 @@ import { join, dirname } from 'path';
 const args = process.argv.slice(2);
 const diffMode = args.includes('--diff');
 const pricesOnly = args.includes('--prices-only');
+const keepCities = args.includes('--keep-cities');
 const gameFlagIdx = args.indexOf('--game');
 const rawGame = gameFlagIdx >= 0 ? args[gameFlagIdx + 1] : 'ets2';
 if (!process.env.VITEST && rawGame !== 'ets2' && rawGame !== 'ats') {
@@ -35,9 +44,10 @@ if (!process.env.VITEST && rawGame !== 'ets2' && rawGame !== 'ats') {
 const game = (rawGame === 'ats' ? 'ats' : 'ets2') as 'ets2' | 'ats';
 const rawDefsPath = args.find((a, i) => !a.startsWith('--') && args[i - 1] !== '--game');
 if (!process.env.VITEST && (!rawDefsPath || !existsSync(rawDefsPath))) {
-  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff | --prices-only] [--game ets2|ats]');
+  console.error('Usage: npx tsx scripts/parse-game-defs.ts <path-to-def-folder> [--diff] [--prices-only | --keep-cities] [--game ets2|ats]');
   console.error('  --diff         Compare against existing game-defs.json without writing');
   console.error('  --prices-only  Patch only trailer prices and truck presets into the existing game-defs.json');
+  console.error('  --keep-cities  Carry cities missing from the def tree (unowned map DLCs) forward from the existing game-defs.json');
   console.error('  --game <id>    Target game (default: ets2). Routes I/O to public/data/<id>/game-defs.json');
   console.error('Example: npx tsx scripts/parse-game-defs.ts /tmp/ets2-1.60-defs --game ets2 --diff');
   process.exit(1);
@@ -334,7 +344,7 @@ const ETS2_CITY_DLC_MAP: Record<string, string[]> = {
     'constanta','craiova','edirne','galati','giurgiu','hamzabeyli','hunedoara','iasi',
     'istanbul','kapikule','karlovo','kozloduy','mangalia','nadlac','pernik','pirdop',
     'pitesti','pleven','plovdiv','resita','ruse','sofia','targu_mures','tekirdag',
-    'timisoara','varna','veli_tarnovi',
+    'timisoara','varna','veli_tarnovo',
   ],
   iberia: [
     'a_coruna','albacete','algeciras','almaraz','almeria','badajoz','bailen','barcelona',
@@ -548,8 +558,9 @@ const ATS_CARGO_DLC_MAP: Record<string, string> = {
  *
  * Permanently empty: ATS state map DLCs ship no cargo defs at all. Verified against
  * 13 owned state archives (AR CO ID MT NM OK OR TX UT WA WY + free AZ NV) on
- * 1.60.1.8 — every `dlc_<state>.scs` contains `def/city` plus per-company `in`/`out`
- * lists, but zero files under `def/cargo`, and no `def/cargo.dlc_<state>.sii` aggregator
+ * 1.60.1.8 — every `dlc_<state>.scs` contains `def/city` plus per-company `editor/`
+ * placements (company defs and their `in`/`out` lists are base-only, `def.scs`),
+ * but zero files under `def/cargo`, and no `def/cargo.dlc_<state>.sii` aggregator
  * exists for any state. State DLCs extend where existing cargo spawns, never what
  * cargo exists. Contrast ETS2, where map expansions do add shadow cargo.
  *
@@ -580,14 +591,25 @@ const MAP_DLC_CARGO: Record<string, string> =
 /** Cities by DLC. For ATS this is computed by grouping each city by its
  * country (state) and routing through ATS_STATE_TO_DLC. The set of cities
  * is not yet known here (cities are extracted later); we expose a builder
- * the city extractor calls once it has the data. */
+ * the city extractor calls once it has the data.
+ *
+ * A state absent from ATS_STATE_TO_DLC is an error, not base game: the
+ * `country/` defs ship ahead of a state DLC (south_dakota landed in 1.61 with
+ * no cities), and the day its cities arrive an unmapped state would silently
+ * publish them to every user. Add the state to ATS_STATE_TO_DLC and
+ * ATS_MAP_DLCS instead. */
 export function buildAtsCityDlcMap(cityIds: Array<{ id: string; country: string }>): Record<string, string[]> {
   const byDlc: Record<string, string[]> = {};
+  const unmapped = new Set<string>();
   for (const c of cityIds) {
+    if (!(c.country in ATS_STATE_TO_DLC)) { unmapped.add(c.country); continue; }
     const dlc = ATS_STATE_TO_DLC[c.country];
-    if (!dlc) continue; // base / free state, no DLC required
+    if (dlc === null) continue; // base / free state, no DLC required
     if (!byDlc[dlc]) byDlc[dlc] = [];
     byDlc[dlc].push(c.id);
+  }
+  if (unmapped.size > 0) {
+    throw new Error(`ATS_STATE_TO_DLC has no entry for state(s): ${[...unmapped].sort().join(', ')} — map each to its DLC id (and add it to ATS_MAP_DLCS) or to null for base game`);
   }
   for (const dlc of Object.keys(byDlc)) byDlc[dlc].sort();
   return byDlc;
@@ -1320,8 +1342,11 @@ function extractCompanies(): CompanyData[] {
       }
     }
 
-    // Only include companies that have cargo and city placements
-    if ((cargoOut.length > 0 || cargoIn.length > 0) && cities.length > 0) {
+    // Only include companies that have cargo. Placement-less companies are
+    // kept: on a partial-ownership tree their editor/ files sit in an unowned
+    // map DLC, and --keep-cities restores the placements before main() drops
+    // whatever is still unplaced.
+    if (cargoOut.length > 0 || cargoIn.length > 0) {
       companies.push({
         id,
         name: companyNames.get(id) ?? formatCompanyName(id),
@@ -1817,16 +1842,22 @@ function main() {
   }
 
   console.log('Extracting companies...');
-  const companies = extractCompanies();
+  let companies = extractCompanies();
   console.log(`  Found ${companies.length} companies`);
 
   console.log('Extracting cities...');
-  const cities = extractCities();
+  let cities = extractCities();
   console.log(`  Found ${cities.length} cities`);
 
   console.log('Extracting countries...');
-  const countries = extractCountries();
+  let countries = extractCountries();
   console.log(`  Found ${countries.length} countries`);
+
+  if (keepCities) {
+    console.log('Carrying forward cities the def tree lacks...');
+    ({ companies, cities, countries } = carryForwardCities({ companies, cities, countries }));
+  }
+  companies = companies.filter(co => co.cities.length > 0);
 
   console.log('Extracting economy data...');
   const economy = extractEconomy();
@@ -1853,6 +1884,82 @@ function main() {
     writeOutput(cargo, trailers, companies, cities, countries, economy, trucks, matches, cityCompanyMap, frontendData);
     printSummary(cargo, trailers, companies, cities, countries, trucks, matches, cityCompanyMap);
   }
+}
+
+/** The slice of game-defs.json that --keep-cities reads back. */
+interface CarriedDefs {
+  cities: Record<string, { name: string; country: string }>;
+  countries: Record<string, { name: string }>;
+  companies: Record<string, { name: string; cargo_out: string[]; cargo_in: string[]; cities: string[] }>;
+  dlc: { city_dlc_map: Record<string, string[]> };
+}
+
+interface CityScope {
+  companies: CompanyData[];
+  cities: CityData[];
+  countries: CountryData[];
+}
+
+/**
+ * Merge for --keep-cities. Everything the def tree knows is taken fresh; only
+ * what it cannot see is carried forward from the existing file:
+ *   - cities of a map DLC the tree has NO city of, per the existing file's
+ *     dlc.city_dlc_map (an unowned DLC is absent whole; a DLC with any city in
+ *     the tree is owned, and a base-game city is always in the tree, so a city
+ *     missing from either is a real removal and is not carried), and the
+ *     countries those cities sit in when the tree lacks them;
+ *   - each company's placements in those carried cities — a company is
+ *     otherwise taken fresh, so a placement gone from an owned city stays gone.
+ * Keyed on the DLC rather than the country because ETS2 map DLCs split a
+ * country with the base game (France: 4 base cities, 32 in Vive la France).
+ * A company with no placement left after the merge is dropped by the caller.
+ * Pure; the I/O wrapper is carryForwardCities().
+ */
+export function mergeCarriedCities(fresh: CityScope, existing: CarriedDefs): CityScope & { carried: { cities: number; countries: number; placements: number; dlcs: string[] } } {
+  const freshCityIds = new Set(fresh.cities.map(c => c.id));
+  const cityDlc = new Map<string, string>();
+  for (const [dlc, ids] of Object.entries(existing.dlc.city_dlc_map)) for (const id of ids) cityDlc.set(id, dlc);
+  const dlcInTree = new Set([...freshCityIds].map(id => cityDlc.get(id)).filter((d): d is string => d !== undefined));
+  const carriedCityIds = Object.keys(existing.cities).filter(id => {
+    const dlc = cityDlc.get(id);
+    return !freshCityIds.has(id) && dlc !== undefined && !dlcInTree.has(dlc);
+  });
+  const carriedCitySet = new Set(carriedCityIds);
+  const cities = [
+    ...fresh.cities,
+    ...carriedCityIds.map(id => ({ id, name: existing.cities[id].name, country: existing.cities[id].country, population: 0 })),
+  ].sort((a, b) => a.name.localeCompare(b.name));
+
+  const freshCountryIds = new Set(fresh.countries.map(c => c.id));
+  const carriedCountryIds = [...new Set(carriedCityIds.map(id => existing.cities[id].country))].filter(id => !freshCountryIds.has(id));
+  const carriedCountries = carriedCountryIds.map(id => ({ id, name: existing.countries[id].name }));
+  const countries = [...fresh.countries, ...carriedCountries].sort((a, b) => a.name.localeCompare(b.name));
+
+  let placements = 0;
+  const companies = fresh.companies.map(co => {
+    const prev = existing.companies[co.id];
+    if (!prev) return co;
+    const extra = prev.cities.filter(c => carriedCitySet.has(c) && !co.cities.includes(c));
+    placements += extra.length;
+    return extra.length > 0 ? { ...co, cities: [...co.cities, ...extra].sort() } : co;
+  });
+
+  const dlcs = [...new Set(carriedCityIds.map(id => cityDlc.get(id) as string))].sort();
+  return { companies, cities, countries, carried: { cities: carriedCityIds.length, countries: carriedCountries.length, placements, dlcs } };
+}
+
+function carryForwardCities(fresh: CityScope): CityScope {
+  if (!existsSync(gameDefsPath)) {
+    console.error(`No ${gameDefsPath} to carry cities from — run a full parse first.`);
+    process.exit(1);
+  }
+  const existing = JSON.parse(readFileSync(gameDefsPath, 'utf-8')) as CarriedDefs;
+  const merged = mergeCarriedCities(fresh, existing);
+  // Name the DLCs: a DLC removed from the game looks exactly like an unowned
+  // one here, and this line is the only place the operator can tell them apart.
+  console.log(`  Carried ${merged.carried.cities} cities, ${merged.carried.countries} countries and ${merged.carried.placements} company placements from ${gameDefsPath}`);
+  console.log(`  Carried DLCs (must all be unowned): ${merged.carried.dlcs.join(', ') || 'none'}`);
+  return merged;
 }
 
 /**
@@ -1905,12 +2012,16 @@ function buildFrontendData(
   // Consistency check: every GARAGE_CITIES entry must exist in the extracted
   // cities[]. Catches silent has_garage:false regressions when a hand-curated
   // ID drifts from SCS's actual city.id (the Salt Lake City class of bug).
+  // A partial-ownership tree trips it too (unowned states' cities are absent);
+  // --diff only reads, so it warns and carries on — --keep-cities is the fix.
   const cityIdSet = new Set(cities.map(c => c.id));
   const missingGarageCities = [...GARAGE_CITIES].filter(id => !cityIdSet.has(id));
   if (missingGarageCities.length > 0) {
-    console.error(`[ERR] GARAGE_CITIES drift: ${missingGarageCities.length} id(s) not found in extracted cities[] for game=${game}:`);
+    const tag = diffMode ? '[WARN]' : '[ERR]';
+    console.error(`${tag} GARAGE_CITIES drift: ${missingGarageCities.length} id(s) not found in extracted cities[] for game=${game}:`);
     for (const id of missingGarageCities) console.error(`  - ${id}`);
-    process.exit(1);
+    console.error('  Hand-curated id drift, or a def tree missing map DLCs (re-run with --keep-cities).');
+    if (!diffMode) process.exit(1);
   }
 
   return {

@@ -46,8 +46,12 @@ ATS="$HOME/Library/Application Support/Steam/steamapps/common/American Truck Sim
 for a in def base base_share dlc_*; do
   go run . -x -o /tmp/ats_def "$ATS/$a.scs" def
 done
-npx tsx ../parse-game-defs.ts /tmp/ats_def/def --game ats
+npx tsx ../parse-game-defs.ts /tmp/ats_def/def --game ats --keep-cities
 ```
+
+`--keep-cities` because an install without every state DLC yields a tree with
+no cities for the unowned states; the flag carries those forward from the
+bundled `game-defs.json` instead of tripping the garage-city drift guard.
 
 ## Deriving cargo→DLC-pack mappings
 

@@ -1,6 +1,7 @@
 # Trailer & truck price coverage — ETS2 + ATS
 
-Snapshot as of **2026-09-04** (ETS2 1.60.1.7, ATS 1.60.1.8).
+Game versions and refresh dates: README "Data Coverage" (generated from
+`public/data/<game>/data-version.json`).
 
 ## How prices are sourced
 
@@ -42,9 +43,9 @@ node scripts/all-ties.cjs ets2
 
 ## ATS
 
-Re-priced from a 1.60.1.8 install with `--prices-only`, which patches prices and
-truck presets into the bundled `game-defs.json` without touching the 20-state
-city set.
+Reparsed with `--keep-cities`: the owned states parse fresh; the unowned
+states' cities and company placements carry forward from the previous
+`game-defs.json` (see the parser header for the mode).
 
 ```
 node scripts/winners-table.cjs ats
