@@ -43,9 +43,9 @@ node scripts/all-ties.cjs ets2
 
 ## ATS
 
-Full reparse of a 1.61.1.4 install with `--keep-cities`: the 14 owned states
-parse fresh, the 6 unowned states' cities and company placements carry forward
-from the previous `game-defs.json` (see the parser header for the mode).
+Reparsed with `--keep-cities`: the owned states parse fresh; the unowned
+states' cities and company placements carry forward from the previous
+`game-defs.json` (see the parser header for the mode).
 
 ```
 node scripts/winners-table.cjs ats

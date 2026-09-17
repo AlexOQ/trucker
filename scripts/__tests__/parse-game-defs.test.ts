@@ -97,7 +97,7 @@ describe('mergeCarriedCities', () => {
     expect(merged.cities.map(c => c.id).sort()).toEqual(['chicago', 'houston', 'peoria']);
     expect(merged.cities.find(c => c.id === 'peoria')).toMatchObject({ name: 'Peoria', country: 'illinois' });
     expect(merged.countries.map(c => c.id).sort()).toEqual(['illinois', 'south_dakota', 'texas']);
-    expect(merged.carried).toEqual({ cities: 2, countries: 1, placements: 2 });
+    expect(merged.carried).toEqual({ cities: 2, countries: 1, placements: 2, dlcs: ['illinois'] });
   });
 
   it('drops a city missing from an owned DLC or the base game, and the placements in it', () => {
@@ -113,7 +113,7 @@ describe('mergeCarriedCities', () => {
       { cities: { paris: { name: 'Paris', country: 'france' }, lyon: { name: 'Lyon', country: 'france' } }, countries: { france: { name: 'France' } }, companies: {}, dlc: { city_dlc_map: { vive_la_france: ['lyon'] } } },
     );
     expect(merged2.cities.map(c => c.id).sort()).toEqual(['lyon', 'paris']);
-    expect(merged2.carried).toEqual({ cities: 1, countries: 0, placements: 0 });
+    expect(merged2.carried).toEqual({ cities: 1, countries: 0, placements: 0, dlcs: ['vive_la_france'] });
   });
 
   it('takes company cargo and name fresh but restores placements in carried cities', () => {
@@ -217,6 +217,12 @@ function runSchemaInvariantsForGame(game: 'ats' | 'ets2') {
         for (const c of co.cities) if (!(c in data.cities)) bad.push(`${id}: ${c} not in cities`);
       }
       expect(bad).toEqual([]);
+    });
+
+    it('every city_dlc_map value is a city id in cities (a misspelt id gates nothing)', () => {
+      const data = JSON.parse(readFileSync(fixturePath, 'utf-8'));
+      const orphans = Object.values(data.dlc.city_dlc_map as Record<string, string[]>).flat().filter(id => !(id in data.cities));
+      expect(orphans).toEqual([]);
     });
 
     it('city_dlc_map keys are a subset of map_dlcs keys (no orphan DLC references)', () => {

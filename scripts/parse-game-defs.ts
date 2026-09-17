@@ -344,7 +344,7 @@ const ETS2_CITY_DLC_MAP: Record<string, string[]> = {
     'constanta','craiova','edirne','galati','giurgiu','hamzabeyli','hunedoara','iasi',
     'istanbul','kapikule','karlovo','kozloduy','mangalia','nadlac','pernik','pirdop',
     'pitesti','pleven','plovdiv','resita','ruse','sofia','targu_mures','tekirdag',
-    'timisoara','varna','veli_tarnovi',
+    'timisoara','varna','veli_tarnovo',
   ],
   iberia: [
     'a_coruna','albacete','algeciras','almaraz','almeria','badajoz','bailen','barcelona',
@@ -1915,7 +1915,7 @@ interface CityScope {
  * A company with no placement left after the merge is dropped by the caller.
  * Pure; the I/O wrapper is carryForwardCities().
  */
-export function mergeCarriedCities(fresh: CityScope, existing: CarriedDefs): CityScope & { carried: { cities: number; countries: number; placements: number } } {
+export function mergeCarriedCities(fresh: CityScope, existing: CarriedDefs): CityScope & { carried: { cities: number; countries: number; placements: number; dlcs: string[] } } {
   const freshCityIds = new Set(fresh.cities.map(c => c.id));
   const cityDlc = new Map<string, string>();
   for (const [dlc, ids] of Object.entries(existing.dlc.city_dlc_map)) for (const id of ids) cityDlc.set(id, dlc);
@@ -1944,7 +1944,8 @@ export function mergeCarriedCities(fresh: CityScope, existing: CarriedDefs): Cit
     return extra.length > 0 ? { ...co, cities: [...co.cities, ...extra].sort() } : co;
   });
 
-  return { companies, cities, countries, carried: { cities: carriedCityIds.length, countries: carriedCountries.length, placements } };
+  const dlcs = [...new Set(carriedCityIds.map(id => cityDlc.get(id) as string))].sort();
+  return { companies, cities, countries, carried: { cities: carriedCityIds.length, countries: carriedCountries.length, placements, dlcs } };
 }
 
 function carryForwardCities(fresh: CityScope): CityScope {
@@ -1954,7 +1955,10 @@ function carryForwardCities(fresh: CityScope): CityScope {
   }
   const existing = JSON.parse(readFileSync(gameDefsPath, 'utf-8')) as CarriedDefs;
   const merged = mergeCarriedCities(fresh, existing);
+  // Name the DLCs: a DLC removed from the game looks exactly like an unowned
+  // one here, and this line is the only place the operator can tell them apart.
   console.log(`  Carried ${merged.carried.cities} cities, ${merged.carried.countries} countries and ${merged.carried.placements} company placements from ${gameDefsPath}`);
+  console.log(`  Carried DLCs (must all be unowned): ${merged.carried.dlcs.join(', ') || 'none'}`);
   return merged;
 }
 
