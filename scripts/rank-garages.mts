@@ -5,7 +5,8 @@
  *
  * Stubs `fetch` (reads public/ off disk) and `localStorage` (selects the game), then runs
  * the same calculateCityRankings() the rankings page uses. Owned-DLC sets below are read
- * off the ATS save's info.sii dependency list — see playthrough-ats/dlc-owned.md.
+ * off the ATS save's info.sii dependency list, the one authoritative source — an
+ * install-directory listing is not proof of ownership. (A local untracked note mirrors it.)
  *
  * ⚠️ RANKING_MC_SIMS is 500, so scores carry a few points of Monte Carlo noise. Treat gaps
  * under ~2% as ties and break them on depot count / position, not on the score.
