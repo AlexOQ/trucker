@@ -19,7 +19,10 @@ import {
   type OptimalFleet, type CityRanking,
 } from './optimizer';
 import type { AllData, Lookups } from './types';
-import { computeDLCValuesCore, type DLCMarginalValue } from './dlc-value';
+import {
+  computeDLCValuesCore, computeOptimalDLCSet,
+  type DLCMarginalValue, type OptimalDLCSet,
+} from './dlc-value';
 
 // ============================================
 // Module-level data store
@@ -43,7 +46,7 @@ export type WorkerResponse =
   | { type: 'initResult'; id: number }
   | { type: 'fleetResult'; id: number; result: OptimalFleet | null }
   | { type: 'rankingsResult'; id: number; result: CityRanking[] }
-  | { type: 'dlcValuesResult'; id: number; result: DLCMarginalValue[] }
+  | { type: 'dlcValuesResult'; id: number; result: DLCMarginalValue[]; optimalSet: OptimalDLCSet }
   | { type: 'dlcProgress'; id: number; completed: number; total: number }
   | { type: 'error'; id: number; message: string }
 
@@ -70,7 +73,7 @@ function computeDLCValuesInWorker(
   rawData: AllData,
   config: DLCConfig,
   postProgress: (completed: number, total: number) => void,
-): DLCMarginalValue[] {
+): { result: DLCMarginalValue[]; optimalSet: OptimalDLCSet } {
   const { ownedTrailer, ownedCargo, ownedMap, ownedGarages } = config;
   const garageCities = new Set(config.garageCities);
 
@@ -88,10 +91,21 @@ function computeDLCValuesInWorker(
     ...config.allCargoDLCIds.filter(id => !ownedCargo.includes(id)).map(id => ({ id, type: 'cargo' as const, name: id })),
   ];
 
-  return computeDLCValuesCore(rawData, {
+  const ownership = {
     ownedTrailer, ownedCargo, ownedMap, activeGarages, garageCities, unowned,
     cityDlcMap: config.cityDlcMap, combinedCargoDlcMap: config.combinedCargoDlcMap,
-  }, postProgress);
+  };
+  const result = computeDLCValuesCore(rawData, ownership, postProgress);
+
+  // Every DLC in the game, owned or not — the set search starts from "own everything" and prunes.
+  const allDlcs = [
+    ...config.allMapDLCIds.map(id => ({ id, type: 'map' as const, name: id })),
+    ...config.allTrailerDLCIds.map(id => ({ id, type: 'trailer' as const, name: id })),
+    ...config.allCargoDLCIds.map(id => ({ id, type: 'cargo' as const, name: id })),
+  ];
+  const optimalSet = computeOptimalDLCSet(rawData, ownership, allDlcs, postProgress);
+
+  return { result, optimalSet };
 }
 
 // ============================================
@@ -140,7 +154,9 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
             self.postMessage({ type: 'dlcProgress', id: msg.id, completed, total } satisfies WorkerResponse);
           },
         );
-        self.postMessage({ type: 'dlcValuesResult', id: msg.id, result } satisfies WorkerResponse);
+        self.postMessage({
+          type: 'dlcValuesResult', id: msg.id, result: result.result, optimalSet: result.optimalSet,
+        } satisfies WorkerResponse);
         break;
       }
     }
