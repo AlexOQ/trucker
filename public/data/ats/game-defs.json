@@ -1463,7 +1463,8 @@
       "groups": [
         "bulk"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 400
     },
     "excavator": {
       "name": "excavator",
@@ -1964,7 +1965,8 @@
       "groups": [
         "construction"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 400
     },
     "glass": {
       "name": "glass",
@@ -2449,7 +2451,8 @@
       "groups": [
         "livestock"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 600
     },
     "live_pigs": {
       "name": "live_pigs",
@@ -2467,7 +2470,8 @@
       "groups": [
         "livestock"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 600
     },
     "live_sheep": {
       "name": "live_sheep",
@@ -2485,7 +2489,8 @@
       "groups": [
         "livestock"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 600
     },
     "log_harvest": {
       "name": "log_harvester",
@@ -4244,7 +4249,8 @@
       "groups": [
         "bulk"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 400
     },
     "stumper": {
       "name": "stumper",

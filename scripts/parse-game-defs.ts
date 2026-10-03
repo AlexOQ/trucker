@@ -2238,6 +2238,15 @@ function buildFrontendData(
       body_types: c.body_types,
       groups: c.groups,
       excluded: c.excluded,
+      // Range limit from the def's `maximum_distance`. Nine ETS2 cargo carry one — livestock and
+      // excavated soil at 600 km, bulk (coal, ore, sand, stone dust, granite, wall panels) at 800 —
+      // and without it the optimizer believes `live_cattle` can cross the map, over-crediting any city
+      // whose pool leans on range-limited cargo. Emitted only when set; 0 means unlimited.
+      ...(c.max_distance ? { max_distance: c.max_distance } : {}),
+      // `minimum_distance` appears ONLY on `cargo_obsolete/` entries, all of which carry prob_coef 0
+      // and therefore never spawn. Emitted for completeness and for update-diffing, but it does not
+      // currently gate any live cargo.
+      ...(c.min_distance ? { min_distance: c.min_distance } : {}),
       ...(c.dlc ? { dlc: c.dlc } : {}),
     }])),
     trailers: Object.fromEntries(trailers.map(t => [t.id, {
@@ -2414,6 +2423,10 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
     if (oldVal.volume !== newVal.volume) diffs.push(`volume: ${oldVal.volume} → ${newVal.volume}`);
     if (oldVal.mass !== newVal.mass) diffs.push(`mass: ${oldVal.mass} → ${newVal.mass}`);
     if (oldVal.prob_coef !== newVal.prob_coef) diffs.push(`prob_coef: ${oldVal.prob_coef} → ${newVal.prob_coef}`);
+    if (oldVal.max_distance !== newVal.max_distance)
+      diffs.push(`max_distance: ${oldVal.max_distance ?? 'unlimited'} → ${newVal.max_distance ?? 'unlimited'}`);
+    if (oldVal.min_distance !== newVal.min_distance)
+      diffs.push(`min_distance: ${oldVal.min_distance ?? 'none'} → ${newVal.min_distance ?? 'none'}`);
     if (oldVal.fragile !== newVal.fragile) diffs.push(`fragile: ${oldVal.fragile} → ${newVal.fragile}`);
     if (oldVal.high_value !== newVal.high_value) diffs.push(`high_value: ${oldVal.high_value} → ${newVal.high_value}`);
     if (JSON.stringify(oldVal.body_types) !== JSON.stringify(newVal.body_types))
