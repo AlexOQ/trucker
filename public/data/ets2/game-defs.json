@@ -1247,7 +1247,8 @@
       "groups": [
         "bulk"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 800
     },
     "coconut_milk": {
       "name": "coconut_milk",
@@ -2050,7 +2051,8 @@
       "groups": [
         "bulk"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 600
     },
     "excavator": {
       "name": "excavator",
@@ -2655,7 +2657,8 @@
       "groups": [
         "bulk"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 800
     },
     "grapes": {
       "name": "grapes",
@@ -3168,7 +3171,8 @@
       "groups": [
         "livestock"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 600
     },
     "live_pigs": {
       "name": "live_pigs",
@@ -3186,7 +3190,8 @@
       "groups": [
         "livestock"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 600
     },
     "liver_paste": {
       "name": "liver_paste",
@@ -4296,7 +4301,8 @@
       "groups": [
         "bulk"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 800
     },
     "outdr_flr_tl": {
       "name": "outdoor_floor_tiles",
@@ -5410,7 +5416,8 @@
       "groups": [
         "bulk"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 800
     },
     "sandwch_pnls": {
       "name": "sandwich_panels",
@@ -5911,7 +5918,8 @@
       "groups": [
         "bulk"
       ],
-      "excluded": false
+      "excluded": false,
+      "max_distance": 800
     },
     "stone_wool": {
       "name": "stone_wool",
