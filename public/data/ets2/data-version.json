@@ -1,5 +1,5 @@
 {
-  "game_version": "1.61.1.0",
-  "refreshed_at": "2026-09-17",
-  "coverage_notes": "Full reparse of a 1.61.1.0 install (all map and trailer DLCs owned); livestock trailer prices moved with the rework, ids and capacities did not"
+  "game_version": "1.61.1.1",
+  "refreshed_at": "2026-10-03",
+  "coverage_notes": "Full reparse of a 1.61.1.1 install (all map and trailer DLCs owned). Diffed against the 1.61.1.0 bundle: the only changes were the six cargo-DLC attribution fixes, so the 1.61.1.0 -> 1.61.1.1 patch touched none of the extracted fields. Saves for validation come from a second PC via Steam Cloud, so pack-to-cargo attribution is read from this machine's archives while DLC ownership is read from the save's own info.sii; all eleven cargo-bearing archives are present locally."
 }
