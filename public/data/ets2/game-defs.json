@@ -66138,112 +66138,468 @@
   },
   "countries": {
     "belgium": {
-      "name": "België"
+      "name": "België",
+      "mass_limit_per_axle_count": [
+        19000,
+        26000,
+        39000,
+        44000
+      ]
     },
     "bosnia": {
-      "name": "Bosna i Hercegovina"
+      "name": "Bosna i Hercegovina",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "czech": {
-      "name": "Česká republika"
+      "name": "Česká republika",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        48000
+      ]
     },
     "denmark": {
-      "name": "Danmark"
+      "name": "Danmark",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        38000,
+        42000,
+        50000,
+        56000
+      ]
     },
     "germany": {
-      "name": "Deutschland"
+      "name": "Deutschland",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "estonia": {
-      "name": "Eesti"
+      "name": "Eesti",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000,
+        44000
+      ]
     },
     "spain": {
-      "name": "España"
+      "name": "España",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        38000,
+        46000,
+        60000
+      ]
     },
     "france": {
-      "name": "France"
+      "name": "France",
+      "mass_limit_per_axle_count": [
+        19000,
+        26000,
+        38000,
+        44000
+      ]
     },
     "croatia": {
-      "name": "Hrvatska"
+      "name": "Hrvatska",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "iceland": {
-      "name": "Ísland"
+      "name": "Ísland",
+      "mass_limit_per_axle_count": [
+        18000,
+        29000,
+        38000,
+        46000,
+        60000
+      ]
     },
     "italy": {
-      "name": "Italia"
+      "name": "Italia",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        40000,
+        44000
+      ]
     },
     "kosovo": {
-      "name": "Kosovo"
+      "name": "Kosovo",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "latvia": {
-      "name": "Latvija"
+      "name": "Latvija",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "luxembourg": {
-      "name": "Lëtzebuerg"
+      "name": "Lëtzebuerg",
+      "mass_limit_per_axle_count": [
+        19000,
+        26000,
+        44000
+      ]
     },
     "lithuania": {
-      "name": "Lietuva"
+      "name": "Lietuva",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "hungary": {
-      "name": "Magyarország"
+      "name": "Magyarország",
+      "mass_limit_per_axle_count": [
+        18000,
+        25000,
+        36000,
+        40000
+      ]
     },
     "netherlands": {
-      "name": "Nederland"
+      "name": "Nederland",
+      "mass_limit_per_axle_count": [
+        21500,
+        30500,
+        40000,
+        50000,
+        60000
+      ]
     },
     "norway": {
-      "name": "Norge"
+      "name": "Norge",
+      "mass_limit_per_axle_count": [
+        19000,
+        26000,
+        39000,
+        47000,
+        60000
+      ]
     },
     "austria": {
-      "name": "Österreich"
+      "name": "Österreich",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        44000
+      ]
     },
     "poland": {
-      "name": "Polska"
+      "name": "Polska",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "portugal": {
-      "name": "Portugal"
+      "name": "Portugal",
+      "mass_limit_per_axle_count": [
+        18000,
+        29000,
+        38000,
+        46000,
+        60000
+      ]
     },
     "romania": {
-      "name": "România"
+      "name": "România",
+      "mass_limit_per_axle_count": [
+        19000,
+        26000,
+        38000,
+        40000
+      ]
     },
     "switzerland": {
-      "name": "Schweiz"
+      "name": "Schweiz",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "albania": {
-      "name": "Shqipëria"
+      "name": "Shqipëria",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "slovenia": {
-      "name": "Slovenija"
+      "name": "Slovenija",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "slovakia": {
-      "name": "Slovensko"
+      "name": "Slovensko",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "finland": {
-      "name": "Suomi"
+      "name": "Suomi",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        44000,
+        56000,
+        60000,
+        68000,
+        74000,
+        84000,
+        105000
+      ]
     },
     "sweden": {
-      "name": "Sverige"
+      "name": "Sverige",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        38000,
+        46000,
+        64000,
+        64000
+      ]
     },
     "turkey": {
-      "name": "Türkiye"
+      "name": "Türkiye",
+      "mass_limit_per_axle_count": [
+        19000,
+        26000,
+        38000,
+        40000
+      ]
     },
     "uk": {
-      "name": "United Kingdom"
+      "name": "United Kingdom",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        38000,
+        40000,
+        44000
+      ]
     },
     "greece": {
-      "name": "Ελληνική Δημοκρατία"
+      "name": "Ελληνική Δημοκρατία",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        44000
+      ]
     },
     "bulgaria": {
-      "name": "България"
+      "name": "България",
+      "mass_limit_per_axle_count": [
+        19000,
+        26000,
+        38000,
+        40000
+      ]
     },
     "russia": {
-      "name": "Россия"
+      "name": "Россия",
+      "mass_limit_per_axle_count": [
+        18000,
+        25000,
+        36000,
+        40000,
+        44000
+      ]
     },
     "macedonia": {
-      "name": "Северна Македонија"
+      "name": "Северна Македонија",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "serbia": {
-      "name": "Србија"
+      "name": "Србија",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
     },
     "montenegro": {
-      "name": "Црна Гора"
+      "name": "Црна Гора",
+      "mass_limit_per_axle_count": [
+        18000,
+        26000,
+        36000,
+        40000
+      ]
+    }
+  },
+  "skills": {
+    "long_dist": {
+      "max_rank": 6,
+      "xp_bonus": 0.25,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3
+      ],
+      "max_distance_per_rank": [
+        400,
+        650,
+        1000,
+        1600,
+        2500,
+        4000
+      ]
+    },
+    "valuable": {
+      "max_rank": 6,
+      "xp_bonus": 0.18,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3
+      ]
+    },
+    "fragile": {
+      "max_rank": 6,
+      "xp_bonus": 0.22,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3
+      ]
+    },
+    "urgent": {
+      "max_rank": 6,
+      "xp_bonus": 0.3,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3
+      ]
+    },
+    "ecodriving": {
+      "max_rank": 6,
+      "fuel_saved_per_rank": [
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3,
+        0.35
+      ]
+    },
+    "adr": {
+      "max_rank": 6,
+      "xp_bonus": 0.21,
+      "rank_classes": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        8
+      ]
+    }
+  },
+  "trailer_fill": {
+    "container": {
+      "cargo_min_fill": 0.8,
+      "cargo_max_fill": 1
+    },
+    "curtainside": {
+      "cargo_min_fill": 0.8,
+      "cargo_max_fill": 1
+    },
+    "dryvan": {
+      "cargo_min_fill": 0.8,
+      "cargo_max_fill": 1
+    },
+    "flatbed": {
+      "cargo_min_fill": 1,
+      "cargo_max_fill": 1
+    },
+    "flatbed_brck": {
+      "cargo_min_fill": 0.8,
+      "cargo_max_fill": 1
+    },
+    "flatbed_cont": {
+      "cargo_min_fill": 1,
+      "cargo_max_fill": 1
+    },
+    "insulated": {
+      "cargo_min_fill": 0.8,
+      "cargo_max_fill": 1
+    },
+    "lowbed": {
+      "cargo_min_fill": 1,
+      "cargo_max_fill": 1
+    },
+    "lowboy": {
+      "cargo_min_fill": 1,
+      "cargo_max_fill": 1
+    },
+    "refrigerated": {
+      "cargo_min_fill": 0.8,
+      "cargo_max_fill": 1
     }
   },
   "cargo_trailer_units": {
@@ -148971,47 +149327,43 @@
   },
   "economy": {
     "fixed_revenue": 600,
+    "revenue_per_km_base": 15,
     "revenue_coef_per_km": 0.9,
     "cargo_market_revenue_coef_per_km": 1,
     "driver_revenue_coef_per_km": 0.67,
+    "driver_cargo_market_revenue_coef_per_km": 0.7,
+    "delivery_window_mins": [
+      400,
+      250,
+      90
+    ],
     "delivery_window_coefs": [
       1,
       1.15,
       1.4
     ],
-    "reward_bonus_fragile": [
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05
+    "reward_bonus_level": 0.015,
+    "minimal_driver_salary": 350,
+    "simulation_avg_speed": 62,
+    "maximum_driving_time": 660,
+    "sleeping_time": 540,
+    "no_cargo_prob": 0.1,
+    "cargo_validity_min": 180,
+    "cargo_validity_max": 1800,
+    "driver_no_return_job_prob": 0.1,
+    "driver_skilled_job_prob": 0.8,
+    "driver_max_cargo_damage": 6,
+    "driver_maintenance_cost": [
+      1.8,
+      3
     ],
-    "reward_bonus_valuable": [
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05
+    "fuel_cost_per_km": [
+      1.5,
+      2
     ],
-    "reward_bonus_long_dist": [
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05
-    ],
-    "reward_bonus_urgent": [
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05
-    ],
-    "reward_bonus_level": 0.015
+    "driver_hire_cost": 1500,
+    "free_driver_level_cap": 30,
+    "driver_offer_scrap_prob": 0.5
   },
   "trucks": [
     {

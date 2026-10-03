@@ -1459,6 +1459,13 @@ function extractCities(): CityData[] {
 interface CountryData {
   id: string;
   name: string;
+  /**
+   * Total combination mass cap by axle count, 0-indexed from 1 axle. Germany tops out at
+   * 40,000 kg on 4 axles where Finland reaches 105,000 on 10, so a trailer's own
+   * `gross_weight_limit` is not the binding constraint everywhere. Unmodelled by the optimizer
+   * as of register Q68; captured here so a game update to it is visible in --diff.
+   */
+  mass_limit_per_axle_count?: number[];
 }
 
 function extractCountries(): CountryData[] {
@@ -1472,10 +1479,12 @@ function extractCountries(): CountryData[] {
 
     const id = unit.name.replace('country.data.', '');
     const name = String(unit.props.name || unit.props.country_name || id);
+    const mass = unit.props.mass_limit_per_axle_count;
 
     countries.push({
       id,
       name: name.replace(/@@.*?@@/g, id),
+      ...(Array.isArray(mass) ? { mass_limit_per_axle_count: (mass as string[]).map(Number) } : {}),
     });
   }
 
@@ -1786,65 +1795,219 @@ function buildCityCompanyMap(companies: CompanyData[]): CityCompanyEntry[] {
 
 interface EconomyData {
   fixed_revenue: number;
+  revenue_per_km_base: number;
   revenue_coef_per_km: number;
   cargo_market_revenue_coef_per_km: number;
   driver_revenue_coef_per_km: number;
+  driver_cargo_market_revenue_coef_per_km: number;
+  delivery_window_mins: number[];
   delivery_window_coefs: number[];
-  reward_bonus_fragile: number[];
-  reward_bonus_valuable: number[];
-  reward_bonus_long_dist: number[];
-  reward_bonus_urgent: number[];
   reward_bonus_level: number;
+  // AI employee-driver block. These govern the fleet the advisor optimises, so a game update that
+  // touches any of them changes every recommendation - which is why they are diffed, not assumed.
+  minimal_driver_salary: number;
+  simulation_avg_speed: number;
+  maximum_driving_time: number;
+  sleeping_time: number;
+  no_cargo_prob: number;
+  cargo_validity_min: number;
+  cargo_validity_max: number;
+  driver_no_return_job_prob: number;
+  driver_skilled_job_prob: number;
+  driver_max_cargo_damage: number;
+  driver_maintenance_cost: number[];
+  fuel_cost_per_km: number[];
+  driver_hire_cost: number;
+  free_driver_level_cap: number;
+  driver_offer_scrap_prob: number;
 }
+
+/** Per-skill economics from `skill_data.sii`. Absent from every earlier bundle. */
+interface SkillData {
+  /** Rank cap, 6 for every skill in both games. */
+  max_rank: number;
+  /** `long_dist` only: max haul km by rank, 0-indexed. 400/650/1000/1600/2500/4000 in ETS2 1.61. */
+  max_distance_per_rank?: number[];
+  /**
+   * Revenue bonus by rank, CUMULATIVE TOTALS not increments (the sibling `xp` node of the same
+   * type carries a single value, so the array index is the rank and the value is the total).
+   * Absent for `adr` and `ecodriving`, which pay nothing. For `long_dist` the bonus actually paid
+   * is selected by the HAUL's distance band, not by the driver's rank - see register Q75.
+   */
+  revenue_bonus_per_rank?: number[];
+  xp_bonus?: number;
+  /** `adr` only: hazmat classes unlocked per rank. */
+  rank_classes?: number[];
+  /** `ecodriving` only: fuel saved per rank. Does not apply to AI drivers. */
+  fuel_saved_per_rank?: number[];
+}
+
+/**
+ * Per-body-type cargo fill roll from `def/economy_trailers_data/<body>.sii`.
+ * The game rolls a fill fraction per job; `units = floor(volume * fill / cargo_volume)`.
+ * Six ETS2 bodies roll 0.8-1.0 and four roll 1.0-1.0, an ~11% systematic bias between them.
+ * Bodies with no file (chemtank, dumper, foodtank, fueltank, gastank, livestock, log, silo) are
+ * absent here and the def states no default - do not assume 1.0 for them.
+ */
+interface TrailerFill {
+  cargo_min_fill: number;
+  cargo_max_fill: number;
+}
+
+const ECONOMY_FALLBACK: EconomyData = {
+  fixed_revenue: 600,
+  revenue_per_km_base: 15,
+  revenue_coef_per_km: 0.9,
+  cargo_market_revenue_coef_per_km: 1.0,
+  driver_revenue_coef_per_km: 0.67,
+  driver_cargo_market_revenue_coef_per_km: 0.70,
+  delivery_window_mins: [400, 250, 90],
+  delivery_window_coefs: [1.0, 1.15, 1.4],
+  reward_bonus_level: 0.015,
+  minimal_driver_salary: 350,
+  simulation_avg_speed: 62.0,
+  maximum_driving_time: 660,
+  sleeping_time: 540,
+  no_cargo_prob: 0.1,
+  cargo_validity_min: 180,
+  cargo_validity_max: 1800,
+  driver_no_return_job_prob: 0.1,
+  driver_skilled_job_prob: 0.8,
+  driver_max_cargo_damage: 6.0,
+  driver_maintenance_cost: [1.8, 3.0],
+  fuel_cost_per_km: [1.5, 2.0],
+  driver_hire_cost: 1500,
+  free_driver_level_cap: 30,
+  driver_offer_scrap_prob: 0.5,
+};
 
 function extractEconomy(): EconomyData {
   const econFile = join(defsPath, 'economy_data.sii');
-  if (!existsSync(econFile)) {
-    return {
-      fixed_revenue: 600,
-      revenue_coef_per_km: 0.9,
-      cargo_market_revenue_coef_per_km: 1.0,
-      driver_revenue_coef_per_km: 0.67,
-      delivery_window_coefs: [1.0, 1.15, 1.4],
-      reward_bonus_fragile: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
-      reward_bonus_valuable: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
-      reward_bonus_long_dist: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
-      reward_bonus_urgent: [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
-      reward_bonus_level: 0.015,
-    };
-  }
+  if (!existsSync(econFile)) return { ...ECONOMY_FALLBACK };
 
-  const content = readFileSync(econFile, 'utf-8');
-  const units = parseSiiFile(content);
+  const units = parseSiiFile(readFileSync(econFile, 'utf-8'));
   const econ = units.find(u => u.type === 'economy_data');
-  if (!econ) return extractEconomy(); // return defaults
+  if (!econ) return { ...ECONOMY_FALLBACK };
+
+  const num = (k: string, d: number) =>
+    typeof econ.props[k] === 'number' ? (econ.props[k] as number) : d;
+  const arr = (k: string, d: number[]) =>
+    Array.isArray(econ.props[k]) ? (econ.props[k] as string[]).map(Number) : d;
+  // `(1.5, 2.0)` tuples arrive as a single string, not an array.
+  const tuple = (k: string, d: number[]) => {
+    const v = econ.props[k];
+    if (Array.isArray(v)) return (v as string[]).map(Number);
+    if (typeof v === 'string') {
+      const m = v.match(/-?[\d.]+/g);
+      if (m && m.length >= 2) return m.map(Number);
+    }
+    if (typeof v === 'number') return [v, v];
+    return d;
+  };
 
   return {
-    fixed_revenue: typeof econ.props.fixed_revenue === 'number' ? econ.props.fixed_revenue : 600,
-    revenue_coef_per_km: typeof econ.props.revenue_coef_per_km === 'number'
-      ? econ.props.revenue_coef_per_km : 0.9,
-    cargo_market_revenue_coef_per_km: typeof econ.props.cargo_market_revenue_coef_per_km === 'number'
-      ? econ.props.cargo_market_revenue_coef_per_km : 1.0,
-    driver_revenue_coef_per_km: typeof econ.props.driver_revenue_coef_per_km === 'number'
-      ? econ.props.driver_revenue_coef_per_km : 0.67,
-    delivery_window_coefs: Array.isArray(econ.props.delivery_window_coef)
-      ? (econ.props.delivery_window_coef as string[]).map(Number)
-      : [1.0, 1.15, 1.4],
-    reward_bonus_fragile: Array.isArray(econ.props.reward_bonus_fragile)
-      ? (econ.props.reward_bonus_fragile as string[]).map(Number)
-      : [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
-    reward_bonus_valuable: Array.isArray(econ.props.reward_bonus_valuable)
-      ? (econ.props.reward_bonus_valuable as string[]).map(Number)
-      : [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
-    reward_bonus_long_dist: Array.isArray(econ.props.reward_bonus_long_dist)
-      ? (econ.props.reward_bonus_long_dist as string[]).map(Number)
-      : [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
-    reward_bonus_urgent: Array.isArray(econ.props.reward_bonus_urgent)
-      ? (econ.props.reward_bonus_urgent as string[]).map(Number)
-      : [0.05, 0.05, 0.05, 0.05, 0.05, 0.05],
-    reward_bonus_level: typeof econ.props.reward_bonus_level === 'number'
-      ? econ.props.reward_bonus_level : 0.015,
+    fixed_revenue: num('fixed_revenue', ECONOMY_FALLBACK.fixed_revenue),
+    revenue_per_km_base: num('revenue_per_km_base', ECONOMY_FALLBACK.revenue_per_km_base),
+    revenue_coef_per_km: num('revenue_coef_per_km', ECONOMY_FALLBACK.revenue_coef_per_km),
+    cargo_market_revenue_coef_per_km:
+      num('cargo_market_revenue_coef_per_km', ECONOMY_FALLBACK.cargo_market_revenue_coef_per_km),
+    driver_revenue_coef_per_km:
+      num('driver_revenue_coef_per_km', ECONOMY_FALLBACK.driver_revenue_coef_per_km),
+    driver_cargo_market_revenue_coef_per_km: num(
+      'driver_cargo_market_revenue_coef_per_km',
+      ECONOMY_FALLBACK.driver_cargo_market_revenue_coef_per_km,
+    ),
+    delivery_window_mins: arr('delivery_window', ECONOMY_FALLBACK.delivery_window_mins),
+    delivery_window_coefs: arr('delivery_window_coef', ECONOMY_FALLBACK.delivery_window_coefs),
+    reward_bonus_level: num('reward_bonus_level', ECONOMY_FALLBACK.reward_bonus_level),
+    minimal_driver_salary: num('minimal_driver_salary', ECONOMY_FALLBACK.minimal_driver_salary),
+    simulation_avg_speed: num('simulation_avg_speed', ECONOMY_FALLBACK.simulation_avg_speed),
+    maximum_driving_time: num('maximum_driving_time', ECONOMY_FALLBACK.maximum_driving_time),
+    sleeping_time: num('sleeping_time', ECONOMY_FALLBACK.sleeping_time),
+    no_cargo_prob: num('no_cargo_prob', ECONOMY_FALLBACK.no_cargo_prob),
+    cargo_validity_min: num('cargo_validity_min', ECONOMY_FALLBACK.cargo_validity_min),
+    cargo_validity_max: num('cargo_validity_max', ECONOMY_FALLBACK.cargo_validity_max),
+    driver_no_return_job_prob:
+      num('driver_no_return_job_prob', ECONOMY_FALLBACK.driver_no_return_job_prob),
+    driver_skilled_job_prob:
+      num('driver_skilled_job_prob', ECONOMY_FALLBACK.driver_skilled_job_prob),
+    driver_max_cargo_damage:
+      num('driver_max_cargo_damage', ECONOMY_FALLBACK.driver_max_cargo_damage),
+    driver_maintenance_cost:
+      tuple('driver_maintenance_cost', ECONOMY_FALLBACK.driver_maintenance_cost),
+    fuel_cost_per_km: tuple('fuel_cost_per_km', ECONOMY_FALLBACK.fuel_cost_per_km),
+    driver_hire_cost: num('driver_hire_cost', ECONOMY_FALLBACK.driver_hire_cost),
+    free_driver_level_cap: num('free_driver_level_cap', ECONOMY_FALLBACK.free_driver_level_cap),
+    driver_offer_scrap_prob:
+      num('driver_offer_scrap_prob', ECONOMY_FALLBACK.driver_offer_scrap_prob),
   };
+}
+
+/**
+ * Reads `def/skill_data.sii`. No earlier pipeline step opened this file, so the four
+ * `reward_bonus_*` arrays previously emitted were a hardcoded `[0.05 x 6]` fallback standing in
+ * for fields that do not exist in `economy_data.sii` in either game. Register Q68.
+ */
+function extractSkills(): Record<string, SkillData> {
+  const f = join(defsPath, 'skill_data.sii');
+  if (!existsSync(f)) return {};
+
+  const units = parseSiiFile(readFileSync(f, 'utf-8'));
+  const out: Record<string, SkillData> = {};
+  const skillOf = (name: string) => {
+    const m = name.match(/^\.skills\.([a-z_]+)/);
+    return m ? m[1] : null;
+  };
+  const nums = (v: unknown): number[] | undefined =>
+    Array.isArray(v) ? (v as string[]).map(Number)
+      : typeof v === 'number' ? [v]
+      : undefined;
+
+  for (const u of units) {
+    const skill = skillOf(u.name);
+    if (!skill) continue;
+    const e = (out[skill] ??= { max_rank: 6 });
+
+    if (typeof u.props.max_rank === 'number') e.max_rank = u.props.max_rank;
+
+    const d = nums(u.props.max_distance_per_rank);
+    if (d) e.max_distance_per_rank = d;
+
+    const inc = nums(u.props.percentage_increase_per_rank);
+    if (inc) {
+      // `.revenue` and `.xp` sub-units share the unit type; the suffix disambiguates them.
+      if (u.name.endsWith('.revenue')) e.revenue_bonus_per_rank = inc;
+      else if (u.name.endsWith('.xp')) e.xp_bonus = inc[0];
+    }
+
+    const dec = nums(u.props.percentage_decrease_per_rank);
+    if (dec) e.fuel_saved_per_rank = dec;
+
+    const cls = nums(u.props.rank_classes);
+    if (cls) e.rank_classes = cls;
+  }
+  return out;
+}
+
+/** Reads `def/economy_trailers_data/<body>.sii`; filename is the body type. */
+function extractTrailerFill(): Record<string, TrailerFill> {
+  const dir = join(defsPath, 'economy_trailers_data');
+  if (!existsSync(dir)) return {};
+
+  const out: Record<string, TrailerFill> = {};
+  for (const file of readdirSync(dir)) {
+    if (!file.endsWith('.sii')) continue;
+    const body = file.replace(/\.sii$/, '');
+    const u = parseSiiFile(readFileSync(join(dir, file), 'utf-8'))
+      .find(x => x.type === 'economy_trailer_data');
+    if (!u) continue;
+    const mn = u.props.cargo_min_fill;
+    const mx = u.props.cargo_max_fill;
+    if (typeof mn === 'number' && typeof mx === 'number') {
+      out[body] = { cargo_min_fill: mn, cargo_max_fill: mx };
+    }
+  }
+  return out;
 }
 
 // ─── Main ──────────────────────────────────────────────────────────────
@@ -1893,7 +2056,9 @@ function main() {
 
   console.log('Extracting economy data...');
   const economy = extractEconomy();
-  console.log('  Done');
+  const skills = extractSkills();
+  const trailerFill = extractTrailerFill();
+  console.log(`  ${Object.keys(skills).length} skills, ${Object.keys(trailerFill).length} body fill ranges`);
 
   console.log('Extracting trucks...');
   const trucks = extractTrucks();
@@ -1908,7 +2073,7 @@ function main() {
   console.log(`  Found ${cityCompanyMap.length} city-company placements`);
 
   // Build frontend-compatible data structure
-  const frontendData = buildFrontendData(cargo, trailers, companies, cities, countries, matches, cityCompanyMap, economy, trucks);
+  const frontendData = buildFrontendData(cargo, trailers, companies, cities, countries, matches, cityCompanyMap, economy, trucks, skills, trailerFill);
 
   if (diffMode) {
     runDiff(frontendData);
@@ -1921,7 +2086,9 @@ function main() {
 /** The slice of game-defs.json that --keep-cities reads back. */
 interface CarriedDefs {
   cities: Record<string, { name: string; country: string }>;
-  countries: Record<string, { name: string }>;
+  countries: Record<string, { name: string; mass_limit_per_axle_count?: number[] }>;
+  skills?: Record<string, Record<string, unknown>>;
+  trailer_fill?: Record<string, Record<string, unknown>>;
   companies: Record<string, { name: string; cargo_out: string[]; cargo_in: string[]; cities: string[] }>;
   dlc: { city_dlc_map: Record<string, string[]> };
 }
@@ -2037,6 +2204,7 @@ function buildFrontendData(
   cargo: CargoData[], trailers: TrailerData[], companies: CompanyData[],
   cities: CityData[], countries: CountryData[], matches: CargoTrailerMatch[],
   cityCompanyMap: CityCompanyEntry[], economy: EconomyData, trucks: TruckData[],
+  skills: Record<string, SkillData> = {}, trailerFill: Record<string, TrailerFill> = {},
 ) {
   // Game-aware city → DLCs map. Pure helper, no module-scope state.
   const cityDlcMap = getCityDlcMap(game, cities.map(c => ({ id: c.id, country: c.country })));
@@ -2098,7 +2266,12 @@ function buildFrontendData(
       country: c.country,
       has_garage: GARAGE_CITIES.has(c.id),
     }])),
-    countries: Object.fromEntries(countries.map(c => [c.id, { name: c.name }])),
+    countries: Object.fromEntries(countries.map(c => [c.id, {
+      name: c.name,
+      ...(c.mass_limit_per_axle_count ? { mass_limit_per_axle_count: c.mass_limit_per_axle_count } : {}),
+    }])),
+    skills,
+    trailer_fill: trailerFill,
     cargo_trailer_units: (() => {
       const result: Record<string, Record<string, number>> = {};
       for (const m of matches) {
@@ -2319,8 +2492,14 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
 
   // --- Country diff ---
   diffSection(changes, 'countries', existing.countries || {}, newData.countries, (id, oldVal, newVal) => {
-    if (oldVal.name !== newVal.name) return `name: "${oldVal.name}" → "${newVal.name}"`;
-    return null;
+    const diffs: string[] = [];
+    if (oldVal.name !== newVal.name) diffs.push(`name: "${oldVal.name}" → "${newVal.name}"`);
+    // Per-country combination mass cap by axle count. Interacts with trailer gross_weight_limit, so a
+    // change here moves deliverable payload without touching any trailer def (register Q68).
+    const om = JSON.stringify(oldVal.mass_limit_per_axle_count);
+    const nm = JSON.stringify(newVal.mass_limit_per_axle_count);
+    if (om !== nm) diffs.push(`mass_limit_per_axle_count: ${om} → ${nm}`);
+    return diffs.length > 0 ? diffs.join(', ') : null;
   }, () => 'needs_input'); // New countries always need input
 
   // --- Economy diff ---
@@ -2335,6 +2514,40 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
   if (econChanges.length > 0) {
     changes.push({ category: 'clean', section: 'economy', type: 'changed', id: 'economy', detail: econChanges.join(', ') });
   }
+
+  // --- Skill economics diff (skill_data.sii) ---
+  // A game update that retunes a skill's revenue ladder or the long_dist distance bands changes every
+  // recommendation the advisor makes, silently. It is classified needs_input for that reason: the shape
+  // of these arrays is load-bearing (register Q75), not a cosmetic data refresh.
+  diffSection(
+    changes, 'skills', existing.skills || {}, newData.skills || {},
+    (_id, o, n) => {
+      const d: string[] = [];
+      for (const k of new Set([...Object.keys(o || {}), ...Object.keys(n || {})])) {
+        const ov = JSON.stringify((o || {})[k]);
+        const nv = JSON.stringify((n || {})[k]);
+        if (ov !== nv) d.push(`${k}: ${ov} → ${nv}`);
+      }
+      return d.length ? d.join(', ') : null;
+    },
+    () => 'needs_input',
+  );
+
+  // --- Per-body cargo fill diff (economy_trailers_data/) ---
+  // These set units per haul, so a change reorders body types against each other.
+  diffSection(
+    changes, 'trailer_fill', existing.trailer_fill || {}, newData.trailer_fill || {},
+    (_id, o, n) => {
+      const d: string[] = [];
+      for (const k of ['cargo_min_fill', 'cargo_max_fill']) {
+        if (JSON.stringify((o || {})[k]) !== JSON.stringify((n || {})[k])) {
+          d.push(`${k}: ${JSON.stringify((o || {})[k])} → ${JSON.stringify((n || {})[k])}`);
+        }
+      }
+      return d.length ? d.join(', ') : null;
+    },
+    () => 'needs_input',
+  );
 
   // --- Print results ---
   const clean = changes.filter(c => c.category === 'clean');
