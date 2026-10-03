@@ -39405,69 +39405,279 @@
   },
   "countries": {
     "arizona": {
-      "name": "Arizona"
+      "name": "Arizona",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "arkansas": {
-      "name": "Arkansas"
+      "name": "Arkansas",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "california": {
-      "name": "California"
+      "name": "California",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "colorado": {
-      "name": "Colorado"
+      "name": "Colorado",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4,
+        45359.3,
+        49895.2
+      ]
     },
     "idaho": {
-      "name": "Idaho"
+      "name": "Idaho",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4,
+        45359.3,
+        47854
+      ]
     },
     "illinois": {
-      "name": "Illinois"
+      "name": "Illinois",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "iowa": {
-      "name": "Iowa"
+      "name": "Iowa",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "kansas": {
-      "name": "Kansas"
+      "name": "Kansas",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "louisiana": {
-      "name": "Louisiana"
+      "name": "Louisiana",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "missouri": {
-      "name": "Missouri"
+      "name": "Missouri",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "montana": {
-      "name": "Montana"
+      "name": "Montana",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4,
+        45359.3,
+        50076.6,
+        58967,
+        59447.9
+      ]
     },
     "nebraska": {
-      "name": "Nebraska"
+      "name": "Nebraska",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "nevada": {
-      "name": "Nevada"
+      "name": "Nevada",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4,
+        45359.3,
+        54431.1,
+        58513.5
+      ]
     },
     "new_mexico": {
-      "name": "New Mexico"
+      "name": "New Mexico",
+      "mass_limit_per_axle_count": [
+        19595.2,
+        29392.8,
+        39490.4
+      ]
     },
     "oklahoma": {
-      "name": "Oklahoma"
+      "name": "Oklahoma",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4,
+        40823.4
+      ]
     },
     "oregon": {
-      "name": "Oregon"
+      "name": "Oregon",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4,
+        45359.3,
+        47854
+      ]
     },
     "south_dakota": {
-      "name": "South Dakota"
+      "name": "South Dakota",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "texas": {
-      "name": "Texas"
+      "name": "Texas",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4
+      ]
     },
     "utah": {
-      "name": "Utah"
+      "name": "Utah",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4,
+        45359.3,
+        54431.1,
+        58513.5
+      ]
     },
     "washington": {
-      "name": "Washington"
+      "name": "Washington",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4,
+        45359.3,
+        47854
+      ]
     },
     "wyoming": {
-      "name": "Wyoming"
+      "name": "Wyoming",
+      "mass_limit_per_axle_count": [
+        18143.7,
+        27215.6,
+        36287.4,
+        45359.3,
+        50348.8,
+        52390,
+        53070.4
+      ]
     }
   },
+  "skills": {
+    "long_dist": {
+      "max_rank": 6,
+      "xp_bonus": 0.25,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3
+      ],
+      "max_distance_per_rank": [
+        403,
+        644,
+        1047,
+        1610,
+        2575,
+        4024
+      ]
+    },
+    "valuable": {
+      "max_rank": 6,
+      "xp_bonus": 0.18,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3
+      ]
+    },
+    "fragile": {
+      "max_rank": 6,
+      "xp_bonus": 0.22,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3
+      ]
+    },
+    "urgent": {
+      "max_rank": 6,
+      "xp_bonus": 0.3,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3
+      ]
+    },
+    "ecodriving": {
+      "max_rank": 6,
+      "fuel_saved_per_rank": [
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.3,
+        0.35
+      ]
+    },
+    "adr": {
+      "max_rank": 6,
+      "xp_bonus": 0.21,
+      "rank_classes": [
+        1,
+        2,
+        3,
+        4,
+        6,
+        8
+      ]
+    }
+  },
+  "trailer_fill": {},
   "cargo_trailer_units": {
     "bob_tl3070a": {
       "lodeking.bril_drop.single_48_3.dropdeck_alw": 1,
@@ -103423,47 +103633,43 @@
   },
   "economy": {
     "fixed_revenue": 600,
+    "revenue_per_km_base": 15,
     "revenue_coef_per_km": 0.9,
     "cargo_market_revenue_coef_per_km": 1,
     "driver_revenue_coef_per_km": 0.67,
+    "driver_cargo_market_revenue_coef_per_km": 0.77,
+    "delivery_window_mins": [
+      400,
+      250,
+      90
+    ],
     "delivery_window_coefs": [
       1,
       1.15,
       1.4
     ],
-    "reward_bonus_fragile": [
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05
+    "reward_bonus_level": 0.01,
+    "minimal_driver_salary": 350,
+    "simulation_avg_speed": 62,
+    "maximum_driving_time": 840,
+    "sleeping_time": 600,
+    "no_cargo_prob": 0.1,
+    "cargo_validity_min": 180,
+    "cargo_validity_max": 1800,
+    "driver_no_return_job_prob": 0.1,
+    "driver_skilled_job_prob": 0.8,
+    "driver_max_cargo_damage": 6,
+    "driver_maintenance_cost": [
+      0.9,
+      1.5
     ],
-    "reward_bonus_valuable": [
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05
+    "fuel_cost_per_km": [
+      0.6,
+      1
     ],
-    "reward_bonus_long_dist": [
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05
-    ],
-    "reward_bonus_urgent": [
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05,
-      0.05
-    ],
-    "reward_bonus_level": 0.01
+    "driver_hire_cost": 1500,
+    "free_driver_level_cap": 30,
+    "driver_offer_scrap_prob": 0.5
   },
   "trucks": [
     {
