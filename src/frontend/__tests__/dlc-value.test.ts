@@ -18,7 +18,10 @@ vi.mock('../storage', () => ({
 }));
 
 // Import after mocking
-import { sumGarageScores, computeAllDLCValues, computeDLCValuesCore } from '../dlc-value';
+import {
+  sumGarageScores, computeAllDLCValues, computeDLCValuesCore,
+  cappedFleetTotal, FLEET_DRIVER_CAP, DRIVERS_PER_GARAGE,
+} from '../dlc-value';
 import { applyDLCFilter, getBlockedCities } from '../dlc-filter';
 import { buildLookups } from '../lookups';
 import type { AllData } from '../types';
@@ -485,5 +488,51 @@ describe('computeDLCValuesCore — breakdown demand-scoping + multi-country (#25
     expect(silo.runnerUpTrailerSpec).toBeNull();
     expect(silo.marginHV).toBe(320);       // special.value 4 × 80 units, no prior trailer
     expect(f.totalDelta).toBeGreaterThan(0);
+  });
+});
+
+describe('cappedFleetTotal — the 354-driver ceiling (Q82)', () => {
+  const FULL = Math.floor(FLEET_DRIVER_CAP / DRIVERS_PER_GARAGE);   // 70
+  const LEFTOVER = FLEET_DRIVER_CAP % DRIVERS_PER_GARAGE;           // 4
+
+  it('sums every garage when there are fewer than the cap allows', () => {
+    expect(cappedFleetTotal([10, 20, 30])).toBe(60);
+  });
+
+  it('is invariant to input order', () => {
+    const a = cappedFleetTotal([5, 100, 1, 50]);
+    const b = cappedFleetTotal([100, 50, 5, 1]);
+    expect(a).toBe(b);
+  });
+
+  it('takes the BEST garages, not the first ones', () => {
+    const scores = Array.from({ length: FULL + 10 }, (_, i) => i);   // 0..79, ascending
+    // Best 70 of 0..79 are 10..79; the 71st-best is 9, pro-rated.
+    const best = Array.from({ length: FULL }, (_, i) => scores.length - 1 - i).reduce((x, y) => x + y, 0);
+    expect(cappedFleetTotal(scores)).toBeCloseTo(best + 9 * (LEFTOVER / DRIVERS_PER_GARAGE), 6);
+  });
+
+  it('pro-rates the partial garage, so the 71st counts 4/5', () => {
+    const scores = Array.from({ length: FULL + 1 }, () => 100);
+    expect(cappedFleetTotal(scores)).toBeCloseTo(FULL * 100 + 100 * (LEFTOVER / DRIVERS_PER_GARAGE), 6);
+  });
+
+  it('ignores cities beyond the cap entirely — extra garages cannot be crewed', () => {
+    const base = Array.from({ length: FULL + 1 }, () => 100);
+    const withExtras = [...base, 99, 98, 97];   // worse than the 71st, so inert
+    expect(cappedFleetTotal(withExtras)).toBeCloseTo(cappedFleetTotal(base), 6);
+  });
+
+  it('IS moved by a city good enough to displace one inside the cap', () => {
+    const base = Array.from({ length: FULL + 1 }, () => 100);
+    expect(cappedFleetTotal([...base, 500])).toBeGreaterThan(cappedFleetTotal(base));
+  });
+
+  it('is not monotone in the number of cities — the whole point of the cap', () => {
+    // Adding cities below the cut changes nothing, which is what lets a DLC score negative once its
+    // diluting cargo is also counted (register Q81).
+    const base = Array.from({ length: FULL + 1 }, () => 100);
+    const many = [...base, ...Array.from({ length: 50 }, () => 1)];
+    expect(cappedFleetTotal(many)).toBeCloseTo(cappedFleetTotal(base), 6);
   });
 });

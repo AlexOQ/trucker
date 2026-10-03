@@ -14,7 +14,7 @@
 
 import type { AllData, Lookups } from './types';
 import type { OptimalFleet, CityRanking } from './optimizer';
-import type { DLCMarginalValue } from './dlc-value';
+import type { DLCMarginalValue, OptimalDLCSet } from './dlc-value';
 import type { WorkerRequest, WorkerResponse, DLCConfig } from './optimizer-worker';
 
 let worker: Worker | null = null;
@@ -61,7 +61,7 @@ function getWorker(): Worker | null {
       } else if (msg.type === 'rankingsResult') {
         pending.resolve(msg.result);
       } else if (msg.type === 'dlcValuesResult') {
-        pending.resolve(msg.result);
+        pending.resolve({ result: msg.result, optimalSet: msg.optimalSet });
       }
     };
 
@@ -190,12 +190,15 @@ export async function computeDLCValuesAsync(
   dlcConfig: DLCConfig,
   dlcNameMap: Record<string, string>,
   onProgress?: (completed: number, total: number) => void,
-): Promise<DLCMarginalValue[]> {
+  /** Also search for the best DLC set. Costs ~2N extra full re-rankings — opt-in only. */
+  withOptimalSet = false,
+): Promise<{ results: DLCMarginalValue[]; optimalSet: OptimalDLCSet | null }> {
   const w = getWorker();
   if (!w) {
-    // Synchronous fallback — use the original implementation
+    // Synchronous fallback. The set search is ~2N full re-rankings, which would block the UI thread
+    // for far too long, so it is worker-only — the page degrades to per-DLC marginals alone.
     const { computeAllDLCValues } = await import('./dlc-value');
-    return computeAllDLCValues(rawData, onProgress);
+    return { results: await computeAllDLCValues(rawData, onProgress), optimalSet: null };
   }
 
   // Ensure worker has the raw data (auto-init with lookups=null for DLC page)
@@ -206,16 +209,21 @@ export async function computeDLCValuesAsync(
 
   const id = ++requestId;
   const result = await postRequest(
-    { type: 'computeDLCValues', id, dlcConfig },
+    { type: 'computeDLCValues', id, dlcConfig, withOptimalSet },
     onProgress,
   );
 
   // Patch display names — worker only has IDs
-  const results = result as DLCMarginalValue[];
+  const { result: results, optimalSet } = result as {
+    results?: never; result: DLCMarginalValue[]; optimalSet: OptimalDLCSet | null;
+  };
   for (const r of results) {
     r.dlcName = dlcNameMap[r.dlcId] ?? r.dlcId;
   }
-  return results;
+  for (const m of optimalSet?.members ?? []) {
+    m.dlcName = dlcNameMap[m.dlcId] ?? m.dlcId;
+  }
+  return { results, optimalSet };
 }
 
 /** Terminate the worker (e.g., on page unload). */

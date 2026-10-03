@@ -42,7 +42,11 @@ export interface DLCMarginalValue {
   dlcId: string;
   dlcName: string;
   dlcType: 'map' | 'trailer' | 'cargo';
+  /** Max-fleet delta under the 354-driver cap (register Q82). Can be negative. */
   totalDelta: number;
+  /** Delta summed over every purchasable city, ignoring the cap. Monotone in cities added — kept for
+   *  comparison, never for ranking: it is what made map DLCs look unconditionally positive. */
+  uncappedDelta: number;
   existingGarageDelta: number;
   newCityPotential: number;
   newGarageCities: Array<{ id: string; name: string; score: number }>;
@@ -65,8 +69,43 @@ export interface DLCValueOwnership {
   combinedCargoDlcMap: Record<string, string>;
 }
 
+/**
+ * The save allocates exactly 354 AI-driver records — a hard engine constant, identical in ETS2 and
+ * ATS and independent of cities, companies or owned DLC (register Q82). At 5 slots per garage that
+ * staffs 70 garages fully plus one at 4/5, whatever else you own. Buying a 72nd garage adds a slot
+ * that can never be crewed, which is why a DLC's value is NOT "how many cities does it add" but
+ * "does it put a city into the top 71".
+ */
+export const FLEET_DRIVER_CAP = 354;
+export const DRIVERS_PER_GARAGE = 5;
+
+/**
+ * Fleet total under the driver cap: the best `FLEET_DRIVER_CAP / DRIVERS_PER_GARAGE` garages, with
+ * the last one pro-rated for its partial crew.
+ *
+ * A city's ranking score is the summed EV of a full 5-driver roster, so the partial garage
+ * contributes `leftover / DRIVERS_PER_GARAGE` of its score.
+ */
+export function cappedFleetTotal(scores: number[]): number {
+  const sorted = [...scores].sort((x, y) => y - x);
+  const full = Math.floor(FLEET_DRIVER_CAP / DRIVERS_PER_GARAGE);
+  const leftover = FLEET_DRIVER_CAP % DRIVERS_PER_GARAGE;
+  let total = 0;
+  for (let i = 0; i < full && i < sorted.length; i++) total += sorted[i];
+  if (leftover > 0 && sorted.length > full) total += sorted[full] * (leftover / DRIVERS_PER_GARAGE);
+  return total;
+}
+
 interface ScenarioResult {
+  /** Sum over the caller's garage set. Answers "what is this worth to my fleet as placed?" */
   total: number;
+  /**
+   * Sum over the best staffable garages drawn from every purchasable city the DLC set allows.
+   * Answers "what is this worth to a maximum fleet?" — the question the DLC page exists for, and
+   * the only one that can come out negative, because adding cities cannot help unless they
+   * displace something already in the top 71.
+   */
+  cappedTotal: number;
   perCity: Map<string, number>;
   filtered: AllData;
   lookups: Lookups;
@@ -86,6 +125,8 @@ export function sumGarageScores(
   garageCityIds: Set<string>,
   cityDlcMap: Record<string, string[]>,
   combinedCargoDlcMap: Record<string, string>,
+  /** Every purchasable-garage city, for the capped max-fleet figure. Defaults to `garageCityIds`. */
+  allPurchasable: ReadonlySet<string> = garageCityIds,
 ): ScenarioResult {
   const blocked = getBlockedCities(ownedMap, cityDlcMap);
   const filtered = applyDLCFilter(rawData, ownedTrailer, ownedCargoAndMap, combinedCargoDlcMap, blocked);
@@ -95,13 +136,14 @@ export function sumGarageScores(
 
   let total = 0;
   const perCity = new Map<string, number>();
+  const purchasable: number[] = [];
   for (const r of rankings) {
     perCity.set(r.id, r.score);
-    if (garageCityIds.has(r.id)) {
-      total += r.score;
-    }
+    if (garageCityIds.has(r.id)) total += r.score;
+    // `rankings` is already DLC-filtered, so a city behind an unowned map DLC never appears here.
+    if (allPurchasable.has(r.id)) purchasable.push(r.score);
   }
-  return { total, perCity, filtered, lookups };
+  return { total, cappedTotal: cappedFleetTotal(purchasable), perCity, filtered, lookups };
 }
 
 /** Active garage city ids grouped by country. */
@@ -207,7 +249,7 @@ export function computeDLCValuesCore(
   onProgress?: (completed: number, total: number) => void,
 ): DLCMarginalValue[] {
   const baselineCargoSet = new Set([...o.ownedCargo, ...o.ownedMap]);
-  const baseline = sumGarageScores(rawData, o.ownedTrailer, baselineCargoSet, o.ownedMap, o.activeGarages, o.cityDlcMap, o.combinedCargoDlcMap);
+  const baseline = sumGarageScores(rawData, o.ownedTrailer, baselineCargoSet, o.ownedMap, o.activeGarages, o.cityDlcMap, o.combinedCargoDlcMap, o.garageCities);
 
   const garagesByCountry = garagesByCountryOf(rawData, o.activeGarages);
   // Baseline per-(profile, country) winners — computed once, diffed against each hypo.
@@ -234,7 +276,7 @@ export function computeDLCValuesCore(
       }
     }
 
-    const hypo = sumGarageScores(rawData, hypoTrailer, hypoCargoSet, hypoMap, hypoGarages, o.cityDlcMap, o.combinedCargoDlcMap);
+    const hypo = sumGarageScores(rawData, hypoTrailer, hypoCargoSet, hypoMap, hypoGarages, o.cityDlcMap, o.combinedCargoDlcMap, o.garageCities);
 
     // Existing garage delta = improvement at current garages only
     let existingGarageDelta = 0;
@@ -263,7 +305,10 @@ export function computeDLCValuesCore(
       dlcId: dlc.id,
       dlcName: dlc.name,
       dlcType: dlc.type,
-      totalDelta: hypo.total - baseline.total,
+      // Capped: the max-fleet delta under the 354-driver ceiling. This is what can go negative when a
+      // DLC's shadow cargo dilutes the draw pool more than its cities improve the top 71 (register Q81).
+      totalDelta: hypo.cappedTotal - baseline.cappedTotal,
+      uncappedDelta: hypo.total - baseline.total,
       existingGarageDelta,
       newCityPotential,
       newGarageCities,
@@ -282,6 +327,123 @@ export function computeDLCValuesCore(
   clearTrailerInfoCache();
   results.sort((a, b) => b.totalDelta - a.totalDelta);
   return results;
+}
+
+/** One DLC's contribution to the optimal set, as found by `computeOptimalDLCSet`. */
+export interface DLCSetMember {
+  dlcId: string;
+  dlcName: string;
+  dlcType: 'map' | 'trailer' | 'cargo';
+  /** Capped max-fleet delta from REMOVING this DLC from the full set. Negative = owning it costs you. */
+  removalMarginal: number;
+  inOptimalSet: boolean;
+}
+
+export interface OptimalDLCSet {
+  /** DLC ids that maximise max-fleet earnings under the driver cap. */
+  optimalIds: string[];
+  optimalTotal: number;
+  /** The same figure for the DLCs the player currently owns. */
+  ownedTotal: number;
+  /** Everything owned — the naive "buy it all" baseline. */
+  everythingTotal: number;
+  /** Fraction the owned set gives up against the optimum, e.g. -0.045 for 4.5% left on the table. */
+  ownedShortfall: number;
+  members: DLCSetMember[];
+}
+
+/**
+ * Finds the DLC set that maximises max-fleet earnings under the 354-driver cap.
+ *
+ * Why a SET search and not the per-DLC marginals above: with 234 purchasable cities competing for 71
+ * staffed slots, removing one map DLC just promotes the next-best cities, so single-DLC marginals are
+ * heavily damped by substitution — measured at 0.01-1.74% each where the best *set* differs from
+ * "own everything" by 4.5% (register Q81). Marginals get the sign right and the magnitude wrong.
+ *
+ * Strategy: start from everything, prune every DLC whose removal helps, then try re-adding the pruned
+ * ones once. That is ~2N scenario evaluations rather than the O(N^2) a full greedy needs, and it
+ * catches the known case (Scandinavia and Greece are both net-negative, together -4.5%).
+ *
+ * Trailer DLCs are never pruned: they add trailers and no cargo, so they cannot dilute a draw pool and
+ * their removal marginal is bounded at <= 0 (register Q38 measured every brand at exactly 0.000).
+ */
+export function computeOptimalDLCSet(
+  rawData: AllData,
+  o: DLCValueOwnership,
+  allDlcs: Array<{ id: string; type: 'map' | 'trailer' | 'cargo'; name: string }>,
+  onProgress?: (completed: number, total: number) => void,
+): OptimalDLCSet {
+  const trailerIds = allDlcs.filter(d => d.type === 'trailer').map(d => d.id);
+  const searchable = allDlcs.filter(d => d.type !== 'trailer');
+
+  let completed = 0;
+  const totalSteps = searchable.length * 2 + 3;
+  const score = (ids: Set<string>): number => {
+    const maps = allDlcs.filter(d => d.type === 'map' && ids.has(d.id)).map(d => d.id);
+    const cargo = allDlcs.filter(d => d.type === 'cargo' && ids.has(d.id)).map(d => d.id);
+    const r = sumGarageScores(
+      rawData, trailerIds, new Set([...cargo, ...maps]), maps,
+      o.activeGarages, o.cityDlcMap, o.combinedCargoDlcMap, o.garageCities,
+    );
+    completed++;
+    onProgress?.(completed, totalSteps);
+    return r.cappedTotal;
+  };
+
+  const everything = new Set(searchable.map(d => d.id));
+  const everythingTotal = score(everything);
+
+  // Removal marginals, each from the full set.
+  const members: DLCSetMember[] = [];
+  const marginal = new Map<string, number>();
+  for (const d of searchable) {
+    const without = new Set(everything);
+    without.delete(d.id);
+    const m = score(without) - everythingTotal;   // > 0 means dropping it HELPS
+    marginal.set(d.id, -m);                       // report as "what owning it is worth"
+  }
+
+  // Prune everything whose removal helped, then try adding each back.
+  const keep = new Set(searchable.filter(d => (marginal.get(d.id) ?? 0) >= 0).map(d => d.id));
+  let bestTotal = score(keep);
+  for (const d of searchable) {
+    if (keep.has(d.id)) { completed++; onProgress?.(completed, totalSteps); continue; }
+    const trial = new Set(keep);
+    trial.add(d.id);
+    const t = score(trial);
+    if (t > bestTotal) { keep.add(d.id); bestTotal = t; }
+  }
+  // "Own everything" can still win if pruning overshot.
+  if (everythingTotal > bestTotal) {
+    keep.clear();
+    for (const id of everything) keep.add(id);
+    bestTotal = everythingTotal;
+  }
+
+  for (const d of searchable) {
+    members.push({
+      dlcId: d.id, dlcName: d.name, dlcType: d.type,
+      removalMarginal: marginal.get(d.id) ?? 0,
+      inOptimalSet: keep.has(d.id),
+    });
+  }
+  for (const id of trailerIds) {
+    const d = allDlcs.find(x => x.id === id)!;
+    members.push({ dlcId: id, dlcName: d.name, dlcType: 'trailer', removalMarginal: 0, inOptimalSet: true });
+  }
+  members.sort((a, b) => b.removalMarginal - a.removalMarginal);
+
+  const ownedTotal = score(new Set([...o.ownedMap, ...o.ownedCargo]));
+  clearTrailerInfoCache();
+
+  return {
+    optimalIds: [...keep, ...trailerIds].sort(),
+    optimalTotal: bestTotal,
+    ownedTotal,
+    everythingTotal,
+    ownedShortfall: bestTotal > 0 ? ownedTotal / bestTotal - 1 : 0,
+    members,
+  };
 }
 
 /**
