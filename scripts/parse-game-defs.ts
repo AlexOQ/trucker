@@ -243,19 +243,32 @@ interface CargoData {
   dlc?: string;          // cargo DLC pack ID (see CARGO_DLC_MAP below)
 }
 
-// Cargo DLC mapping — verified against trucksimulator.wiki.gg/wiki/Cargo_types
-// Source: https://trucksimulator.wiki.gg/wiki/Cargo_types/Euro_Truck_Simulator_2
+/* Cargo DLC mapping, ETS2.
+ *
+ * Sourced the same way as ATS (below): each pack's `def/cargo.<dlc>.sii` aggregator inside its
+ * `dlc_*.scs` archive names exactly the cargo that pack adds, and every id is cross-checked to
+ * exist in `public/data/ets2/game-defs.json` `.cargo` and to NOT be defined in base `def.scs`.
+ *
+ * This replaced a wiki-derived table that mis-gated six cargo. For the record, because every one
+ * of them made the advisor rate base-game cargo as DLC-locked (or the reverse):
+ *   crawler, hvac, concr_beams2, czl_es300, czl_muv75 — base `def.scs`, were tagged to a pack.
+ *   tractor — `dlc_trailers.scs`, was untagged.
+ * High Power Cargo ships as `dlc_trailers.scs`, not `dlc_pcg.scs` (that is Cabin Accessories, and
+ * carries no cargo at all). Special Transport (`dlc_oversize`) maps to zero cargo: all 17 of its
+ * defs are oversize/player-only and excluded from the AI-haulable set, same as ATS. The two trailer
+ * brand DLCs that ship cargo (`dlc_feldbinder`, `dlc_krone`, 4 each) are the trailer-delivery jobs,
+ * also excluded. Re-derive with `scripts/scs-extract` over `def/cargo.*.sii` after a game update. */
 const ETS2_CARGO_DLC_MAP: Record<string, string> = {
-  // High Power Cargo Pack (8 cargo types)
-  aircond: 'high_power', hvac: 'high_power', crawler: 'high_power', driller: 'high_power',
-  tube: 'high_power', helicopter: 'high_power', roller: 'high_power', tracks: 'high_power', yacht: 'high_power',
-  // Heavy Cargo Pack (11 cargo types)
-  asph_miller: 'heavy_cargo', concr_beams: 'heavy_cargo', concr_beams2: 'heavy_cargo',
+  // High Power Cargo Pack (8) — dlc_trailers.scs
+  aircond: 'high_power', driller: 'high_power', helicopter: 'high_power', roller: 'high_power',
+  tracks: 'high_power', tractor: 'high_power', tube: 'high_power', yacht: 'high_power',
+  // Heavy Cargo Pack (11) — dlc_heavy_cargo.scs
+  asph_miller: 'heavy_cargo', concr_beams: 'heavy_cargo',
   dozer: 'heavy_cargo', cable_reel: 'heavy_cargo', locomotive: 'heavy_cargo',
   metal_center: 'heavy_cargo', mobile_crane: 'heavy_cargo', mob_crusher: 'heavy_cargo',
   mob_screener: 'heavy_cargo', mob_stacker: 'heavy_cargo', transformat: 'heavy_cargo',
-  // Special Transport (14 cargo types, most escort-only; only CZLoko has regular body types)
-  czl_es300: 'special_transport', czl_muv75: 'special_transport',
+  // Special Transport (0) — every def in dlc_oversize is oversize/player-only and excluded.
+  // czl_es300 and czl_muv75 are base `def.scs`; only czl_es1000 comes from the pack, and it is excluded.
   // Volvo Construction Equipment (7 cargo types)
   volvo_a25g: 'volvo_ce', volvo_bucket: 'volvo_ce', volvo_sd160b: 'volvo_ce',
   volvo_ec220e: 'volvo_ce', volvo_l250h: 'volvo_ce', volvo_rims: 'volvo_ce', vol_ew240emh: 'volvo_ce',

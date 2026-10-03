@@ -113,8 +113,7 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false,
-      "dlc": "high_power"
+      "excluded": false
     },
     "aircft_tires": {
       "name": "aircraft_tires",
@@ -1442,8 +1441,7 @@
       "groups": [
         "construction"
       ],
-      "excluded": false,
-      "dlc": "heavy_cargo"
+      "excluded": false
     },
     "concr_cent": {
       "name": "concr_centering",
@@ -1615,8 +1613,7 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false,
-      "dlc": "high_power"
+      "excluded": false
     },
     "tractor_c": {
       "name": "crawler_tractor",
@@ -3247,8 +3244,7 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false,
-      "dlc": "special_transport"
+      "excluded": false
     },
     "czl_muv75": {
       "name": "locomotive_czloko_muv75",
@@ -3266,8 +3262,7 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false,
-      "dlc": "special_transport"
+      "excluded": false
     },
     "log_harvest": {
       "name": "log_harvester",
@@ -5321,7 +5316,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "dlc": "high_power"
     },
     "rye": {
       "name": "rye",
@@ -177930,17 +177926,15 @@
     },
     "cargo_dlc_map": {
       "aircond": "high_power",
-      "hvac": "high_power",
-      "crawler": "high_power",
       "driller": "high_power",
-      "tube": "high_power",
       "helicopter": "high_power",
       "roller": "high_power",
       "tracks": "high_power",
+      "tractor": "high_power",
+      "tube": "high_power",
       "yacht": "high_power",
       "asph_miller": "heavy_cargo",
       "concr_beams": "heavy_cargo",
-      "concr_beams2": "heavy_cargo",
       "dozer": "heavy_cargo",
       "cable_reel": "heavy_cargo",
       "locomotive": "heavy_cargo",
@@ -177950,8 +177944,6 @@
       "mob_screener": "heavy_cargo",
       "mob_stacker": "heavy_cargo",
       "transformat": "heavy_cargo",
-      "czl_es300": "special_transport",
-      "czl_muv75": "special_transport",
       "volvo_a25g": "volvo_ce",
       "volvo_bucket": "volvo_ce",
       "volvo_sd160b": "volvo_ce",
