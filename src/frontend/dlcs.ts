@@ -22,6 +22,7 @@ import type { DLCMarginalValue, OptimalDLCSet } from './dlc-value';
 const settingsEl = document.getElementById('dlc-settings') as HTMLElement;
 const valueSection = document.getElementById('dlc-value-section') as HTMLElement;
 const calcBtn = document.getElementById('calc-value-btn') as HTMLButtonElement;
+const setBtn = document.getElementById('calc-set-btn') as HTMLButtonElement;
 const progressEl = document.getElementById('dlc-value-progress') as HTMLElement;
 const resultsEl = document.getElementById('dlc-value-results') as HTMLElement;
 
@@ -276,7 +277,7 @@ function renderResults(results: DLCMarginalValue[], optimalSet: OptimalDLCSet | 
   `;
 }
 
-async function runCalculation(): Promise<void> {
+async function runCalculation(withOptimalSet = false): Promise<void> {
   if (!rawData) return;
 
   // Check prerequisites before heavy computation
@@ -287,7 +288,9 @@ async function runCalculation(): Promise<void> {
   }
 
   calcBtn.disabled = true;
-  calcBtn.textContent = 'Calculating...';
+  setBtn.disabled = true;
+  const activeBtn = withOptimalSet ? setBtn : calcBtn;
+  activeBtn.textContent = withOptimalSet ? 'Searching sets...' : 'Calculating...';
   progressEl.style.display = 'block';
   resultsEl.innerHTML = '';
 
@@ -311,7 +314,7 @@ async function runCalculation(): Promise<void> {
     };
     const { results, optimalSet } = await computeDLCValuesAsync(rawData, dlcConfig, dlcNameMap, (done, total) => {
       progressEl.textContent = `Evaluating ${done} / ${total} scenarios...`;
-    });
+    }, withOptimalSet);
 
     lastResults = results;
     progressEl.style.display = 'none';
@@ -322,7 +325,9 @@ async function runCalculation(): Promise<void> {
     resultsEl.innerHTML = '<div class="empty-state">Calculation failed. Check console for details.</div>';
   } finally {
     calcBtn.disabled = false;
+    setBtn.disabled = false;
     calcBtn.textContent = 'Calculate Marginal Value';
+    setBtn.textContent = 'Find Best DLC Set (slow)';
   }
 }
 
@@ -333,7 +338,15 @@ async function init(): Promise<void> {
     renderSettings();
     valueSection.style.display = '';
 
-    calcBtn.addEventListener('click', runCalculation);
+    calcBtn.addEventListener('click', () => void runCalculation(false));
+    setBtn.addEventListener('click', () => {
+      // One scenario is a full re-ranking of every purchasable city, measured at 30-60s in the
+      // browser; the set search needs ~2N of them. Warn rather than appear hung.
+      if (confirm(
+        'Searching for the best DLC set re-ranks every city about 40 times.\n\n'
+        + 'This can take several minutes. Continue?',
+      )) void runCalculation(true);
+    });
   } catch (err) {
     console.error('Failed to initialize DLC page:', err);
     settingsEl.innerHTML = '<div class="empty-state">Failed to load data.</div>';

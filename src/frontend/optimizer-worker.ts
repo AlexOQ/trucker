@@ -40,13 +40,13 @@ export type WorkerRequest =
   | { type: 'reset'; id: number; data: AllData; lookups: Lookups | null }
   | { type: 'computeFleet'; id: number; cityId: string }
   | { type: 'computeRankings'; id: number }
-  | { type: 'computeDLCValues'; id: number; dlcConfig: DLCConfig }
+  | { type: 'computeDLCValues'; id: number; dlcConfig: DLCConfig; withOptimalSet?: boolean }
 
 export type WorkerResponse =
   | { type: 'initResult'; id: number }
   | { type: 'fleetResult'; id: number; result: OptimalFleet | null }
   | { type: 'rankingsResult'; id: number; result: CityRanking[] }
-  | { type: 'dlcValuesResult'; id: number; result: DLCMarginalValue[]; optimalSet: OptimalDLCSet }
+  | { type: 'dlcValuesResult'; id: number; result: DLCMarginalValue[]; optimalSet: OptimalDLCSet | null }
   | { type: 'dlcProgress'; id: number; completed: number; total: number }
   | { type: 'error'; id: number; message: string }
 
@@ -73,7 +73,8 @@ function computeDLCValuesInWorker(
   rawData: AllData,
   config: DLCConfig,
   postProgress: (completed: number, total: number) => void,
-): { result: DLCMarginalValue[]; optimalSet: OptimalDLCSet } {
+  withOptimalSet = false,
+): { result: DLCMarginalValue[]; optimalSet: OptimalDLCSet | null } {
   const { ownedTrailer, ownedCargo, ownedMap, ownedGarages } = config;
   const garageCities = new Set(config.garageCities);
 
@@ -97,13 +98,19 @@ function computeDLCValuesInWorker(
   };
   const result = computeDLCValuesCore(rawData, ownership, postProgress);
 
-  // Every DLC in the game, owned or not — the set search starts from "own everything" and prunes.
-  const allDlcs = [
-    ...config.allMapDLCIds.map(id => ({ id, type: 'map' as const, name: id })),
-    ...config.allTrailerDLCIds.map(id => ({ id, type: 'trailer' as const, name: id })),
-    ...config.allCargoDLCIds.map(id => ({ id, type: 'cargo' as const, name: id })),
-  ];
-  const optimalSet = computeOptimalDLCSet(rawData, ownership, allDlcs, postProgress);
+  // The set search costs ~2N full re-rankings on top of the N the loop above already did. One
+  // re-ranking measured at 30-60s in the browser over 234 cities, so running it unconditionally takes
+  // 20-40 minutes. Opt-in only, behind its own button, until per-city invalidation lands (see the
+  // perf issue): a DLC toggle changes a bounded cargo set, so most cities do not need rescoring.
+  let optimalSet: OptimalDLCSet | null = null;
+  if (withOptimalSet) {
+    const allDlcs = [
+      ...config.allMapDLCIds.map(id => ({ id, type: 'map' as const, name: id })),
+      ...config.allTrailerDLCIds.map(id => ({ id, type: 'trailer' as const, name: id })),
+      ...config.allCargoDLCIds.map(id => ({ id, type: 'cargo' as const, name: id })),
+    ];
+    optimalSet = computeOptimalDLCSet(rawData, ownership, allDlcs, postProgress);
+  }
 
   return { result, optimalSet };
 }
@@ -153,6 +160,7 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
           (completed, total) => {
             self.postMessage({ type: 'dlcProgress', id: msg.id, completed, total } satisfies WorkerResponse);
           },
+          msg.withOptimalSet ?? false,
         );
         self.postMessage({
           type: 'dlcValuesResult', id: msg.id, result: result.result, optimalSet: result.optimalSet,

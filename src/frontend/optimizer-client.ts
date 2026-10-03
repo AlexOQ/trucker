@@ -190,6 +190,8 @@ export async function computeDLCValuesAsync(
   dlcConfig: DLCConfig,
   dlcNameMap: Record<string, string>,
   onProgress?: (completed: number, total: number) => void,
+  /** Also search for the best DLC set. Costs ~2N extra full re-rankings — opt-in only. */
+  withOptimalSet = false,
 ): Promise<{ results: DLCMarginalValue[]; optimalSet: OptimalDLCSet | null }> {
   const w = getWorker();
   if (!w) {
@@ -207,18 +209,18 @@ export async function computeDLCValuesAsync(
 
   const id = ++requestId;
   const result = await postRequest(
-    { type: 'computeDLCValues', id, dlcConfig },
+    { type: 'computeDLCValues', id, dlcConfig, withOptimalSet },
     onProgress,
   );
 
   // Patch display names — worker only has IDs
   const { result: results, optimalSet } = result as {
-    results?: never; result: DLCMarginalValue[]; optimalSet: OptimalDLCSet;
+    results?: never; result: DLCMarginalValue[]; optimalSet: OptimalDLCSet | null;
   };
   for (const r of results) {
     r.dlcName = dlcNameMap[r.dlcId] ?? r.dlcId;
   }
-  for (const m of optimalSet.members) {
+  for (const m of optimalSet?.members ?? []) {
     m.dlcName = dlcNameMap[m.dlcId] ?? m.dlcId;
   }
   return { results, optimalSet };
