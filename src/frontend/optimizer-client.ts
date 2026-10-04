@@ -14,7 +14,7 @@
 
 import type { AllData, Lookups } from './types';
 import type { OptimalFleet, CityRanking } from './optimizer';
-import type { DLCMarginalValue, DLCConfig, ScenarioSummary, UnownedDLC } from './dlc-value';
+import type { DLCMarginalValue, DLCConfig, ScenarioSummary, DLCToggle } from './dlc-value';
 import type { WorkerRequest, WorkerResponse } from './optimizer-worker';
 
 let worker: Worker | null = null;
@@ -254,7 +254,7 @@ function terminatePool(): void {
 }
 
 /**
- * Compute DLC marginal values across the worker pool: the baseline and one scenario per unowned DLC.
+ * Compute DLC values across the worker pool: the current ownership and one scenario per DLC toggled.
  *
  * @param dlcNameMap - mapping from DLC ID to display name (workers return IDs only)
  */
@@ -274,13 +274,13 @@ export async function computeDLCValuesAsync(
   await ensurePool(rawData);
 
   let completed = 0;
-  const total = o.unowned.length + 1;
-  const scenario = (dlc: UnownedDLC | null) =>
+  const total = o.toggles.length + 1;
+  const scenario = (dlc: DLCToggle | null) =>
     submit<ScenarioSummary>({ type: 'evalDLCScenario', id: ++requestId, dlcConfig, dlc }).then((s) => {
       onProgress?.(++completed, total);
       return s;
     });
-  const [baseline, ...hypos] = await Promise.all([scenario(null), ...o.unowned.map(scenario)]);
+  const [baseline, ...hypos] = await Promise.all([scenario(null), ...o.toggles.map(scenario)]);
   const results = assembleDLCValues(rawData, o, baseline, hypos);
 
   // Patch display names — workers only have IDs

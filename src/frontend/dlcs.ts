@@ -15,7 +15,6 @@ import {
   getOwnedTrailerDLCs, setOwnedTrailerDLCs, toggleTrailerDLC,
   getOwnedCargoDLCs, setOwnedCargoDLCs, toggleCargoDLC,
   getOwnedMapDLCs, setOwnedMapDLCs, toggleMapDLC,
-  getOwnedGarages,
 } from './storage';
 import { computeDLCValuesAsync } from './optimizer-client';
 import type { DLCMarginalValue } from './dlc-value';
@@ -27,20 +26,21 @@ const progressEl = document.getElementById('dlc-value-progress') as HTMLElement;
 const resultsEl = document.getElementById('dlc-value-results') as HTMLElement;
 
 let rawData: AllData | null = null;
-let lastResults: DLCMarginalValue[] | null = null;
 /** DLCs in the smallest max-earnings set (best-dlc-set.json); null when the file is missing. */
 let bestSet: Set<string> | null = null;
+/** Measured Monte Carlo noise (EV): a value inside ±noiseFloor reads "≈ 0". 0 without the file. */
+let noiseFloor = 0;
 
 /**
- * The best DLC set depends only on the game data — the search scores every purchasable city with
- * every trailer DLC, whatever the player owns — so it ships precomputed (scripts/gen-best-dlc-set.mts).
+ * The best DLC set and the noise floor depend only on the game data — every purchasable city is
+ * scored, whatever the player owns — so they ship precomputed (scripts/gen-best-dlc-set.mts).
  */
-async function loadBestSet(): Promise<Set<string> | null> {
+async function loadBestSet(): Promise<{ best: Set<string>; floor: number } | null> {
   try {
     const response = await fetch(`data/${getActiveGame()}/best-dlc-set.json`);
     if (!response.ok) return null;
-    const file = await response.json() as { best: string[] };
-    return new Set(file.best);
+    const file = await response.json() as { best: string[]; noise_floor: number };
+    return { best: new Set(file.best), floor: file.noise_floor };
   } catch {
     return null;
   }
@@ -189,7 +189,6 @@ function wireCheckboxes(): void {
 }
 
 function invalidateResults(): void {
-  lastResults = null;
   resultsEl.innerHTML = '';
   progressEl.style.display = 'none';
 }
@@ -200,38 +199,44 @@ function formatEV(value: number): string {
   return Math.round(value).toString();
 }
 
+/** "Lisbon, Almería, Vigo +2 more". */
+function cityList(cities: Array<{ name: string }>): string {
+  const head = cities.slice(0, 3).map(c => c.name).join(', ');
+  return cities.length > 3 ? `${head} +${cities.length - 3} more` : head;
+}
+
 function renderResults(results: DLCMarginalValue[]): void {
   if (results.length === 0) {
-    resultsEl.innerHTML = '<div class="empty-state">All DLCs are owned — nothing to compare.</div>';
+    resultsEl.innerHTML = '<div class="empty-state">No DLCs to evaluate.</div>';
     return;
   }
 
   const rows = results.map(r => {
-    const deltaClass = r.totalDelta > 0 ? 'positive' : r.totalDelta < 0 ? 'negative' : '';
+    const noise = Math.abs(r.totalDelta) < noiseFloor;
+    const deltaClass = noise ? '' : r.totalDelta > 0 ? 'positive' : 'negative';
     const typeLabel = r.dlcType === 'map' ? 'Map' : r.dlcType === 'trailer' ? 'Trailer' : 'Cargo';
+    const action = r.owned ? 'Disable' : 'Buy';
+    const value = noise
+      ? '≈ 0'
+      : `${r.share > 0 ? '+' : ''}${(r.share * 100).toFixed(1)}%<span class="dlc-value-ev">${r.totalDelta > 0 ? '+' : ''}${formatEV(r.totalDelta)} EV</span>`;
 
     let detail = '';
-    if (r.dlcType === 'map') {
+    if (!noise) {
       const parts: string[] = [];
-      if (r.existingGarageDelta !== 0) {
-        parts.push(`Shadow cargo: <span class="${r.existingGarageDelta > 0 ? 'positive' : ''}">${r.existingGarageDelta > 0 ? '+' : ''}${formatEV(r.existingGarageDelta)}</span>`);
+      if (r.enters.length > 0) parts.push(`Into your best 71: ${cityList(r.enters)}`);
+      if (r.leaves.length > 0) parts.push(`Out of it: ${cityList(r.leaves)}`);
+      if (parts.length > 0) detail = `<div class="dlc-value-detail">${parts.join(' · ')}</div>`;
+      if (r.bodyTypeBreakdown && r.bodyTypeBreakdown.length > 0) {
+        const lines = r.bodyTypeBreakdown.map(b => {
+          const vs = b.runnerUpTrailerSpec ? `over <code>${b.runnerUpTrailerSpec}</code>` : '(no prior trailer)';
+          const where = ` · ${b.countries} ${b.countries === 1 ? 'country' : 'countries'}`;
+          return `<li><span class="dlc-bt-name">${b.displayName}</span> wins ${vs} by <span class="positive">+${formatEV(b.marginHV)} HV</span>${where}</li>`;
+        }).join('');
+        const n = r.bodyTypeBreakdown.length;
+        // Structural breakdown: which body types this DLC wins and the haul-value
+        // margin over the runner-up. Does not sum to the EV delta above (#257).
+        detail += `<details class="dlc-value-detail dlc-breakdown"><summary>Wins ${n} body type${n !== 1 ? 's' : ''} — where the value comes from</summary><ul>${lines}</ul></details>`;
       }
-      if (r.newGarageCities.length > 0) {
-        const cityList = r.newGarageCities.slice(0, 3).map(c => `${c.name} (${formatEV(c.score)})`).join(', ');
-        const more = r.newGarageCities.length > 3 ? ` +${r.newGarageCities.length - 3} more` : '';
-        parts.push(`${r.newGarageCities.length} new garages: ${cityList}${more}`);
-      }
-      detail = parts.length ? `<div class="dlc-value-detail">${parts.join(' · ')}</div>` : '';
-    } else if (r.bodyTypeBreakdown && r.bodyTypeBreakdown.length > 0) {
-      const lines = r.bodyTypeBreakdown.map(b => {
-        const vs = b.runnerUpTrailerSpec ? `over <code>${b.runnerUpTrailerSpec}</code>` : '(no prior trailer)';
-        const where = ` · ${b.countries} ${b.countries === 1 ? 'country' : 'countries'}`;
-        return `<li><span class="dlc-bt-name">${b.displayName}</span> wins ${vs} by <span class="positive">+${formatEV(b.marginHV)} HV</span>${where}</li>`;
-      }).join('');
-      const n = r.bodyTypeBreakdown.length;
-      // Structural breakdown: which body types this DLC wins and the haul-value
-      // margin over the runner-up. Does not sum to the EV delta above (#257).
-      detail = `<details class="dlc-value-detail dlc-breakdown"><summary>Wins ${n} body type${n !== 1 ? 's' : ''} — where the value comes from</summary><ul>${lines}</ul></details>`;
     }
 
     return `
@@ -239,10 +244,9 @@ function renderResults(results: DLCMarginalValue[]): void {
         <div class="dlc-value-info">
           <span class="dlc-value-name">${r.dlcName}</span>
           <span class="dlc-value-type">${typeLabel}</span>
+          <span class="dlc-value-action ${r.owned ? 'disable' : 'buy'}">${action}</span>
         </div>
-        <div class="dlc-value-delta ${deltaClass}">
-          ${r.totalDelta > 0 ? '+' : ''}${formatEV(r.totalDelta)} EV
-        </div>
+        <div class="dlc-value-delta ${deltaClass}">${value}</div>
         ${detail}
       </div>
     `;
@@ -251,9 +255,10 @@ function renderResults(results: DLCMarginalValue[]): void {
   resultsEl.innerHTML = `
     <div class="dlc-value-list">
       <div class="dlc-value-summary">
-        Scored at the 354-driver cap. A DLC's value is what it adds to the best 71 staffable garages
-        over every purchasable city — adding cities below that cut is worth nothing, and shadow cargo
-        can make a DLC net-negative.
+        Each row is one change on its own; both games let you turn owned DLCs off per profile. Scored
+        as max-fleet earnings at the 354-driver cap: the best 71 garages over every purchasable city.
+        ${noiseFloor > 0 ? `Changes within ±${noiseFloor} EV are noise and read ≈ 0.` : ''}
+        The highlight above is the end state; the best next step from where you are can differ.
       </div>
       ${rows}
     </div>
@@ -273,7 +278,6 @@ async function runCalculation(): Promise<void> {
       ownedTrailer: getOwnedTrailerDLCs(),
       ownedCargo: getOwnedCargoDLCs(),
       ownedMap: getOwnedMapDLCs(),
-      ownedGarages: getOwnedGarages(),
       allTrailerDLCIds: [...ALL_DLC_IDS],
       allCargoDLCIds: [...ALL_CARGO_DLC_IDS],
       allMapDLCIds: [...ALL_MAP_DLC_IDS],
@@ -290,7 +294,6 @@ async function runCalculation(): Promise<void> {
       progressEl.textContent = `Evaluating ${done} / ${total} scenarios...`;
     });
 
-    lastResults = results;
     progressEl.style.display = 'none';
     renderResults(results);
   } catch (err) {
@@ -306,7 +309,10 @@ async function runCalculation(): Promise<void> {
 async function init(): Promise<void> {
   initGameSelector();
   try {
-    [rawData, bestSet] = await Promise.all([loadAllData(), loadBestSet()]);
+    const [data, best] = await Promise.all([loadAllData(), loadBestSet()]);
+    rawData = data;
+    bestSet = best?.best ?? null;
+    noiseFloor = best?.floor ?? 0;
     renderSettings();
     valueSection.style.display = '';
 
