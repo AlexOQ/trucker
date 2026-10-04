@@ -447,6 +447,19 @@ nav {
   box-shadow: inset 3px 0 0 var(--accent);
   background: color-mix(in srgb, var(--accent) 12%, transparent);
 }
+.dlc-value-action {
+  font-size: 0.75rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  border: 1px solid var(--border-primary);
+  color: var(--text-muted);
+}
+.dlc-value-ev {
+  margin-left: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: var(--text-muted);
+}
 .dlc-best-legend {
   display: flex;
   align-items: center;

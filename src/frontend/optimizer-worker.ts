@@ -21,7 +21,7 @@ import {
 import type { AllData, Lookups } from './types';
 import {
   evaluateDLCScenario, ownershipFromConfig,
-  type DLCConfig, type ScenarioSummary, type UnownedDLC,
+  type DLCConfig, type ScenarioSummary, type DLCToggle,
 } from './dlc-value';
 
 // ============================================
@@ -40,7 +40,7 @@ export type WorkerRequest =
   | { type: 'reset'; id: number; data: AllData; lookups: Lookups | null }
   | { type: 'computeFleet'; id: number; cityId: string }
   | { type: 'computeRankings'; id: number }
-  | { type: 'evalDLCScenario'; id: number; dlcConfig: DLCConfig; dlc: UnownedDLC | null }
+  | { type: 'evalDLCScenario'; id: number; dlcConfig: DLCConfig; dlc: DLCToggle | null }
 
 export type WorkerResponse =
   | { type: 'initResult'; id: number }

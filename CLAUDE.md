@@ -187,11 +187,11 @@ Three categories of DLC content affect optimization results:
 2. On page load, `applyDLCFilter()` removes unowned trailers, cargo, and cities
 3. All pages (rankings, city detail, browsers) operate on filtered data
 
-**Marginal Value Calculator** (`dlc-value.ts`):
-- For each unowned DLC, computes the fleet EV delta if the player owned it
-- Uses analytical city rankings (fast) — evaluates each DLC by adding it hypothetically and re-ranking
-- Map DLCs show both "shadow cargo" improvement at existing garages and potential new garage cities
-- Results sorted by total EV delta descending
+**DLC page** (`dlcs.ts`, `dlc-value.ts`):
+- **Best set** (highlight): the smallest DLC set reaching max-fleet earnings — game data only, precomputed by `npm run gen:best-dlc-set` into `public/data/<game>/best-dlc-set.json` with the measured Monte Carlo noise floor
+- **Values** (live, per player): one scenario per DLC — buy it if unowned, disable it if owned — scored as max-fleet earnings at the 354-driver cap (best 71 of every purchasable city); shown as a share of current earnings, with the cities entering/leaving the best 71. Values inside the noise floor read "≈ 0"
+- Scenarios run across a worker pool (`optimizer-client.ts`); `computeDLCValuesCore` is the synchronous fallback and the test path
+- Values depend on what the player owns (substitution between maps, dilution by cargo packs), so they are never precomputed
 
 **DLC Data Initialization**:
 - Hardcoded fallbacks in `dlc-data.ts` used until game-defs.json loads

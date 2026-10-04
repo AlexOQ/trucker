@@ -169,18 +169,14 @@ describe('computeAllDLCValues', () => {
     vi.clearAllMocks();
   });
 
-  it('returns marginal values for each unowned DLC', async () => {
+  it('returns a value for every DLC, owned ones to disable and the rest to buy', async () => {
     const data = createDLCValueTestData();
     const results = await computeAllDLCValues(data);
 
     // We mock: ownedTrailer=['feldbinder'], ownedCargo=[], ownedMap=[]
-    // Unowned: krone (trailer), high_power (cargo), iberia (map)
-    expect(results).toHaveLength(3);
-
-    const dlcIds = results.map((r) => r.dlcId);
-    expect(dlcIds).toContain('krone');
-    expect(dlcIds).toContain('high_power');
-    expect(dlcIds).toContain('iberia');
+    expect(results).toHaveLength(4);
+    const owned = Object.fromEntries(results.map((r) => [r.dlcId, r.owned]));
+    expect(owned).toEqual({ feldbinder: true, krone: false, high_power: false, iberia: false });
   });
 
   it('assigns correct DLC types', async () => {
@@ -214,31 +210,39 @@ describe('computeAllDLCValues', () => {
       progressCalls.push([completed, total]);
     });
 
-    expect(progressCalls.length).toBe(3); // 3 unowned DLCs
+    expect(progressCalls.length).toBe(4); // every DLC, owned or not
     // Last call should have completed === total
     const last = progressCalls[progressCalls.length - 1];
     expect(last[0]).toBe(last[1]);
   });
 
-  it('map DLCs include newGarageCities', async () => {
+  it('a map DLC brings only its own cities into the best 71', async () => {
     const data = createDLCValueTestData();
     const results = await computeAllDLCValues(data);
 
-    const iberia = results.find((r) => r.dlcId === 'iberia');
-    // iberia adds lisboa and madrid (both in GARAGE_CITIES)
-    // Player already has garages in berlin/paris but not lisboa/madrid
-    expect(iberia!.newGarageCities.length).toBeGreaterThanOrEqual(0);
+    // Fewer than 71 purchasable cities, so every one is staffed: iberia's enter, none leave.
+    const iberia = results.find((r) => r.dlcId === 'iberia')!;
+    for (const c of iberia.enters) expect(['lisboa', 'madrid']).toContain(c.id);
+    expect(iberia.leaves).toHaveLength(0);
   });
 
-  it('trailer/cargo DLCs have no newGarageCities', async () => {
+  it('trailer and cargo DLCs move no city in or out of the best 71', async () => {
     const data = createDLCValueTestData();
     const results = await computeAllDLCValues(data);
 
-    const krone = results.find((r) => r.dlcId === 'krone');
-    expect(krone!.newGarageCities).toHaveLength(0);
+    for (const id of ['krone', 'high_power']) {
+      const r = results.find((x) => x.dlcId === id)!;
+      expect(r.enters).toHaveLength(0);
+      expect(r.leaves).toHaveLength(0);
+    }
+  });
 
-    const highPower = results.find((r) => r.dlcId === 'high_power');
-    expect(highPower!.newGarageCities).toHaveLength(0);
+  it('reports each value as a share of current max-fleet earnings', async () => {
+    const results = await computeAllDLCValues(createDLCValueTestData());
+    for (const r of results) {
+      if (r.totalDelta === 0) expect(r.share).toBe(0);
+      else expect(Math.sign(r.share)).toBe(Math.sign(r.totalDelta));
+    }
   });
 });
 
@@ -292,11 +296,10 @@ function createBreakdownTestData(): AllData {
 describe('computeDLCValuesCore — body-type breakdown (#257)', () => {
   const ownership = {
     ownedTrailer: [], ownedCargo: [], ownedMap: [],
-    activeGarages: new Set(['berlin']),
     garageCities: new Set(['berlin']),
-    unowned: [
-      { id: 'krone', type: 'trailer' as const, name: 'Krone' },
-      { id: 'tieonly', type: 'trailer' as const, name: 'Tie Only' },
+    toggles: [
+      { id: 'krone', type: 'trailer' as const, name: 'Krone', owned: false },
+      { id: 'tieonly', type: 'trailer' as const, name: 'Tie Only', owned: false },
     ],
     cityDlcMap: {}, combinedCargoDlcMap: {},
   };
@@ -445,12 +448,29 @@ function createNewlyEnabledTestData(): AllData {
   };
 }
 
+describe('computeDLCValuesCore — disable values', () => {
+  it('disabling an owned DLC is exactly the negative of buying it back', () => {
+    const data = createBreakdownTestData();
+    const base = { ownedCargo: [], ownedMap: [], garageCities: new Set(['berlin']), cityDlcMap: {}, combinedCargoDlcMap: {} };
+    const [disable] = computeDLCValuesCore(data, {
+      ...base, ownedTrailer: ['krone'], toggles: [{ id: 'krone', type: 'trailer' as const, name: 'Krone', owned: true }],
+    });
+    const [buy] = computeDLCValuesCore(data, {
+      ...base, ownedTrailer: [], toggles: [{ id: 'krone', type: 'trailer' as const, name: 'Krone', owned: false }],
+    });
+    expect(disable.owned).toBe(true);
+    expect(disable.totalDelta).toBeLessThan(0);
+    expect(disable.totalDelta).toBeCloseTo(-buy.totalDelta, 9);
+    expect(disable.bodyTypeBreakdown).toBeUndefined();   // the breakdown explains a purchase only
+  });
+});
+
 describe('computeDLCValuesCore — breakdown demand-scoping + multi-country (#257)', () => {
   it('omits body types the garages do not demand (no false win, ~0 delta)', () => {
     const results = computeDLCValuesCore(createUndemandedTestData(), {
       ownedTrailer: [], ownedCargo: [], ownedMap: [],
-      activeGarages: new Set(['berlin']), garageCities: new Set(['berlin']),
-      unowned: [{ id: 'kogel', type: 'trailer' as const, name: 'Kogel' }],
+      garageCities: new Set(['berlin']),
+      toggles: [{ id: 'kogel', type: 'trailer' as const, name: 'Kogel', owned: false }],
       cityDlcMap: {}, combinedCargoDlcMap: {},
     });
     const kogel = results.find(r => r.dlcId === 'kogel')!;
@@ -461,8 +481,8 @@ describe('computeDLCValuesCore — breakdown demand-scoping + multi-country (#25
   it('reports the MAX margin and country count across multiple garage countries', () => {
     const results = computeDLCValuesCore(createMultiCountryTestData(), {
       ownedTrailer: [], ownedCargo: [], ownedMap: [],
-      activeGarages: new Set(['aaa', 'bbb']), garageCities: new Set(['aaa', 'bbb']),
-      unowned: [{ id: 'krone', type: 'trailer' as const, name: 'Krone' }],
+      garageCities: new Set(['aaa', 'bbb']),
+      toggles: [{ id: 'krone', type: 'trailer' as const, name: 'Krone', owned: false }],
       cityDlcMap: {}, combinedCargoDlcMap: {},
     });
     const krone = results.find(r => r.dlcId === 'krone')!;
@@ -478,8 +498,8 @@ describe('computeDLCValuesCore — breakdown demand-scoping + multi-country (#25
     // the newly-enabled haul raises EV.
     const results = computeDLCValuesCore(createNewlyEnabledTestData(), {
       ownedTrailer: [], ownedCargo: [], ownedMap: [],
-      activeGarages: new Set(['berlin']), garageCities: new Set(['berlin']),
-      unowned: [{ id: 'feldbinder', type: 'trailer' as const, name: 'Feldbinder' }],
+      garageCities: new Set(['berlin']),
+      toggles: [{ id: 'feldbinder', type: 'trailer' as const, name: 'Feldbinder', owned: false }],
       cityDlcMap: {}, combinedCargoDlcMap: {},
     });
     const f = results.find(r => r.dlcId === 'feldbinder')!;
