@@ -11,8 +11,9 @@
  *
  * 1. Optimum: `searchOptimalDLCSet` over map and cargo DLCs, every trailer brand owned.
  * 2. Noise floor: re-score every single-DLC toggle around the optimum under SALTS seeds. A city's
- *    Monte Carlo is seeded by its id, so one seed gives one draw of each delta; the floor is twice
- *    the median seed-to-seed standard deviation. The page shows a delta under it as "≈ 0".
+ *    Monte Carlo is seeded by its id, so the page sees one draw of each delta; the floor is twice the
+ *    LARGEST seed-to-seed standard deviation, so no toggle's noise reads as value. The page shows a
+ *    delta under it as "≈ 0". (Twice the median let West Balkans through at +19 on a 15 floor.)
  * 3. Smallest set: from optimum + every trailer brand, drop the member whose removal costs least
  *    while that cost stays under the floor and the set stays within the floor of the optimum.
  *
@@ -122,7 +123,7 @@ if (!isMainThread) {
   const start = [...optimum.optimalIds];   // includes every trailer brand
   const maxTotal = await score(start);
 
-  // 2. Noise floor: each toggle's delta under SALTS seeds; twice the median non-zero spread.
+  // 2. Noise floor: each toggle's delta under SALTS seeds; twice the largest spread.
   const spreads: number[] = [];
   await Promise.all(ids.map(async (id) => {
     const deltas = await Promise.all(Array.from({ length: SALTS }, async (_, s) =>
@@ -131,8 +132,7 @@ if (!isMainThread) {
     const sd = Math.sqrt(deltas.reduce((a, b) => a + (b - mean) ** 2, 0) / (deltas.length - 1));
     if (sd > 0) spreads.push(sd);
   }));
-  spreads.sort((a, b) => a - b);
-  const floor = 2 * spreads[Math.floor(spreads.length / 2)];
+  const floor = 2 * Math.max(...spreads);
 
   // 3. Smallest set: drop the cheapest member while its removal is noise and the set stays near the optimum.
   let best = start;

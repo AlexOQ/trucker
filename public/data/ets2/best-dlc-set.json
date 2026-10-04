@@ -1,6 +1,6 @@
 {
   "game_version": "1.61.1.1",
-  "noise_floor": 15,
+  "noise_floor": 25,
   "best": [
     "beyond_the_baltic_sea",
     "forest_machinery",

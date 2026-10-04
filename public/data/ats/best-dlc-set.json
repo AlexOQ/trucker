@@ -1,6 +1,6 @@
 {
   "game_version": "1.61.1.4",
-  "noise_floor": 6,
+  "noise_floor": 20,
   "best": [
     "arkansas",
     "colorado",
@@ -20,7 +20,6 @@
     "oregon",
     "texas",
     "utah",
-    "washington",
     "wyoming"
   ]
 }
