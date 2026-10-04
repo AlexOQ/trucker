@@ -20,8 +20,8 @@ import {
 } from './optimizer';
 import type { AllData, Lookups } from './types';
 import {
-  computeDLCValuesCore, computeOptimalDLCSet,
-  type DLCMarginalValue, type OptimalDLCSet,
+  evaluateDLCScenario, scoreDLCSet, ownershipFromConfig,
+  type DLCConfig, type ScenarioSummary, type UnownedDLC,
 } from './dlc-value';
 
 // ============================================
@@ -40,80 +40,18 @@ export type WorkerRequest =
   | { type: 'reset'; id: number; data: AllData; lookups: Lookups | null }
   | { type: 'computeFleet'; id: number; cityId: string }
   | { type: 'computeRankings'; id: number }
-  | { type: 'computeDLCValues'; id: number; dlcConfig: DLCConfig; withOptimalSet?: boolean }
+  | { type: 'evalDLCScenario'; id: number; dlcConfig: DLCConfig; dlc: UnownedDLC | null }
+  | { type: 'scoreDLCSet'; id: number; dlcConfig: DLCConfig; ids: string[] }
 
 export type WorkerResponse =
   | { type: 'initResult'; id: number }
   | { type: 'fleetResult'; id: number; result: OptimalFleet | null }
   | { type: 'rankingsResult'; id: number; result: CityRanking[] }
-  | { type: 'dlcValuesResult'; id: number; result: DLCMarginalValue[]; optimalSet: OptimalDLCSet | null }
-  | { type: 'dlcProgress'; id: number; completed: number; total: number }
+  | { type: 'dlcScenarioResult'; id: number; result: ScenarioSummary }
+  | { type: 'dlcSetScore'; id: number; result: number }
   | { type: 'error'; id: number; message: string }
 
-/** DLC ownership state needed to run marginal value calculation */
-export interface DLCConfig {
-  ownedTrailer: string[];
-  ownedCargo: string[];
-  ownedMap: string[];
-  ownedGarages: string[];
-  // DLC registries
-  allTrailerDLCIds: string[];
-  allCargoDLCIds: string[];
-  allMapDLCIds: string[];
-  cityDlcMap: Record<string, string[]>;
-  combinedCargoDlcMap: Record<string, string>;
-  garageCities: string[];
-}
-
-// ============================================
-// DLC marginal value (worker-side)
-// ============================================
-
-function computeDLCValuesInWorker(
-  rawData: AllData,
-  config: DLCConfig,
-  postProgress: (completed: number, total: number) => void,
-  withOptimalSet = false,
-): { result: DLCMarginalValue[]; optimalSet: OptimalDLCSet | null } {
-  const { ownedTrailer, ownedCargo, ownedMap, ownedGarages } = config;
-  const garageCities = new Set(config.garageCities);
-
-  // Active garages = intersection of owned garages and garage cities
-  const activeGarages = new Set<string>();
-  for (const g of ownedGarages) {
-    if (garageCities.has(g)) activeGarages.add(g);
-  }
-
-  // Names are id placeholders — the client patches them after results return
-  // (the worker has no DLC name maps).
-  const unowned = [
-    ...config.allMapDLCIds.filter(id => !ownedMap.includes(id)).map(id => ({ id, type: 'map' as const, name: id })),
-    ...config.allTrailerDLCIds.filter(id => !ownedTrailer.includes(id)).map(id => ({ id, type: 'trailer' as const, name: id })),
-    ...config.allCargoDLCIds.filter(id => !ownedCargo.includes(id)).map(id => ({ id, type: 'cargo' as const, name: id })),
-  ];
-
-  const ownership = {
-    ownedTrailer, ownedCargo, ownedMap, activeGarages, garageCities, unowned,
-    cityDlcMap: config.cityDlcMap, combinedCargoDlcMap: config.combinedCargoDlcMap,
-  };
-  const result = computeDLCValuesCore(rawData, ownership, postProgress);
-
-  // The set search costs ~2N full re-rankings on top of the N the loop above already did. One
-  // re-ranking measured at 30-60s in the browser over 234 cities, so running it unconditionally takes
-  // 20-40 minutes. Opt-in only, behind its own button, until per-city invalidation lands (see the
-  // perf issue): a DLC toggle changes a bounded cargo set, so most cities do not need rescoring.
-  let optimalSet: OptimalDLCSet | null = null;
-  if (withOptimalSet) {
-    const allDlcs = [
-      ...config.allMapDLCIds.map(id => ({ id, type: 'map' as const, name: id })),
-      ...config.allTrailerDLCIds.map(id => ({ id, type: 'trailer' as const, name: id })),
-      ...config.allCargoDLCIds.map(id => ({ id, type: 'cargo' as const, name: id })),
-    ];
-    optimalSet = computeOptimalDLCSet(rawData, ownership, allDlcs, postProgress);
-  }
-
-  return { result, optimalSet };
-}
+export type { DLCConfig } from './dlc-value';
 
 // ============================================
 // Message handler
@@ -150,21 +88,22 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
         break;
       }
 
-      case 'computeDLCValues': {
+      case 'evalDLCScenario': {
         if (!storedData) {
-          throw new Error('Worker not initialized — send "init" before computeDLCValues');
+          throw new Error('Worker not initialized — send "init" before evalDLCScenario');
         }
-        const result = computeDLCValuesInWorker(
-          storedData,
-          msg.dlcConfig,
-          (completed, total) => {
-            self.postMessage({ type: 'dlcProgress', id: msg.id, completed, total } satisfies WorkerResponse);
-          },
-          msg.withOptimalSet ?? false,
-        );
-        self.postMessage({
-          type: 'dlcValuesResult', id: msg.id, result: result.result, optimalSet: result.optimalSet,
-        } satisfies WorkerResponse);
+        const result = evaluateDLCScenario(storedData, ownershipFromConfig(msg.dlcConfig), msg.dlc);
+        self.postMessage({ type: 'dlcScenarioResult', id: msg.id, result } satisfies WorkerResponse);
+        break;
+      }
+
+      case 'scoreDLCSet': {
+        if (!storedData) {
+          throw new Error('Worker not initialized — send "init" before scoreDLCSet');
+        }
+        const c = msg.dlcConfig;
+        const result = scoreDLCSet(storedData, ownershipFromConfig(c), c.allTrailerDLCIds, new Set(c.allMapDLCIds), msg.ids);
+        self.postMessage({ type: 'dlcSetScore', id: msg.id, result } satisfies WorkerResponse);
         break;
       }
     }

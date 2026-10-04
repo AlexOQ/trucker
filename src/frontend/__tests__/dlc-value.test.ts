@@ -20,7 +20,7 @@ vi.mock('../storage', () => ({
 // Import after mocking
 import {
   sumGarageScores, computeAllDLCValues, computeDLCValuesCore,
-  cappedFleetTotal, FLEET_DRIVER_CAP, DRIVERS_PER_GARAGE,
+  cappedFleetTotal, FLEET_DRIVER_CAP, DRIVERS_PER_GARAGE, searchOptimalDLCSet,
 } from '../dlc-value';
 import { applyDLCFilter, getBlockedCities } from '../dlc-filter';
 import { buildLookups } from '../lookups';
@@ -534,5 +534,61 @@ describe('cappedFleetTotal — the 354-driver ceiling (Q82)', () => {
     const base = Array.from({ length: FULL + 1 }, () => 100);
     const many = [...base, ...Array.from({ length: 50 }, () => 1)];
     expect(cappedFleetTotal(many)).toBeCloseTo(cappedFleetTotal(base), 6);
+  });
+});
+
+describe('searchOptimalDLCSet', () => {
+  type Dlc = { id: string; type: 'map' | 'trailer' | 'cargo'; name: string };
+
+  /** The search as it ran before batching: one scenario at a time, re-adds tried in order. */
+  function sequentialSearch(all: Dlc[], score: (ids: string[]) => number): { optimal: string[]; total: number } {
+    const searchable = all.filter(d => d.type !== 'trailer').map(d => d.id);
+    const everythingTotal = score(searchable);
+    const keep = searchable.filter(id => everythingTotal - score(searchable.filter(x => x !== id)) >= 0);
+    let best = score(keep);
+    for (const id of searchable) {
+      if (keep.includes(id)) continue;
+      const t = score([...keep, id]);
+      if (t > best) { keep.push(id); best = t; }
+    }
+    return everythingTotal > best ? { optimal: searchable, total: everythingTotal } : { optimal: keep, total: best };
+  }
+
+  /** Deterministic PRNG so a failure reproduces. */
+  function rng(seed: number): () => number {
+    return () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
+  }
+
+  it('matches the one-at-a-time search on random scores with pairwise interactions', async () => {
+    const r = rng(7);
+    for (let trial = 0; trial < 200; trial++) {
+      const all: Dlc[] = [
+        ...Array.from({ length: 6 }, (_, i) => ({ id: `m${i}`, type: 'map' as const, name: `m${i}` })),
+        ...Array.from({ length: 4 }, (_, i) => ({ id: `c${i}`, type: 'cargo' as const, name: `c${i}` })),
+        { id: 't0', type: 'trailer', name: 't0' },
+      ];
+      const ids = all.filter(d => d.type !== 'trailer').map(d => d.id);
+      const w = new Map(ids.map(id => [id, r() * 4 - 2]));
+      const pairs = Array.from({ length: 5 }, () => [ids[Math.floor(r() * ids.length)], ids[Math.floor(r() * ids.length)], r() * 6 - 3] as const);
+      const score = (set: string[]) => {
+        const s = new Set(set);
+        let total = 100;
+        for (const id of s) total += w.get(id)!;
+        for (const [a, b, v] of pairs) if (a !== b && s.has(a) && s.has(b)) total += v;
+        return total;
+      };
+
+      const expected = sequentialSearch(all, score);
+      const got = await searchOptimalDLCSet(all, ['m0', 'c0'], async sets => sets.map(score));
+      expect(got.optimalIds).toEqual([...expected.optimal, 't0'].sort());
+      expect(got.optimalTotal).toBe(expected.total);
+    }
+  });
+
+  it('scores the removals and the owned set as one batch', async () => {
+    const all: Dlc[] = ['a', 'b', 'c'].map(id => ({ id, type: 'map' as const, name: id }));
+    const batches: number[] = [];
+    await searchOptimalDLCSet(all, ['a'], async sets => { batches.push(sets.length); return sets.map(s => s.length); });
+    expect(batches[0]).toBe(1 + 3 + 1);  // everything, three removals, owned
   });
 });

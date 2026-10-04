@@ -237,46 +237,117 @@ function computeBodyTypeBreakdown(
   return out;
 }
 
-/**
- * Shared per-DLC computation used by both the main-thread calculator and the
- * Web Worker — the single source of truth for the marginal-value math. Synchronous;
- * the main-thread fallback wraps it (the worker path is the normal one and doesn't
- * block the UI).
- */
-export function computeDLCValuesCore(
-  rawData: AllData,
-  o: DLCValueOwnership,
-  onProgress?: (completed: number, total: number) => void,
-): DLCMarginalValue[] {
-  const baselineCargoSet = new Set([...o.ownedCargo, ...o.ownedMap]);
-  const baseline = sumGarageScores(rawData, o.ownedTrailer, baselineCargoSet, o.ownedMap, o.activeGarages, o.cityDlcMap, o.combinedCargoDlcMap, o.garageCities);
+/** DLC ownership state needed to run marginal value calculation */
+export interface DLCConfig {
+  ownedTrailer: string[];
+  ownedCargo: string[];
+  ownedMap: string[];
+  ownedGarages: string[];
+  // DLC registries
+  allTrailerDLCIds: string[];
+  allCargoDLCIds: string[];
+  allMapDLCIds: string[];
+  cityDlcMap: Record<string, string[]>;
+  combinedCargoDlcMap: Record<string, string>;
+  garageCities: string[];
+}
 
-  const garagesByCountry = garagesByCountryOf(rawData, o.activeGarages);
-  // Baseline per-(profile, country) winners — computed once, diffed against each hypo.
-  const baselineProfiles = new Map<string, Map<string, ProfileTrailerInfo>>();
-  for (const country of garagesByCountry.keys()) {
-    baselineProfiles.set(country, computeProfileTrailerInfoForCountry(country, baseline.filtered, baseline.lookups));
+/**
+ * The ownership the DLC scenarios score against. Every unowned DLC is listed with its id as its
+ * name — the client patches display names after the results return (the worker has no name maps).
+ */
+export function ownershipFromConfig(config: DLCConfig): DLCValueOwnership {
+  const { ownedTrailer, ownedCargo, ownedMap, ownedGarages } = config;
+  const garageCities = new Set(config.garageCities);
+
+  // Active garages = intersection of owned garages and garage cities
+  const activeGarages = new Set<string>();
+  for (const g of ownedGarages) {
+    if (garageCities.has(g)) activeGarages.add(g);
   }
 
-  const results: DLCMarginalValue[] = [];
-  let completed = 0;
+  const unowned = [
+    ...config.allMapDLCIds.filter(id => !ownedMap.includes(id)).map(id => ({ id, type: 'map' as const, name: id })),
+    ...config.allTrailerDLCIds.filter(id => !ownedTrailer.includes(id)).map(id => ({ id, type: 'trailer' as const, name: id })),
+    ...config.allCargoDLCIds.filter(id => !ownedCargo.includes(id)).map(id => ({ id, type: 'cargo' as const, name: id })),
+  ];
 
-  for (const dlc of o.unowned) {
-    const hypoTrailer = dlc.type === 'trailer' ? [...o.ownedTrailer, dlc.id] : o.ownedTrailer;
-    const hypoCargo = dlc.type === 'cargo' ? [...o.ownedCargo, dlc.id] : o.ownedCargo;
-    const hypoMap = dlc.type === 'map' ? [...o.ownedMap, dlc.id] : o.ownedMap;
-    const hypoCargoSet = new Set([...hypoCargo, ...hypoMap]);
+  return {
+    ownedTrailer, ownedCargo, ownedMap, activeGarages, garageCities, unowned,
+    cityDlcMap: config.cityDlcMap, combinedCargoDlcMap: config.combinedCargoDlcMap,
+  };
+}
 
-    const hypoGarages = new Set(o.activeGarages);
-    const newGarageCities: Array<{ id: string; name: string; score: number }> = [];
+/** A DLC the player does not own — one marginal-value scenario. */
+export type UnownedDLC = DLCValueOwnership['unowned'][number];
 
-    if (dlc.type === 'map') {
-      for (const cityId of o.cityDlcMap[dlc.id] || []) {
-        if (o.garageCities.has(cityId)) hypoGarages.add(cityId);
-      }
+/**
+ * One scenario's scores, small enough to post back from a worker: the totals, the per-city scores
+ * the marginal fields read (the active garages and, for a map DLC, its purchasable cities), and a
+ * trailer DLC's body-type breakdown.
+ */
+export interface ScenarioSummary {
+  dlcId: string | null;
+  total: number;
+  cappedTotal: number;
+  perCity: Map<string, number>;
+  bodyTypeBreakdown?: BodyTypeWinDelta[];
+}
+
+/** Garages a scenario sums over: the active ones, plus a map DLC's purchasable cities. */
+function scenarioGarages(o: DLCValueOwnership, dlc: UnownedDLC | null): Set<string> {
+  const garages = new Set(o.activeGarages);
+  if (dlc?.type === 'map') {
+    for (const cityId of o.cityDlcMap[dlc.id] || []) {
+      if (o.garageCities.has(cityId)) garages.add(cityId);
     }
+  }
+  return garages;
+}
 
-    const hypo = sumGarageScores(rawData, hypoTrailer, hypoCargoSet, hypoMap, hypoGarages, o.cityDlcMap, o.combinedCargoDlcMap, o.garageCities);
+/**
+ * Score one ownership scenario: the baseline (`dlc` null) or the baseline plus one unowned DLC.
+ * Scenarios are independent of each other — the unit a worker pool runs in parallel.
+ */
+export function evaluateDLCScenario(rawData: AllData, o: DLCValueOwnership, dlc: UnownedDLC | null): ScenarioSummary {
+  const trailer = dlc?.type === 'trailer' ? [...o.ownedTrailer, dlc.id] : o.ownedTrailer;
+  const cargo = dlc?.type === 'cargo' ? [...o.ownedCargo, dlc.id] : o.ownedCargo;
+  const map = dlc?.type === 'map' ? [...o.ownedMap, dlc.id] : o.ownedMap;
+  const garages = scenarioGarages(o, dlc);
+
+  const r = sumGarageScores(rawData, trailer, new Set([...cargo, ...map]), map, garages, o.cityDlcMap, o.combinedCargoDlcMap, o.garageCities);
+  const perCity = new Map<string, number>();
+  for (const id of garages) {
+    const score = r.perCity.get(id);
+    if (score !== undefined) perCity.set(id, score);
+  }
+  const summary: ScenarioSummary = { dlcId: dlc?.id ?? null, total: r.total, cappedTotal: r.cappedTotal, perCity };
+
+  const garagesByCountry = garagesByCountryOf(rawData, o.activeGarages);
+  if (dlc?.type === 'trailer' && garagesByCountry.size > 0) {
+    // Per-(profile, country) winners need only the baseline's filtered data, not its rankings.
+    const base = applyDLCFilter(rawData, o.ownedTrailer, new Set([...o.ownedCargo, ...o.ownedMap]), o.combinedCargoDlcMap, getBlockedCities(o.ownedMap, o.cityDlcMap));
+    const baseLookups = buildLookups(base);
+    clearTrailerInfoCache();
+    const baselineProfiles = new Map<string, Map<string, ProfileTrailerInfo>>();
+    for (const country of garagesByCountry.keys()) {
+      baselineProfiles.set(country, computeProfileTrailerInfoForCountry(country, base, baseLookups));
+    }
+    const breakdown = computeBodyTypeBreakdown(baselineProfiles, r, garagesByCountry);
+    if (breakdown.length > 0) summary.bodyTypeBreakdown = breakdown;
+  }
+  clearTrailerInfoCache();
+  return summary;
+}
+
+/** Turn the baseline and each DLC's scenario into marginal values, best first. */
+export function assembleDLCValues(
+  rawData: AllData, o: DLCValueOwnership, baseline: ScenarioSummary, hypos: ScenarioSummary[],
+): DLCMarginalValue[] {
+  const results: DLCMarginalValue[] = [];
+  for (const dlc of o.unowned) {
+    const hypo = hypos.find(h => h.dlcId === dlc.id);
+    if (!hypo) continue;
 
     // Existing garage delta = improvement at current garages only
     let existingGarageDelta = 0;
@@ -286,6 +357,7 @@ export function computeDLCValuesCore(
 
     // New city potential (map DLCs only)
     let newCityPotential = 0;
+    const newGarageCities: Array<{ id: string; name: string; score: number }> = [];
     if (dlc.type === 'map') {
       for (const cityId of o.cityDlcMap[dlc.id] || []) {
         if (o.garageCities.has(cityId) && !o.activeGarages.has(cityId)) {
@@ -313,20 +385,29 @@ export function computeDLCValuesCore(
       newCityPotential,
       newGarageCities,
     };
-
-    if (dlc.type === 'trailer' && garagesByCountry.size > 0) {
-      const breakdown = computeBodyTypeBreakdown(baselineProfiles, hypo, garagesByCountry);
-      if (breakdown.length > 0) result.bodyTypeBreakdown = breakdown;
-    }
-
+    if (hypo.bodyTypeBreakdown) result.bodyTypeBreakdown = hypo.bodyTypeBreakdown;
     results.push(result);
-    completed++;
-    onProgress?.(completed, o.unowned.length);
   }
-
-  clearTrailerInfoCache();
   results.sort((a, b) => b.totalDelta - a.totalDelta);
   return results;
+}
+
+/**
+ * Per-DLC marginal values, synchronously, one scenario after another — the main-thread fallback
+ * and the tests. The page's normal path runs the same scenarios across a worker pool.
+ */
+export function computeDLCValuesCore(
+  rawData: AllData,
+  o: DLCValueOwnership,
+  onProgress?: (completed: number, total: number) => void,
+): DLCMarginalValue[] {
+  const baseline = evaluateDLCScenario(rawData, o, null);
+  const hypos: ScenarioSummary[] = [];
+  for (const dlc of o.unowned) {
+    hypos.push(evaluateDLCScenario(rawData, o, dlc));
+    onProgress?.(hypos.length, o.unowned.length);
+  }
+  return assembleDLCValues(rawData, o, baseline, hypos);
 }
 
 /** One DLC's contribution to the optimal set, as found by `computeOptimalDLCSet`. */
@@ -352,6 +433,16 @@ export interface OptimalDLCSet {
   members: DLCSetMember[];
 }
 
+/** Max-fleet total (capped) for a set of map + cargo DLCs, every trailer DLC owned. */
+export function scoreDLCSet(rawData: AllData, o: DLCValueOwnership, trailerIds: string[], mapIds: Set<string>, ids: string[]): number {
+  const maps = ids.filter(id => mapIds.has(id));
+  const cargo = ids.filter(id => !mapIds.has(id));
+  return sumGarageScores(
+    rawData, trailerIds, new Set([...cargo, ...maps]), maps,
+    o.activeGarages, o.cityDlcMap, o.combinedCargoDlcMap, o.garageCities,
+  ).cappedTotal;
+}
+
 /**
  * Finds the DLC set that maximises max-fleet earnings under the 354-driver cap.
  *
@@ -364,80 +455,60 @@ export interface OptimalDLCSet {
  * ones once. That is ~2N scenario evaluations rather than the O(N^2) a full greedy needs, and it
  * catches the known case (Scandinavia and Greece are both net-negative, together -4.5%).
  *
+ * `scoreMany` scores a batch of sets, each a list of map + cargo DLC ids, and may run them in
+ * parallel. The removals score as one batch. The re-adds are tried in order against the growing set:
+ * each batch scores every remaining trial against the current set, the walk accepts the first that
+ * helps, and the rest re-score against the larger set — the same result as trying them one by one.
+ *
  * Trailer DLCs are never pruned: they add trailers and no cargo, so they cannot dilute a draw pool and
  * their removal marginal is bounded at <= 0 (register Q38 measured every brand at exactly 0.000).
  */
-export function computeOptimalDLCSet(
-  rawData: AllData,
-  o: DLCValueOwnership,
+export async function searchOptimalDLCSet(
   allDlcs: Array<{ id: string; type: 'map' | 'trailer' | 'cargo'; name: string }>,
-  onProgress?: (completed: number, total: number) => void,
-): OptimalDLCSet {
+  owned: string[],
+  scoreMany: (sets: string[][]) => Promise<number[]>,
+): Promise<OptimalDLCSet> {
   const trailerIds = allDlcs.filter(d => d.type === 'trailer').map(d => d.id);
   const searchable = allDlcs.filter(d => d.type !== 'trailer');
+  const everything = searchable.map(d => d.id);
 
-  let completed = 0;
-  const totalSteps = searchable.length * 2 + 3;
-  const score = (ids: Set<string>): number => {
-    const maps = allDlcs.filter(d => d.type === 'map' && ids.has(d.id)).map(d => d.id);
-    const cargo = allDlcs.filter(d => d.type === 'cargo' && ids.has(d.id)).map(d => d.id);
-    const r = sumGarageScores(
-      rawData, trailerIds, new Set([...cargo, ...maps]), maps,
-      o.activeGarages, o.cityDlcMap, o.combinedCargoDlcMap, o.garageCities,
-    );
-    completed++;
-    onProgress?.(completed, totalSteps);
-    return r.cappedTotal;
-  };
-
-  const everything = new Set(searchable.map(d => d.id));
-  const everythingTotal = score(everything);
-
-  // Removal marginals, each from the full set.
-  const members: DLCSetMember[] = [];
+  // Everything, each removal from it, and the owned set: independent, one batch.
+  const first = await scoreMany([everything, ...searchable.map(d => everything.filter(id => id !== d.id)), owned]);
+  const everythingTotal = first[0];
+  const ownedTotal = first[first.length - 1];
   const marginal = new Map<string, number>();
-  for (const d of searchable) {
-    const without = new Set(everything);
-    without.delete(d.id);
-    const m = score(without) - everythingTotal;   // > 0 means dropping it HELPS
-    marginal.set(d.id, -m);                       // report as "what owning it is worth"
+  searchable.forEach((d, i) => marginal.set(d.id, everythingTotal - first[i + 1]));  // what owning it is worth
+
+  // Prune everything whose removal helped, then try adding each back, in order.
+  const keep = searchable.filter(d => (marginal.get(d.id) ?? 0) >= 0).map(d => d.id);
+  let pending = searchable.filter(d => !keep.includes(d.id)).map(d => d.id);
+  let [bestTotal] = await scoreMany([keep]);
+  while (pending.length > 0) {
+    const trials = await scoreMany(pending.map(id => [...keep, id]));
+    const accepted = trials.findIndex(t => t > bestTotal);
+    if (accepted < 0) break;
+    keep.push(pending[accepted]);
+    bestTotal = trials[accepted];
+    pending = pending.slice(accepted + 1);
   }
 
-  // Prune everything whose removal helped, then try adding each back.
-  const keep = new Set(searchable.filter(d => (marginal.get(d.id) ?? 0) >= 0).map(d => d.id));
-  let bestTotal = score(keep);
-  for (const d of searchable) {
-    if (keep.has(d.id)) { completed++; onProgress?.(completed, totalSteps); continue; }
-    const trial = new Set(keep);
-    trial.add(d.id);
-    const t = score(trial);
-    if (t > bestTotal) { keep.add(d.id); bestTotal = t; }
-  }
   // "Own everything" can still win if pruning overshot.
-  if (everythingTotal > bestTotal) {
-    keep.clear();
-    for (const id of everything) keep.add(id);
-    bestTotal = everythingTotal;
-  }
+  const optimal = everythingTotal > bestTotal ? everything : keep;
+  if (everythingTotal > bestTotal) bestTotal = everythingTotal;
 
-  for (const d of searchable) {
-    members.push({
-      dlcId: d.id, dlcName: d.name, dlcType: d.type,
-      removalMarginal: marginal.get(d.id) ?? 0,
-      inOptimalSet: keep.has(d.id),
-    });
-  }
+  const members: DLCSetMember[] = searchable.map(d => ({
+    dlcId: d.id, dlcName: d.name, dlcType: d.type,
+    removalMarginal: marginal.get(d.id) ?? 0,
+    inOptimalSet: optimal.includes(d.id),
+  }));
   for (const id of trailerIds) {
     const d = allDlcs.find(x => x.id === id)!;
     members.push({ dlcId: id, dlcName: d.name, dlcType: 'trailer', removalMarginal: 0, inOptimalSet: true });
   }
   members.sort((a, b) => b.removalMarginal - a.removalMarginal);
 
-  const ownedTotal = score(new Set([...o.ownedMap, ...o.ownedCargo]));
-  clearTrailerInfoCache();
-
   return {
-    optimalIds: [...keep, ...trailerIds].sort(),
+    optimalIds: [...optimal, ...trailerIds].sort(),
     optimalTotal: bestTotal,
     ownedTotal,
     everythingTotal,
