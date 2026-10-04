@@ -6,6 +6,7 @@
 
 import { loadAllData, type AllData } from './data';
 import { initGameSelector } from './page-init';
+import { getActiveGame } from './game';
 import {
   TRAILER_DLCS, ALL_DLC_IDS,
   CARGO_DLCS, ALL_CARGO_DLC_IDS,
@@ -17,17 +18,38 @@ import {
   getOwnedGarages,
 } from './storage';
 import { computeDLCValuesAsync } from './optimizer-client';
-import type { DLCMarginalValue, OptimalDLCSet } from './dlc-value';
+import type { DLCMarginalValue } from './dlc-value';
 
 const settingsEl = document.getElementById('dlc-settings') as HTMLElement;
 const valueSection = document.getElementById('dlc-value-section') as HTMLElement;
 const calcBtn = document.getElementById('calc-value-btn') as HTMLButtonElement;
-const setBtn = document.getElementById('calc-set-btn') as HTMLButtonElement;
 const progressEl = document.getElementById('dlc-value-progress') as HTMLElement;
 const resultsEl = document.getElementById('dlc-value-results') as HTMLElement;
 
 let rawData: AllData | null = null;
 let lastResults: DLCMarginalValue[] | null = null;
+/** Map and cargo DLCs in the max-earnings set (best-dlc-set.json); null when the file is missing. */
+let bestSet: Set<string> | null = null;
+
+/**
+ * The best DLC set depends only on the game data — the search scores every purchasable city with
+ * every trailer DLC, whatever the player owns — so it ships precomputed (scripts/gen-best-dlc-set.mts).
+ */
+async function loadBestSet(): Promise<Set<string> | null> {
+  try {
+    const response = await fetch(`data/${getActiveGame()}/best-dlc-set.json`);
+    if (!response.ok) return null;
+    const file = await response.json() as { best: string[] };
+    return new Set(file.best);
+  } catch {
+    return null;
+  }
+}
+
+/** Row class: highlighted when the DLC is in the max-earnings set. */
+function rowClass(id: string): string {
+  return bestSet?.has(id) ? 'dlc-row dlc-best' : 'dlc-row';
+}
 
 function sortedEntries(dict: Record<string, string>): [string, string][] {
   return Object.entries(dict).sort((a, b) => a[1].localeCompare(b[1]));
@@ -42,7 +64,7 @@ function renderSettings(): void {
     const isBase = id === 'base_game';
     const checked = isBase || ownedMap.includes(id) ? 'checked' : '';
     const disabled = isBase ? 'disabled' : '';
-    return `<label class="dlc-row"><input type="checkbox" data-map-dlc="${id}" ${checked} ${disabled}> ${name}</label>`;
+    return `<label class="${rowClass(id)}"><input type="checkbox" data-map-dlc="${id}" ${checked} ${disabled}> ${name}</label>`;
   }).join('');
 
   // Group trailer DLC entries by display name (e.g. lodeking+prestige → one row)
@@ -59,7 +81,7 @@ function renderSettings(): void {
 
   const cargoRows = sortedEntries(CARGO_DLCS).map(([id, name]) => {
     const checked = ownedCargo.includes(id) ? 'checked' : '';
-    return `<label class="dlc-row"><input type="checkbox" data-cargo-dlc="${id}" ${checked}> ${name}</label>`;
+    return `<label class="${rowClass(id)}"><input type="checkbox" data-cargo-dlc="${id}" ${checked}> ${name}</label>`;
   }).join('');
 
   const totalMap = ALL_MAP_DLC_IDS.length;
@@ -99,6 +121,10 @@ function renderSettings(): void {
         ${cargoRows}
       </div>
     </div>
+    ${bestSet ? `<p class="dlc-best-legend">
+      <span class="dlc-best-swatch"></span> Highlighted: the map and cargo DLCs that give the highest
+      max-fleet earnings (354-driver cap), whatever you own. Trailer brands don't change earnings.
+    </p>` : ''}
   `;
 
   wireCheckboxes();
@@ -173,52 +199,9 @@ function formatEV(value: number): string {
   return Math.round(value).toString();
 }
 
-/**
- * "Best possible set" panel. The per-DLC list below it answers "what would adding X be worth?", which
- * substitution heavily damps: with 234 purchasable cities competing for 71 staffable slots, dropping
- * one map DLC just promotes the next-best cities. The set figure is the one to act on.
- */
-function renderOptimalSet(o: OptimalDLCSet | null): string {
-  if (!o) return '';
-  const short = o.ownedShortfall;
-  const onOptimum = Math.abs(short) < 0.0005;
-  const negatives = o.members.filter(m => m.removalMarginal < 0);
-  const verdict = onOptimum
-    ? 'Your DLC set is already optimal for fleet earnings.'
-    : `Your set leaves <strong>${(Math.abs(short) * 100).toFixed(1)}%</strong> of max-fleet earnings on the table.`;
-
-  const negList = negatives.length === 0 ? '' : `
-      <p class="muted">
-        Owning these <em>costs</em> you, because the cargo they add dilutes the job pool more than
-        their cities improve your best 71:
-        ${negatives.map(m => `<strong>${m.dlcName}</strong> (${(m.removalMarginal * 100 / Math.max(o.optimalTotal, 1e-9)).toFixed(2)}%)`).join(', ')}
-      </p>`;
-
-  return `
-    <div class="panel optimal-set">
-      <h3>Best possible DLC set</h3>
-      <p>${verdict}</p>
-      <p class="muted">
-        Scored at the <strong>354-driver cap</strong> — 70 fully-crewed garages plus one at 4/5, whatever
-        else you own. A DLC only pays if it puts a city into that 71.
-      </p>
-      ${negList}
-      <p class="muted">
-        Owning everything scores ${((o.everythingTotal / Math.max(o.optimalTotal, 1e-9) - 1) * 100).toFixed(1)}%
-        against the optimum. Magnitudes carry roughly ±25%; the ordering is the reliable part.
-      </p>
-    </div>`;
-}
-
-function renderResults(results: DLCMarginalValue[], optimalSet: OptimalDLCSet | null = null): void {
+function renderResults(results: DLCMarginalValue[]): void {
   if (results.length === 0) {
-    resultsEl.innerHTML = renderOptimalSet(optimalSet)
-      || '<div class="empty-state">All DLCs are owned — nothing to compare.</div>';
-    return;
-  }
-  const garages = getOwnedGarages().filter(g => GARAGE_CITIES.has(g));
-  if (garages.length === 0) {
-    resultsEl.innerHTML = '<div class="empty-state">Mark some garages on the <a href="index.html" class="link">Rankings</a> page first to see DLC value.</div>';
+    resultsEl.innerHTML = '<div class="empty-state">All DLCs are owned — nothing to compare.</div>';
     return;
   }
 
@@ -265,32 +248,22 @@ function renderResults(results: DLCMarginalValue[], optimalSet: OptimalDLCSet | 
   }).join('');
 
   resultsEl.innerHTML = `
-    ${renderOptimalSet(optimalSet)}
     <div class="dlc-value-list">
       <div class="dlc-value-summary">
-        Scored at the 354-driver cap over ${garages.length} owned garage${garages.length !== 1 ? 's' : ''}.
-        A DLC's value is what it adds to your best 71 staffable garages — adding cities below that cut
-        is worth nothing, and shadow cargo can make a DLC net-negative.
+        Scored at the 354-driver cap. A DLC's value is what it adds to the best 71 staffable garages
+        over every purchasable city — adding cities below that cut is worth nothing, and shadow cargo
+        can make a DLC net-negative.
       </div>
       ${rows}
     </div>
   `;
 }
 
-async function runCalculation(withOptimalSet = false): Promise<void> {
+async function runCalculation(): Promise<void> {
   if (!rawData) return;
 
-  // Check prerequisites before heavy computation
-  const garages = getOwnedGarages().filter(g => GARAGE_CITIES.has(g));
-  if (garages.length === 0) {
-    resultsEl.innerHTML = '<div class="empty-state">Mark some garages on the <a href="index.html" class="link">Rankings</a> page first to see DLC value.</div>';
-    return;
-  }
-
   calcBtn.disabled = true;
-  setBtn.disabled = true;
-  const activeBtn = withOptimalSet ? setBtn : calcBtn;
-  activeBtn.textContent = withOptimalSet ? 'Searching sets...' : 'Calculating...';
+  calcBtn.textContent = 'Calculating...';
   progressEl.style.display = 'block';
   resultsEl.innerHTML = '';
 
@@ -312,41 +285,31 @@ async function runCalculation(withOptimalSet = false): Promise<void> {
       ...TRAILER_DLCS,
       ...CARGO_DLCS,
     };
-    const { results, optimalSet } = await computeDLCValuesAsync(rawData, dlcConfig, dlcNameMap, (done, total) => {
+    const results = await computeDLCValuesAsync(rawData, dlcConfig, dlcNameMap, (done, total) => {
       progressEl.textContent = `Evaluating ${done} / ${total} scenarios...`;
-    }, withOptimalSet);
+    });
 
     lastResults = results;
     progressEl.style.display = 'none';
-    renderResults(results, optimalSet);
+    renderResults(results);
   } catch (err) {
     console.error('DLC value calculation failed:', err);
     progressEl.style.display = 'none';
     resultsEl.innerHTML = '<div class="empty-state">Calculation failed. Check console for details.</div>';
   } finally {
     calcBtn.disabled = false;
-    setBtn.disabled = false;
     calcBtn.textContent = 'Calculate Marginal Value';
-    setBtn.textContent = 'Find Best DLC Set (slow)';
   }
 }
 
 async function init(): Promise<void> {
   initGameSelector();
   try {
-    rawData = await loadAllData();
+    [rawData, bestSet] = await Promise.all([loadAllData(), loadBestSet()]);
     renderSettings();
     valueSection.style.display = '';
 
-    calcBtn.addEventListener('click', () => void runCalculation(false));
-    setBtn.addEventListener('click', () => {
-      // One scenario is a full re-ranking of every purchasable city, measured at 30-60s in the
-      // browser; the set search needs ~2N of them. Warn rather than appear hung.
-      if (confirm(
-        'Searching for the best DLC set re-ranks every city about 40 times.\n\n'
-        + 'This can take several minutes. Continue?',
-      )) void runCalculation(true);
-    });
+    calcBtn.addEventListener('click', () => void runCalculation());
   } catch (err) {
     console.error('Failed to initialize DLC page:', err);
     settingsEl.innerHTML = '<div class="empty-state">Failed to load data.</div>';

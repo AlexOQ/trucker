@@ -19,6 +19,7 @@
     "parse-saves": "node scripts/parse-saves.cjs",
     "defs-query": "node scripts/defs-query.cjs",
     "gen:data-coverage": "tsx scripts/gen-data-coverage.ts",
+    "gen:best-dlc-set": "tsx scripts/gen-best-dlc-set.mts ets2 && tsx scripts/gen-best-dlc-set.mts ats",
     "lint": "tsc --noEmit -p tsconfig.lint.json",
     "lint:fix": "tsc --noEmit -p tsconfig.lint.json",
     "format": "prettier --write src/frontend/"
