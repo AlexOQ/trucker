@@ -1,5 +1,6 @@
 {
   "game_version": "1.61.1.4",
+  "noise_floor": 6,
   "best": [
     "arkansas",
     "colorado",
@@ -17,7 +18,6 @@
     "new_mexico",
     "oklahoma",
     "oregon",
-    "special_transport",
     "texas",
     "utah",
     "washington",
