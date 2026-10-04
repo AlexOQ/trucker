@@ -480,6 +480,12 @@ function hashString(s: string): number {
 // Module-level RNG, initialized per computeOptimalFleet call
 let rng: () => number = Math.random;
 
+/** Added to every city's seed. 0 in the app; scripts vary it to measure Monte Carlo noise. */
+let mcSeedSalt = 0;
+export function setMcSeedSalt(salt: number): void {
+  mcSeedSalt = salt;
+}
+
 // ============================================
 // Monte Carlo simulation helpers
 // ============================================
@@ -753,7 +759,7 @@ export function computeOptimalFleet(
   const mcSims = opts?.mcSims ?? MC_SIMS;
 
   // Seed PRNG from city ID for deterministic results
-  rng = mulberry32(hashString(cityId));
+  rng = mulberry32((hashString(cityId) + mcSeedSalt) | 0);
 
   const depots = buildCityDepotProfiles(cityId, lookups);
   if (!depots) return null;

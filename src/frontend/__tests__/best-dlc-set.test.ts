@@ -12,10 +12,11 @@ describe.each(['ets2', 'ats'])('best-dlc-set.json (%s)', (game) => {
     expect(read('best-dlc-set.json').game_version).toBe(read('data-version.json').game_version);
   });
 
-  it('names only map and cargo DLCs the game data knows', () => {
-    const { best } = read('best-dlc-set.json') as { best: string[] };
-    const { map_dlcs, cargo_dlcs } = read('game-defs.json').dlc as Record<string, Record<string, string>>;
-    const known = new Set([...Object.keys(map_dlcs), ...Object.keys(cargo_dlcs)]);
+  it('names only DLCs the game data knows, and carries a noise floor', () => {
+    const { best, noise_floor } = read('best-dlc-set.json') as { best: string[]; noise_floor: number };
+    const { map_dlcs, cargo_dlcs, trailer_dlcs } = read('game-defs.json').dlc as Record<string, Record<string, string>>;
+    const known = new Set([...Object.keys(map_dlcs), ...Object.keys(cargo_dlcs), ...Object.keys(trailer_dlcs)]);
+    expect(noise_floor).toBeGreaterThan(0);
     expect(best.length).toBeGreaterThan(0);
     for (const id of best) expect(known).toContain(id);
   });

@@ -1,17 +1,15 @@
 {
   "game_version": "1.61.1.1",
+  "noise_floor": 25,
   "best": [
     "beyond_the_baltic_sea",
     "forest_machinery",
-    "going_east",
     "heavy_cargo",
     "high_power",
     "iberia",
-    "italia",
     "nordic_horizons",
-    "road_to_the_black_sea",
     "scandinavia",
-    "special_transport",
+    "schmitz",
     "vive_la_france"
   ]
 }

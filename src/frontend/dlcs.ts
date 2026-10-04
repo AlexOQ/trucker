@@ -28,7 +28,7 @@ const resultsEl = document.getElementById('dlc-value-results') as HTMLElement;
 
 let rawData: AllData | null = null;
 let lastResults: DLCMarginalValue[] | null = null;
-/** Map and cargo DLCs in the max-earnings set (best-dlc-set.json); null when the file is missing. */
+/** DLCs in the smallest max-earnings set (best-dlc-set.json); null when the file is missing. */
 let bestSet: Set<string> | null = null;
 
 /**
@@ -76,7 +76,8 @@ function renderSettings(): void {
   const trailerRows = [...trailerGroups.entries()].map(([name, ids]) => {
     const allOwned = ids.every(id => ownedTrailer.includes(id));
     const checked = allOwned ? 'checked' : '';
-    return `<label class="dlc-row"><input type="checkbox" data-trailer-dlc="${ids.join(',')}" ${checked}> ${name}</label>`;
+    const best = ids.some(id => bestSet?.has(id)) ? 'dlc-row dlc-best' : 'dlc-row';
+    return `<label class="${best}"><input type="checkbox" data-trailer-dlc="${ids.join(',')}" ${checked}> ${name}</label>`;
   }).join('');
 
   const cargoRows = sortedEntries(CARGO_DLCS).map(([id, name]) => {
@@ -122,8 +123,8 @@ function renderSettings(): void {
       </div>
     </div>
     ${bestSet ? `<p class="dlc-best-legend">
-      <span class="dlc-best-swatch"></span> Highlighted: the map and cargo DLCs that give the highest
-      max-fleet earnings (354-driver cap), whatever you own. Trailer brands don't change earnings.
+      <span class="dlc-best-swatch"></span> Highlighted: the smallest set of DLCs that reaches the highest
+      max-fleet earnings (354-driver cap), whatever you own. The rest add nothing or cost earnings.
     </p>` : ''}
   `;
 
