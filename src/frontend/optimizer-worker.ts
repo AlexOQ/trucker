@@ -1,8 +1,8 @@
 /**
  * Web Worker for optimizer computation.
  *
- * Runs computeOptimalFleet(), calculateCityRankings(), and the full
- * DLC marginal value pipeline off the main thread so the UI stays
+ * Runs computeOptimalFleet(), calculateCityRankings(), and single DLC
+ * scenarios off the main thread so the UI stays
  * responsive during heavy Monte Carlo simulations.
  *
  * Communication uses the structured clone algorithm, which handles
@@ -20,7 +20,7 @@ import {
 } from './optimizer';
 import type { AllData, Lookups } from './types';
 import {
-  evaluateDLCScenario, scoreDLCSet, ownershipFromConfig,
+  evaluateDLCScenario, ownershipFromConfig,
   type DLCConfig, type ScenarioSummary, type UnownedDLC,
 } from './dlc-value';
 
@@ -41,14 +41,12 @@ export type WorkerRequest =
   | { type: 'computeFleet'; id: number; cityId: string }
   | { type: 'computeRankings'; id: number }
   | { type: 'evalDLCScenario'; id: number; dlcConfig: DLCConfig; dlc: UnownedDLC | null }
-  | { type: 'scoreDLCSet'; id: number; dlcConfig: DLCConfig; ids: string[] }
 
 export type WorkerResponse =
   | { type: 'initResult'; id: number }
   | { type: 'fleetResult'; id: number; result: OptimalFleet | null }
   | { type: 'rankingsResult'; id: number; result: CityRanking[] }
   | { type: 'dlcScenarioResult'; id: number; result: ScenarioSummary }
-  | { type: 'dlcSetScore'; id: number; result: number }
   | { type: 'error'; id: number; message: string }
 
 export type { DLCConfig } from './dlc-value';
@@ -97,15 +95,6 @@ self.onmessage = (e: MessageEvent<WorkerRequest>) => {
         break;
       }
 
-      case 'scoreDLCSet': {
-        if (!storedData) {
-          throw new Error('Worker not initialized — send "init" before scoreDLCSet');
-        }
-        const c = msg.dlcConfig;
-        const result = scoreDLCSet(storedData, ownershipFromConfig(c), c.allTrailerDLCIds, new Set(c.allMapDLCIds), msg.ids);
-        self.postMessage({ type: 'dlcSetScore', id: msg.id, result } satisfies WorkerResponse);
-        break;
-      }
     }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

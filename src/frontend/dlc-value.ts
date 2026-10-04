@@ -410,7 +410,7 @@ export function computeDLCValuesCore(
   return assembleDLCValues(rawData, o, baseline, hypos);
 }
 
-/** One DLC's contribution to the optimal set, as found by `computeOptimalDLCSet`. */
+/** One DLC's contribution to the optimal set, as found by `searchOptimalDLCSet`. */
 export interface DLCSetMember {
   dlcId: string;
   dlcName: string;

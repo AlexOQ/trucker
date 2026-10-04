@@ -14,7 +14,7 @@
 
 import type { AllData, Lookups } from './types';
 import type { OptimalFleet, CityRanking } from './optimizer';
-import type { DLCMarginalValue, OptimalDLCSet, DLCConfig, ScenarioSummary, UnownedDLC } from './dlc-value';
+import type { DLCMarginalValue, DLCConfig, ScenarioSummary, UnownedDLC } from './dlc-value';
 import type { WorkerRequest, WorkerResponse } from './optimizer-worker';
 
 let worker: Worker | null = null;
@@ -179,7 +179,7 @@ export async function computeRankingsAsync(
 /**
  * DLC scenarios are independent full re-rankings (~4 s each), so the DLC page runs them across a
  * pool of workers rather than the one above. Jobs wait in one queue; each idle worker takes the
- * next, so the marginals and the set search share the pool.
+ * next.
  */
 interface PoolJob {
   msg: WorkerRequest;
@@ -254,7 +254,7 @@ function terminatePool(): void {
 }
 
 /**
- * Compute DLC marginal values, and optionally the best DLC set, across the worker pool.
+ * Compute DLC marginal values across the worker pool: the baseline and one scenario per unowned DLC.
  *
  * @param dlcNameMap - mapping from DLC ID to display name (workers return IDs only)
  */
@@ -263,58 +263,31 @@ export async function computeDLCValuesAsync(
   dlcConfig: DLCConfig,
   dlcNameMap: Record<string, string>,
   onProgress?: (completed: number, total: number) => void,
-  /** Also search for the best DLC set: ~2N more full re-rankings. */
-  withOptimalSet = false,
-): Promise<{ results: DLCMarginalValue[]; optimalSet: OptimalDLCSet | null }> {
+): Promise<DLCMarginalValue[]> {
   if (typeof Worker === 'undefined') {
-    // Synchronous fallback. The set search is ~2N full re-rankings, which would block the UI thread
-    // for far too long, so it is worker-only — the page degrades to per-DLC marginals alone.
     const { computeAllDLCValues } = await import('./dlc-value');
-    return { results: await computeAllDLCValues(rawData, onProgress), optimalSet: null };
+    return computeAllDLCValues(rawData, onProgress);
   }
 
-  const { ownershipFromConfig, assembleDLCValues, searchOptimalDLCSet } = await import('./dlc-value');
+  const { ownershipFromConfig, assembleDLCValues } = await import('./dlc-value');
   const o = ownershipFromConfig(dlcConfig);
   await ensurePool(rawData);
 
-  // Progress counts finished scenarios; the set search's total is its usual 2N + 3 estimate.
-  const searchable = dlcConfig.allMapDLCIds.length + dlcConfig.allCargoDLCIds.length;
   let completed = 0;
-  const total = o.unowned.length + 1 + (withOptimalSet ? searchable * 2 + 3 : 0);
-  const tick = <T>(p: Promise<T>): Promise<T> => p.then((v) => {
-    completed++;
-    onProgress?.(Math.min(completed, total), total);
-    return v;
-  });
-
+  const total = o.unowned.length + 1;
   const scenario = (dlc: UnownedDLC | null) =>
-    tick(submit<ScenarioSummary>({ type: 'evalDLCScenario', id: ++requestId, dlcConfig, dlc }));
-  const marginals = Promise.all([scenario(null), ...o.unowned.map(scenario)])
-    .then(([baseline, ...hypos]) => assembleDLCValues(rawData, o, baseline, hypos));
-
-  const optimal = withOptimalSet
-    ? searchOptimalDLCSet(
-      [
-        ...dlcConfig.allMapDLCIds.map(id => ({ id, type: 'map' as const, name: id })),
-        ...dlcConfig.allTrailerDLCIds.map(id => ({ id, type: 'trailer' as const, name: id })),
-        ...dlcConfig.allCargoDLCIds.map(id => ({ id, type: 'cargo' as const, name: id })),
-      ],
-      [...dlcConfig.ownedMap, ...dlcConfig.ownedCargo],
-      (sets) => Promise.all(sets.map((ids) =>
-        tick(submit<number>({ type: 'scoreDLCSet', id: ++requestId, dlcConfig, ids })))),
-    )
-    : Promise.resolve(null);
-
-  const [results, optimalSet] = await Promise.all([marginals, optimal]);
+    submit<ScenarioSummary>({ type: 'evalDLCScenario', id: ++requestId, dlcConfig, dlc }).then((s) => {
+      onProgress?.(++completed, total);
+      return s;
+    });
+  const [baseline, ...hypos] = await Promise.all([scenario(null), ...o.unowned.map(scenario)]);
+  const results = assembleDLCValues(rawData, o, baseline, hypos);
 
   // Patch display names — workers only have IDs
   for (const r of results) {
     r.dlcName = dlcNameMap[r.dlcId] ?? r.dlcId;
   }
-  for (const m of optimalSet?.members ?? []) {
-    m.dlcName = dlcNameMap[m.dlcId] ?? m.dlcId;
-  }
-  return { results, optimalSet };
+  return results;
 }
 
 /** Terminate the worker (e.g., on page unload). */
