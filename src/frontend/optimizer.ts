@@ -154,6 +154,76 @@ export interface CityDepotData {
   cumProbs: number[];
 }
 
+/** One company's cargo profile in one country — shared by every depot instance of it. */
+interface CompanyCargoProfile {
+  cargo: DepotCargoItem[];
+  totalProbCoef: number;
+  cumProbs: number[];
+}
+
+/**
+ * Company profiles depend only on (company, country) and the filtered data, so the cities of a
+ * country share them. Keyed per Lookups instance: a DLC scenario builds fresh lookups, which
+ * starts a fresh cache and lets the old one be collected (#327: rebuilding these per city was
+ * half of a scenario's time).
+ */
+const companyProfileCache = new WeakMap<Lookups, Map<string, CompanyCargoProfile | null>>();
+
+function buildCompanyCargoProfile(companyId: string, country: string, lookups: Lookups): CompanyCargoProfile | null {
+  const cargoIds = lookups.companyCargoMap.get(companyId) || [];
+  const cargo: DepotCargoItem[] = [];
+  let totalProbCoef = 0;
+
+  for (const cargoId of cargoIds) {
+    const c = lookups.cargoById.get(cargoId);
+    if (!c || c.excluded) continue;
+
+    const probCoef = c.prob_coef ?? 1.0;
+    const bonus = cargoBonus(c);
+    const unitVal = c.value * bonus;
+
+    // Find best haul value per body type from trailers available in this country
+    const bodyHV: Record<string, number> = {};
+    const compatibleTrailers = lookups.cargoTrailerMap.get(cargoId);
+    if (!compatibleTrailers) continue;
+
+    for (const trailerId of compatibleTrailers) {
+      const trailer = lookups.trailersById.get(trailerId);
+      if (!trailer || !trailer.ownable) continue;
+      // Zone check: trailer must be available in this country
+      if (trailer.country_validity && trailer.country_validity.length > 0
+        && !trailer.country_validity.includes(country)) continue;
+
+      const units = lookups.cargoTrailerUnits.get(`${cargoId}:${trailerId}`) ?? 1;
+      if (units <= 0) continue;
+
+      const hv = unitVal * units;
+      // Trailer contributes its HV to every body-type bucket it can serve that
+      // also matches this cargo. Multi-body trailers (extra_body_types set via
+      // multi-body-overrides.json) thus compete in multiple body slots from one
+      // physical SKU. Falls back to single-bucket behavior when extras unset.
+      const trailerBodyTypes = trailer.extra_body_types
+        ? [trailer.body_type, ...trailer.extra_body_types]
+        : [trailer.body_type];
+      for (const bt of trailerBodyTypes) {
+        if (!c.body_types.includes(bt)) continue;
+        if (!bodyHV[bt] || hv > bodyHV[bt]) bodyHV[bt] = hv;
+      }
+    }
+
+    if (Object.keys(bodyHV).length === 0) continue;
+    cargo.push({ cargoId, probCoef, unitVal, bodyHV });
+    totalProbCoef += probCoef;
+  }
+
+  if (cargo.length === 0 || totalProbCoef === 0) return null;
+
+  // Build CDF for fast binary-search sampling
+  let cum = 0;
+  const cumProbs = cargo.map((c) => { cum += c.probCoef / totalProbCoef; return cum; });
+  return { cargo, totalProbCoef, cumProbs };
+}
+
 /**
  * Build depot cargo profiles for a city.
  * Each depot instance (company × depotCount) gets its own entry.
@@ -166,64 +236,23 @@ export function buildCityDepotProfiles(cityId: string, lookups: Lookups): CityDe
   const cityCompanies = lookups.cityCompanyMap.get(cityId) || [];
   if (cityCompanies.length === 0) return null;
 
+  let profiles = companyProfileCache.get(lookups);
+  if (!profiles) { profiles = new Map(); companyProfileCache.set(lookups, profiles); }
+
   const depots: CityDepotData[] = [];
 
   for (const { companyId, count: depotCount } of cityCompanies) {
-    const cargoIds = lookups.companyCargoMap.get(companyId) || [];
-    const cargo: DepotCargoItem[] = [];
-    let totalProbCoef = 0;
-
-    for (const cargoId of cargoIds) {
-      const c = lookups.cargoById.get(cargoId);
-      if (!c || c.excluded) continue;
-
-      const probCoef = c.prob_coef ?? 1.0;
-      const bonus = cargoBonus(c);
-      const unitVal = c.value * bonus;
-
-      // Find best haul value per body type from trailers available in this country
-      const bodyHV: Record<string, number> = {};
-      const compatibleTrailers = lookups.cargoTrailerMap.get(cargoId);
-      if (!compatibleTrailers) continue;
-
-      for (const trailerId of compatibleTrailers) {
-        const trailer = lookups.trailersById.get(trailerId);
-        if (!trailer || !trailer.ownable) continue;
-        // Zone check: trailer must be available in this country
-        if (trailer.country_validity && trailer.country_validity.length > 0
-          && !trailer.country_validity.includes(country)) continue;
-
-        const units = lookups.cargoTrailerUnits.get(`${cargoId}:${trailerId}`) ?? 1;
-        if (units <= 0) continue;
-
-        const hv = unitVal * units;
-        // Trailer contributes its HV to every body-type bucket it can serve that
-        // also matches this cargo. Multi-body trailers (extra_body_types set via
-        // multi-body-overrides.json) thus compete in multiple body slots from one
-        // physical SKU. Falls back to single-bucket behavior when extras unset.
-        const trailerBodyTypes = trailer.extra_body_types
-          ? [trailer.body_type, ...trailer.extra_body_types]
-          : [trailer.body_type];
-        for (const bt of trailerBodyTypes) {
-          if (!c.body_types.includes(bt)) continue;
-          if (!bodyHV[bt] || hv > bodyHV[bt]) bodyHV[bt] = hv;
-        }
-      }
-
-      if (Object.keys(bodyHV).length === 0) continue;
-      cargo.push({ cargoId, probCoef, unitVal, bodyHV });
-      totalProbCoef += probCoef;
+    const key = `${companyId}|${country}`;
+    let profile = profiles.get(key);
+    if (profile === undefined) {
+      profile = buildCompanyCargoProfile(companyId, country, lookups);
+      profiles.set(key, profile);
     }
-
-    if (cargo.length === 0 || totalProbCoef === 0) continue;
-
-    // Build CDF for fast binary-search sampling
-    let cum = 0;
-    const cumProbs = cargo.map((c) => { cum += c.probCoef / totalProbCoef; return cum; });
+    if (!profile) continue;
 
     // Add one entry per depot instance
     for (let i = 0; i < depotCount; i++) {
-      depots.push({ companyId, cargo, totalProbCoef, cumProbs });
+      depots.push({ companyId, cargo: profile.cargo, totalProbCoef: profile.totalProbCoef, cumProbs: profile.cumProbs });
     }
   }
 
