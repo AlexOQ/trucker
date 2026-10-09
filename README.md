@@ -87,7 +87,7 @@ DLC counts below are the trailer-brand / cargo-pack / map-expansion DLCs each ga
 | Game | Version | Refreshed | DLCs (trailer / cargo / map) | Notes |
 |------|---------|-----------|------------------------------|-------|
 | ETS2 | 1.61.1.1 | 2026-10-03 | 27 (8 / 9 / 10) | Full reparse of a 1.61.1.1 install (all map and trailer DLCs owned). Diffed against the 1.61.1.0 bundle: the only changes were the six cargo-DLC attribution fixes, so the 1.61.1.0 -> 1.61.1.1 patch touched none of the extracted fields. Saves for validation come from a second PC via Steam Cloud, so pack-to-cargo attribution is read from this machine's archives while DLC ownership is read from the save's own info.sii; all eleven cargo-bearing archives are present locally. |
-| ATS | 1.61.1.4 | 2026-09-17 | 27 (2 / 8 / 17) | Full reparse of a 1.61.1.4 install with --keep-cities; the 6 unowned states’ cities carried forward from 1.60.1.8 — since validated exact, as buying Kansas diffed clean against its first-party defs. South Dakota ships no cities at all and is the one real gap. |
+| ATS | 1.61.3.1 | 2026-10-09 | 27 (2 / 8 / 17) | Full reparse of a 1.61.3.1 install with --keep-cities; the 4 unowned states’ (Iowa · Louisiana · Missouri · Illinois) cities carried forward from 1.60.1.8 — since validated exact, as buying Kansas diffed clean against its first-party defs. South Dakota ships no cities at all and is the one real gap. |
 <!-- END data-coverage -->
 
 ## Development

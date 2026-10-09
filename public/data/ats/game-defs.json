@@ -5099,7 +5099,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 38045,
+      "price": 45775,
       "level_floor": 11
     },
     "lodeking.bril_drop.single_48.dropdeck_alw": {
@@ -5113,7 +5113,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 33545,
+      "price": 38310,
       "level_floor": 11
     },
     "lodeking.bril_drop.single_53_3.dropdeck_alw": {
@@ -5127,7 +5127,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 43145,
+      "price": 50875,
       "level_floor": 15
     },
     "lodeking.bril_drop.single_53.dropdeck_alw": {
@@ -5161,7 +5161,7 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 40645,
+      "price": 45410,
       "level_floor": 13
     },
     "lodeking.bril_flat.single_48_3.flatbed_alw": {
@@ -5459,7 +5459,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 33045,
+      "price": 40775,
       "level_floor": 11
     },
     "lodeking.force_drop.single_48_3.dropdeck_hw": {
@@ -5473,7 +5473,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 35545,
+      "price": 43275,
       "level_floor": 11
     },
     "lodeking.force_drop.single_48.dropdeck_f": {
@@ -5487,7 +5487,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28545,
+      "price": 33310,
       "level_floor": 11
     },
     "lodeking.force_drop.single_48.dropdeck_hw": {
@@ -5501,7 +5501,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 31045,
+      "price": 35810,
       "level_floor": 11
     },
     "lodeking.force_drop.single_53_3.dropdeck_f": {
@@ -5515,7 +5515,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 38145,
+      "price": 45875,
       "level_floor": 15
     },
     "lodeking.force_drop.single_53_3.dropdeck_hw": {
@@ -5529,7 +5529,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 40645,
+      "price": 48375,
       "level_floor": 15
     },
     "lodeking.force_drop.single_53_4.dropdeck_f": {
@@ -5543,7 +5543,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "lodeking.force_drop.single_53_4.dropdeck_hw": {
@@ -5557,7 +5557,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "lodeking.force_drop.single_53.dropdeck_f": {
@@ -5571,7 +5571,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 35645,
+      "price": 40410,
       "level_floor": 13
     },
     "lodeking.force_drop.single_53.dropdeck_hw": {
@@ -5585,7 +5585,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 38145,
+      "price": 42910,
       "level_floor": 13
     },
     "lodeking.force_flat.single_48_3.flatbed_f": {
@@ -6073,7 +6073,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 38045,
+      "price": 45775,
       "level_floor": 11
     },
     "lodeking.renow_drop.single_48_3.dropdeck_f": {
@@ -6087,7 +6087,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 33045,
+      "price": 40775,
       "level_floor": 11
     },
     "lodeking.renow_drop.single_48_3.dropdeck_hw": {
@@ -6101,7 +6101,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 35545,
+      "price": 43275,
       "level_floor": 11
     },
     "lodeking.renow_drop.single_48.dropdeck_alw": {
@@ -6115,7 +6115,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 33545,
+      "price": 38310,
       "level_floor": 11
     },
     "lodeking.renow_drop.single_48.dropdeck_f": {
@@ -6129,7 +6129,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28545,
+      "price": 33310,
       "level_floor": 11
     },
     "lodeking.renow_drop.single_48.dropdeck_hw": {
@@ -6143,7 +6143,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 31045,
+      "price": 35810,
       "level_floor": 11
     },
     "lodeking.renow_drop.single_53_3.dropdeck_alw": {
@@ -6157,7 +6157,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 43145,
+      "price": 50875,
       "level_floor": 15
     },
     "lodeking.renow_drop.single_53_3.dropdeck_f": {
@@ -6171,7 +6171,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 38145,
+      "price": 45875,
       "level_floor": 15
     },
     "lodeking.renow_drop.single_53_3.dropdeck_hw": {
@@ -6185,7 +6185,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 40645,
+      "price": 48375,
       "level_floor": 15
     },
     "lodeking.renow_drop.single_53_4.dropdeck_alw": {
@@ -6199,7 +6199,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "lodeking.renow_drop.single_53_4.dropdeck_f": {
@@ -6213,7 +6213,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "lodeking.renow_drop.single_53_4.dropdeck_hw": {
@@ -6227,7 +6227,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "lodeking.renow_drop.single_53.dropdeck_alw": {
@@ -6241,7 +6241,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 40645,
+      "price": 45410,
       "level_floor": 13
     },
     "lodeking.renow_drop.single_53.dropdeck_f": {
@@ -6255,7 +6255,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 35645,
+      "price": 40410,
       "level_floor": 13
     },
     "lodeking.renow_drop.single_53.dropdeck_hw": {
@@ -6269,7 +6269,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 38145,
+      "price": 42910,
       "level_floor": 13
     },
     "lodeking.renow_flat.single_48_3.flatbed_alw": {
@@ -6883,7 +6883,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 38045,
+      "price": 45775,
       "level_floor": 11
     },
     "prestige.bril_drop.single_48.dropdeck_alw": {
@@ -6897,7 +6897,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 33545,
+      "price": 38310,
       "level_floor": 11
     },
     "prestige.bril_drop.single_53_3.dropdeck_alw": {
@@ -6911,7 +6911,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 43145,
+      "price": 50875,
       "level_floor": 15
     },
     "prestige.bril_drop.single_53.dropdeck_alw": {
@@ -6945,7 +6945,7 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 40645,
+      "price": 45410,
       "level_floor": 13
     },
     "prestige.bril_flat.single_48_3.flatbed_alw": {
@@ -7243,7 +7243,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 33045,
+      "price": 40775,
       "level_floor": 11
     },
     "prestige.force_drop.single_48_3.dropdeck_hw": {
@@ -7257,7 +7257,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 35545,
+      "price": 43275,
       "level_floor": 11
     },
     "prestige.force_drop.single_48.dropdeck_f": {
@@ -7271,7 +7271,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28545,
+      "price": 33310,
       "level_floor": 11
     },
     "prestige.force_drop.single_48.dropdeck_hw": {
@@ -7285,7 +7285,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 31045,
+      "price": 35810,
       "level_floor": 11
     },
     "prestige.force_drop.single_53_3.dropdeck_f": {
@@ -7299,7 +7299,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 38145,
+      "price": 45875,
       "level_floor": 15
     },
     "prestige.force_drop.single_53_3.dropdeck_hw": {
@@ -7313,7 +7313,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 40645,
+      "price": 48375,
       "level_floor": 15
     },
     "prestige.force_drop.single_53_4.dropdeck_f": {
@@ -7327,7 +7327,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "prestige.force_drop.single_53_4.dropdeck_hw": {
@@ -7341,7 +7341,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "prestige.force_drop.single_53.dropdeck_f": {
@@ -7355,7 +7355,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 35645,
+      "price": 40410,
       "level_floor": 13
     },
     "prestige.force_drop.single_53.dropdeck_hw": {
@@ -7369,7 +7369,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 38145,
+      "price": 42910,
       "level_floor": 13
     },
     "prestige.force_flat.single_48_3.flatbed_f": {
@@ -7783,7 +7783,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 38045,
+      "price": 45775,
       "level_floor": 11
     },
     "prestige.renow_drop.single_48_3.dropdeck_f": {
@@ -7797,7 +7797,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 33045,
+      "price": 40775,
       "level_floor": 11
     },
     "prestige.renow_drop.single_48_3.dropdeck_hw": {
@@ -7811,7 +7811,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 35545,
+      "price": 43275,
       "level_floor": 11
     },
     "prestige.renow_drop.single_48.dropdeck_alw": {
@@ -7825,7 +7825,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 33545,
+      "price": 38310,
       "level_floor": 11
     },
     "prestige.renow_drop.single_48.dropdeck_f": {
@@ -7839,7 +7839,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28545,
+      "price": 33310,
       "level_floor": 11
     },
     "prestige.renow_drop.single_48.dropdeck_hw": {
@@ -7853,7 +7853,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 31045,
+      "price": 35810,
       "level_floor": 11
     },
     "prestige.renow_drop.single_53_3.dropdeck_alw": {
@@ -7867,7 +7867,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 43145,
+      "price": 50875,
       "level_floor": 15
     },
     "prestige.renow_drop.single_53_3.dropdeck_f": {
@@ -7881,7 +7881,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 38145,
+      "price": 45875,
       "level_floor": 15
     },
     "prestige.renow_drop.single_53_3.dropdeck_hw": {
@@ -7895,7 +7895,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 40645,
+      "price": 48375,
       "level_floor": 15
     },
     "prestige.renow_drop.single_53_4.dropdeck_alw": {
@@ -7909,7 +7909,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "prestige.renow_drop.single_53_4.dropdeck_f": {
@@ -7923,7 +7923,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "prestige.renow_drop.single_53_4.dropdeck_hw": {
@@ -7937,7 +7937,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 34607,
+      "price": 45302,
       "level_floor": 16
     },
     "prestige.renow_drop.single_53.dropdeck_alw": {
@@ -7951,7 +7951,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 40645,
+      "price": 45410,
       "level_floor": 13
     },
     "prestige.renow_drop.single_53.dropdeck_f": {
@@ -7965,7 +7965,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 35645,
+      "price": 40410,
       "level_floor": 13
     },
     "prestige.renow_drop.single_53.dropdeck_hw": {
@@ -7979,7 +7979,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 38145,
+      "price": 42910,
       "level_floor": 13
     },
     "prestige.renow_flat.single_48_3.flatbed_alw": {
@@ -10471,7 +10471,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 43780,
+      "price": 50900,
       "level_floor": 12
     },
     "scs.dropdeck.single_48_3.dropdeck_alu": {
@@ -10485,7 +10485,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 35780,
+      "price": 42900,
       "level_floor": 11
     },
     "scs.dropdeck.single_48_3.dropdeck_w": {
@@ -10499,7 +10499,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 31280,
+      "price": 38400,
       "level_floor": 11
     },
     "scs.dropdeck.single_48f.curtain": {
@@ -10513,7 +10513,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 41280,
+      "price": 45740,
       "level_floor": 12
     },
     "scs.dropdeck.single_48f.dropdeck_alu": {
@@ -10527,7 +10527,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 33280,
+      "price": 37740,
       "level_floor": 10
     },
     "scs.dropdeck.single_48f.dropdeck_w": {
@@ -10541,7 +10541,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28780,
+      "price": 33240,
       "level_floor": 9
     },
     "scs.dropdeck.single_48r.curtain": {
@@ -10555,7 +10555,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 41280,
+      "price": 45740,
       "level_floor": 12
     },
     "scs.dropdeck.single_48r.dropdeck_alu": {
@@ -10569,7 +10569,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 33280,
+      "price": 37740,
       "level_floor": 10
     },
     "scs.dropdeck.single_48r.dropdeck_w": {
@@ -10583,7 +10583,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 28780,
+      "price": 33240,
       "level_floor": 9
     },
     "scs.dropdeck.single_48sp.curtain": {
@@ -10597,7 +10597,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 41780,
+      "price": 46240,
       "level_floor": 12
     },
     "scs.dropdeck.single_48sp.dropdeck_alu": {
@@ -10611,7 +10611,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 33780,
+      "price": 38240,
       "level_floor": 10
     },
     "scs.dropdeck.single_48sp.dropdeck_w": {
@@ -10625,7 +10625,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 29280,
+      "price": 33740,
       "level_floor": 10
     },
     "scs.dropdeck.single_53_3.curtain": {
@@ -10639,7 +10639,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 49840,
+      "price": 56960,
       "level_floor": 15
     },
     "scs.dropdeck.single_53_3.dropdeck_alu": {
@@ -10653,7 +10653,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 40840,
+      "price": 47960,
       "level_floor": 15
     },
     "scs.dropdeck.single_53_3.dropdeck_w": {
@@ -10667,7 +10667,7 @@
       "axles": 3,
       "chain_type": "single",
       "ownable": true,
-      "price": 35840,
+      "price": 42960,
       "level_floor": 15
     },
     "scs.dropdeck.single_53_4.curtain": {
@@ -10681,7 +10681,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 51840,
+      "price": 61620,
       "level_floor": 16
     },
     "scs.dropdeck.single_53_4.dropdeck_alu": {
@@ -10695,7 +10695,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 42840,
+      "price": 52620,
       "level_floor": 16
     },
     "scs.dropdeck.single_53_4.dropdeck_w": {
@@ -10709,7 +10709,7 @@
       "axles": 4,
       "chain_type": "single",
       "ownable": true,
-      "price": 37840,
+      "price": 47620,
       "level_floor": 16
     },
     "scs.dropdeck.single_53f.curtain": {
@@ -10723,7 +10723,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 47340,
+      "price": 51800,
       "level_floor": 13
     },
     "scs.dropdeck.single_53f.dropdeck_alu": {
@@ -10737,7 +10737,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 38340,
+      "price": 42800,
       "level_floor": 13
     },
     "scs.dropdeck.single_53f.dropdeck_w": {
@@ -10751,7 +10751,7 @@
       "axles": 2,
       "chain_type": "single",
       "ownable": true,
-      "price": 33340,
+      "price": 37800,
       "level_floor": 13
     },
     "scs.dropdeck.single_53r.curtain": {
@@ -10785,7 +10785,7 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 47340,
+      "price": 51800,
       "level_floor": 13
     },
     "scs.dropdeck.single_53r.dropdeck_alu": {
@@ -10819,7 +10819,7 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 38340,
+      "price": 42800,
       "level_floor": 13
     },
     "scs.dropdeck.single_53r.dropdeck_w": {
@@ -10853,7 +10853,7 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 33340,
+      "price": 37800,
       "level_floor": 13
     },
     "scs.dropdeck.single_53sp.curtain": {
@@ -10887,7 +10887,7 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 47840,
+      "price": 52300,
       "level_floor": 14
     },
     "scs.dropdeck.single_53sp.dropdeck_alu": {
@@ -10921,7 +10921,7 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 38840,
+      "price": 43300,
       "level_floor": 14
     },
     "scs.dropdeck.single_53sp.dropdeck_w": {
@@ -10955,7 +10955,7 @@
         "wyoming"
       ],
       "ownable": true,
-      "price": 33840,
+      "price": 38300,
       "level_floor": 14
     },
     "scs.drybulk.bdouble_3_2.drybulk": {
