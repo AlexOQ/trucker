@@ -938,7 +938,10 @@ function extractTrailerPricing(): Map<string, TrailerPricing> {
   if (!existsSync(ownedDir)) return pricing;
   const archiveRoot = dirname(defsPath);
   const abs = (defPath: string) => join(archiveRoot, defPath.replace(/^\//, ''));
-  const WHEEL = new Set(['r_tire', 'r_disc', 'r_hub', 'r_nuts', 'f_tire', 'f_disc', 'f_hub', 'f_nuts']);
+  // Wheel slots by trailer_wheel/<type>: ETS2 uses r_/f_; ATS dealer presets also fit d_ (and s_) sets, which
+  // were missing here, so ATS walks priced no tires and undercut the dealer by ~$2.7k per axle.
+  const WHEEL = new Set(['r_tire', 'r_disc', 'r_hub', 'r_nuts', 'f_tire', 'f_disc', 'f_hub', 'f_nuts',
+    'd_tire', 'd_disc', 'd_hub', 'd_nuts', 's_tire', 's_disc', 's_hub', 's_nuts']);
   const arr = (v: unknown): string[] => (Array.isArray(v) ? (v as string[]) : []);
 
   // Accessory type from a def path: wheels by trailer_wheel/<type>, addons by
