@@ -120,6 +120,19 @@ export function buildLookups(data: AllData): Lookups {
     }
   }
 
+  // Country axle-mass limits (#340). Lives only in game defs; observations carry none.
+  const countryMassLimits = new Map<string, number[]>();
+  if (defs?.countries) {
+    for (const [id, c] of Object.entries(defs.countries)) {
+      if (c.mass_limit_per_axle_count && c.mass_limit_per_axle_count.length > 0) {
+        countryMassLimits.set(id, c.mass_limit_per_axle_count);
+      }
+    }
+  }
+
+  // The cap is safe only on data that marks which heavy cargo is exempt. See Lookups.massLimitsActive.
+  const massLimitsActive = data.cargo.some((c) => c.overweight === true);
+
   return {
     citiesById,
     companiesById,
@@ -130,5 +143,7 @@ export function buildLookups(data: AllData): Lookups {
     trailerCargoMap,
     cargoTrailerMap,
     cargoTrailerUnits,
+    countryMassLimits,
+    massLimitsActive,
   };
 }

@@ -33,6 +33,32 @@ A trailer's "coverage" is the percentage of the city's cargo pool it can service
 
 Each cargo type has a base value (€ per km). High-value cargo (electronics, machinery) pays more than bulk goods.
 
+### Units Per Haul (loading)
+
+A haul's value is `unit value × units`. Units are:
+
+```
+units = min( volume units, ⌊(limit − truck tare − trailer tare) / cargo unit mass⌋ )
+```
+
+- **volume units** = `⌊trailer volume / cargo volume⌋`, already capped by the trailer's own gross
+  weight limit. Def-derived and country-independent (`cargo_trailer_units` in game-defs.json).
+- **limit** = the country's `mass_limit_per_axle_count` for the combination's total axle count — a
+  4x2 (2-axle) truck plus the trailer's `axles`, clamped to the array. Truck tare is a fitted ~7 t
+  constant (truck chassis defs carry no mass); trailer tare is its chassis + body mass.
+- Cargo with an **overweight permit** (`overweight: true` in the def — 46 ETS2 cargo, e.g.
+  `log_stacker`, `tractor_c`) ignores the mass limit and loads by volume.
+- When the limit leaves room for **0 units** the haul is a **dead run**: the cargo still spawns on
+  the board and crowds out better jobs, but earns nothing.
+
+Measured exact on 90.1% of 28,114 ETS2 AI hauls (#340). The cap is inert for datasets that carry no
+overweight flags (ATS until validated — #342), leaving units at the volume/weight baseline.
+
+### Trailer Zones
+
+A trailer with a non-empty `country_validity` is legal only in those countries — Finland+Sweden HCT
+road-trains, ATS doubles/triples per state. It is a fleet candidate only at garages inside its zone.
+
 ## The Algorithm
 
 The optimizer uses a **greedy weighted set cover** approach with three configurable parameters.
@@ -129,7 +155,9 @@ Some cities are heavily specialized (e.g., port cities with mostly containers). 
 ## Limitations
 
 1. **Static data**: Actual in-game job availability fluctuates
-2. **No distance factoring**: We don't account for delivery destinations
+2. **No destination modelling**: jobs carry no destination. The game's axle-mass limit is the stricter
+   of the source and destination countries; with no destination to read, the loading rule above uses
+   the home (source) country alone.
 3. **No driver skills**: Real earnings depend on driver level, truck efficiency
 4. **Equal probability assumption**: Game may weight certain jobs higher
 

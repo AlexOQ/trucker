@@ -79,8 +79,8 @@ describe('analyticalFirstPickEVForRep — rep-specific HV with weight clamp', ()
     const depots = buildCityDepotProfiles('test_city', lookups);
     expect(depots).not.toBeNull();
 
-    const sllEV = analyticalFirstPickEVForRep(depots!, 'sll_cont', lookups);
-    const scsEV = analyticalFirstPickEVForRep(depots!, 'scs_4ax', lookups);
+    const sllEV = analyticalFirstPickEVForRep(depots!, 'sll_cont', lookups, 'test_country');
+    const scsEV = analyticalFirstPickEVForRep(depots!, 'scs_4ax', lookups, 'test_country');
 
     // Closed-form expected values for the fixture (1 depot, 3 jobs, 3 equiprobable cargo):
     //   SLL.cont: hvSet = {0 (heavy clamped), 3 (mid), 8 (light)}

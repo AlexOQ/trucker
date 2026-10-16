@@ -34,6 +34,13 @@ export interface Cargo {
   body_types: string[];
   groups: string[];
   excluded: boolean;
+  /**
+   * Overweight permit (#340): a cargo the game lets AI haul over the country
+   * axle-mass limit. 46 ETS2 cargo carry it (heavy machinery/forest/oversize-pack
+   * loads — log_stacker, tractor_c, crawler, …). Exempts the cargo from the
+   * mass-limited unit cap. Emitted only when true, so absent === false.
+   */
+  overweight?: boolean;
 }
 
 export interface Trailer {
@@ -79,6 +86,8 @@ export interface GameDefs {
     body_types: string[];
     groups: string[];
     excluded: boolean;
+    /** Overweight permit (#340); emitted only when true. See `Cargo.overweight`. */
+    overweight?: boolean;
   }>;
   trailers: Record<string, {
     name: string;
@@ -102,6 +111,13 @@ export interface GameDefs {
   }>;
   countries: Record<string, {
     name: string;
+    /**
+     * Total combination mass cap (kg) by axle count, 0-indexed from 1 axle
+     * (index i = i+1 axles), clamped to the last entry beyond its length (#340).
+     * The combination's axle count is the 4x2 truck's 2 plus the trailer's
+     * `axles`. Present on every ETS2 country and ATS state.
+     */
+    mass_limit_per_axle_count?: number[];
   }>;
   companies: Record<string, {
     name: string;
@@ -257,7 +273,16 @@ export interface Lookups {
   companyCargoMap: Map<string, string[]>;
   trailerCargoMap: Map<string, Set<string>>;
   cargoTrailerMap: Map<string, Set<string>>;
-  cargoTrailerUnits: Map<string, number>; // "cargoId:trailerId" -> units
+  cargoTrailerUnits: Map<string, number>; // "cargoId:trailerId" -> volume/gwl units (country-independent)
+  /** country id -> `mass_limit_per_axle_count` (#340). Empty when the data carries none. */
+  countryMassLimits: Map<string, number[]>;
+  /**
+   * Whether the country axle-mass unit cap is active (#340). True iff the dataset
+   * carries `overweight` permit flags — without them the cap can't tell which
+   * heavy cargo is exempt and would wrongly kill it, so the rule stays off.
+   * ETS2 carries flags; ATS does not until #342 reparses it, so it reads false there.
+   */
+  massLimitsActive: boolean;
 }
 
 export interface BodyTypeProfile {
