@@ -867,7 +867,12 @@ function extractCargo(): CargoData[] {
       groups,
       min_distance: typeof unit.props.minimum_distance === 'number' ? unit.props.minimum_distance : 0,
       max_distance: typeof unit.props.maximum_distance === 'number' ? unit.props.maximum_distance : 0,
-      overweight: id === 'overweight' || groups.includes('oversize'),
+      // Permit flag from the def: a cargo marked `overweight: true` rides exempt
+      // from the country axle-mass limit (#340). The 46 ETS2 cargo that carry it
+      // are heavy machinery/forest/oversize-pack loads the game lets AI haul over
+      // the limit (log_stacker, tractor_c, crawler, …). Read the def value, not
+      // the old id/oversize-group guess, which never reached game-defs.json.
+      overweight: unit.props.overweight === true,
       excluded: false,
       unit_load_time: typeof unit.props.unit_load_time === 'number' ? unit.props.unit_load_time : 0,
       dlc: CARGO_DLC_MAP[id],
@@ -2254,6 +2259,9 @@ function buildFrontendData(
       body_types: c.body_types,
       groups: c.groups,
       excluded: c.excluded,
+      // Overweight permit (#340): emitted only when true (46 ETS2 cargo). The
+      // optimizer exempts these from the country axle-mass unit cap.
+      ...(c.overweight ? { overweight: true } : {}),
       // Range limit from the def's `maximum_distance`. Nine ETS2 cargo carry one — livestock and
       // excavated soil at 600 km, bulk (coal, ore, sand, stone dust, granite, wall panels) at 800 —
       // and without it the optimizer believes `live_cattle` can cross the map, over-crediting any city
@@ -2445,6 +2453,8 @@ function runDiff(newData: ReturnType<typeof buildFrontendData>): void {
       diffs.push(`min_distance: ${oldVal.min_distance ?? 'none'} → ${newVal.min_distance ?? 'none'}`);
     if (oldVal.fragile !== newVal.fragile) diffs.push(`fragile: ${oldVal.fragile} → ${newVal.fragile}`);
     if (oldVal.high_value !== newVal.high_value) diffs.push(`high_value: ${oldVal.high_value} → ${newVal.high_value}`);
+    if ((oldVal.overweight ?? false) !== (newVal.overweight ?? false))
+      diffs.push(`overweight: ${oldVal.overweight ?? false} → ${newVal.overweight ?? false}`);
     if (JSON.stringify(oldVal.body_types) !== JSON.stringify(newVal.body_types))
       diffs.push(`body_types changed`);
     if (oldVal.dlc !== newVal.dlc) diffs.push(`dlc: ${oldVal.dlc || 'none'} → ${newVal.dlc || 'none'}`);

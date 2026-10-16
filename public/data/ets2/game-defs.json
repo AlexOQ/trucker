@@ -301,6 +301,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "volvo_ce"
     },
     "asph_miller": {
@@ -321,6 +322,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "atl_cod_flt": {
@@ -749,6 +751,7 @@
         "construction"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "canned_beans": {
@@ -1422,6 +1425,7 @@
         "construction"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "concr_beams2": {
@@ -1594,7 +1598,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "crawler": {
       "name": "crawler_carrier",
@@ -1613,7 +1618,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "tractor_c": {
       "name": "crawler_tractor",
@@ -1632,6 +1638,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "farm_machinery"
     },
     "cut_flowers": {
@@ -1786,6 +1793,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "driller": {
@@ -2128,6 +2136,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "jcb"
     },
     "volvo_ec220e": {
@@ -2168,6 +2177,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "volvo_ce"
     },
     "exhausts_c": {
@@ -2392,6 +2402,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "forklifts": {
@@ -2448,6 +2459,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "fresh_fish": {
@@ -3226,6 +3238,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "czl_es300": {
@@ -3244,7 +3257,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "czl_muv75": {
       "name": "locomotive_czloko_muv75",
@@ -3262,7 +3276,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "log_harvest": {
       "name": "log_harvester",
@@ -3281,6 +3296,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "log_stacker": {
@@ -3300,6 +3316,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "logs": {
@@ -3544,7 +3561,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "med_equip": {
       "name": "medical_equipment",
@@ -3661,6 +3679,7 @@
         "construction"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "mtl_coil": {
@@ -3775,6 +3794,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "mob_crusher": {
@@ -3795,6 +3815,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "mob_screener": {
@@ -3815,6 +3836,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "mob_stacker": {
@@ -3835,6 +3857,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "mob_tr_winch": {
@@ -3855,6 +3878,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "motor_oil": {
@@ -3972,6 +3996,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "natur_rubber": {
@@ -5606,6 +5631,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "jcb"
     },
     "bob_s86": {
@@ -5644,6 +5670,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "smokd_eel": {
@@ -6302,6 +6329,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "transmis": {
@@ -6841,6 +6869,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "wooden_beams": {

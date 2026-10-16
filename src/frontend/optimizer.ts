@@ -17,6 +17,55 @@ import type { AllData, Lookups, Trailer } from './types.js';
 /** Jobs spawned per depot instance on each visit */
 const JOBS_PER_DEPOT = 3;
 
+// ── Country axle-mass loading limit (#340) ──────────────────────────────────
+// A combination may not exceed its country's `mass_limit_per_axle_count` for its
+// total axle count, so heavy cargo loads fewer units than volume alone allows —
+// often zero (a dead run). Measured exact on 90.1% of 28,114 ETS2 AI hauls.
+
+/** Truck tare (kg), fitted across the 28,114 hauls: a ~7 t 4x2 tractor. Truck chassis defs carry no mass. */
+const TRUCK_TARE_KG = 7000;
+/** The modelled truck is a 4x2 — 2 axles — added to the trailer's axles for the combination total. */
+const TRUCK_AXLES = 2;
+
+/**
+ * Zone rule (#340): a trailer with a non-empty `country_validity` may only run
+ * inside that set, so it is a fleet candidate only at garages whose country is
+ * in it. The model has no per-haul destination, so "runs only inside its zone"
+ * is realised as "is only admitted at garages inside its zone" — this is the
+ * single home for that check (was inlined at two trailer-entry points).
+ */
+function trailerServesCountry(trailer: Trailer, country: string): boolean {
+  const zone = trailer.country_validity;
+  return !zone || zone.length === 0 || zone.includes(country);
+}
+
+/**
+ * Units of `cargoId` on trailer `repId` after the country axle-mass cap, given a
+ * home country. `baseUnits` is the volume/gross-weight count; the cap can only
+ * lower it, to 0 for a dead run. Returns `baseUnits` unchanged when the rule is
+ * inert (dataset carries no overweight permits — see `Lookups.massLimitsActive`),
+ * the cargo holds an overweight permit, the country declares no limit, or axle/mass
+ * data is missing. `country` is the source (home) country: the model has no
+ * destination, so the measured "stricter of source and destination" reduces to it.
+ */
+function massLimitedUnits(
+  baseUnits: number, cargoId: string, repId: string, country: string, lookups: Lookups,
+): number {
+  if (!lookups.massLimitsActive || baseUnits <= 0) return baseUnits;
+  const cargo = lookups.cargoById.get(cargoId);
+  if (!cargo || cargo.overweight || !(cargo.mass > 0)) return baseUnits;
+  const limits = lookups.countryMassLimits.get(country);
+  if (!limits || limits.length === 0) return baseUnits;
+  const trailer = lookups.trailersById.get(repId);
+  const axles = trailer?.axles ?? 0;
+  if (!trailer || axles <= 0) return baseUnits;
+  const combinationAxles = TRUCK_AXLES + axles;
+  const limit = limits[Math.min(combinationAxles, limits.length) - 1];
+  const massAvail = limit - TRUCK_TARE_KG - trailer.chassis_mass - trailer.body_mass;
+  const massUnits = Math.floor(massAvail / cargo.mass);
+  return massUnits < baseUnits ? Math.max(0, massUnits) : baseUnits;
+}
+
 /** Max AI drivers dispatched simultaneously */
 const MAX_DRIVERS = 5;
 
@@ -128,8 +177,10 @@ interface DepotCargoItem {
   repHV?: Record<string, number>;
 }
 
-/** Populate repHV[repId] on each DepotCargoItem; call after candidate selection, before MC sim. */
-function populateRepHV(depots: CityDepotData[], repIds: string[], lookups: Lookups): void {
+/** Populate repHV[repId] on each DepotCargoItem; call after candidate selection, before MC sim.
+ *  Units are capped by the home country's axle-mass limit (#340), so a cargo too heavy to load
+ *  at all reads 0 HV — it still spawns on the board and dilutes, it just can't be hauled. */
+function populateRepHV(depots: CityDepotData[], repIds: string[], lookups: Lookups, country: string): void {
   const seen = new Set<DepotCargoItem>();
   for (const depot of depots) {
     for (const c of depot.cargo) {
@@ -137,8 +188,8 @@ function populateRepHV(depots: CityDepotData[], repIds: string[], lookups: Looku
       seen.add(c);
       const map: Record<string, number> = {};
       for (const repId of repIds) {
-        const units = lookups.cargoTrailerUnits.get(`${c.cargoId}:${repId}`) ?? 0;
-        map[repId] = c.unitVal * units;
+        const baseUnits = lookups.cargoTrailerUnits.get(`${c.cargoId}:${repId}`) ?? 0;
+        map[repId] = c.unitVal * massLimitedUnits(baseUnits, c.cargoId, repId, country, lookups);
       }
       c.repHV = map;
     }
@@ -190,12 +241,14 @@ function buildCompanyCargoProfile(companyId: string, country: string, lookups: L
     for (const trailerId of compatibleTrailers) {
       const trailer = lookups.trailersById.get(trailerId);
       if (!trailer || !trailer.ownable) continue;
-      // Zone check: trailer must be available in this country
-      if (trailer.country_validity && trailer.country_validity.length > 0
-        && !trailer.country_validity.includes(country)) continue;
+      if (!trailerServesCountry(trailer, country)) continue;
 
-      const units = lookups.cargoTrailerUnits.get(`${cargoId}:${trailerId}`) ?? 1;
-      if (units <= 0) continue;
+      const baseUnits = lookups.cargoTrailerUnits.get(`${cargoId}:${trailerId}`) ?? 1;
+      if (baseUnits <= 0) continue;
+      // Axle-mass cap (#340): may drop to 0 (a dead run). The cargo is kept in the
+      // pool — bodyHV records the 0 — so it still spawns and dilutes the board; it
+      // just earns nothing. Removing it would make an all-dead pack look free.
+      const units = massLimitedUnits(baseUnits, cargoId, trailerId, country, lookups);
 
       const hv = unitVal * units;
       // Trailer contributes its HV to every body-type bucket it can serve that
@@ -405,6 +458,7 @@ export function analyticalFirstPickEVForRep(
   depots: CityDepotData[],
   repId: string,
   lookups: Lookups,
+  country: string,
   cache?: DepotItemsCache,
 ): number {
   const depotItems: DepotItemsCache = cache ?? buildDepotItemsCache(depots);
@@ -414,10 +468,11 @@ export function analyticalFirstPickEVForRep(
   // version's lookup is unitVal × Map.get(cargoTrailerUnits) — 10x heavier per
   // call. Skipping the precompute would multiply that cost by hvValues.length
   // inside totalCDF, which compounds at city-rankings scale.
+  // Units carry the home country's axle-mass cap (#340).
   const hvPerItem: number[][] = depotItems.map((items) =>
     items.map((item) => {
-      const units = lookups.cargoTrailerUnits.get(`${item.cargoId}:${repId}`) ?? 0;
-      return item.unitVal * units;
+      const baseUnits = lookups.cargoTrailerUnits.get(`${item.cargoId}:${repId}`) ?? 0;
+      return item.unitVal * massLimitedUnits(baseUnits, item.cargoId, repId, country, lookups);
     })
   );
 
@@ -597,8 +652,7 @@ export function computeProfileTrailerInfoForCountry(
 
   for (const t of data.trailers) {
     if (!t.ownable) continue;
-    if (t.country_validity && t.country_validity.length > 0
-      && !t.country_validity.includes(country)) continue;
+    if (!trailerServesCountry(t, country)) continue;
 
     const cargoSet = lookups.trailerCargoMap.get(t.id);
     if (!cargoSet) continue;
@@ -616,7 +670,8 @@ export function computeProfileTrailerInfoForCountry(
       if (!c || c.excluded) continue;
       const matches = c.body_types.some((bt) => bodyTypes.includes(bt));
       if (!matches) continue;
-      const units = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
+      const baseUnits = lookups.cargoTrailerUnits.get(`${cargoId}:${t.id}`) ?? 1;
+      const units = massLimitedUnits(baseUnits, cargoId, t.id, country, lookups);
       const bonus = cargoBonus(c);
       totalHV += c.value * bonus * units;
     }
@@ -788,7 +843,7 @@ export function computeOptimalFleet(
   for (const [key, info] of profileInfo) {
     const surviving = info.bodyTypes.filter((bt) => allBodyTypes.has(bt) && !dominated.has(bt));
     if (surviving.length === 0) continue;
-    const ev = analyticalFirstPickEVForRep(depots, info.trailerId, lookups, depotItemsCache);
+    const ev = analyticalFirstPickEVForRep(depots, info.trailerId, lookups, country, depotItemsCache);
     if (ev > 0) candidates.push({ key, bodyTypes: surviving, repId: info.trailerId, ev });
   }
   candidates.sort((a, b) => b.ev - a.ev);
@@ -797,7 +852,7 @@ export function computeOptimalFleet(
   if (viableProfiles.length === 0) return null;
 
   // Cache rep HV per (cargo, viable rep) so the MC inner loop is pure array access.
-  populateRepHV(depots, viableProfiles.map((p) => p.repId), lookups);
+  populateRepHV(depots, viableProfiles.map((p) => p.repId), lookups, country);
 
   // Pre-allocate board buffer (reused across all MC simulations)
   const totalSlots = depots.length * JOBS_PER_DEPOT;

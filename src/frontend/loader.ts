@@ -128,6 +128,7 @@ function buildCargo(defs: GameDefs | null, obs: Observations | null): Cargo[] {
       body_types: c.body_types,
       groups: c.groups,
       excluded: c.excluded,
+      overweight: c.overweight,
     }));
   }
   if (obs) {

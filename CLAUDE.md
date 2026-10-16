@@ -56,7 +56,7 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 - Body type profiles are built dynamically from game-defs.json via `getBodyTypeProfiles()`
 - Optimizer works at body-type level, not individual trailer level
 
-**Haul Value Formula**: `unitValue × units` where `unitValue = cargo.value × (1 + 0.3×fragile + 0.3×high_value)`
+**Haul Value Formula**: `unitValue × units` where `unitValue = cargo.value × (1 + 0.3×fragile + 0.3×high_value)`. `units` is the volume/gross-weight count (`cargo_trailer_units`) further capped at optimize time by the home country's axle-mass limit (#340, `massLimitedUnits` in `optimizer.ts`): `min(volume units, ⌊(country limit − 7t truck tare − trailer tare) / cargo mass⌋)`. Cargo with the def's `overweight: true` permit is exempt; a 0-unit result is a dead run that still spawns and dilutes. The cap is inert on datasets without overweight flags (ATS until #342). See ALGORITHM.md "Units Per Haul".
 
 **Cargo Value Bonuses**:
 - Fragile cargo: +30% value bonus
