@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-"""#320 build, slice 1: a city-pair road-distance graph from ETS2 map sectors,
-with separate city/normal road scales.
+"""#320 build, slices 1-2: a city-pair road-distance graph from ETS2 map sectors,
+with separate city/normal road scales and depot-node city anchors.
 
 Answers "can route_km come out of base_map.scs, to retire the save-derived
 citykm.json?".  It reads the `.base` sector files that `scripts/scs-extract`
@@ -38,8 +38,11 @@ Method:
      locatable in the item bytes; the flag is bit 23 of the u32 at uid+48 (byte
      uid+50 bit 0x80). The full item parser (productionize bullet) would read it
      directly. Verified against a CityArea-box ground truth at 94.5% agreement.
-  4. Anchor cities from CityArea items (token name | f32 w | f32 h | u64 node),
-     snap each to the nearest graph node, and shortest-path between them.
+  4. Anchor cities on their company depot nodes (slice 2) -- the node field of
+     each Company item, the real freight terminals -- snap each to the nearest
+     graph node, and take a city pair's distance as the median over its depot
+     pairs (min validates worse). CityArea-centroid anchors (token name | f32 w |
+     f32 h | u64 node, slice 1) are kept for the side-by-side `--validate` prints.
 
 Distances come out in MAP metres. ETS2 compresses the world, but by two factors:
 NormalScale (~19) for open road, CityScale (~3) for city streets. Both are read
@@ -75,7 +78,31 @@ def tokenizable(s):
     return 0 < len(s) <= 12 and all(c in TBL for c in s)
 
 
+def detok(v):
+    """Decode an SCS base-38 token back to its unit name, or None if `v` is not a
+    valid token: a zero base-38 digit is the '\\0' char (never inside a real name)
+    and names are at most 12 chars. Used to vet a Company item's company token."""
+    if v <= 0:
+        return None
+    s = []
+    while v:
+        v, d = divmod(v, 38)
+        if d == 0 or len(s) >= 12:
+            return None
+        s.append(TBL[d])
+    return ''.join(s)
+
+
 DEFAULT_SCALES = (19.0, 3.0)  # ETS2 documented NormalScale / CityScale
+
+# The slice-1 sample pairs (short -> long), reused so slice 2 is comparable;
+# mannheim:strasbourg is the anchoring probe the README tracks.
+DEFAULT_SAMPLE = [
+    ('dortmund', 'duisburg'), ('mannheim', 'strasbourg'), ('linz', 'prague'),
+    ('kassel', 'prague'), ('bratislava', 'innsbruck'), ('kiel', 'strasbourg'),
+    ('dresden', 'trieste'), ('lille', 'wien'), ('geneve', 'rostock'),
+    ('calais', 'rijeka'),
+]
 
 
 def find_mbd(sources):
@@ -143,6 +170,7 @@ class Graph:
         self.pos = {}                    # uid -> (x, y, z) metres
         self.node_items = {}             # node uid -> (backward_item, forward_item)
         self.adj = defaultdict(dict)     # uid -> {uid: weight_metres}
+        self.adj_city = defaultdict(dict)  # uid -> {uid: 1 city / 0 normal} (fast decomp)
         self.edge_src = {}               # frozenset({u,v}) -> source label
         self.edge_city = {}              # frozenset({u,v}) -> 1 city road / 0 normal
         self.regions = []                # (bytes, item_start, item_end, source)
@@ -158,6 +186,8 @@ class Graph:
         if v not in self.adj[u] or w < self.adj[u][v]:
             self.adj[u][v] = w
             self.adj[v][u] = w
+            self.adj_city[u][v] = city
+            self.adj_city[v][u] = city
             self.edge_src[frozenset((u, v))] = src
             self.edge_city[frozenset((u, v))] = city
 
@@ -274,6 +304,8 @@ class Graph:
                 u, v = tuple(key)
                 self.adj[u].pop(v, None)
                 self.adj[v].pop(u, None)
+                self.adj_city[u].pop(v, None)
+                self.adj_city[v].pop(u, None)
                 del self.edge_src[key]
                 self.edge_city.pop(key, None)
 
@@ -317,6 +349,79 @@ class Graph:
                     if node in nodeset and 0.0 < w < 20000.0 and 0.0 < h < 20000.0:
                         hits[cid].append(node)
         return hits
+
+    def company_anchors(self, tokmap):
+        """city_id -> sorted [depot node uid] from Company items (phase-scanned).
+
+        The depot-accurate anchor (slice 2): each company placement in a city is
+        a real freight terminal, where the CityArea label is only a map caption.
+        Company item payload (TruckLib CompanySerializer), after the item head:
+            token city | u64 prefab_uid | token company | u64 node_uid
+            | u32 count | u64 spawn_uids[count] | u32 spawn_flags[count]
+        We find the city token (a known city id), then read the company token 16 B
+        on, the depot node_uid 24 B on, and the spawn-point run. A hit is kept only
+        when the company token decodes to a base-38 name, node_uid is a known node,
+        and all `count` spawn uids are known nodes -- a structural signature a stray
+        byte run cannot meet (a known node is ~1e-14 of the u64 space), so no
+        def/company dir cross-check is needed. Deduped per city on node_uid.
+        """
+        nodeset = set(self.pos)
+        hits = defaultdict(set)
+        for (b, s, e, _src) in self.regions:
+            for phase in range(8):
+                base = s + phase
+                k = (e - base) // 8
+                for i in range(k):
+                    o = base + i * 8
+                    cid = tokmap.get(struct.unpack_from('<Q', b, o)[0])
+                    if cid is None or o + 36 > e:
+                        continue
+                    comp = struct.unpack_from('<Q', b, o + 16)[0]
+                    node = struct.unpack_from('<Q', b, o + 24)[0]
+                    count = struct.unpack_from('<I', b, o + 32)[0]
+                    if node not in nodeset or not (0 < count <= 64) or detok(comp) is None:
+                        continue
+                    if o + 36 + count * 8 > e:
+                        continue
+                    if all(struct.unpack_from('<Q', b, o + 36 + j * 8)[0] in nodeset
+                           for j in range(count)):
+                        hits[cid].add(node)
+        return {cid: sorted(ns) for cid, ns in hits.items()}
+
+    def dijkstra_decomp(self, src, targets):
+        """{node: (city_m, normal_m, total_m)} from `src` to each node in `targets`.
+
+        One map-metre Dijkstra, propagating the city/normal split as nodes settle,
+        so the whole depot x depot distance matrix is a Dijkstra per source node --
+        no per-pair path reconstruction (route()).
+        """
+        dist = {src: 0.0}
+        cm = {src: 0.0}
+        nm = {src: 0.0}
+        pq = [(0.0, src)]
+        want = set(targets)
+        out = {}
+        adj, adjc = self.adj, self.adj_city
+        while pq and want:
+            d, u = heapq.heappop(pq)
+            if d > dist[u]:
+                continue
+            if u in want:
+                out[u] = (cm[u], nm[u], d)
+                want.discard(u)
+                if not want:
+                    break
+            cmu, nmu, auc = cm[u], nm[u], adjc[u]
+            for v, w in adj[u].items():
+                nd = d + w
+                if nd < dist.get(v, 1e30):
+                    dist[v] = nd
+                    if auc[v]:
+                        cm[v], nm[v] = cmu + w, nmu
+                    else:
+                        cm[v], nm[v] = cmu, nmu + w
+                    heapq.heappush(pq, (nd, v))
+        return out
 
     def dijkstra(self, src, dst):
         dist = {src: 0.0}
@@ -469,95 +574,171 @@ def main():
         print("city road length fraction: %.1f%% (IsCityRoad flag)"
               % (100 * g.city_len / (g.city_len + g.normal_len)))
 
-    # Two scales: from the .mbd when readable, else fitted from the oracle, else default.
+    # Two scales: from the .mbd when readable, else the documented defaults (an
+    # unreadable .mbd falls back to a least-squares fit from the oracle, below).
     mbd_path = args.mbd or find_mbd(sources)
     scales = read_mbd(mbd_path) if mbd_path else None
     if scales:
         normal_scale, city_scale = scales
         scale_src = "mbd %s" % mbd_path
     else:
-        normal_scale, city_scale = None, None   # resolved below once we have rows
+        normal_scale, city_scale = DEFAULT_SCALES
         scale_src = "unreadable mbd" if mbd_path else "no mbd"
 
     citykm = json.load(open(args.citykm)) if args.citykm else None
+    sample_pairs = ([tuple(p.split(':')) for p in args.pairs.split(',')]
+                    if args.pairs else DEFAULT_SAMPLE)
     city_ids = set()
     if citykm:
         for key in citykm:
             a, b = key.split('|')
-            city_ids.add(a)
-            city_ids.add(b)
-    if args.pairs:
-        for p in args.pairs.split(','):
-            a, b = p.split(':')
-            city_ids.add(a)
-            city_ids.add(b)
+            city_ids.add(a); city_ids.add(b)
+    for a, b in sample_pairs:
+        city_ids.add(a); city_ids.add(b)
     tokmap = {tok(c): c for c in city_ids if tokenizable(c)}
-    hits = g.city_anchors(tokmap)
     snap = snapper(g, giant)
-    anchored = {cid: snap(ns) for cid, ns in hits.items() if snap(ns)}
-    on_net = {c: v for c, v in anchored.items() if v[1] < args.snap_max and v[0] in giant}
-    print("cities anchored=%d  on giant network (<%.0fm)=%d"
-          % (len(anchored), args.snap_max, len(on_net)))
+
+    # Slice-1 anchor (CityArea label centroid), kept for the comparison.
+    centroid_hits = g.city_anchors(tokmap)
+    centroid_net = {}                        # city -> giant node (snap < max, on giant)
+    centroid_anchored = 0
+    for cid, ns in centroid_hits.items():
+        r = snap(ns)
+        if not r:
+            continue
+        centroid_anchored += 1
+        if r[1] < args.snap_max and r[0] in giant:
+            centroid_net[cid] = r[0]
+
+    # Slice-2 anchor: company depot node_uids, each snapped to the giant net.
+    depot_hits = g.company_anchors(tokmap)
+    depots_total = iso = small = on_g = 0
+    off_snaps = []
+    depot_net = {}                           # city -> sorted [giant anchor node]
+    for cid, nodes in depot_hits.items():
+        gns = []
+        for nd in nodes:
+            depots_total += 1
+            if nd not in g.adj:
+                iso += 1
+            elif nd in giant:
+                on_g += 1
+            else:
+                small += 1
+            r = snap([nd])
+            if r is None:
+                continue
+            gnode, sd = r
+            if nd not in giant:
+                off_snaps.append(sd)
+            if sd < args.snap_max:
+                gns.append(gnode)
+        if gns:
+            depot_net[cid] = sorted(set(gns))
+
+    off_med = sorted(off_snaps)[len(off_snaps) // 2] if off_snaps else 0.0
+    print("\ncities anchored (depot)=%d  on giant network=%d   [slice-1 centroid: %d / %d]"
+          % (len(depot_hits), len(depot_net), centroid_anchored, len(centroid_net)))
+    print("depots=%d  node on giant=%d  off giant=%d (small-comp %d / isolated %d)  off-giant snap median=%.0fm"
+          % (depots_total, on_g, small + iso, small, iso, off_med))
+
+    # Depot x depot game-distance matrix (one decomp Dijkstra per needed anchor).
+    need_cities = set(depot_net) if citykm else set()
+    for a, b in sample_pairs:
+        need_cities.add(a); need_cities.add(b)
+    need_nodes = sorted({n for c in need_cities if c in depot_net for n in depot_net[c]})
+    tset = set(need_nodes)
+    tmat = time.time()
+    D = {sn: g.dijkstra_decomp(sn, tset) for sn in need_nodes} if need_nodes else {}
+    if need_nodes:
+        print("depot matrix: %d anchor nodes, %.1fs" % (len(need_nodes), time.time() - tmat))
+
+    def depot_pick(a, b, which):
+        """(city_m, normal_m) of the a->b depot pair chosen by min or median game km."""
+        cand = []
+        for an in depot_net.get(a, ()):
+            row = D.get(an, {})
+            for bn in depot_net.get(b, ()):
+                r = row.get(bn)
+                if r:
+                    cand.append((r[1] * normal_scale + r[0] * city_scale, r[0], r[1]))
+        if not cand:
+            return None
+        cand.sort()
+        _, c, n = cand[0 if which == 'min' else len(cand) // 2]
+        return c, n
+
+    def dual(c, n):
+        return n * normal_scale + c * city_scale
+
+    def spread(rows):
+        if not rows:
+            return 1e9
+        res = sorted(100.0 * (dual(c, n) / (km * 1000.0) - 1.0) for (_, _, c, n, km) in rows)
+        return res[9 * len(res) // 10] - res[len(res) // 10]
 
     single = args.scale
-    fit_city = fit_normal = None
     if citykm:
-        rows = []   # (a, b, city_m, normal_m, oracle_km)
+        rows_c, rows_min, rows_med = [], [], []
         for key, km in citykm.items():
             a, b = key.split('|')
-            if a in on_net and b in on_net:
-                r = g.route(on_net[a][0], on_net[b][0])
+            if a in centroid_net and b in centroid_net:
+                r = g.route(centroid_net[a], centroid_net[b])
                 if r and r[2] > 0:
-                    rows.append((a, b, r[0], r[1], km))
-        if rows:
-            single = fit_single(rows)
-            fit_city, fit_normal = fit_dual(rows)
-            if normal_scale is None:          # mbd unreadable -> derive by fit
-                normal_scale, city_scale = fit_normal, fit_city
+                    rows_c.append((a, b, r[0], r[1], km))
+            if a in depot_net and b in depot_net:
+                pm, pd = depot_pick(a, b, 'min'), depot_pick(a, b, 'median')
+                if pm:
+                    rows_min.append((a, b, pm[0], pm[1], km))
+                if pd:
+                    rows_med.append((a, b, pd[0], pd[1], km))
+        win = 'min' if spread(rows_min) <= spread(rows_med) else 'median'
+        win_rows = rows_min if win == 'min' else rows_med
+        if win_rows:
+            single = fit_single(win_rows)
+            if not scales and win_rows:              # unreadable mbd -> fit headline scales
+                fc, fn = fit_dual(win_rows)
+                normal_scale, city_scale = fn, fc
                 scale_src = "fitted from oracle (lsq)"
-            print("\noracle pairs on network=%d" % len(rows))
-            print("scales: normal=%.2f city=%.2f  [%s]" % (normal_scale, city_scale, scale_src))
-            print("        single-scale median=%.2f   oracle-fitted dual city=%.2f normal=%.2f"
-                  % (single, fit_city, fit_normal))
-            if args.validate:
-                print("\n  SINGLE scale %.2f:" % single)
-                residual_bands(rows, lambda c, n: (c + n) * single)
-                print("  DUAL normal=%.2f city=%.2f [%s]:" % (normal_scale, city_scale, scale_src))
-                residual_bands(rows, lambda c, n: n * normal_scale + c * city_scale)
-                print("  DUAL oracle-fitted normal=%.2f city=%.2f (diagnostic):"
-                      % (fit_normal, fit_city))
-                residual_bands(rows, lambda c, n: n * fit_normal + c * fit_city)
-    if normal_scale is None:                  # no oracle and no mbd
-        normal_scale, city_scale = DEFAULT_SCALES
-        scale_src = "default %.0f/%.0f" % DEFAULT_SCALES
+        print("\noracle pairs on net: centroid=%d  depot=%d" % (len(rows_c), len(rows_med)))
         print("scales: normal=%.2f city=%.2f  [%s]" % (normal_scale, city_scale, scale_src))
+        print("depot aggregation all-pairs spread: min=%.1f  median=%.1f  -> keep %s"
+              % (spread(rows_min), spread(rows_med), win))
+        if args.validate:
+            print("\n  CENTROID anchor (slice 1), dual %.0f/%.0f:" % (normal_scale, city_scale))
+            residual_bands(rows_c, dual)
+            print("  DEPOT-MIN anchor, dual %.0f/%.0f:" % (normal_scale, city_scale))
+            residual_bands(rows_min, dual)
+            print("  DEPOT-MEDIAN anchor, dual %.0f/%.0f:" % (normal_scale, city_scale))
+            residual_bands(rows_med, dual)
+            fc, fn = fit_dual(win_rows)
+            print("  DEPOT-%s oracle-fitted normal=%.2f city=%.2f (diagnostic):"
+                  % (win.upper(), fn, fc))
+            residual_bands(win_rows, lambda c, n: n * fn + c * fc)
 
-    if args.pairs:
-        # map_km, city share, and single- vs dual-scale game km (+residual vs oracle)
-        print("\n%-24s %7s %7s %5s  %8s %8s" %
-              ("pair", "oracle", "map_km", "city%", "single", "dual"))
-        for p in args.pairs.split(','):
-            a, b = p.split(':')
-            if a not in anchored or b not in anchored:
-                print("%-24s  unanchored (not a base_map city?)" % p)
-                continue
-            r = g.route(anchored[a][0], anchored[b][0])
-            if r is None:
-                print("%-24s  disconnected" % p)
-                continue
-            city_m, normal_m, total_m = r
-            single_km = total_m / 1000.0 * single
-            dual_km = (normal_m * normal_scale + city_m * city_scale) / 1000.0
-            cityp = 100 * city_m / total_m if total_m else 0.0
-            km = citykm.get('%s|%s' % (a, b), citykm.get('%s|%s' % (b, a))) if citykm else None
-            if km:
-                print("%-24s %7d %7.1f %4.0f%%  %4.0f %+5.1f%% %4.0f %+5.1f%%"
-                      % (p, km, total_m / 1000, cityp,
-                         single_km, 100 * (single_km / km - 1),
-                         dual_km, 100 * (dual_km / km - 1)))
-            else:
-                print("%-24s %7s %7.1f %4.0f%%  %13.0f %8.0f"
-                      % (p, "-", total_m / 1000, cityp, single_km, dual_km))
+    # Sample table: centroid vs depot (min, median) game km under the dual scale.
+    def cell(cn, km):
+        if cn is None:
+            return "%13s" % "-"
+        gk = dual(cn[0], cn[1]) / 1000.0
+        return "%4.0f %+6.1f%%" % (gk, 100 * (gk / km - 1)) if km else "%8.0f     " % gk
+    print("\n%-22s %7s  %-13s %-13s %-13s %6s"
+          % ("pair", "oracle", "centroid", "depot-min", "depot-med", "depots"))
+    for a, b in sample_pairs:
+        km = citykm.get('%s|%s' % (a, b), citykm.get('%s|%s' % (b, a))) if citykm else None
+        cen = None
+        if a in centroid_net and b in centroid_net:
+            r = g.route(centroid_net[a], centroid_net[b])
+            if r:
+                cen = (r[0], r[1])
+        if a in depot_net and b in depot_net:
+            dn = "%dx%d" % (len(depot_net[a]), len(depot_net[b]))
+            print("%-22s %7s  %-13s %-13s %-13s %6s"
+                  % ('%s:%s' % (a, b), km if km else "-", cell(cen, km),
+                     cell(depot_pick(a, b, 'min'), km), cell(depot_pick(a, b, 'median'), km), dn))
+        else:
+            print("%-22s %7s  %-13s  depot unanchored"
+                  % ('%s:%s' % (a, b), km if km else "-", cell(cen, km)))
 
 
 if __name__ == '__main__':
