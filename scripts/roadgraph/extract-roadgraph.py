@@ -52,9 +52,12 @@ Method:
      stubs). def/ferry/connection/*.sii gives which ports connect and the authored
      crossing km; each connection whose two terminals are present becomes an edge
      of its own `ferry` kind, bridging the components. The crossing is BILLED at
-     the authored km (scale-free), not via the road scales: the oracle counts it
-     at the authored length (factor=0 under-reads ferry pairs by a median ~14%,
-     factor=1 fits at +3%, oracle-fit ~1.06). Its Dijkstra weight is
+     the authored km (scale-free), not via the road scales: measured on the ferry
+     pairs (one authored-cost routing, distance reported with and without the km),
+     the long North Sea crossings (>=207 km) need it (without -> median -29%, with
+     -> -3%), the short Channel crossings (<=66 km) read closer to uncounted
+     (without +5% vs with +11%), and the least-squares factor over all ferry pairs
+     is 1.06, so the edge bills the authored km. Its Dijkstra weight is
      km*1000/NormalScale, a road-equivalent length so ferries weigh against roads
      (a free ferry would let mainland pairs teleport). UK path fidelity (the
      sparse UK road graph routes long) is the dominant residual on the
@@ -357,8 +360,11 @@ class Graph:
                 self.adj[v].pop(u, None)
                 self.adj_city[u].pop(v, None)
                 self.adj_city[v].pop(u, None)
+                self.adj_ferry[u].pop(v, None)
+                self.adj_ferry[v].pop(u, None)
                 del self.edge_src[key]
                 self.edge_city.pop(key, None)
+                self.ferry_km.pop(key, None)
 
     def components(self):
         seen = set()
@@ -439,8 +445,8 @@ class Graph:
                         hits[cid].add(node)
         return {cid: sorted(ns) for cid, ns in hits.items()}
 
-    def ferry_terminals(self, porttok):
-        """port_id -> sorted [terminal node uid] from Ferry items (phase-scanned).
+    def ferry_terminals(self, porttok, allowed=None):
+        """port_id -> {terminal node uid: source label} from Ferry items.
 
         A Ferry map item places one port; after the item head its payload is
             token port | u64 approach_node | u64 node_uid | f32 unload[3] | ...
@@ -451,11 +457,16 @@ class Graph:
         nodes, fails this); those same 8 B as two floats are not a CityArea's
         width/height; and the unload offset reads as a small vector. Deduped per
         port on node_uid; a port with >1 survivor is resolved by add_ferries,
-        which keeps the terminal nearest a real road network.
+        which keeps the terminal nearest a real road network. `allowed` (the
+        `--only` DLC subset, #326) restricts the scan to its source sectors, so a
+        terminal in an unowned map's sectors is never found and its connection
+        never forms; each terminal carries the source it was found in.
         """
         nodeset = set(self.pos)
-        hits = defaultdict(set)
-        for (b, s, e, _src) in self.regions:
+        hits = defaultdict(dict)
+        for (b, s, e, src) in self.regions:
+            if allowed is not None and src not in allowed:
+                continue
             for phase in range(8):
                 base = s + phase
                 k = (e - base) // 8
@@ -474,10 +485,11 @@ class Graph:
                         continue
                     ux, uy, uz = struct.unpack_from('<fff', b, o + 24)
                     if abs(ux) < 10000.0 and abs(uy) < 2000.0 and abs(uz) < 10000.0:
-                        hits[pid].add(node)
-        return {pid: sorted(ns) for pid, ns in hits.items()}
+                        hits[pid].setdefault(node, src)
+        return {pid: dict(nm) for pid, nm in hits.items()}
 
-    def add_ferries(self, conns, porttok, normal_scale, min_comp=100, snap_max=1500.0):
+    def add_ferries(self, conns, porttok, normal_scale, allowed=None,
+                    min_comp=100, snap_max=1500.0):
         """Add each ferry connection as an edge of its own `ferry` kind.
 
         Terminals (ferry_terminals) are isolated like Company depot nodes, so
@@ -488,10 +500,12 @@ class Graph:
         the UK/islands to the mainland giant. The edge's map-metre weight is
         km*1000/normal_scale (a road-equivalent length, so Dijkstra weighs a
         ferry against the roads); its billed length is the authored km, tracked
-        in ferry_km and added scale-free at convert time. Returns
-        (terminals, {port: road_node}, {port: snap_m}, [(A, B, km) added]).
+        in ferry_km and added scale-free at convert time. `allowed` scopes the
+        terminal scan to the #326 DLC subset and tags each edge's source in
+        edge_src (the two terminals' sources, so restrict can drop it too).
+        Returns (terminals, {port: road_node}, {port: snap_m}, [(A, B, km) added]).
         """
-        terms = self.ferry_terminals(porttok)
+        terms = self.ferry_terminals(porttok, allowed)
         comps = self.components()
         big = [u for c in comps if len(c) >= min_comp for u in c]
         pts = [(self.pos[u][0], self.pos[u][2], u) for u in big]
@@ -503,12 +517,13 @@ class Graph:
                 if dd < bd:
                     bd, best = dd, u
             return best, math.sqrt(bd)
-        road, snaps = {}, {}
-        for pid, nodes in terms.items():
-            cand = sorted((lambda r: (r[1], r[0]))(snap_big(nd)) for nd in nodes)
-            sd, rn = cand[0]
+        road, snaps, src = {}, {}, {}
+        for pid, nodemap in terms.items():
+            cand = sorted((lambda r, s: (r[1], r[0], s))(snap_big(nd), nsrc)
+                          for nd, nsrc in nodemap.items())
+            sd, rn, nsrc = cand[0]
             if sd < snap_max:
-                road[pid], snaps[pid] = rn, sd
+                road[pid], snaps[pid], src[pid] = rn, sd, nsrc
         added = []
         for (a, b), km in sorted(conns.items()):
             if a in road and b in road and road[a] != road[b]:
@@ -520,6 +535,7 @@ class Graph:
                     self.adj_city[u][v] = self.adj_city[v][u] = 0
                     self.adj_ferry[u][v] = self.adj_ferry[v][u] = 1
                     self.edge_city[frozenset((u, v))] = 0
+                    self.edge_src[frozenset((u, v))] = '+'.join(sorted({src[a], src[b]}))
                     self.ferry_km[frozenset((u, v))] = km
                     self.ferry_edges += 1
                     added.append((a, b, km))
@@ -710,7 +726,8 @@ def main():
             sys.exit('no .base files under %s' % d)
         g.load_nodes(files, label)
     g.build_edges()
-    g.restrict(set(args.only.split(',')) if args.only else None)
+    only = set(args.only.split(',')) if args.only else None
+    g.restrict(only)
 
     # Two scales: from the .mbd when readable, else the documented defaults (an
     # unreadable .mbd falls back to a least-squares fit from the oracle, below).
@@ -731,7 +748,7 @@ def main():
         conns = load_ferry_connections(args.ferry_def)
         ports = {p for pair in conns for p in pair}
         porttok = {tok(p): p for p in ports if tokenizable(p)}
-        terms, road, snaps, ferry_added = g.add_ferries(conns, porttok, normal_scale)
+        terms, road, snaps, ferry_added = g.add_ferries(conns, porttok, normal_scale, only)
         print("ferry: %d connections, %d ports, %d terminals found, %d edges added"
               % (len(conns), len(ports), len(terms), len(ferry_added)))
         for a, b, km in ferry_added:
@@ -885,20 +902,29 @@ def main():
             residual_bands(win_rows, lambda c, n, fk: n * fn + c * fc + fk * 1000.0)
 
             # Ferry crossing accounting (slice 3): how does the oracle count a
-            # crossing? Measure on the pairs the shortest path routes over a ferry.
+            # crossing? One authored-cost routing; report each ferry pair's game
+            # km WITHOUT the crossing (factor 0) and WITH it (factor 1). Split by
+            # crossing length -- the two behave differently -- and flag the pairs
+            # whose oracle is below the crossing km (factor 1 is impossible there).
             ferry_rows = [r for r in rows_med if r[4] > 0]
             if ferry_rows:
+                road_only = lambda c, n, fk: n * normal_scale + c * city_scale
                 num = den = 0.0
                 for (_, _, c, n, fk, km) in ferry_rows:
-                    y = km * 1000.0 - (n * normal_scale + c * city_scale)
+                    y = km * 1000.0 - road_only(c, n, fk)
                     num += y * (fk * 1000.0); den += (fk * 1000.0) ** 2
                 factor = num / den if den else 0.0
-                print("\n  FERRY pairs (depot-median), n=%d  fitted crossing factor=%.3f"
+                imposs = sum(1 for r in ferry_rows if r[5] < r[4])
+                print("\n  FERRY pairs (depot-median), n=%d  least-squares crossing factor=%.3f"
                       % (len(ferry_rows), factor))
-                print("  crossing counted as NONE (factor 0):")
-                residual_bands(ferry_rows, lambda c, n, fk: n * normal_scale + c * city_scale)
-                print("  crossing counted at AUTHORED length (factor 1, shipped):")
-                residual_bands(ferry_rows, dual)
+                print("  oracle < crossing km (factor 1 impossible for these): %d" % imposs)
+                for lbl, sub in (("ALL ferry pairs", ferry_rows),
+                                 ("SHORT crossing <=66km", [r for r in ferry_rows if r[4] <= 66]),
+                                 ("LONG crossing >=207km", [r for r in ferry_rows if r[4] >= 207])):
+                    print("  %s, WITHOUT crossing (factor 0):" % lbl)
+                    residual_bands(sub, road_only)
+                    print("  %s, WITH crossing (factor 1, shipped):" % lbl)
+                    residual_bands(sub, dual)
 
         # All-pairs band (the #320 headline) and, when ferries are present, the
         # giant's city roster and a 5-pair ferry sample -- the slice-3 report.

@@ -26,9 +26,11 @@ routes across a ferry went unrouted. Parsing `def/ferry/connection/*.sii` for th
 authored crossing km and the Ferry map items for each port's terminal node adds
 the base crossings as edges of their own kind. The UK's 18 cities join the giant
 (**67 → 85 cities**, giant 68,176 → 72,888 nodes) and routed oracle pairs grow
-**2,079 → 3,221**. The crossing is billed at the authored length: counting it as 0
-under-reads ferry pairs by a median −14% (p10 −46%); the authored length fits
-(median +3.4%, oracle-fit factor 1.06). The all-pairs band *widens* (−8.1/+5.5 →
+**2,079 → 3,221**. The crossing is billed at the authored length: the long North
+Sea ferries (207–508 km) need it — without the crossing they undershoot a median
+−29%, with it −3% — while the short Channel crossings (≤66 km) read closer to
+uncounted; the least-squares factor over all ferry pairs is 1.06, so the edge
+bills the authored km. The all-pairs band *widens* (−8.1/+5.5 →
 −9.2/+19.0) because the newly-reachable UK pairs carry the sparse UK road graph's
 **path-fidelity** inflation (UK-internal pairs median +29%), not a ferry defect —
 the mainland 2,079 are unchanged. See "Ferries (slice 3)".
@@ -329,28 +331,38 @@ ancona, bari — have no base terminal, so their connections drop):
 | europoort ↔ hull | 370 | | tunnel_c ↔ tunnel_d | 60 |
 | gedser ↔ rostock | 65 | | | |
 
-The five UK↔mainland crossings (and the Channel Tunnel) **merge the UK component
-into the giant**: 68,176 → 72,888 nodes, **67 → 85 on-giant cities** (+18 UK), and
-routed oracle pairs **2,079 → 3,221**. `priwall↔travemunde_p` is a real 1 km local
-crossing; `gedser↔rostock` is inert (gedser is a Scandinavia-DLC port whose stub
-terminal sits beside Rostock, so its edge is a longer-than-driving detour between
-two adjacent mainland nodes — never on a shortest path).
+The four UK↔mainland ferries (calais-dover, europoort-harwich, europoort-hull,
+ijmuiden-tyne) and the Channel Tunnel (tunnel_c-tunnel_d) **merge the UK into the
+giant**: 68,176 → 72,888 nodes, **67 → 85 on-giant cities** (+18 UK), and routed
+oracle pairs **2,079 → 3,221**. `priwall↔travemunde_p` is a real 1 km local
+crossing. `gedser↔rostock` bridges a road-disconnected stub: gedser is a
+Scandinavia-DLC port whose base-map terminal sits beside Rostock but is not
+road-linked to the mainland, so the ferry is its only link — `gedser:travemunde`
+routes over it, which is how gedser enters the giant as the 85th city (a DLC-stub
+artifact, not a base city; it carries a handful of pairs).
 
-**How the oracle counts a crossing.** Measured on the 1,057 depot-median pairs the
-shortest path routes over a ferry:
+**How the oracle counts a crossing.** One authored-cost routing; each of the 1,057
+depot-median pairs whose shortest path takes a ferry is scored both ways —
+`WITHOUT` the crossing km (factor 0) and `WITH` it (factor 1) — and the two
+crossing-length classes behave oppositely (≥0 km band, p10/p90, **median**):
 
-| crossing billed as | ≥0 km p10/p90 | med | ≥800 km p10/p90 | med |
-|---|--:|--:|--:|--:|
-| none (factor 0) | −46.0 / +12.6% | **−13.8%** | −47.8 / +8.2% | −19.5% |
-| **authored km (factor 1, shipped)** | −12.7 / +23.1% | **+3.4%** | −13.6 / +15.4% | +1.5% |
+| ferry pairs | n | WITHOUT (factor 0) | WITH (factor 1, shipped) |
+|---|--:|--:|--:|
+| long crossing ≥207 km | 628 | −52.6 / −9.2% **−28.7%** | −15.9 / +13.4% **−2.8%** |
+| short crossing ≤66 km | 429 | −5.0 / +20.4% **+4.7%** | −0.6 / +28.7% **+11.2%** |
+| all | 1057 | −46.0 / +12.6% **−13.8%** | −12.7 / +23.1% **+3.4%** |
 
-Counting the crossing as 0 under-reads ferry pairs by a median −14% (−20% on the
-long hauls): the oracle **does** include the crossing. The authored length fits
-(median +3.4%; least-squares factor **1.059**, i.e. the authored km verbatim), so
-the ferry edge is billed on its def distance, not the road scales. The wide p90
-(+23%) is **not** the crossing: it is the UK road graph's path fidelity leaking in
-(a long-ferry pair like `felixstowe:rotterdam` reads +181% because its UK leg
-detours, not because 207 km is wrong) — out of scope, below.
+The long North Sea crossings (207–508 km) **need** the crossing: without it they
+undershoot a median −29%, with it they fit at −2.8%. The short Channel crossings
+(49–66 km) are a small fraction of their long-drive routes and read closer to
+uncounted (+4.7% vs +11.2%). The least-squares factor over all ferry pairs is
+**1.059** (the long crossings dominate the fit), so the edge bills the **authored
+km**, scale-free. Five pairs have an oracle below their crossing km (e.g.
+`newcastle:rotterdam` 269 < 508) — observed hauls whose recorded distance cannot
+include the authored crossing; too few to move the billing. The WITH-crossing p90
+(+23%) is **not** the crossing: it is UK road path fidelity leaking in
+(`felixstowe:rotterdam` reads +181% because its UK leg detours, not because 207 km
+is wrong) — out of scope, below.
 
 **All-pairs, depot-median, shipped (dual 19/3 + authored ferry km):**
 
