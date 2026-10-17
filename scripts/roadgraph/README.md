@@ -20,6 +20,21 @@ back from 1.6 toward the authored 3.0 — slice 1's low city scale was partly an
 anchoring artifact. The remaining large residuals (e.g. `mannheim:strasbourg`)
 are now shown to be *routing*, not anchoring — see "Depot anchoring (slice 2)".
 
+**Slice 3 (ferry edges)** is landed (`--ferry-def`): the base-game giant stopped
+at the water, so the UK sat in its own component and every oracle pair the game
+routes across a ferry went unrouted. Parsing `def/ferry/connection/*.sii` for the
+authored crossing km and the Ferry map items for each port's terminal node adds
+the base crossings as edges of their own kind. The UK's 18 cities join the giant
+(**67 → 85 cities**, giant 68,176 → 72,888 nodes) and routed oracle pairs grow
+**2,079 → 3,221**. The crossing is billed at the authored length: the long North
+Sea ferries (207–508 km) need it — without the crossing they undershoot a median
+−29%, with it −3% — while the short Channel crossings (≤66 km) read closer to
+uncounted; the least-squares factor over all ferry pairs is 1.06, so the edge
+bills the authored km. The all-pairs band *widens* (−8.1/+5.5 →
+−9.2/+19.0) because the newly-reachable UK pairs carry the sparse UK road graph's
+**path-fidelity** inflation (UK-internal pairs median +29%), not a ferry defect —
+the mainland 2,079 are unchanged. See "Ferries (slice 3)".
+
 Context: issues #320 (retire `citykm.json`) and #326 (per-DLC `route_km`). The
 `citykm.json` oracle is 47,108 observed haul medians over 372 of ~400 cities
 (`playthrough/research-register.md` Q59/Q60). It is the system's only non-def
@@ -35,18 +50,21 @@ input; everything else is derived from game files.
 cd scripts/scs-extract
 ETS2="$HOME/Library/Application Support/Steam/steamapps/common/Euro Truck Simulator 2"
 go run . -x -o /tmp/ets2map "$ETS2/base_map.scs" map   # `map` (not map/europe) for the .mbd
+go run . -x -o /tmp/ets2def "$ETS2/def.scs" def/ferry   # ferry connections live in def.scs
 
 # 2a. route named city pairs (centroid vs depot-min vs depot-median game km)
 python3 scripts/roadgraph/extract-roadgraph.py base=/tmp/ets2map/map/europe \
-    --pairs geneve:paris,prague:rotterdam,berlin:milano
+    --ferry-def /tmp/ets2def/def/ferry --pairs london:paris,geneve:paris,berlin:milano
 
-# 2b. validate against the oracle (per-anchor, per-distance-band residuals, and
-#     the default 10-pair sample). --pairs overrides the sample.
+# 2b. validate against the oracle (per-anchor, per-distance-band residuals, the
+#     ferry-crossing accounting, and the default 10-pair sample).
 python3 scripts/roadgraph/extract-roadgraph.py base=/tmp/ets2map/map/europe \
-    --citykm playthrough/tools/citykm.json --validate
+    --ferry-def /tmp/ets2def/def/ferry --citykm playthrough/tools/citykm.json --validate
 ```
 
-The two scales auto-load from `<first SRC>.mbd` (here `/tmp/ets2map/map/europe.mbd`);
+`--ferry-def` points at an extracted `def/ferry` tree (the connection distances
+are in `def.scs`, not `base_map.scs`); omit it for the slices 1-2 graph with no
+ferry edges. The two scales auto-load from `<first SRC>.mbd` (here `/tmp/ets2map/map/europe.mbd`);
 `--mbd PATH` overrides. When the `.mbd` is unreadable they are fitted from the
 oracle (if `--citykm` is given) or defaulted to the documented 19/3; the run
 prints which. No game data is committed. `citykm.json` lives under the
@@ -122,6 +140,22 @@ one of ~40 item types' byte layout. This spike sidesteps that:
    city/normal metres are scaled separately; the depot×depot matrix is one
    decomposition-tracking Dijkstra per anchor node, not a path-reconstruction per
    pair.
+5. **Ferry edges** (slice 3, `--ferry-def`). `def/ferry/connection/*.sii` gives
+   each connection's two ports and authored crossing km (symmetric; the two
+   directional files collapse onto one key). A **Ferry map item** places one port:
+   after the item head its payload is `token port | u64 approach | u64 node |
+   f32 unload[3]`. The terminal `node` is a scalar (like a Company depot's), so it
+   is not in any node-run and enters the graph isolated. It is found by scanning
+   the item bytes for each port token with the node 16 B past it known, three
+   filters peeling off the city/CityArea/road items whose token aliases (the
+   approach uid 8 B past is *not* a graph node; those bytes as two floats are not
+   a CityArea's width/height; the unload offset reads small). Each terminal snaps
+   to the nearest road node in a non-trivial component (≥100 nodes, skipping the
+   sub-20-node ramp stubs), and a connection whose two terminals land in different
+   components becomes an edge that **bridges** them — joining the UK to the giant.
+   The edge's Dijkstra weight is `km·1000 / NormalScale` (a road-equivalent length,
+   so a ferry weighs against roads rather than teleporting mainland pairs), billed
+   as the authored km (scale-free, a third decomposition term beside city/normal).
 
 Per-sector provenance (#326): each source is `LABEL=DIR`; every edge is tagged
 with its source archive, and `--only L1,L2` rebuilds the graph for a DLC subset.
@@ -134,9 +168,11 @@ the same call with more sources.
   length**) from 277 sectors (5 empty). Build ~10 s; `--validate` ~105 s (a
   326-node depot×depot matrix at 24 s, plus the 1,960 centroid Dijkstras it keeps
   for the comparison); no archive data committed.
-- One giant road component (68,176 nodes) spans the whole base-game footprint.
-  **67 cities anchor onto it by depot (2,079 oracle pairs), 65 by centroid
-  (1,960)** — see "Depot anchoring (slice 2)".
+- One giant road component (68,176 nodes) spans the whole base-game *mainland*;
+  the UK and islands are separate until ferries bridge them (slice 3: 72,888
+  nodes). **67 cities anchor onto it by depot (2,079 oracle pairs), 65 by centroid
+  (1,960)** without ferries, **85 / 3,221** with — see "Depot anchoring (slice 2)"
+  and "Ferries (slice 3)".
 - **Stored road lengths sum +1.37% over straight-line chord** — the curvature a
   geometry graph captures and a chord estimate misses; the right sign for #320's
   "`citykm` reads ~1% low".
@@ -282,6 +318,84 @@ crossing the game's GPS does not. That is the routing bullet below, out of slice
 depot-median −8.1/+5.5%) and the on-giant city count grows (65 → 67), while
 confirming the stubborn short-read pairs are a routing problem, not an anchor one.
 
+### Ferries (slice 3)
+
+`--ferry-def /tmp/ets2def/def/ferry` finds **11 connections over 19 ports, 15
+terminals in base_map, 7 edges added** (4 DLC-only ports — roscoff, trelleborg,
+ancona, bari — have no base terminal, so their connections drop):
+
+| edge | km | | edge | km |
+|---|--:|---|---|--:|
+| calais ↔ dover | 49 | | ijmuiden ↔ tyne | 508 |
+| europoort ↔ harwich | 207 | | priwall ↔ travemunde_p | 1 |
+| europoort ↔ hull | 370 | | tunnel_c ↔ tunnel_d | 60 |
+| gedser ↔ rostock | 65 | | | |
+
+The four UK↔mainland ferries (calais-dover, europoort-harwich, europoort-hull,
+ijmuiden-tyne) and the Channel Tunnel (tunnel_c-tunnel_d) **merge the UK into the
+giant**: 68,176 → 72,888 nodes, **67 → 85 on-giant cities** (+18 UK), and routed
+oracle pairs **2,079 → 3,221**. `priwall↔travemunde_p` is a real 1 km local
+crossing. `gedser↔rostock` bridges a road-disconnected stub: gedser is a
+Scandinavia-DLC port whose base-map terminal sits beside Rostock but is not
+road-linked to the mainland, so the ferry is its only link — `gedser:travemunde`
+routes over it, which is how gedser enters the giant as the 85th city (a DLC-stub
+artifact, not a base city; it carries a handful of pairs).
+
+**How the oracle counts a crossing.** One authored-cost routing; each of the 1,057
+depot-median pairs whose shortest path takes a ferry is scored both ways —
+`WITHOUT` the crossing km (factor 0) and `WITH` it (factor 1) — and the two
+crossing-length classes behave oppositely (≥0 km band, p10/p90, **median**):
+
+| ferry pairs | n | WITHOUT (factor 0) | WITH (factor 1, shipped) |
+|---|--:|--:|--:|
+| long crossing ≥207 km | 628 | −52.6 / −9.2% **−28.7%** | −15.9 / +13.4% **−2.8%** |
+| short crossing ≤66 km | 429 | −5.0 / +20.4% **+4.7%** | −0.6 / +28.7% **+11.2%** |
+| all | 1057 | −46.0 / +12.6% **−13.8%** | −12.7 / +23.1% **+3.4%** |
+
+The long North Sea crossings (207–508 km) **need** the crossing: without it they
+undershoot a median −29%, with it they fit at −2.8%. The short Channel crossings
+(49–66 km) are a small fraction of their long-drive routes and read closer to
+uncounted (+4.7% vs +11.2%). The least-squares factor over all ferry pairs is
+**1.059** (the long crossings dominate the fit), so the edge bills the **authored
+km**, scale-free. Five pairs have an oracle below their crossing km (e.g.
+`newcastle:rotterdam` 269 < 508) — observed hauls whose recorded distance cannot
+include the authored crossing; too few to move the billing. The WITH-crossing p90
+(+23%) is **not** the crossing: it is UK road path fidelity leaking in
+(`felixstowe:rotterdam` reads +181% because its UK leg detours, not because 207 km
+is wrong) — out of scope, below.
+
+**All-pairs, depot-median, shipped (dual 19/3 + authored ferry km):**
+
+| oracle band | n | resid p10/p90 | median | \|r\|≤1% |
+|---|--:|--:|--:|--:|
+| ≥0 km | 3221 | −9.2% / +19.0% | −0.7% | 11% |
+| ≥400 km | 2667 | −9.4% / +14.6% | −1.1% | 12% |
+| ≥800 km | 1661 | −10.1% / +11.4% | −1.7% | 12% |
+| ≥1200 km | 700 | −11.1% / +10.6% | −1.7% | 10% |
+
+5 ferry-pair samples (oracle vs routed, shipped):
+
+| pair | oracle | routed | | ferry |
+|---|--:|--:|--:|--:|
+| calais:london | 124 | 225 | +81% | 49 |
+| dover:lille | 127 | 171 | +35% | 49 |
+| felixstowe:rotterdam | 134 | 376 | +181% | 207 |
+| calais:cambridge | 200 | 315 | +57% | 49 |
+| gedser:travemunde | 214 | 267 | +25% | 66 |
+
+**Slice 3 does not clear the band half of its bar.** Routed pairs grow 2,079 →
+3,221 (+55%) and the crossing accounting validates, but the all-pairs p90 widens
++5.5% → +19.0%. The cause is isolated: the mainland 2,079 are unchanged
+(−8.2/+5.5), while the new **UK-internal** pairs sit at a +29% median and the
+cross pairs inherit it — the sparse UK base-game road graph routes long, the same
+path-fidelity gap as `mannheim:strasbourg`, now dominant because the UK is reached
+for the first time. The oracle scale-fit confirms it: including the UK pairs drives
+the fitted city scale from the clean-mainland 2.73 to a nonsensical 12.88, as the
+fit tries to absorb UK routing error into a scale. Closing it needs the full item
+parser (one-way/road-class/lane links) — the "Path fidelity" bullet, not ferries.
+`mannheim:strasbourg` (mainland, no crossing) is unchanged at −33%: ferries don't
+touch it, so #347's routing verdict stands.
+
 ## What this does not do (cost of the full build)
 
 - ~~**Dual scale.**~~ Done (slice 1): `NormalScale`/`CityScale` from the `.mbd`,
@@ -290,23 +404,18 @@ confirming the stubborn short-read pairs are a routing problem, not an anchor on
   depot nodes (median over depot pairs), not CityArea centroids. All-pairs band
   −10.7/+7.0% → −8.1/+5.5%, on-giant cities 65 → 67, fitted city scale 1.6 → 2.73.
   See "Depot anchoring (slice 2)".
-- **Game-faithful routing** (next slice). `citykm` is the *median observed* route;
-  strict shortest-path diverges where the game's GPS takes a longer road. With
-  depots anchored, this is now the dominant residual term — `mannheim:strasbourg`
-  reads −33% because its 10.6 map-km shortest path undercuts the game's crossing,
-  and the all-pairs p10 sits at −8% regardless of anchor. Two parts:
-  - **Ferries.** Ferry items are not yet edges, so the base-game giant stops at
-    the water: islands, Scandinavia and the UK are separate components, and every
-    oracle pair that the game routes across a ferry (the EUR/km-trap legs in the
-    pay model) is simply unrouted here. Load-bearing the moment a DLC map (#326)
-    overlays — Scandinavia and the Baltic are reachable only by ferry. Next slice:
-    parse Ferry/FerryConnection items for their terminal node pair and the
-    authored crossing distance, add them as edges billed on the ferry schedule,
-    not the road scales.
-  - **Path fidelity.** Even on the mainland the shortest map path can undercut the
-    GPS route (one-way/road-class preferences, avoided links). Quantifying the gap
-    against a GPS-faithful cost needs the full item parser (below) for lane/road
-    attributes; out of scope until productionizing.
+- ~~**Ferries.**~~ Done (slice 3, `--ferry-def`): Ferry map items give each port's
+  terminal node, `def/ferry/connection/*.sii` the pairs and authored crossing km;
+  the base crossings are edges billed on the authored length, merging the UK into
+  the giant (67 → 85 cities, 2,079 → 3,221 oracle pairs). See "Ferries (slice 3)".
+- **Game-faithful path fidelity** (now the dominant residual). `citykm` is the
+  *median observed* route; strict shortest-path diverges where the game's GPS
+  takes a longer road (one-way/road-class preferences, avoided links). On the
+  mainland this is the ~−8% p10 and `mannheim:strasbourg` −33%; with ferries it is
+  acute on the newly-reached UK, whose sparse base-game road graph routes +29%
+  long and drags the all-pairs p90 to +19%. Quantifying the gap against a
+  GPS-faithful cost needs the full item parser (below) for lane/road attributes;
+  out of scope until productionizing.
 - **Productionize.** Port the sector reader into the parse pipeline (Go, beside
   `scs-extract`, or TS in `parse-game-defs.ts`) so `route_km` regenerates with
   `game-defs.json` on every reparse, per-DLC (#326), replacing `citykm.json`. A
