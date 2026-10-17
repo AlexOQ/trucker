@@ -11,6 +11,15 @@ city-heavy routes. Each road edge now carries its `IsCityRoad` flag and the two
 scales come from the map's `.mbd`. This removes the distance-dependent bias the
 spike (#345) left open — see "Findings".
 
+**Slice 2 (depot-accurate terminals)** is landed: cities now anchor on their
+company depot nodes (the Q59 Company scan), not the CityArea label centroid. Over
+466 base-game depots the typical (per-city-pair **median** over depot pairs)
+anchor narrows the all-pairs residual band from **−10.7/+7.0% to −8.1/+5.5%** and
+grows the on-giant city count **65 → 67**, and pulls the oracle-fitted city scale
+back from 1.6 toward the authored 3.0 — slice 1's low city scale was partly an
+anchoring artifact. The remaining large residuals (e.g. `mannheim:strasbourg`)
+are now shown to be *routing*, not anchoring — see "Depot anchoring (slice 2)".
+
 Context: issues #320 (retire `citykm.json`) and #326 (per-DLC `route_km`). The
 `citykm.json` oracle is 47,108 observed haul medians over 372 of ~400 cities
 (`playthrough/research-register.md` Q59/Q60). It is the system's only non-def
@@ -27,11 +36,12 @@ cd scripts/scs-extract
 ETS2="$HOME/Library/Application Support/Steam/steamapps/common/Euro Truck Simulator 2"
 go run . -x -o /tmp/ets2map "$ETS2/base_map.scs" map   # `map` (not map/europe) for the .mbd
 
-# 2a. route named city pairs (map km, city share, single vs dual game km)
+# 2a. route named city pairs (centroid vs depot-min vs depot-median game km)
 python3 scripts/roadgraph/extract-roadgraph.py base=/tmp/ets2map/map/europe \
     --pairs geneve:paris,prague:rotterdam,berlin:milano
 
-# 2b. validate against the oracle (single scale vs dual scale, per distance band)
+# 2b. validate against the oracle (per-anchor, per-distance-band residuals, and
+#     the default 10-pair sample). --pairs overrides the sample.
 python3 scripts/roadgraph/extract-roadgraph.py base=/tmp/ets2map/map/europe \
     --citykm playthrough/tools/citykm.json --validate
 ```
@@ -101,9 +111,17 @@ one of ~40 item types' byte layout. This spike sidesteps that:
    ground truth (road midpoint inside any city's `w/2 × h/2` box): **94.5%**
    agreement — the gap is where the flag is the finer signal (a highway crossing
    a city box is not flagged; a city street just outside one is).
-4. **City anchors** from CityArea items (`token name | f32 w | f32 h | u64 node`),
-   each snapped to the nearest graph node; Dijkstra between anchors on map metres,
-   then the chosen path's city/normal metres are scaled separately.
+4. **City anchors.** The default (slice 2) is the city's **company depot nodes**,
+   scanned from Company items (`… token city | u64 prefab | token company |
+   u64 node | u32 count | u64 spawn[count] …`) — the real freight terminals, where
+   a CityArea label is only a caption. Each depot node is snapped to the nearest
+   graph node; a city pair's distance is the **median over its depot pairs** (min
+   validates worse — see below). CityArea-centroid anchors (`token name | f32 w |
+   f32 h | u64 node`, slice 1) are still computed for the side-by-side comparison
+   `--validate` prints. Dijkstra runs on map metres, then the chosen path's
+   city/normal metres are scaled separately; the depot×depot matrix is one
+   decomposition-tracking Dijkstra per anchor node, not a path-reconstruction per
+   pair.
 
 Per-sector provenance (#326): each source is `LABEL=DIR`; every edge is tagged
 with its source archive, and `--only L1,L2` rebuilds the graph for a DLC subset.
@@ -113,10 +131,12 @@ the same call with more sources.
 ## Findings (base_map.scs, 1.61, europe)
 
 - 247,124 nodes, 75,546 road edges (**22,314 flagged `IsCityRoad`, 23.7% by
-  length**) from 277 sectors (5 empty). Build ~10 s, `--validate` ~70 s
-  (1,960 path-reconstructing Dijkstras); no archive data committed.
-- One giant road component (68,176 nodes) spans the whole base-game footprint;
-  65 cities anchor onto it. 1,960 oracle pairs lie on it.
+  length**) from 277 sectors (5 empty). Build ~10 s; `--validate` ~105 s (a
+  326-node depot×depot matrix at 24 s, plus the 1,960 centroid Dijkstras it keeps
+  for the comparison); no archive data committed.
+- One giant road component (68,176 nodes) spans the whole base-game footprint.
+  **67 cities anchor onto it by depot (2,079 oracle pairs), 65 by centroid
+  (1,960)** — see "Depot anchoring (slice 2)".
 - **Stored road lengths sum +1.37% over straight-line chord** — the curvature a
   geometry graph captures and a chord estimate misses; the right sign for #320's
   "`citykm` reads ~1% low".
@@ -188,20 +208,105 @@ and the spike mis-attributed it. The clean short-pair case is `dortmund:duisburg
 
 **Slice 1 clears its bar**: the all-pairs residual band narrows (−8.7%/+15.6% →
 −8.2%/+9.8% fitted) and the distance-dependent bias is removed. The residual that
-remains (±~8%) is anchoring and routing, not scale — the open bullets below.
+remains (±~8%) is anchoring and routing, not scale — slice 2 (below) splits those.
+
+### Depot anchoring (slice 2)
+
+Each city now anchors on its **company depot nodes** — the `node` field of every
+Company item in the city (466 depots over the 107 base-game cities the oracle
+covers, ~4.4 per city), the real freight terminals drivers haul between. A city
+pair's distance is taken over the city×city depot pairs two ways, **min** (the
+closest facilities) and **median** (the typical haul); the median is kept.
+
+All three anchors under the authored dual scale (19/3), all-pairs (oracle ≥0 km):
+
+| anchor | n | resid p10/p90 | median | \|r\|≤1% |
+|---|--:|--:|--:|--:|
+| centroid (slice 1) | 1960 | −10.7% / +7.0% | −2.5% | 12% |
+| depot, **min** | 2079 | −17.6% / −0.6% | −6.6% | 6% |
+| depot, **median** | 2079 | **−8.1% / +5.5%** | **−1.7%** | **15%** |
+
+`min` reads systematically short (it always takes the nearest pair of
+facilities); `median` matches the oracle, which is itself a median observed haul.
+Depot-median per band:
+
+| oracle band | n | resid p10/p90 | median | \|r\|≤1% |
+|---|--:|--:|--:|--:|
+| ≥0 km | 2079 | −8.1% / +5.5% | −1.7% | 15% |
+| ≥400 km | 1634 | −7.9% / +3.5% | −2.1% | 16% |
+| ≥800 km | 851 | −7.9% / +1.8% | −2.8% | 16% |
+| ≥1200 km | 183 | −7.9% / −0.3% | −2.9% | 15% |
+
+Oracle-fitting the two scales to the depot-median rows gives **normal 19.46, city
+2.73** (band −6.0/+7.8%, median +0.5%). The city scale rebounds from slice 1's
+centroid-fitted 1.6 **toward the authored 3.0**: slice 1's suspiciously-low city
+scale was partly an anchoring artifact — label centroids sit deeper in the city
+grid than depots do, inflating the city-metre share that the fit then had to
+discount. Depot anchors carry less spurious city metre, so the authored 3 nearly
+fits as-is.
+
+**All 466 depot control nodes land off the giant component** (snap median **9 m**),
+and the cause is uniform: a Company item names its control node only as a scalar
+`node` field, never inside a node-*run*, and the graph's run-scan (README "Method")
+only makes edges from runs of ≥2 consecutive node UIDs. So every depot node enters
+the graph isolated and is bridged by the snap to the nearest road node — a 9 m
+median gap, four orders below the ~1% residual budget on a multi-hundred-km haul.
+**No fix ships**: wiring the control node in would cost a Company-item parser for
+sub-0.01% of distance. (The company *spawn* UIDs, by contrast, do form a run and
+are already cliqued; they are not needed as anchors.)
+
+Depot-median vs the slice-1 centroid, same 10 sample pairs (dual 19/3):
+
+| pair | oracle | centroid | depot-med | depots |
+|---|--:|--:|--:|--:|
+| dortmund:duisburg | 31 | 45 (+45%) | 54 (+74%) | 6×6 |
+| mannheim:strasbourg | 258 | 193 (−25%) | 172 (−33%) | 5×5 |
+| linz:prague | 276 | 315 (+14%) | 303 (+10%) | 5×5 |
+| kassel:prague | 447 | 433 (−3%) | 463 (+4%) | 5×5 |
+| bratislava:innsbruck | 600 | 548 (−9%) | 538 (−10%) | 4×4 |
+| kiel:strasbourg | 797 | 813 (+2%) | 799 (0%) | 5×5 |
+| dresden:trieste | 962 | 945 (−2%) | 955 (−1%) | 5×1 |
+| lille:wien | 1164 | 1119 (−4%) | 1167 (0%) | 3×6 |
+| geneve:rostock | 1312 | 1269 (−3%) | 1252 (−5%) | 5×6 |
+| calais:rijeka | 1524 | 1451 (−5%) | 1492 (−2%) | 3×4 |
+
+Most long pairs tighten (`kiel:strasbourg` +2%→0, `lille:wien` −4%→0,
+`calais:rijeka` −5%→−2%). The one that does **not** is `mannheim:strasbourg`: the
+depot anchor makes it *worse* (−25% → −33%). Slice 1 guessed "anchoring/routing";
+slice 2 settles it — better anchoring moved it the wrong way, so its deficit is
+**routing**, not anchoring. Its 10.6 map-km shortest path is genuinely shorter
+than the ~13.5 the 258 km oracle implies at scale 19; the graph is taking a
+crossing the game's GPS does not. That is the routing bullet below, out of slice 2.
+
+**Slice 2 clears its bar**: the all-pairs band narrows (centroid −10.7/+7.0% →
+depot-median −8.1/+5.5%) and the on-giant city count grows (65 → 67), while
+confirming the stubborn short-read pairs are a routing problem, not an anchor one.
 
 ## What this does not do (cost of the full build)
 
 - ~~**Dual scale.**~~ Done (slice 1): `NormalScale`/`CityScale` from the `.mbd`,
   per-edge `IsCityRoad`. Largest residual term, closed.
-- **Depot-accurate terminals.** Anchor on company depot nodes (the Q59 Company
-  scan already yields `city → node`), not CityArea label centroids. ~44 of 107
-  base cities currently snap poorly or land off the giant component. This now
-  dominates the residual (e.g. `mannheim:strasbourg` −24%, only 4% city).
-- **Game-faithful routing.** `citykm` is the *median observed* route; strict
-  shortest-path diverges where GPS avoids roads or prefers ferries. Ferry links
-  (Ferry items) are not yet edges, so islands/Scandinavia/UK are separate
-  components — needed once DLC maps are overlaid.
+- ~~**Depot-accurate terminals.**~~ Done (slice 2): anchor on the Company items'
+  depot nodes (median over depot pairs), not CityArea centroids. All-pairs band
+  −10.7/+7.0% → −8.1/+5.5%, on-giant cities 65 → 67, fitted city scale 1.6 → 2.73.
+  See "Depot anchoring (slice 2)".
+- **Game-faithful routing** (next slice). `citykm` is the *median observed* route;
+  strict shortest-path diverges where the game's GPS takes a longer road. With
+  depots anchored, this is now the dominant residual term — `mannheim:strasbourg`
+  reads −33% because its 10.6 map-km shortest path undercuts the game's crossing,
+  and the all-pairs p10 sits at −8% regardless of anchor. Two parts:
+  - **Ferries.** Ferry items are not yet edges, so the base-game giant stops at
+    the water: islands, Scandinavia and the UK are separate components, and every
+    oracle pair that the game routes across a ferry (the EUR/km-trap legs in the
+    pay model) is simply unrouted here. Load-bearing the moment a DLC map (#326)
+    overlays — Scandinavia and the Baltic are reachable only by ferry. Next slice:
+    parse Ferry/FerryConnection items for their terminal node pair and the
+    authored crossing distance, add them as edges billed on the ferry schedule,
+    not the road scales.
+  - **Path fidelity.** Even on the mainland the shortest map path can undercut the
+    GPS route (one-way/road-class preferences, avoided links). Quantifying the gap
+    against a GPS-faithful cost needs the full item parser (below) for lane/road
+    attributes; out of scope until productionizing.
 - **Productionize.** Port the sector reader into the parse pipeline (Go, beside
   `scs-extract`, or TS in `parse-game-defs.ts`) so `route_km` regenerates with
   `game-defs.json` on every reparse, per-DLC (#326), replacing `citykm.json`. A
