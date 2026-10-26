@@ -230,7 +230,7 @@ const SORTABLE_COLUMNS: { col: SortColumn; label: string; tooltip?: string }[] =
   { col: 'country', label: 'Country' },
   { col: 'depotCount', label: 'Depots', tooltip: 'Company facilities in this city' },
   { col: 'cargoTypes', label: 'Cargo', tooltip: 'Distinct cargo types available' },
-  { col: 'score', label: 'Fleet EV', tooltip: 'Expected haul value per cycle for the recommended 5-driver fleet (contention- and stacking-aware)' },
+  { col: 'score', label: 'Fleet EV', tooltip: 'Expected haul value per cycle for the recommended 5-driver fleet (5 × the best trailer; drivers roll their own jobs)' },
 ];
 
 export function sortRankings(rankings: CityRanking[], col: SortColumn, dir: SortDirection): CityRanking[] {

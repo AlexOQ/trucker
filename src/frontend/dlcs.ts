@@ -28,19 +28,19 @@ const resultsEl = document.getElementById('dlc-value-results') as HTMLElement;
 let rawData: AllData | null = null;
 /** DLCs in the smallest max-earnings set (best-dlc-set.json); null when the file is missing. */
 let bestSet: Set<string> | null = null;
-/** Measured Monte Carlo noise (EV): a value inside ±noiseFloor reads "≈ 0". 0 without the file. */
-let noiseFloor = 0;
+/** Scores are deterministic (#352), so only float rounding separates a no-op from zero. */
+const ZERO_EV = 1e-6;
 
 /**
- * The best DLC set and the noise floor depend only on the game data — every purchasable city is
- * scored, whatever the player owns — so they ship precomputed (scripts/gen-best-dlc-set.mts).
+ * The best DLC set depends only on the game data — every purchasable city is scored, whatever
+ * the player owns — so it ships precomputed (scripts/gen-best-dlc-set.mts).
  */
-async function loadBestSet(): Promise<{ best: Set<string>; floor: number } | null> {
+async function loadBestSet(): Promise<Set<string> | null> {
   try {
     const response = await fetch(`data/${getActiveGame()}/best-dlc-set.json`);
     if (!response.ok) return null;
-    const file = await response.json() as { best: string[]; noise_floor: number };
-    return { best: new Set(file.best), floor: file.noise_floor };
+    const file = await response.json() as { best: string[] };
+    return new Set(file.best);
   } catch {
     return null;
   }
@@ -212,16 +212,16 @@ function renderResults(results: DLCMarginalValue[]): void {
   }
 
   const rows = results.map(r => {
-    const noise = Math.abs(r.totalDelta) < noiseFloor;
-    const deltaClass = noise ? '' : r.totalDelta > 0 ? 'positive' : 'negative';
+    const none = Math.abs(r.totalDelta) < ZERO_EV;
+    const deltaClass = none ? '' : r.totalDelta > 0 ? 'positive' : 'negative';
     const typeLabel = r.dlcType === 'map' ? 'Map' : r.dlcType === 'trailer' ? 'Trailer' : 'Cargo';
     const action = r.owned ? 'Disable' : 'Buy';
-    const value = noise
-      ? '≈ 0'
+    const value = none
+      ? '0'
       : `${r.share > 0 ? '+' : ''}${(r.share * 100).toFixed(1)}%<span class="dlc-value-ev">${r.totalDelta > 0 ? '+' : ''}${formatEV(r.totalDelta)} EV</span>`;
 
     let detail = '';
-    if (!noise) {
+    if (!none) {
       const parts: string[] = [];
       if (r.enters.length > 0) parts.push(`Into your best 71: ${cityList(r.enters)}`);
       if (r.leaves.length > 0) parts.push(`Out of it: ${cityList(r.leaves)}`);
@@ -257,7 +257,6 @@ function renderResults(results: DLCMarginalValue[]): void {
       <div class="dlc-value-summary">
         Each row is one change on its own; both games let you turn owned DLCs off per profile. Scored
         as max-fleet earnings at the 354-driver cap: the best 71 garages over every purchasable city.
-        ${noiseFloor > 0 ? `Changes within ±${noiseFloor} EV are noise and read ≈ 0.` : ''}
         The highlight above is the end state; the best next step from where you are can differ.
       </div>
       ${rows}
@@ -311,8 +310,7 @@ async function init(): Promise<void> {
   try {
     const [data, best] = await Promise.all([loadAllData(), loadBestSet()]);
     rawData = data;
-    bestSet = best?.best ?? null;
-    noiseFloor = best?.floor ?? 0;
+    bestSet = best;
     renderSettings();
     valueSection.style.display = '';
 

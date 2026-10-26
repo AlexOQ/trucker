@@ -2,14 +2,14 @@
  * DLC Marginal Value Calculator
  *
  * For each unowned DLC, computes the fleet EV delta if the player were to own it.
- * Re-runs the city rankings (reduced-sample MC, seeded per city) per scenario.
+ * Re-runs the city rankings (exact, deterministic — #352) per scenario.
  *
  * Trailer DLCs additionally carry a per-body-type breakdown (#257): which body
  * types the DLC's trailers now win, the trailer you'd otherwise use, and the
  * haul-value margin. This is a STRUCTURAL diagnostic (winner vs runner-up HV
  * across your garages' countries) — it explains where the value comes from and
  * intentionally does NOT sum to `totalDelta`, which is garage-scoped EV (folds
- * in spawn probability + contention) rather than raw HV.
+ * in spawn probability and best-of-board selection) rather than raw HV.
  */
 
 import { applyDLCFilter, buildLookups, getBlockedCities, type AllData, type Lookups } from './data';

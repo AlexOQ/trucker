@@ -82,8 +82,8 @@
         <div class="explanation-section">
           <h3>The Recommendation Algorithm</h3>
           <p>
-            The advisor uses a <strong>Monte Carlo simulation</strong> to find the best fleet
-            of up to 5 AI drivers for each city garage.
+            The advisor scores every trailer by the best job one AI driver with it would find, and
+            recommends <strong>five of the best</strong> for each city garage.
           </p>
           <ol class="algorithm-steps">
             <li>
@@ -96,9 +96,9 @@
               another can (and more), the weaker type is removed from consideration.
             </li>
             <li>
-              <strong>Greedy driver selection (20,000 simulations):</strong> Each round picks the
-              body type that adds the most marginal earning value. Drivers pick the highest-value
-              job they can haul from the shared job board, then that job is removed.
+              <strong>Five of the best:</strong> AI drivers roll their own jobs instead of sharing
+              one board, so a driver's earnings don't depend on what the others haul. The trailer
+              with the highest expected value wins every slot; the runners-up are listed below it.
             </li>
             <li>
               <strong>Country-aware filtering:</strong> Trailers are filtered to those valid in the
@@ -110,14 +110,13 @@
         <div class="explanation-section">
           <h3>Understanding the Scores</h3>
           <p>
-            <strong>City Score</strong> = sum of the top 5 body types' analytical expected values.
-            Each body type's EV uses an E[max of N] formula across all depots — the expected value
-            of the best job a driver with that trailer would find. Higher score means more
-            earning potential.
+            <strong>City Score</strong> = 5 × the best trailer's expected value. That EV is an exact
+            E[max of N] across all depots — the expected value of the best job a driver with that
+            trailer would find. Higher score means more earning potential.
           </p>
           <p>
-            <strong>Trailer EV</strong> = expected earning value for that driver's trailer type,
-            computed via Monte Carlo simulation of the full fleet interacting with random job boards.
+            <strong>Trailer EV</strong> = expected earning value per job cycle for one driver on that
+            trailer.
           </p>
         </div>
       </div>

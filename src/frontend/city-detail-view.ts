@@ -208,7 +208,13 @@ export async function renderCity(
           ${optimal.drivers.map(renderFleetRow).join('')}
         </tbody>
       </table>
-
+      ${optimal.alternatives.length > 0 ? `
+      <h3 class="tooltip" tabindex="0" data-tooltip="Drivers roll their own jobs, so the fleet is five of the best trailer. These come next, EV per driver.">Runners-up</h3>
+      <table>
+        <tbody>
+          ${optimal.alternatives.map(renderFleetRow).join('')}
+        </tbody>
+      </table>` : ''}
     </div>
   `;
 

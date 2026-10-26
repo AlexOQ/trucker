@@ -4,9 +4,9 @@ Living document: known simplifications in the optimization model, game-mechanics
 
 ## Model Summary
 
-The optimizer maximizes expected fleet income by Monte Carlo simulation of job boards. Each depot spawns random cargo weighted by `prob_coef`, drivers pick the best job they can haul, and the greedy algorithm selects body types maximizing marginal EV across 20K simulations.
+The optimizer maximizes expected fleet income. Each depot spawns random cargo weighted by `prob_coef` and a driver takes the best job he can haul. Drivers roll their own boards — no job is shared (register Q24, EXP-9/EXP-10; #352) — so each trailer is scored by the exact E[max] of one driver's board, and the fleet is five of the best.
 
-**Modeled**: cargo value, fragile/high-value bonuses, unit capacity per trailer, spawn probability, inter-driver job competition.
+**Modeled**: cargo value, fragile/high-value bonuses, unit capacity per trailer (axle-mass capped), spawn probability.
 
 **Deliberately not modeled**:
 - **Distance** — per-hour income reduces to pay/km, which is what HV scores; see The Distance Question below.

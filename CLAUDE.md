@@ -9,8 +9,8 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 **Core Logic**:
 - Cities contain depots (company facilities), each spawning random cargo jobs
 - Cargoes have value, spawn probability (prob_coef), and compatible trailer body types
-- Monte Carlo simulation finds best fleet: greedy driver selection maximizing marginal EV
-- City rankings run the same greedy MC picker as fleet computation (`RANKING_MC_SIMS = 500`); fleet cached on `CityRanking.fleet` and shared with the city detail view
+- Drivers roll their own jobs — no shared board (register Q24, EXP-9/EXP-10; #352) — so the best fleet is `MAX_DRIVERS` × the single best trailer, scored by its exact analytical first-pick EV. Deterministic, no Monte Carlo
+- City rankings run the same `computeOptimalFleet`; fleet cached on `CityRanking.fleet` and shared with the city detail view
 
 **First-Visit UX**:
 - DLC configuration banner prompts new visitors to set up owned DLCs for accurate results
@@ -86,7 +86,7 @@ Euro Truck Simulator 2 and American Truck Simulator trucking company analyzer - 
 7. Outputs `public/data/<game>/game-defs.json` (e.g. `public/data/ets2/game-defs.json`, `public/data/ats/game-defs.json`) — single file per game, idempotent, includes all DLC content
 8. Re-run per game on every game update or DLC — full reseed, no incremental merge needed (a partial-ownership tree reseeds with `--keep-cities`, see the parser header)
 9. After re-parsing, update the manual fields in `public/data/<game>/data-version.json` (`game_version`, `coverage_notes`) and run `npm run gen:data-coverage` to refresh the README table + UI footer (see README "Data Coverage"; `--check` gates this in CI)
-10. Then run `npm run gen:best-dlc-set` to regenerate `public/data/<game>/best-dlc-set.json` — the smallest DLC set reaching max-fleet earnings and the measured Monte Carlo noise floor, both highlighted/used by the DLC page (method in the script header). `best-dlc-set.test.ts` fails while its `game_version` lags `data-version.json`
+10. Then run `npm run gen:best-dlc-set` to regenerate `public/data/<game>/best-dlc-set.json` — the smallest DLC set reaching max-fleet earnings, highlighted by the DLC page (method in the script header). `best-dlc-set.test.ts` fails while its `game_version` lags `data-version.json`
 
 **Pricing is def-derived, exact to the dealer screen** (2026-09-04, replaced the hand-walked `manual-prices.json`). A dealer preset (`def/vehicle/trailer_dealer`, `def/vehicle/truck_dealer`) lists every accessory on every unit of the combination and the sum of those parts' `price` fields is the sticker price; paint prices sit in `@include`d settings files, so `readSiiWithIncludes()` inlines includes before reading. Non-preset trailer configurations (`trailer_owned/<brand>/configurations/`) are priced by *walking* from the brand's presets the way the upgrade shop does — keep fitting accessories, swap chassis/body, re-count wheels per axle, add new `defaults[]`, fill `require[]` with the cheapest suitable part — and taking the cheapest walk. Verified to the euro on 9 owned ETS2 combinations plus a truck. Trucks additionally carry `kit_price` (interior, wheels, mirrors… the dealer charges on every build) and their `presets`; `computeMinCost` adds the kit so the trucks page matches the dealer. `--prices-only` re-prices an existing `game-defs.json` from a partial def tree without touching anything else; `--keep-cities` is the full-reparse counterpart for that tree (see the parser header).
 
@@ -117,38 +117,30 @@ For each company in city:
       probCoef = cargo.prob_coef (spawn probability)
       For each compatible ownable trailer valid in city's country:
         bodyHV[bodyType] = max(unitValue × units) across trailers of that body type
-    Build cumulative probability distribution (CDF) for fast MC sampling
 ```
 
-### Fleet Optimization — Monte Carlo Simulation (`computeOptimalFleet()`)
-Constants: `MAX_DRIVERS = 5`, `MC_SIMS = 20,000`, `JOBS_PER_DEPOT = 3`
+### Fleet Optimization (`computeOptimalFleet()`)
+Constants: `MAX_DRIVERS = 5`, `JOBS_PER_DEPOT = 3`, `RUNNERS_UP = 4`
+
+Each driver rolls his own board (register Q24: hauls never match the player's board, and the fifth driver
+loading a garage-day gets as good a job as the first; EXP-9: uniform garages earned 1.40–2.07× their mixed
+twins, 4 of 4 pairs). One driver's EV does not depend on the others, so:
 
 ```
-Phase 1 — Greedy driver selection (up to MAX_DRIVERS rounds):
-  1. Pre-filter: compute analytical first-pick EV per body type, keep top 15
-  2. For each pick round:
-     a. Generate MC_SIMS random job boards (JOBS_PER_DEPOT jobs per depot)
-     b. Simulate existing fleet on each board (drivers pick best job, remove it)
-     c. For each candidate body type, measure marginal EV on remaining boards
-     d. Pick body type with highest average marginal EV
-     e. Add to fleet
-
-Phase 2 — Per-driver EV computation:
-  Simulate final fleet across MC_SIMS boards to get each driver's EV
-
-Phase 3 — Collapse:
-  Group drivers by body type, output count and EV per group
+1. Drop dominated body types; candidates = every ownable profile valid in the country
+2. EV per candidate = analyticalFirstPickEVForRep (exact E[max] over one board, units mass-capped)
+3. Fleet = MAX_DRIVERS × the best candidate (exact tie → priced, cheaper trailer)
+4. alternatives = the next RUNNERS_UP candidates, best first — a near-tie can win on price, level or zone
 ```
 
 ### City Ranking Score (`calculateCityRankings()`)
-- Runs `computeOptimalFleet` with a reduced sample count (`RANKING_MC_SIMS = 500`) per city
-- `score = totalFleetEV` — sum of all drivers' per-driver EVs after contention/stacking
+- Runs `computeOptimalFleet` per city
+- `score = totalFleetEV` = `MAX_DRIVERS` × the best trailer's per-driver EV; exact and deterministic
 - `CityRanking.fleet` caches the full fleet; detail view reads it directly so rankings table and detail panel show identical picks
-- Analytical `analyticalFirstPickEV()` still used as candidate pre-filter inside the picker (top-15) and by `dlc-value.ts` for marginal-value calculations
 - Cities ranked by score descending
 
 ### Analytical E[max of N] (`analyticalFirstPickEV()`)
-Multi-depot formula for ranking speed:
+Multi-depot formula — exact for one driver, since every driver rolls his own board:
 ```
 P(max across all depots ≤ H) = Π_d CDF_d(H)^JOBS_PER_DEPOT
 E[max] = Σ_i hv_i × [P(max ≤ hv_i) - P(max ≤ hv_{i-1})]
@@ -188,8 +180,8 @@ Three categories of DLC content affect optimization results:
 3. All pages (rankings, city detail, browsers) operate on filtered data
 
 **DLC page** (`dlcs.ts`, `dlc-value.ts`):
-- **Best set** (highlight): the smallest DLC set reaching max-fleet earnings — game data only, precomputed by `npm run gen:best-dlc-set` into `public/data/<game>/best-dlc-set.json` with the measured Monte Carlo noise floor
-- **Values** (live, per player): one scenario per DLC — buy it if unowned, disable it if owned — scored as max-fleet earnings at the 354-driver cap (best 71 of every purchasable city); shown as a share of current earnings, with the cities entering/leaving the best 71. Values inside the noise floor read "≈ 0"
+- **Best set** (highlight): the smallest DLC set reaching max-fleet earnings — game data only, precomputed by `npm run gen:best-dlc-set` into `public/data/<game>/best-dlc-set.json`
+- **Values** (live, per player): one scenario per DLC — buy it if unowned, disable it if owned — scored as max-fleet earnings at the 354-driver cap (best 71 of every purchasable city); shown as a share of current earnings, with the cities entering/leaving the best 71. A DLC that changes nothing reads "0"
 - Scenarios run across a worker pool (`optimizer-client.ts`); `computeDLCValuesCore` is the synchronous fallback and the test path
 - Values depend on what the player owns (substitution between maps, dilution by cargo packs), so they are never precomputed
 
@@ -266,7 +258,7 @@ Primary data source is `game-defs.json` generated by the parser. Manual data ent
   trailer-profiles.ts - trailer earning profiles, depot profiles, city scoring
   body-types.ts     - getBodyTypeProfiles(), findDominatedBodyTypes(), chassis merging
   utils.ts          - normalize(), titleCase(), trailerTotalHV(), formatTrailerSpec(), escapeHtml()
-  optimizer.ts      - Monte Carlo fleet optimizer and analytical city rankings
+  optimizer.ts      - fleet optimizer (N × best trailer, exact E[max]) and city rankings
   optimizer-worker.ts - Web Worker for non-blocking optimizer computation
   optimizer-client.ts - async wrapper with sync fallback for optimizer
   page-init.ts      - shared initPageData() for all browser pages

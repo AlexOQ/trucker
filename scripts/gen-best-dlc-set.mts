@@ -10,12 +10,8 @@
  * game_version lags data-version.json.
  *
  * 1. Optimum: `searchOptimalDLCSet` over map and cargo DLCs, every trailer brand owned.
- * 2. Noise floor: re-score every single-DLC toggle around the optimum under SALTS seeds. A city's
- *    Monte Carlo is seeded by its id, so the page sees one draw of each delta; the floor is twice the
- *    LARGEST seed-to-seed standard deviation, so no toggle's noise reads as value. The page shows a
- *    delta under it as "≈ 0". (Twice the median let West Balkans through at +19 on a 15 floor.)
- * 3. Smallest set: from optimum + every trailer brand, drop the member whose removal costs least
- *    while that cost stays under the floor and the set stays within the floor of the optimum.
+ * 2. Smallest set: from optimum + every trailer brand, drop the member whose removal costs least
+ *    while it costs nothing. Scores are exact (#352: no Monte Carlo), so "nothing" is float rounding.
  *
  * Scenarios run across a worker_threads pool; the same file is the worker.
  */
@@ -26,7 +22,8 @@ import { Worker, isMainThread, parentPort, workerData } from 'node:worker_thread
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SALTS = 8;
+/** Below this a removal changed nothing — scores are deterministic, only summation rounding differs. */
+const ZERO_EV = 1e-6;
 
 interface Registry { maps: string[]; trailers: string[]; cargo: string[] }
 
@@ -51,14 +48,12 @@ async function loadGame(game: string) {
 }
 
 if (!isMainThread) {
-  // Worker: score { owned, salt } → max-fleet (capped) total.
+  // Worker: score { owned } → max-fleet (capped) total.
   const { raw, dlc } = await loadGame(workerData.game);
   const { sumGarageScores } = await import('../src/frontend/dlc-value.js');
-  const { setMcSeedSalt } = await import('../src/frontend/optimizer.js');
   const maps = new Set<string>(dlc.ALL_MAP_DLC_IDS);
   const trailers = new Set<string>(dlc.ALL_DLC_IDS);
-  parentPort!.on('message', ({ id, owned, salt }: { id: number; owned: string[]; salt: number }) => {
-    setMcSeedSalt(salt);
+  parentPort!.on('message', ({ id, owned }: { id: number; owned: string[] }) => {
     const tr = owned.filter(x => trailers.has(x));
     const mp = owned.filter(x => maps.has(x));
     const cargo = owned.filter(x => !trailers.has(x) && !maps.has(x));
@@ -80,7 +75,7 @@ if (!isMainThread) {
   let nextId = 0;
   const waiting = new Map<number, (score: number) => void>();
   const idle: Worker[] = [];
-  const queue: Array<{ id: number; owned: string[]; salt: number }> = [];
+  const queue: Array<{ id: number; owned: string[] }> = [];
   const pump = () => { while (idle.length > 0 && queue.length > 0) idle.pop()!.postMessage(queue.shift()); };
   const workers = await Promise.all(Array.from({ length: Math.max(1, os.availableParallelism() - 1) }, () =>
     new Promise<Worker>((resolve, reject) => {
@@ -95,13 +90,13 @@ if (!isMainThread) {
       w.on('error', reject);
     })));
   const memo = new Map<string, Promise<number>>();
-  const score = (owned: string[], salt = 0): Promise<number> => {
-    const key = `${salt}|${[...owned].sort().join(',')}`;
+  const score = (owned: string[]): Promise<number> => {
+    const key = [...owned].sort().join(',');
     if (!memo.has(key)) {
       memo.set(key, new Promise((resolve) => {
         const id = ++nextId;
         waiting.set(id, resolve);
-        queue.push({ id, owned: [...owned], salt });
+        queue.push({ id, owned: [...owned] });
         pump();
       }));
     }
@@ -114,8 +109,6 @@ if (!isMainThread) {
     ...registry.trailers.map(id => ({ id, type: 'trailer' as const, name: id })),
     ...registry.cargo.map(id => ({ id, type: 'cargo' as const, name: id })),
   ];
-  const ids = all.map(d => d.id);
-  const toggle = (set: string[], id: string) => (set.includes(id) ? set.filter(x => x !== id) : [...set, id]);
 
   // 1. Optimum over map + cargo, every trailer brand owned.
   const optimum = await searchOptimalDLCSet(all, [], (sets) =>
@@ -123,34 +116,23 @@ if (!isMainThread) {
   const start = [...optimum.optimalIds];   // includes every trailer brand
   const maxTotal = await score(start);
 
-  // 2. Noise floor: each toggle's delta under SALTS seeds; twice the largest spread.
-  const spreads: number[] = [];
-  await Promise.all(ids.map(async (id) => {
-    const deltas = await Promise.all(Array.from({ length: SALTS }, async (_, s) =>
-      (await score(toggle(start, id), s * 7919)) - (await score(start, s * 7919))));
-    const mean = deltas.reduce((a, b) => a + b, 0) / deltas.length;
-    const sd = Math.sqrt(deltas.reduce((a, b) => a + (b - mean) ** 2, 0) / (deltas.length - 1));
-    if (sd > 0) spreads.push(sd);
-  }));
-  const floor = 2 * Math.max(...spreads);
-
-  // 3. Smallest set: drop the cheapest member while its removal is noise and the set stays near the optimum.
+  // 2. Smallest set: drop the cheapest member while its removal costs nothing.
   let best = start;
   let bestTotal = maxTotal;
   for (;;) {
     const trials = await Promise.all(best.map(async id => ({ id, total: await score(best.filter(x => x !== id)) })));
     trials.sort((a, b) => b.total - a.total);
     const cheapest = trials[0];
-    if (!cheapest || bestTotal - cheapest.total > floor || maxTotal - cheapest.total > floor) break;
+    if (!cheapest || maxTotal - cheapest.total > ZERO_EV) break;
     best = best.filter(x => x !== cheapest.id);
     bestTotal = cheapest.total;
   }
 
   const version = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/data', game, 'data-version.json'), 'utf-8'));
-  const out = { game_version: version.game_version, noise_floor: Math.round(floor), best: [...best].sort() };
+  const out = { game_version: version.game_version, best: [...best].sort() };
   fs.writeFileSync(path.join(ROOT, 'public/data', game, 'best-dlc-set.json'), JSON.stringify(out, null, 2) + '\n');
   console.log(`${game}: ${best.length} DLCs (${best.filter(x => registry.trailers.includes(x)).length} trailer), `
-    + `${Math.round(bestTotal)} vs optimum ${Math.round(maxTotal)}, noise floor ${floor.toFixed(1)} EV, `
+    + `${Math.round(bestTotal)} vs optimum ${Math.round(maxTotal)}, `
     + `${memo.size} scenarios, ${((performance.now() - t0) / 1000).toFixed(0)} s`);
   for (const w of workers) await w.terminate();
 }
