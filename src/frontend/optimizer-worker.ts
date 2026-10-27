@@ -3,7 +3,7 @@
  *
  * Runs computeOptimalFleet(), calculateCityRankings(), and single DLC
  * scenarios off the main thread so the UI stays
- * responsive during heavy Monte Carlo simulations.
+ * responsive while every city is scored.
  *
  * Communication uses the structured clone algorithm, which handles
  * Map and Set natively — no manual serialization needed.

@@ -13,7 +13,7 @@ You have garages across Europe. Each garage can hold up to 5 AI drivers. Each dr
 ETS2 Trucker Advisor answers that by:
 
 - Analyzing **all cargo jobs** available at every company depot in each city
-- Running a **Monte Carlo simulation** (20,000 rounds) to find the best fleet composition
+- Scoring every trailer by the **exact expected value of the best job** it would find, and recommending five of the best — drivers roll their own jobs, so mixing trailer types buys nothing
 - Ranking **all garage cities** by earning potential so you know where to expand next
 - Accounting for **DLC content** — toggle which DLCs you own for accurate results
 
@@ -70,8 +70,9 @@ Each city has company depots that spawn random cargo jobs. Each cargo type has a
 
 1. **Builds a cargo profile** for every depot in every city
 2. **Eliminates dominated trailer types** — if trailer A can haul everything trailer B can (and more), B is dropped
-3. **Greedily selects drivers** via Monte Carlo simulation — each round picks the trailer that adds the most marginal expected value on a residual board (20k rounds per city detail, 500 for the rankings table)
-4. **Ranks cities** by total fleet EV from the same greedy picker; the rankings table and the city detail view share one computed fleet for parity
+3. **Scores each trailer** by the expected value of the best job one driver with it finds — an exact E[max] over the depots' job draws
+4. **Recommends five of the best trailer**, with the runners-up listed: AI drivers roll their own jobs instead of sharing a board, so a uniform garage beats a mixed one (measured in ETS2: 1.40–2.07×, 4 of 4 garage pairs)
+5. **Ranks cities** by that fleet's EV; the rankings table and the city detail view share one computed fleet for parity
 
 For more detail on the algorithm and game mechanics, see [docs/ALGORITHM-NOTES.md](docs/ALGORITHM-NOTES.md).
 
@@ -103,7 +104,7 @@ npm run lint             # TypeScript type checking
 ## Tech Stack
 
 - **TypeScript + Vite** — build and bundling
-- **Web Workers** — non-blocking Monte Carlo simulation
+- **Web Workers** — non-blocking city scoring and DLC scenarios
 - **Service Worker** — offline caching (network-first for data, cache-first for assets)
 - **GitHub Pages** — hosting
 - No frameworks, no backend, no runtime dependencies

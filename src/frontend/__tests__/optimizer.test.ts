@@ -4,6 +4,7 @@ import {
   calculateCityRankings,
   computeOptimalFleet,
   analyticalFirstPickEV,
+  analyticalFirstPickEVForRep,
   buildCityDepotProfiles,
   clearTrailerInfoCache,
   type CityDepotData,
@@ -124,13 +125,48 @@ describe('optimizer', () => {
       }
     });
 
-    it('total driver count does not exceed MAX_DRIVERS', () => {
+    it('fleet is MAX_DRIVERS of the single best profile (drivers roll their own jobs, #352)', () => {
       const data = createMockData();
       const lookups = buildLookups(data);
-      const fleet = computeOptimalFleet('berlin', data, lookups);
+      const fleet = computeOptimalFleet('berlin', data, lookups)!;
 
-      const totalDrivers = fleet!.drivers.reduce((s, d) => s + d.count, 0);
-      expect(totalDrivers).toBeLessThanOrEqual(5);
+      expect(fleet.drivers).toHaveLength(1);
+      expect(fleet.drivers[0].count).toBe(5);
+      expect(fleet.totalFleetEV).toBeCloseTo(fleet.drivers[0].ev * 5, 10);
+      expect(fleet.totalEstimatedPrice).toBe(fleet.drivers[0].estimatedPrice * 5);
+    });
+
+    it('per-driver EV is the exact analytical first-pick EV of the picked trailer', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const fleet = computeOptimalFleet('berlin', data, lookups)!;
+      const depots = buildCityDepotProfiles('berlin', lookups)!;
+      const country = lookups.citiesById.get('berlin')!.country;
+
+      const pick = fleet.drivers[0];
+      expect(pick.ev).toBeCloseTo(analyticalFirstPickEVForRep(depots, pick.trailerId, lookups, country), 10);
+    });
+
+    it('runners-up are every other profile, best first, none above the pick', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      const fleet = computeOptimalFleet('berlin', data, lookups)!;
+
+      expect(fleet.alternatives.length).toBeGreaterThan(0);
+      expect(fleet.alternatives.length).toBeLessThanOrEqual(4);
+      let prev = fleet.drivers[0].ev;
+      for (const alt of fleet.alternatives) {
+        expect(alt.count).toBe(1);
+        expect(alt.ev).toBeLessThanOrEqual(prev);
+        expect(alt.trailerId).not.toBe(fleet.drivers[0].trailerId);
+        prev = alt.ev;
+      }
+    });
+
+    it('is deterministic', () => {
+      const data = createMockData();
+      const lookups = buildLookups(data);
+      expect(computeOptimalFleet('berlin', data, lookups)).toEqual(computeOptimalFleet('berlin', data, lookups));
     });
 
     it('excluded cargo does not affect fleet', () => {
@@ -226,7 +262,6 @@ describe('optimizer', () => {
         companyId: 'test',
         cargo: [{ cargoId: 'electronics', probCoef: 1, bodyHV: { dryvan: 225 } }],
         totalProbCoef: 1,
-        cumProbs: [1],
       }];
 
       expect(analyticalFirstPickEV(depots, 'nonexistent')).toBe(0);
@@ -239,7 +274,6 @@ describe('optimizer', () => {
         companyId: 'test',
         cargo: [{ cargoId: 'electronics', probCoef: 1, bodyHV: { dryvan: 225 } }],
         totalProbCoef: 1,
-        cumProbs: [1],
       }];
 
       const ev = analyticalFirstPickEV(depots, 'dryvan');
@@ -256,7 +290,6 @@ describe('optimizer', () => {
           { cargoId: 'machinery', probCoef: 1, bodyHV: { dryvan: 3 } },
         ],
         totalProbCoef: 2,
-        cumProbs: [0.5, 1],
       }];
 
       const ev = analyticalFirstPickEV(depots, 'dryvan');
@@ -278,7 +311,6 @@ describe('optimizer', () => {
           { cargoId: 'machinery', probCoef: 1, bodyHV: { dryvan: 3 } },
         ],
         totalProbCoef: 2,
-        cumProbs: [0.5, 1],
       }];
 
       const twoDepots: CityDepotData[] = [
@@ -302,7 +334,6 @@ describe('optimizer', () => {
           { cargoId: 'common', probCoef: 2.0, bodyHV: { dryvan: 100 } },
         ],
         totalProbCoef: 2.1,
-        cumProbs: [0.1 / 2.1, 1],
       }];
 
       const ev = analyticalFirstPickEV(depots, 'dryvan');
@@ -343,13 +374,10 @@ describe('optimizer', () => {
       expect(dryvanEV).toBeGreaterThan(tankerEV);
     });
 
-    it('ranking score equals real fleet EV (sum of per-driver fleet contributions)', () => {
-      // Rankings now run the greedy MC picker per city (with reduced sample
-      // count). Score == sum of topTrailers' cityValue == totalFleetEV from
-      // computeOptimalFleet. The top trailer's cityValue is its profile's
-      // fleet contribution (per-driver EV × count after contention) and is
-      // bounded by the analytical first-pick EV — strictly less when other
-      // drivers compete for the same jobs.
+    it('ranking score equals the fleet EV: 5 × the best trailer\'s first-pick EV', () => {
+      // Rankings run computeOptimalFleet per city. Score == totalFleetEV ==
+      // topTrailers' cityValue, and with no shared board (#352) each driver earns
+      // the full standalone first-pick EV of his trailer.
       const data = createMockData();
       const lookups = buildLookups(data);
       const rankings = calculateCityRankings(data, lookups);
@@ -361,20 +389,14 @@ describe('optimizer', () => {
 
       expect(paris!.score).toBeGreaterThan(0);
 
-      // Score == sum of topTrailer cityValues when |drivers| ≤ TOP_TRAILERS
-      // (the slice keeps all of them). Catches drift between `ev × count`
-      // aggregation and `totalFleetEV`.
-      const summedCityValues = paris!.topTrailers.reduce((s, t) => s + t.cityValue, 0);
-      expect(Math.abs(summedCityValues - paris!.score)).toBeLessThanOrEqual(0.001);
+      expect(paris!.topTrailers).toHaveLength(1);
+      expect(paris!.topTrailers[0].cityValue).toBeCloseTo(paris!.score, 10);
 
-      // Top trailer's contention-aware EV must not exceed its standalone analytical EV.
-      const topBT = paris!.topTrailers[0].bodyType;
-      const standaloneEV = analyticalFirstPickEV(depots!, topBT);
-      // cityValue = ev × count; for count=1 it equals contested per-driver EV ≤ standalone.
-      // For stacked profiles (count > 1) the comparison no longer holds, so guard.
-      if (paris!.topTrailers[0].variants === 1) {
-        expect(paris!.topTrailers[0].cityValue).toBeLessThanOrEqual(standaloneEV + 0.001);
-      }
+      const top = paris!.topTrailers[0];
+      const country = lookups.citiesById.get('paris')!.country;
+      const standaloneEV = analyticalFirstPickEVForRep(depots!, top.trailerId, lookups, country);
+      expect(top.variants).toBe(5);
+      expect(paris!.score).toBeCloseTo(5 * standaloneEV, 10);
     });
   });
 
@@ -406,28 +428,13 @@ describe('optimizer', () => {
         expect(cargoIds).not.toContain('excluded_cargo');
       }
     });
-
-    it('builds correct CDF for sampling', () => {
-      const data = createMockData();
-      const lookups = buildLookups(data);
-      const depots = buildCityDepotProfiles('berlin', lookups);
-
-      for (const depot of depots!) {
-        // CDF should be monotonically increasing and end at 1
-        for (let i = 1; i < depot.cumProbs.length; i++) {
-          expect(depot.cumProbs[i]).toBeGreaterThan(depot.cumProbs[i - 1]);
-        }
-        expect(depot.cumProbs[depot.cumProbs.length - 1]).toBeCloseTo(1, 10);
-      }
-    });
   });
 
   describe('multi-body profile picks', () => {
-    it('multi-body trailer drains both pools when picked by computeOptimalFleet', () => {
+    it('multi-body trailer is picked as one profile spanning both body types', () => {
       // City has two cargoes per depot: dryvan electronics and flatbed machinery, both 1.0 prob_coef.
       // Only a single multi-body trailer is ownable, serving both body types.
-      // The optimizer must pick a profile [dryvan, flatbed] and its driver must
-      // consume across both pools — verifies bestJobProfile fallback behavior.
+      // The optimizer must pick a profile [dryvan, flatbed] scored across both pools.
       clearTrailerInfoCache();
       const data = createMockData();
       const trailerSpec = {
