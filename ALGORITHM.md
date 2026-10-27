@@ -61,96 +61,47 @@ road-trains, ATS doubles/triples per state. It is a fleet candidate only at gara
 
 ## The Algorithm
 
-The optimizer uses a **greedy weighted set cover** approach with three configurable parameters.
+Each AI driver rolls his own job board: hauls never match the player's board, and the fifth driver
+loading a garage-day gets as good a job as the first (register Q24; EXP-9: uniform garages earned
+1.40–2.07× their mixed twins, 4 of 4 pairs; #352). One driver's expected value does not depend on the
+others, so the best fleet is `MAX_DRIVERS` (5) copies of the single best trailer.
 
-### Parameters
+### Scoring a trailer
 
-#### 1. Scoring Balance (0-100)
-Controls the trade-off between value and coverage:
-- **0** = Pure value focus (pick trailers that haul the highest-paying cargo)
-- **100** = Pure coverage focus (pick trailers that can haul the most cargo types)
-- **50** = Balanced (recommended starting point)
+For a city, every depot spawns `JOBS_PER_DEPOT` (3) jobs drawn by cargo `prob_coef`. A driver takes the
+best job his trailer can haul. A trailer's score is the exact expected value of that best job,
+`analyticalFirstPickEVForRep` — E[max] over one board, with haul value = unit value × units (units
+axle-mass capped, see "Units Per Haul"). Deterministic: no Monte Carlo, no random seed.
 
-Formula:
-```
-valueWeight = (100 - scoringBalance) / 100
-coverageWeight = scoringBalance / 100
-score = valueWeight × normalizedValue + coverageWeight × coverage
-```
+### Selection (`computeOptimalFleet()`)
 
-#### 2. Garage Size (1-20)
-Number of trailer slots available. Most city garages start with 3-5 slots and can be upgraded.
-
-#### 3. Diversity Pressure (0-100)
-Controls how aggressively the algorithm avoids duplicate trailers:
-- **0** = No penalty for duplicates (may recommend 5 of the same trailer)
-- **100** = Strong pressure for variety (forces mix of trailer types)
-
-After each trailer selection, remaining cargo that's already covered gets a diminishing factor applied:
-```
-minFactor = 1 - (0.5 × strength)
-coverageBonus = coverage × 0.5 × strength
-factor = minFactor + coverageBonus
-```
-
-High-coverage trailers (those that can haul diverse cargo) receive a smaller penalty, making subsequent copies less heavily penalized.
-
-### Selection Process
-
-1. **Build the cargo pool**: Enumerate all (depot, cargo, value) tuples for the city
-2. **Calculate trailer scores**: For each trailer type, compute:
-   - Total value of cargo it can haul
-   - Percentage of pool it covers
-   - Combined score based on Scoring Balance
-3. **Select best trailer**: Pick the highest-scoring trailer
-4. **Apply diminishing returns**: Reduce scores for cargo types already covered
-5. **Repeat**: Continue until garage is full
+1. Drop dominated body types; candidates are every ownable profile valid in the country (trailer zones).
+2. Score each candidate as above.
+3. Fleet = `MAX_DRIVERS` × the best candidate; an exact tie goes to the cheaper trailer.
+4. The next `RUNNERS_UP` (4) candidates are returned as alternatives ("Runners-up" in the city view):
+   a near-tie can win on price, level or zone.
 
 ### City Rankings
 
-The city ranking score uses a geometric mean to balance job availability and total value:
-```
-score = √(jobCount × totalValue)
-```
-
-This ensures cities need to perform well across both dimensions to rank highly:
-- Many jobs = more work for AI drivers
-- High total value = better earnings potential
-
-The geometric mean prevents cities from ranking highly by excelling in just one dimension (e.g., many low-value jobs or few high-value jobs).
+Each city runs the same `computeOptimalFleet`. `score = totalFleetEV` = `MAX_DRIVERS` × the best
+trailer's per-driver EV. The rankings table and the city detail view share one computed fleet.
 
 ## Assumptions
 
 ### Job Distribution
 
-We assume all jobs are **equally probable**. The game's actual job RNG is unknown, so we treat each cargo instance in the pool as equally likely to be offered.
+Jobs spawn per depot weighted by cargo `prob_coef`; every driver's board is an independent draw.
 
 ### AI Driver Behavior
 
 We assume AI drivers will:
-- Take any available job they have a trailer for
-- Not be picky about destination or cargo type
+- Take the best job their trailer can haul
+- Not be picky about destination
 - Operate continuously when possible
 
 ### Excluded Cargo
 
 Some "cargo" types are actually **trailer delivery jobs** (e.g., Krone trailers, Feldbinder trailers). These jobs provide a pre-assigned trailer and don't require one from your garage. They're marked `excluded: true` and don't factor into optimization.
-
-## Practical Recommendations
-
-### Starting Configuration
-- **Scoring Balance: 50** - Good balance of value and flexibility
-- **Diversity Pressure: 50** - Moderate variety without sacrificing optimal picks
-- **Garage Size: 10** - Typical upgraded garage
-
-### High-Value Strategy
-Lower the Scoring Balance (20-30) if you prioritize earnings over job acceptance rate. Works best for cities with premium cargo (electronics, machinery).
-
-### Coverage Strategy
-Raise the Scoring Balance (70-80) if you want AI drivers to always have work, even if some jobs pay less.
-
-### Specialized Cities
-Some cities are heavily specialized (e.g., port cities with mostly containers). The algorithm will naturally recommend fewer trailer types with more copies.
 
 ## Limitations
 
