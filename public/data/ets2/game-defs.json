@@ -177622,8 +177622,6 @@
     "city_dlc_map": {
       "going_east": [
         "bialystok",
-        "bratislava",
-        "brno",
         "budapest",
         "bystrica",
         "debrecen",
@@ -177637,12 +177635,8 @@
         "olsztyn",
         "ostrava",
         "pecs",
-        "poznan",
-        "prague",
-        "szczecin",
         "szeged",
-        "warszawa",
-        "wroclaw"
+        "warszawa"
       ],
       "scandinavia": [
         "aalborg",
@@ -177687,7 +177681,6 @@
         "calvi",
         "civaux",
         "clermont",
-        "dijon",
         "golfech",
         "lacq",
         "larochelle",
@@ -177695,16 +177688,13 @@
         "lehavre",
         "lemans",
         "lile_rousse",
-        "lille",
         "limoges",
         "marseille",
-        "metz",
         "montpellier",
         "nantes",
         "nice",
         "paluel",
         "porto_vecchi",
-        "reims",
         "rennes",
         "roscoff",
         "toulouse"
@@ -177718,6 +177708,7 @@
         "catania",
         "catanzaro",
         "firenze",
+        "genova",
         "livorno",
         "messina",
         "napoli",
@@ -177730,8 +177721,7 @@
         "sassari",
         "suzzara",
         "taranto",
-        "terni",
-        "trieste"
+        "terni"
       ],
       "beyond_the_baltic_sea": [
         "daugavpils",

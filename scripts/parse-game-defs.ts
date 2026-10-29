@@ -355,7 +355,7 @@ const ETS2_CITY_DLC_MAP: Record<string, string[]> = {
   italia: [
     'ancona','bari','bologna','cagliari','cassino','catania','catanzaro','firenze',
     'genova','livorno','messina','napoli','olbia','palermo','parma','pescara','roma',
-    'sangiovanni','sassari','suzzara','taranto','terni','trieste',
+    'sangiovanni','sassari','suzzara','taranto','terni',
   ],
   beyond_the_baltic_sea: [
     'daugavpils','helsinki','kaliningrad','kaunas','klaipeda','kotka','kouvola','kunda',

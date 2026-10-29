@@ -146,9 +146,9 @@ export let GARAGE_CITIES: ReadonlySet<string> = new Set([
 
 export let CITY_DLC_MAP: Record<string, string[]> = {
   going_east: [
-    'bialystok','bratislava','brno','budapest','bystrica','debrecen','gdansk','gdyne',
-    'katowice','kosice','krakow','lodz','lublin','olsztyn','ostrava','pecs','poznan',
-    'prague','szczecin','szeged','warszawa','wroclaw',
+    'bialystok','budapest','bystrica','debrecen','gdansk','gdyne',
+    'katowice','kosice','krakow','lodz','lublin','olsztyn','ostrava','pecs',
+    'szeged','warszawa',
   ],
   scandinavia: [
     'aalborg','aarhus','bergen','esbjerg','frederikshv','gedser','goteborg','helsingborg',
@@ -158,14 +158,14 @@ export let CITY_DLC_MAP: Record<string, string[]> = {
   ],
   vive_la_france: [
     'ajaccio','alban','bastia','bayonne','bonifacio','bordeaux','bourges','brest','calvi',
-    'civaux','clermont','dijon','golfech','lacq','larochelle','laurent','lehavre','lemans',
-    'lile_rousse','lille','limoges','marseille','metz','montpellier','nantes','nice',
-    'paluel','porto_vecchi','reims','rennes','roscoff','toulouse',
+    'civaux','clermont','golfech','lacq','larochelle','laurent','lehavre','lemans',
+    'lile_rousse','limoges','marseille','montpellier','nantes','nice',
+    'paluel','porto_vecchi','rennes','roscoff','toulouse',
   ],
   italia: [
     'ancona','bari','bologna','cagliari','cassino','catania','catanzaro','firenze',
-    'livorno','messina','napoli','olbia','palermo','parma','pescara','roma',
-    'sangiovanni','sassari','suzzara','taranto','terni','trieste',
+    'genova','livorno','messina','napoli','olbia','palermo','parma','pescara','roma',
+    'sangiovanni','sassari','suzzara','taranto','terni',
   ],
   beyond_the_baltic_sea: [
     'daugavpils','helsinki','kaliningrad','kaunas','klaipeda','kotka','kouvola','kunda',
