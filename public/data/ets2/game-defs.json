@@ -3202,6 +3202,25 @@
       "excluded": false,
       "max_distance": 600
     },
+    "live_sheep": {
+      "name": "live_sheep",
+      "value": 0.15,
+      "volume": 1.73,
+      "mass": 85,
+      "fragility": 1,
+      "fragile": true,
+      "high_value": false,
+      "adr_class": 0,
+      "prob_coef": 1,
+      "body_types": [
+        "livestock"
+      ],
+      "groups": [
+        "livestock"
+      ],
+      "excluded": false,
+      "max_distance": 600
+    },
     "liver_paste": {
       "name": "liver_paste",
       "value": 0.589,
@@ -15586,9 +15605,11 @@
         "caravans",
         "cars_fr",
         "mondeos",
+        "moto_tires",
         "motorcycles",
         "pickup_gr",
         "scooters",
+        "tyres",
         "vans_fd",
         "vans_id",
         "vans_vt",
@@ -15757,6 +15778,7 @@
         "large_cont",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "med_equip",
         "med_vaccine",
         "olive_tree",
@@ -15779,6 +15801,7 @@
         "large_cont",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "med_equip",
         "med_vaccine",
         "olive_tree",
@@ -16463,6 +16486,7 @@
         "large_cont",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "med_equip",
         "med_vaccine",
         "olive_tree",
@@ -16485,6 +16509,7 @@
         "large_cont",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "med_equip",
         "med_vaccine",
         "olive_tree",
@@ -16686,6 +16711,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "milk",
         "milk_t",
         "planter",
@@ -16725,6 +16751,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "lumber",
         "lumber_p",
         "outdr_flr_tl",
@@ -18025,6 +18052,7 @@
         "sheep_wool",
         "shock_absorb",
         "silica",
+        "skidder",
         "smokd_eel",
         "smokd_sprats",
         "soy_milk",
@@ -18079,6 +18107,7 @@
         "windml_eng",
         "windml_tube",
         "wood_bark",
+        "wood_chipper",
         "wooden_beams",
         "wshavings",
         "yacht",
@@ -18717,6 +18746,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -19114,6 +19144,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -20867,9 +20898,11 @@
         "caravans",
         "cars_fr",
         "mondeos",
+        "moto_tires",
         "motorcycles",
         "pickup_gr",
         "scooters",
+        "tyres",
         "vans_fd",
         "vans_id",
         "vans_vt",
@@ -21874,6 +21907,7 @@
         "jcb_g100rs",
         "jcb_th540180",
         "large_cont",
+        "largetubes",
         "lumber",
         "lumber_p",
         "mat_handler",
@@ -23056,34 +23090,64 @@
         "cable_reel",
         "empty_barr",
         "empty_palet",
-        "empty_spool",
+        "emptytank",
+        "forklifts",
+        "ibc_cont",
+        "jcb_g100rs",
+        "jcb_th540180",
+        "large_cont",
         "lux_yacht",
         "mat_handler",
         "mobile_crane",
+        "overweight",
+        "scaffoldings",
         "scrap_metals",
+        "ter_forklift",
+        "used_battery",
         "used_packag",
+        "used_plast",
+        "used_plast_c",
+        "vol_ew240emh",
         "yacht"
       ],
       "cargo_in": [
+        "acetylene",
         "aircond",
         "alu_ingot",
         "alu_profile",
+        "backfl_prev",
         "bob_d30",
         "cable_reel",
+        "chem_sorb_c",
+        "chem_sorbent",
         "comp_process",
+        "corks",
+        "desinfection",
         "diesel",
         "diesel_gen",
         "elect_wiring",
         "electronics",
-        "empty_spool",
+        "emptytank",
+        "exhausts_c",
         "floorpanels",
         "forklifts",
+        "fuel_oil",
         "fuel_tanks",
+        "fueltanker",
+        "furniture",
+        "glass",
         "glass_packed",
+        "hi_volt_cabl",
         "hipresstank",
         "hvac",
+        "ibc_cont",
         "iron_pipes",
         "jcb_g100rs",
+        "jcb_th540180",
+        "large_cont",
+        "largetubes",
+        "lumber",
+        "lumber_p",
         "mat_handler",
         "metal_beams",
         "metal_pipes",
@@ -23091,18 +23155,41 @@
         "motor_oil",
         "motor_oil_c",
         "mtl_coil",
+        "nylon_cord",
         "oil",
         "oil_filt_c",
         "oil_filters",
+        "overweight",
+        "paper",
+        "petrol",
+        "plast_film",
+        "plast_film_c",
         "plast_pipes",
+        "plumb_suppl",
+        "precast_strs",
+        "press_sl_val",
+        "protec_cloth",
+        "pumps",
         "radiators",
         "re_bars",
+        "roofing_felt",
+        "rooflights",
+        "sandwch_pnls",
+        "sawpanels",
+        "scaffoldings",
+        "spher_valves",
+        "sq_tub",
         "steel_cord",
+        "stone_wool",
         "ter_forklift",
         "train_part",
         "train_part2",
         "transformat",
-        "vent_tube"
+        "transmis",
+        "vent_tube",
+        "vol_ew240emh",
+        "wooden_beams",
+        "wrk_cloth"
       ],
       "cities": [
         "ancona",
@@ -26192,7 +26279,8 @@
         "daf_tr",
         "truck_batt",
         "truck_batt_c",
-        "truck_tyres"
+        "truck_tyres",
+        "volvo_rims"
       ],
       "cities": [
         "amsterdam",
@@ -26227,7 +26315,8 @@
         "used_battery",
         "used_packag",
         "used_plast",
-        "used_plast_c"
+        "used_plast_c",
+        "vol_ew240emh"
       ],
       "cargo_in": [
         "acetylene",
@@ -26299,6 +26388,8 @@
         "truck_tyres",
         "tyres",
         "vent_tube",
+        "vol_ew240emh",
+        "volvo_rims",
         "wrk_cloth"
       ],
       "cities": [
@@ -28659,9 +28750,11 @@
         "vent_tube",
         "vinegar",
         "vinegar_c",
+        "vol_ew240emh",
         "volvo_a25g",
         "volvo_bucket",
         "volvo_cars",
+        "volvo_ec220e",
         "volvo_l250h",
         "volvo_rims",
         "volvo_sd160b",
@@ -29481,6 +29574,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "milk",
         "milk_t",
         "nuts",
@@ -29546,6 +29640,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "logs",
         "lumber",
         "lumber_p",
@@ -29622,6 +29717,7 @@
         "apples_c",
         "asph_miller",
         "atl_cod_flt",
+        "auger_wag",
         "barley",
         "basil",
         "battery",
@@ -29679,6 +29775,7 @@
         "diesel",
         "digger1000",
         "digger500",
+        "disc_harrows",
         "dozer",
         "dryers",
         "drymilk",
@@ -29689,12 +29786,16 @@
         "empty_spool",
         "emptytank",
         "ethane",
+        "exc_craw",
         "excavator",
+        "fert_spread",
         "fertilizer",
         "fish_chips",
         "floorpanels",
         "flour",
+        "forage_harv",
         "forklifts",
+        "forwarder",
         "fresh_fish",
         "frozen_hake",
         "fuel_tanks",
@@ -29734,6 +29835,8 @@
         "limonades",
         "liver_paste",
         "locomotive",
+        "log_harvest",
+        "log_stacker",
         "logs",
         "lpg",
         "lpg_t",
@@ -29754,10 +29857,12 @@
         "mob_crusher",
         "mob_screener",
         "mob_stacker",
+        "mob_tr_winch",
         "mobile_compr",
         "mobile_crane",
         "mondeos",
         "mtl_coil",
+        "mulcher",
         "natur_rubber",
         "nonalco_beer",
         "nuts",
@@ -29777,6 +29882,7 @@
         "pet_food",
         "petrol",
         "plant_substr",
+        "planter",
         "plast_film",
         "plast_film_c",
         "plast_pipes",
@@ -29813,11 +29919,14 @@
         "sheep_wool",
         "shock_absorb",
         "silica",
+        "skidder",
         "smokd_eel",
         "smokd_sprats",
         "soy_milk",
         "soy_milk_t",
+        "sprayer",
         "sq_tub",
+        "square_baler",
         "steel_cord",
         "stone_wool",
         "straw_bales",
@@ -29828,6 +29937,8 @@
         "ter_forklift",
         "tomatoes",
         "toys",
+        "tractor_au",
+        "tractor_c",
         "tractors",
         "train_part",
         "train_part2",
@@ -29846,13 +29957,21 @@
         "vent_tube",
         "vinegar",
         "vinegar_c",
+        "vol_ew240emh",
+        "volvo_a25g",
+        "volvo_bucket",
         "volvo_cars",
+        "volvo_ec220e",
+        "volvo_l250h",
+        "volvo_rims",
+        "volvo_sd160b",
         "wallpanels",
         "watertank",
         "wheat",
         "windml_eng",
         "windml_tube",
         "wood_bark",
+        "wood_chipper",
         "wshavings",
         "yogurt"
       ],
@@ -29864,6 +29983,7 @@
         "apples_c",
         "asph_miller",
         "atl_cod_flt",
+        "auger_wag",
         "barley",
         "basil",
         "battery",
@@ -29926,6 +30046,7 @@
         "diesel",
         "digger1000",
         "digger500",
+        "disc_harrows",
         "dozer",
         "dryers",
         "drymilk",
@@ -29937,6 +30058,7 @@
         "emptytank",
         "exc_craw",
         "exhausts_c",
+        "fert_spread",
         "fertilizer",
         "ffb_eut35",
         "ffb_kip60",
@@ -29946,6 +30068,7 @@
         "fish_chips",
         "flour",
         "food_oil_t",
+        "forage_harv",
         "forwarder",
         "fresh_fish",
         "froz_octopi",
@@ -30037,6 +30160,7 @@
         "petrol",
         "pickup_gr",
         "plant_substr",
+        "planter",
         "plast_film",
         "plast_film_c",
         "plast_pipes",
@@ -30075,7 +30199,9 @@
         "smokd_sprats",
         "soy_milk",
         "soy_milk_t",
+        "sprayer",
         "sq_tub",
+        "square_baler",
         "steel_cord",
         "stone_dust",
         "stone_wool",
@@ -30086,6 +30212,8 @@
         "tableware",
         "tomatoes",
         "toys",
+        "tractor_au",
+        "tractor_c",
         "tractors",
         "train_part",
         "train_part2",
@@ -30107,7 +30235,12 @@
         "vent_tube",
         "vinegar",
         "vinegar_c",
+        "volvo_a25g",
+        "volvo_bucket",
         "volvo_cars",
+        "volvo_l250h",
+        "volvo_rims",
+        "volvo_sd160b",
         "watertank",
         "wheat",
         "windml_eng",
@@ -30502,6 +30635,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "milk",
         "milk_t",
         "planter",
@@ -30541,6 +30675,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "lumber",
         "lumber_p",
         "outdr_flr_tl",
@@ -31908,6 +32043,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "milk",
         "milk_t",
         "mozzarela",
@@ -31950,6 +32086,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "lumber",
         "lumber_p",
         "outdr_flr_tl",
@@ -32325,6 +32462,7 @@
         "large_cont",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "med_equip",
         "med_vaccine",
         "olive_tree",
@@ -32350,6 +32488,7 @@
         "large_cont",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "med_equip",
         "med_vaccine",
         "olive_tree",
@@ -32418,6 +32557,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "milk",
         "milk_t",
         "packag_food",
@@ -32462,6 +32602,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "logs",
         "lumber",
         "lumber_p",
@@ -40990,6 +41131,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -41387,6 +41529,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -42880,6 +43023,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -42998,6 +43142,7 @@
         "sheep_wool",
         "shock_absorb",
         "silica",
+        "skidder",
         "smokd_eel",
         "smokd_sprats",
         "sodchlor",
@@ -43065,6 +43210,7 @@
         "windml_eng",
         "windml_tube",
         "wood_bark",
+        "wood_chipper",
         "wooden_beams",
         "wrk_cloth",
         "wshavings",
@@ -43277,6 +43423,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -43395,6 +43542,7 @@
         "sheep_wool",
         "shock_absorb",
         "silica",
+        "skidder",
         "smokd_eel",
         "smokd_sprats",
         "sodchlor",
@@ -43462,6 +43610,7 @@
         "windml_eng",
         "windml_tube",
         "wood_bark",
+        "wood_chipper",
         "wooden_beams",
         "wrk_cloth",
         "wshavings",
@@ -43499,6 +43648,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "milk",
         "milk_t",
         "planter",
@@ -43537,6 +43687,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "lumber",
         "lumber_p",
         "outdr_flr_tl",
@@ -44051,33 +44202,65 @@
         "empty_barr",
         "empty_palet",
         "empty_spool",
+        "emptytank",
+        "forklifts",
+        "ibc_cont",
+        "jcb_g100rs",
+        "jcb_th540180",
+        "large_cont",
         "lux_yacht",
         "mat_handler",
         "mobile_crane",
+        "overweight",
+        "scaffoldings",
         "scrap_metals",
+        "ter_forklift",
+        "used_battery",
         "used_packag",
+        "used_plast",
+        "used_plast_c",
+        "vol_ew240emh",
         "yacht"
       ],
       "cargo_in": [
+        "acetylene",
         "aircond",
         "alu_ingot",
         "alu_profile",
+        "backfl_prev",
         "bob_d30",
         "cable_reel",
+        "chem_sorb_c",
+        "chem_sorbent",
         "comp_process",
+        "corks",
+        "desinfection",
         "diesel",
         "diesel_gen",
         "elect_wiring",
         "electronics",
         "empty_spool",
+        "emptytank",
+        "exhausts_c",
         "floorpanels",
         "forklifts",
+        "fuel_oil",
         "fuel_tanks",
+        "fueltanker",
+        "furniture",
+        "glass",
         "glass_packed",
+        "hi_volt_cabl",
         "hipresstank",
         "hvac",
+        "ibc_cont",
         "iron_pipes",
         "jcb_g100rs",
+        "jcb_th540180",
+        "large_cont",
+        "largetubes",
+        "lumber",
+        "lumber_p",
         "mat_handler",
         "metal_beams",
         "metal_pipes",
@@ -44085,18 +44268,41 @@
         "motor_oil",
         "motor_oil_c",
         "mtl_coil",
+        "nylon_cord",
         "oil",
         "oil_filt_c",
         "oil_filters",
+        "overweight",
+        "paper",
+        "petrol",
+        "plast_film",
+        "plast_film_c",
         "plast_pipes",
+        "plumb_suppl",
+        "precast_strs",
+        "press_sl_val",
+        "protec_cloth",
+        "pumps",
         "radiators",
         "re_bars",
+        "roofing_felt",
+        "rooflights",
+        "sandwch_pnls",
+        "sawpanels",
+        "scaffoldings",
+        "spher_valves",
+        "sq_tub",
         "steel_cord",
+        "stone_wool",
         "ter_forklift",
         "train_part",
         "train_part2",
         "transformat",
-        "vent_tube"
+        "transmis",
+        "vent_tube",
+        "vol_ew240emh",
+        "wooden_beams",
+        "wrk_cloth"
       ],
       "cities": [
         "algeciras",
@@ -44247,6 +44453,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "milk",
         "milk_t",
         "planter",
@@ -44286,6 +44493,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "lumber",
         "lumber_p",
         "outdr_flr_tl",
@@ -47002,6 +47210,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "milk",
         "milk_t",
         "planter",
@@ -47041,6 +47250,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "lumber",
         "lumber_p",
         "outdr_flr_tl",
@@ -48113,6 +48323,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -48510,6 +48721,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -49930,6 +50142,11 @@
         "mobile_compr",
         "mobile_crane",
         "scaffoldings",
+        "vol_ew240emh",
+        "volvo_a25g",
+        "volvo_bucket",
+        "volvo_ec220e",
+        "volvo_l250h",
         "watertank"
       ],
       "cargo_in": [
@@ -49970,6 +50187,11 @@
         "sawpanels",
         "scaffoldings",
         "sq_tub",
+        "vol_ew240emh",
+        "volvo_a25g",
+        "volvo_bucket",
+        "volvo_ec220e",
+        "volvo_l250h",
         "watertank",
         "wooden_beams",
         "wrk_cloth"
@@ -50877,9 +51099,11 @@
         "caravans",
         "cars_fr",
         "mondeos",
+        "moto_tires",
         "motorcycles",
         "pickup_gr",
         "scooters",
+        "tyres",
         "vans_fd",
         "vans_id",
         "vans_vt",
@@ -51858,7 +52082,9 @@
         "emptytank",
         "jcb_wload457",
         "large_cont",
-        "metal_center"
+        "metal_center",
+        "volvo_bucket",
+        "volvo_l250h"
       ],
       "cargo_in": [
         "cement",
@@ -51873,6 +52099,8 @@
         "ore",
         "sand",
         "scrap_metals",
+        "volvo_bucket",
+        "volvo_l250h",
         "watertank"
       ],
       "cities": [
@@ -52046,7 +52274,8 @@
         "sugar_b",
         "ter_forklift",
         "used_packag",
-        "used_plast"
+        "used_plast",
+        "volvo_l250h"
       ],
       "cargo_in": [
         "acetylene",
@@ -52056,6 +52285,7 @@
         "chem_sorbent",
         "chemicals",
         "chlorine",
+        "coal",
         "desinfection",
         "diesel",
         "diesel_gen",
@@ -52089,6 +52319,7 @@
         "sulfuric",
         "ter_forklift",
         "vent_tube",
+        "volvo_l250h",
         "watertank"
       ],
       "cities": [
@@ -59488,9 +59719,11 @@
         "caravans",
         "cars_fr",
         "mondeos",
+        "moto_tires",
         "motorcycles",
         "pickup_gr",
         "scooters",
+        "tyres",
         "vans_fd",
         "vans_id",
         "vans_vt",
@@ -60891,6 +61124,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "milk",
         "milk_t",
         "planter",
@@ -60930,6 +61164,7 @@
         "kr_vpv190xc",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "lumber",
         "lumber_p",
         "outdr_flr_tl",
@@ -61473,6 +61708,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -61870,6 +62106,7 @@
         "limonades",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "liver_paste",
         "locomotive",
         "log_harvest",
@@ -63133,6 +63370,7 @@
         "large_cont",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "med_equip",
         "med_vaccine",
         "olive_tree",
@@ -63155,6 +63393,7 @@
         "large_cont",
         "live_cattle",
         "live_pigs",
+        "live_sheep",
         "med_equip",
         "med_vaccine",
         "olive_tree",
@@ -66590,6 +66829,57 @@
         4,
         6,
         8
+      ]
+    },
+    "long_duty": {
+      "max_rank": 3,
+      "xp_bonus": 0.05,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15
+      ]
+    },
+    "tight_sched": {
+      "max_rank": 3,
+      "xp_bonus": 0.1,
+      "fuel_saved_per_rank": [
+        0.05,
+        0.1,
+        0.15
+      ]
+    },
+    "sat_decrease": {
+      "max_rank": 3,
+      "revenue_bonus_per_rank": [
+        0.1,
+        0.2,
+        0.3
+      ]
+    },
+    "low_accel": {
+      "max_rank": 3,
+      "xp_bonus": 0.05,
+      "revenue_bonus_per_rank": [
+        0.05,
+        0.1,
+        0.15
+      ],
+      "fuel_saved_per_rank": [
+        0.1,
+        0.2,
+        0.3
+      ]
+    },
+    "sat_increase": {
+      "max_rank": 3
+    },
+    "bus_eco": {
+      "max_rank": 3,
+      "fuel_saved_per_rank": [
+        0.1,
+        0.2,
+        0.3
       ]
     }
   },
@@ -80246,6 +80536,12 @@
       "scs.livestock.single_3s.str_stl": 42
     },
     "live_pigs": {
+      "scs.livestock.single_3b.belly_pnt": 56,
+      "scs.livestock.single_3b.belly_stl": 56,
+      "scs.livestock.single_3s.str_pnt": 50,
+      "scs.livestock.single_3s.str_stl": 50
+    },
+    "live_sheep": {
       "scs.livestock.single_3b.belly_pnt": 56,
       "scs.livestock.single_3b.belly_stl": 56,
       "scs.livestock.single_3s.str_pnt": 50,
@@ -96297,9 +96593,11 @@
       "caravans",
       "cars_fr",
       "mondeos",
+      "moto_tires",
       "motorcycles",
       "pickup_gr",
       "scooters",
+      "tyres",
       "vans_fd",
       "vans_id",
       "vans_vt",
@@ -96373,6 +96671,7 @@
       "large_cont",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "med_equip",
       "med_vaccine",
       "olive_tree",
@@ -96713,6 +97012,7 @@
       "large_cont",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "med_equip",
       "med_vaccine",
       "olive_tree",
@@ -96812,6 +97112,7 @@
       "kr_vpv190xc",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "milk",
       "milk_t",
       "planter",
@@ -97559,6 +97860,7 @@
       "sheep_wool",
       "shock_absorb",
       "silica",
+      "skidder",
       "smokd_eel",
       "smokd_sprats",
       "soy_milk",
@@ -97613,6 +97915,7 @@
       "windml_eng",
       "windml_tube",
       "wood_bark",
+      "wood_chipper",
       "wooden_beams",
       "wshavings",
       "yacht",
@@ -97863,6 +98166,7 @@
       "limonades",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "liver_paste",
       "locomotive",
       "log_harvest",
@@ -98720,9 +99024,11 @@
       "caravans",
       "cars_fr",
       "mondeos",
+      "moto_tires",
       "motorcycles",
       "pickup_gr",
       "scooters",
+      "tyres",
       "vans_fd",
       "vans_id",
       "vans_vt",
@@ -99691,12 +99997,24 @@
       "cable_reel",
       "empty_barr",
       "empty_palet",
-      "empty_spool",
+      "emptytank",
+      "forklifts",
+      "ibc_cont",
+      "jcb_g100rs",
+      "jcb_th540180",
+      "large_cont",
       "lux_yacht",
       "mat_handler",
       "mobile_crane",
+      "overweight",
+      "scaffoldings",
       "scrap_metals",
+      "ter_forklift",
+      "used_battery",
       "used_packag",
+      "used_plast",
+      "used_plast_c",
+      "vol_ew240emh",
       "yacht"
     ],
     "cargotras": [
@@ -100848,7 +101166,8 @@
       "used_battery",
       "used_packag",
       "used_plast",
-      "used_plast_c"
+      "used_plast_c",
+      "vol_ew240emh"
     ],
     "dans_jardin": [
       "almond",
@@ -102308,6 +102627,7 @@
       "kr_vpv190xc",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "milk",
       "milk_t",
       "nuts",
@@ -102344,6 +102664,7 @@
       "apples_c",
       "asph_miller",
       "atl_cod_flt",
+      "auger_wag",
       "barley",
       "basil",
       "battery",
@@ -102401,6 +102722,7 @@
       "diesel",
       "digger1000",
       "digger500",
+      "disc_harrows",
       "dozer",
       "dryers",
       "drymilk",
@@ -102411,12 +102733,16 @@
       "empty_spool",
       "emptytank",
       "ethane",
+      "exc_craw",
       "excavator",
+      "fert_spread",
       "fertilizer",
       "fish_chips",
       "floorpanels",
       "flour",
+      "forage_harv",
       "forklifts",
+      "forwarder",
       "fresh_fish",
       "frozen_hake",
       "fuel_tanks",
@@ -102456,6 +102782,8 @@
       "limonades",
       "liver_paste",
       "locomotive",
+      "log_harvest",
+      "log_stacker",
       "logs",
       "lpg",
       "lpg_t",
@@ -102476,10 +102804,12 @@
       "mob_crusher",
       "mob_screener",
       "mob_stacker",
+      "mob_tr_winch",
       "mobile_compr",
       "mobile_crane",
       "mondeos",
       "mtl_coil",
+      "mulcher",
       "natur_rubber",
       "nonalco_beer",
       "nuts",
@@ -102499,6 +102829,7 @@
       "pet_food",
       "petrol",
       "plant_substr",
+      "planter",
       "plast_film",
       "plast_film_c",
       "plast_pipes",
@@ -102535,11 +102866,14 @@
       "sheep_wool",
       "shock_absorb",
       "silica",
+      "skidder",
       "smokd_eel",
       "smokd_sprats",
       "soy_milk",
       "soy_milk_t",
+      "sprayer",
       "sq_tub",
+      "square_baler",
       "steel_cord",
       "stone_wool",
       "straw_bales",
@@ -102550,6 +102884,8 @@
       "ter_forklift",
       "tomatoes",
       "toys",
+      "tractor_au",
+      "tractor_c",
       "tractors",
       "train_part",
       "train_part2",
@@ -102568,13 +102904,21 @@
       "vent_tube",
       "vinegar",
       "vinegar_c",
+      "vol_ew240emh",
+      "volvo_a25g",
+      "volvo_bucket",
       "volvo_cars",
+      "volvo_ec220e",
+      "volvo_l250h",
+      "volvo_rims",
+      "volvo_sd160b",
       "wallpanels",
       "watertank",
       "wheat",
       "windml_eng",
       "windml_tube",
       "wood_bark",
+      "wood_chipper",
       "wshavings",
       "yogurt"
     ],
@@ -102747,6 +103091,7 @@
       "kr_vpv190xc",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "milk",
       "milk_t",
       "planter",
@@ -103421,6 +103766,7 @@
       "kr_vpv190xc",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "milk",
       "milk_t",
       "mozzarela",
@@ -103565,6 +103911,7 @@
       "large_cont",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "med_equip",
       "med_vaccine",
       "olive_tree",
@@ -103599,6 +103946,7 @@
       "kr_vpv190xc",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "milk",
       "milk_t",
       "packag_food",
@@ -107315,6 +107663,7 @@
       "limonades",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "liver_paste",
       "locomotive",
       "log_harvest",
@@ -108144,6 +108493,7 @@
       "limonades",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "liver_paste",
       "locomotive",
       "log_harvest",
@@ -108262,6 +108612,7 @@
       "sheep_wool",
       "shock_absorb",
       "silica",
+      "skidder",
       "smokd_eel",
       "smokd_sprats",
       "sodchlor",
@@ -108329,6 +108680,7 @@
       "windml_eng",
       "windml_tube",
       "wood_bark",
+      "wood_chipper",
       "wooden_beams",
       "wrk_cloth",
       "wshavings",
@@ -108356,6 +108708,7 @@
       "kr_vpv190xc",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "milk",
       "milk_t",
       "planter",
@@ -108527,11 +108880,24 @@
       "empty_barr",
       "empty_palet",
       "empty_spool",
+      "emptytank",
+      "forklifts",
+      "ibc_cont",
+      "jcb_g100rs",
+      "jcb_th540180",
+      "large_cont",
       "lux_yacht",
       "mat_handler",
       "mobile_crane",
+      "overweight",
+      "scaffoldings",
       "scrap_metals",
+      "ter_forklift",
+      "used_battery",
       "used_packag",
+      "used_plast",
+      "used_plast_c",
+      "vol_ew240emh",
       "yacht"
     ],
     "onnelik": [
@@ -108609,6 +108975,7 @@
       "kr_vpv190xc",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "milk",
       "milk_t",
       "planter",
@@ -109794,6 +110161,7 @@
       "kr_vpv190xc",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "milk",
       "milk_t",
       "planter",
@@ -110403,6 +110771,7 @@
       "limonades",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "liver_paste",
       "locomotive",
       "log_harvest",
@@ -111132,6 +111501,11 @@
       "mobile_compr",
       "mobile_crane",
       "scaffoldings",
+      "vol_ew240emh",
+      "volvo_a25g",
+      "volvo_bucket",
+      "volvo_ec220e",
+      "volvo_l250h",
       "watertank"
     ],
     "sanbuild_hms": [
@@ -111373,9 +111747,11 @@
       "caravans",
       "cars_fr",
       "mondeos",
+      "moto_tires",
       "motorcycles",
       "pickup_gr",
       "scooters",
+      "tyres",
       "vans_fd",
       "vans_id",
       "vans_vt",
@@ -111807,7 +112183,9 @@
       "emptytank",
       "jcb_wload457",
       "large_cont",
-      "metal_center"
+      "metal_center",
+      "volvo_bucket",
+      "volvo_l250h"
     ],
     "subse": [
       "beef_meat",
@@ -111878,7 +112256,8 @@
       "sugar_b",
       "ter_forklift",
       "used_packag",
-      "used_plast"
+      "used_plast",
+      "volvo_l250h"
     ],
     "supercesta": [
       "empty_palet",
@@ -115003,9 +115382,11 @@
       "caravans",
       "cars_fr",
       "mondeos",
+      "moto_tires",
       "motorcycles",
       "pickup_gr",
       "scooters",
+      "tyres",
       "vans_fd",
       "vans_id",
       "vans_vt",
@@ -115647,6 +116028,7 @@
       "kr_vpv190xc",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "milk",
       "milk_t",
       "planter",
@@ -115982,6 +116364,7 @@
       "limonades",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "liver_paste",
       "locomotive",
       "log_harvest",
@@ -116660,6 +117043,7 @@
       "large_cont",
       "live_cattle",
       "live_pigs",
+      "live_sheep",
       "med_equip",
       "med_vaccine",
       "olive_tree",
@@ -130750,6 +131134,12 @@
       "scs.livestock.single_3s.str_stl"
     ],
     "live_pigs": [
+      "scs.livestock.single_3b.belly_pnt",
+      "scs.livestock.single_3b.belly_stl",
+      "scs.livestock.single_3s.str_pnt",
+      "scs.livestock.single_3s.str_stl"
+    ],
+    "live_sheep": [
       "scs.livestock.single_3b.belly_pnt",
       "scs.livestock.single_3b.belly_stl",
       "scs.livestock.single_3s.str_pnt",
@@ -149664,73 +150054,106 @@
           "unlock": 0
         }
       ],
-      "kit_price": 50480,
+      "kit_price": 49880,
       "presets": [
         {
           "id": "daf_xf_4x2_370",
-          "price": 117090,
+          "price": 116490,
           "unlock": 0,
           "cabin": "xf",
           "chassis": "4x2s_xf",
           "engine": "mx11_270",
           "transmission": "zf_12tx2420td",
           "paint": "c_bla_c",
-          "kit": 50480
+          "kit": 49880
         },
         {
           "id": "daf_xf25_4x2_370",
-          "price": 123475,
+          "price": 122850,
           "unlock": 14,
           "cabin": "xf",
           "chassis": "4x2s_xf",
           "engine": "mx11_270",
           "transmission": "zf_12tx2420td",
           "paint": "c_j_rou_c",
-          "kit": 54235
+          "kit": 53610
         },
         {
           "id": "daf_xg_4x2_450",
-          "price": 202601,
+          "price": 202001,
           "unlock": 15,
           "cabin": "xg",
           "chassis": "4x2",
           "engine": "mx11_330",
           "transmission": "zf_12tx2421td",
           "paint": "c_ora_a",
-          "kit": 97191
+          "kit": 96591
         },
         {
           "id": "daf_xg25_4x2_450",
-          "price": 206755,
+          "price": 206130,
           "unlock": 15,
           "cabin": "xg",
           "chassis": "4x2",
           "engine": "mx11_330",
           "transmission": "zf_12tx2421td",
           "paint": "c_j_rou_a",
-          "kit": 100795
+          "kit": 100170
         },
         {
           "id": "daf_xgp_4x2_530",
-          "price": 260076,
-          "unlock": 29,
+          "price": 259251,
+          "unlock": 18,
           "cabin": "xg_plus",
           "chassis": "4x2",
           "engine": "mx13_390",
           "transmission": "zf_12tx2611to",
           "paint": "c_j_yell_b",
-          "kit": 122636
+          "kit": 121811
         },
         {
           "id": "daf_xgp25_4x2_530",
-          "price": 260950,
-          "unlock": 29,
+          "price": 260100,
+          "unlock": 18,
           "cabin": "xg_plus",
           "chassis": "4x2",
           "engine": "mx13_390",
           "transmission": "zf_12tx2611to",
           "paint": "c_j_rou_b",
-          "kit": 123510
+          "kit": 122660
+        },
+        {
+          "id": "daf_xgp_4x2_530_sapphire",
+          "price": 266350,
+          "unlock": 18,
+          "cabin": "xg_plus",
+          "chassis": "4x2",
+          "engine": "mx13_390",
+          "transmission": "zf_12tx2611to",
+          "paint": "sapphire_b",
+          "kit": 108010
+        },
+        {
+          "id": "daf_xgp_4x2_530_emerald",
+          "price": 280650,
+          "unlock": 18,
+          "cabin": "xg_plus",
+          "chassis": "4x2",
+          "engine": "mx13_390",
+          "transmission": "zf_12tx2611to",
+          "paint": "emerald_b",
+          "kit": 121310
+        },
+        {
+          "id": "daf_xgp_4x2_530_cz_anniversary",
+          "price": 283395,
+          "unlock": 18,
+          "cabin": "xg_plus",
+          "chassis": "4x2",
+          "engine": "mx13_390",
+          "transmission": "zf_12tx2611to",
+          "paint": "30ycz_b",
+          "kit": 129055
         }
       ]
     },
@@ -149930,51 +150353,51 @@
           "unlock": 0
         }
       ],
-      "kit_price": 59490,
+      "kit_price": 58890,
       "presets": [
         {
           "id": "daf_xd_1",
-          "price": 134435,
+          "price": 133835,
           "unlock": 0,
           "cabin": "day",
           "chassis": "4x2_day",
           "engine": "mx11_220",
           "transmission": "zf_12tx2210td",
           "paint": "c_whi_c",
-          "kit": 71945
+          "kit": 71345
         },
         {
           "id": "daf_xd_2",
-          "price": 171990,
+          "price": 171390,
           "unlock": 14,
           "cabin": "sl",
           "chassis": "6x2n_sl",
           "engine": "mx11_270",
           "transmission": "zf_12tx2211td",
           "paint": "c_gree_b",
-          "kit": 59490
+          "kit": 58890
         },
         {
           "id": "daf_xd",
-          "price": 238076,
-          "unlock": 29,
+          "price": 236051,
+          "unlock": 16,
           "cabin": "slh",
           "chassis": "4x2_sl",
           "engine": "mx11_330",
           "transmission": "zf_12tx2611to",
           "paint": "c_j_yell_a",
-          "kit": 115036
+          "kit": 113011
         },
         {
           "id": "daf_xd25",
-          "price": 238950,
-          "unlock": 29,
+          "price": 236925,
+          "unlock": 16,
           "cabin": "slh",
           "chassis": "4x2_sl",
           "engine": "mx11_330",
           "transmission": "zf_12tx2611to",
           "paint": "c_j_rou_a",
-          "kit": 115910
+          "kit": 113885
         }
       ]
     },
@@ -153815,62 +154238,62 @@
           "unlock": 0
         }
       ],
-      "kit_price": 57980,
+      "kit_price": 57380,
       "presets": [
         {
           "id": "daf_1",
-          "price": 128290,
+          "price": 127690,
           "unlock": 0,
           "cabin": "space",
           "chassis": "4x2",
           "engine": "mx11_270",
           "transmission": "zf_12tx2420td",
           "paint": "color2",
-          "kit": 57980
+          "kit": 57380
         },
         {
           "id": "daf_2",
-          "price": 182350,
+          "price": 181750,
           "unlock": 18,
           "cabin": "spacespoiler",
           "chassis": "4x2",
           "engine": "mx13_390",
           "transmission": "zf_12tx2421td",
           "paint": "color1",
-          "kit": 75580
+          "kit": 74980
         },
         {
           "id": "daf_5",
-          "price": 184915,
+          "price": 183715,
           "unlock": 14,
           "cabin": "spacespoiler",
           "chassis": "6x2",
           "engine": "mx13_355",
           "transmission": "zf_12tx2421td",
           "paint": "color3",
-          "kit": 70065
+          "kit": 68865
         },
         {
           "id": "daf_4",
-          "price": 210370,
+          "price": 209770,
           "unlock": 18,
           "cabin": "superspace",
           "chassis": "4x2",
           "engine": "mx13_390",
           "transmission": "zf_12tx2611to",
           "paint": "color4",
-          "kit": 76720
+          "kit": 76120
         },
         {
           "id": "daf_6",
-          "price": 222085,
+          "price": 220885,
           "unlock": 18,
           "cabin": "superspace",
           "chassis": "6x2_taglift",
           "engine": "mx13_390",
           "transmission": "zf_12tx2611to",
           "paint": "color5",
-          "kit": 72465
+          "kit": 71265
         }
       ]
     },
@@ -157520,40 +157943,40 @@
         }
       ],
       "paints": [],
-      "kit_price": 53825,
+      "kit_price": 53225,
       "presets": [
         {
           "id": "iveco_sway_4x2_460",
-          "price": 144125,
+          "price": 143525,
           "unlock": 0,
           "cabin": "as",
           "chassis": "4x2",
           "engine": "xc13_460hp",
           "transmission": "zf_12tx2420td",
           "paint": "isw_wr_a",
-          "kit": 53825
+          "kit": 53225
         },
         {
           "id": "iveco_sway_4x2_500",
-          "price": 186421,
+          "price": 185821,
           "unlock": 15,
           "cabin": "as",
           "chassis": "4x2",
           "engine": "xc13_500hp",
           "transmission": "zf_12tx2420td",
           "paint": "isw_m_g24_a",
-          "kit": 91749
+          "kit": 91149
         },
         {
           "id": "iveco_sway_4x2_580",
-          "price": 211285,
+          "price": 210685,
           "unlock": 15,
           "cabin": "as",
           "chassis": "4x2",
           "engine": "xc13_580hp",
           "transmission": "zf_12tx2860td",
           "paint": "isw_m_ao24_a",
-          "kit": 108445
+          "kit": 107845
         }
       ]
     },
@@ -159740,51 +160163,51 @@
           "unlock": 0
         }
       ],
-      "kit_price": 55595,
+      "kit_price": 54995,
       "presets": [
         {
           "id": "man_tgx_2020_4x2",
-          "price": 117385,
+          "price": 116785,
           "unlock": 0,
           "cabin": "gn",
           "chassis": "4x2",
           "engine": "d1556_243",
           "transmission": "zf_12as2330td",
           "paint": "m_whi_c",
-          "kit": 55595
+          "kit": 54995
         },
         {
           "id": "man_tgx_2020_6x2",
-          "price": 188260,
+          "price": 187060,
           "unlock": 11,
           "cabin": "gm",
           "chassis": "6x2_2",
           "engine": "d2676_316",
           "transmission": "zf_12as2330td",
           "paint": "m_grb_b",
-          "kit": 76190
+          "kit": 74990
         },
         {
           "id": "man_tgx_2020",
-          "price": 211785,
+          "price": 211185,
           "unlock": 20,
           "cabin": "gx",
           "chassis": "4x2",
           "engine": "d3876_471",
           "transmission": "zf_12as3141to",
           "paint": "m_j_gold_a",
-          "kit": 80145
+          "kit": 79545
         },
         {
           "id": "man_tgx_2020_8x4",
-          "price": 263600,
+          "price": 262400,
           "unlock": 18,
           "cabin": "gx",
           "chassis": "8x4",
           "engine": "d3876_397",
           "transmission": "zf_12as3141to",
           "paint": "m_blu_a",
-          "kit": 81830
+          "kit": 80630
         }
       ]
     },
@@ -160161,73 +160584,73 @@
           "unlock": 0
         }
       ],
-      "kit_price": 45535,
+      "kit_price": 44935,
       "presets": [
         {
           "id": "man_tgx_euro6_0",
-          "price": 107355,
+          "price": 106755,
           "unlock": 0,
           "cabin": "xl_cab",
           "chassis": "4x2",
           "engine": "d1556_243",
           "transmission": "zf_12as2330td",
           "paint": "ral_6016",
-          "kit": 45535
+          "kit": 44935
         },
         {
           "id": "man_tgx_euro6_3",
-          "price": 149295,
+          "price": 148695,
           "unlock": 12,
           "cabin": "xl_cab",
           "chassis": "6x24",
           "engine": "d1556_294",
           "transmission": "zf_12as2331td",
           "paint": "ral_2011",
-          "kit": 53125
+          "kit": 52525
         },
         {
           "id": "man_tgx_euro6_1",
-          "price": 158715,
+          "price": 158115,
           "unlock": 12,
           "cabin": "xlx_cab",
           "chassis": "4x2",
           "engine": "d2676_338",
           "transmission": "zf_12as2331td",
           "paint": "ral_9005",
-          "kit": 61735
+          "kit": 61135
         },
         {
           "id": "man_tgx_euro6_2",
-          "price": 172320,
+          "price": 171720,
           "unlock": 18,
           "cabin": "xxl_cab",
           "chassis": "4x2",
           "engine": "d3876_397",
           "transmission": "zf_12as3141to",
           "paint": "man_d38_rot",
-          "kit": 46350
+          "kit": 45750
         },
         {
           "id": "man_tgx_euro6_4",
-          "price": 200380,
+          "price": 199180,
           "unlock": 16,
           "cabin": "xlx_cab",
           "chassis": "6x4",
           "engine": "d2676_368",
           "transmission": "zf_12as3141to",
           "paint": "ral_5010",
-          "kit": 69370
+          "kit": 68170
         },
         {
           "id": "man_tgx_euro6_5",
-          "price": 260705,
+          "price": 259505,
           "unlock": 20,
           "cabin": "xxl_cab",
           "chassis": "8x4",
           "engine": "d3876_471a",
           "transmission": "zf_12as3141to",
           "paint": "man_d38_rot",
-          "kit": 73835
+          "kit": 72635
         }
       ]
     },
@@ -164780,51 +165203,51 @@
           "unlock": 0
         }
       ],
-      "kit_price": 51705,
+      "kit_price": 51105,
       "presets": [
         {
           "id": "mercedes_8",
-          "price": 119375,
+          "price": 118775,
           "unlock": 0,
           "cabin": "streamspace",
           "chassis": "4x2",
           "engine": "engine_1842",
           "transmission": "12_speed",
           "paint": "color1",
-          "kit": 51705
+          "kit": 51105
         },
         {
           "id": "mercedes_9",
-          "price": 202475,
+          "price": 201875,
           "unlock": 12,
           "cabin": "gigaspace",
           "chassis": "4x2",
           "engine": "engine_1851",
           "transmission": "12_speed_ret",
           "paint": "color3",
-          "kit": 75385
+          "kit": 74785
         },
         {
           "id": "mercedes_10",
-          "price": 207640,
+          "price": 206440,
           "unlock": 14,
           "cabin": "bigspace",
           "chassis": "6x4",
           "engine": "engine_1848",
           "transmission": "12_speed_ret",
           "paint": "color2",
-          "kit": 68910
+          "kit": 67710
         },
         {
           "id": "mercedes_11",
-          "price": 275730,
+          "price": 274530,
           "unlock": 16,
           "cabin": "gs_8x4",
           "chassis": "8x4",
           "engine": "engine_1852",
           "transmission": "12_speed_ret",
           "paint": "color2",
-          "kit": 79760
+          "kit": 78560
         }
       ]
     },
@@ -168525,40 +168948,40 @@
           "unlock": 0
         }
       ],
-      "kit_price": 45791,
+      "kit_price": 45191,
       "presets": [
         {
           "id": "renault_8",
-          "price": 117361,
+          "price": 116761,
           "unlock": 0,
           "cabin": "sleeper",
           "chassis": "4x2",
           "engine": "dti11_380",
           "transmission": "at2612f",
           "paint": "t_l_b",
-          "kit": 45791
+          "kit": 45191
         },
         {
           "id": "renault_9",
-          "price": 204805,
+          "price": 204205,
           "unlock": 16,
           "cabin": "high_sleeper",
           "chassis": "4x2",
           "engine": "dti13_480",
           "transmission": "at2612fr",
           "paint": "color6m",
-          "kit": 98675
+          "kit": 98075
         },
         {
           "id": "renault_10",
-          "price": 209593,
+          "price": 208393,
           "unlock": 18,
           "cabin": "high_sleeper",
           "chassis": "6x2_taglift",
           "engine": "dti13_520",
           "transmission": "at2612fr",
           "paint": "color1",
-          "kit": 86103
+          "kit": 84903
         }
       ]
     },
@@ -171378,51 +171801,51 @@
           "unlock": 0
         }
       ],
-      "kit_price": 54300,
+      "kit_price": 53700,
       "presets": [
         {
           "id": "scania_r2016_4x2_370",
-          "price": 119780,
+          "price": 119180,
           "unlock": 0,
           "cabin": "normal",
           "chassis": "4x2",
           "engine": "dc13_370",
           "transmission": "grs905",
           "paint": "color1",
-          "kit": 54300
+          "kit": 53700
         },
         {
           "id": "scania_r2016_4x2_460",
-          "price": 162600,
+          "price": 162315,
           "unlock": 16,
           "cabin": "normal",
           "chassis": "4x2",
           "engine": "dc13_460s",
           "transmission": "g25cm_r",
           "paint": "color1m",
-          "kit": 81060
+          "kit": 80775
         },
         {
           "id": "scania_r2016_6x2_500",
-          "price": 224570,
+          "price": 223370,
           "unlock": 16,
           "cabin": "highline",
           "chassis": "6x2_long_taglift",
           "engine": "dc13_500s",
           "transmission": "g33cm_r",
           "paint": "color2m",
-          "kit": 98150
+          "kit": 96950
         },
         {
           "id": "scania_r2016_8x4_660",
-          "price": 316385,
+          "price": 315815,
           "unlock": 22,
           "cabin": "highline_8x4",
           "chassis": "8x4",
           "engine": "dc16_660",
           "transmission": "g33cm_r",
           "paint": "color4m",
-          "kit": 114245
+          "kit": 113675
         }
       ]
     },
@@ -171890,51 +172313,51 @@
           "unlock": 0
         }
       ],
-      "kit_price": 54300,
+      "kit_price": 53700,
       "presets": [
         {
           "id": "scania_s2016_4x2_370",
-          "price": 121280,
+          "price": 120680,
           "unlock": 0,
           "cabin": "normal",
           "chassis": "4x2",
           "engine": "dc13_370",
           "transmission": "grs905",
           "paint": "color5",
-          "kit": 54300
+          "kit": 53700
         },
         {
           "id": "scania_s2016_4x2_460",
-          "price": 208020,
+          "price": 207735,
           "unlock": 16,
           "cabin": "highline",
           "chassis": "4x2",
           "engine": "dc13_460s",
           "transmission": "g25cm",
           "paint": "color5m",
-          "kit": 110520
+          "kit": 110235
         },
         {
           "id": "scania_s2016_6x2_560",
-          "price": 258595,
+          "price": 257710,
           "unlock": 16,
           "cabin": "highline",
           "chassis": "6x2_long_taglift",
           "engine": "dc13_560s",
           "transmission": "g33cm_r",
           "paint": "color4m",
-          "kit": 129895
+          "kit": 129010
         },
         {
           "id": "scania_s2016_8x4_770",
-          "price": 328826,
+          "price": 328256,
           "unlock": 26,
           "cabin": "highline_8x4",
           "chassis": "8x4",
           "engine": "dc16_770",
           "transmission": "g38cm_r",
           "paint": "color3m",
-          "kit": 122130
+          "kit": 121560
         }
       ]
     },
@@ -174661,7 +175084,7 @@
         },
         {
           "id": "at2612f.volvo.fh_2021.transmission",
-          "name": "@@transmission_i_shift_at2612f@@",
+          "name": "@@transmission_ishift_at2612f@@",
           "differential_ratio": 2.64,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -174671,7 +175094,7 @@
         },
         {
           "id": "at2612f_r.volvo.fh_2021.transmission",
-          "name": "@@transmission_i_shift_at2612f_r@@",
+          "name": "@@transmission_ishift_at2612f_retth@@",
           "differential_ratio": 2.64,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -174681,7 +175104,7 @@
         },
         {
           "id": "ato3512f.volvo.fh_2021.transmission",
-          "name": "@@transmission_i_shift_ato3512f@@",
+          "name": "@@transmission_ishift_ato3512f@@",
           "differential_ratio": 3.08,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -174691,7 +175114,7 @@
         },
         {
           "id": "ato3512f_au.volvo.fh_2021.transmission",
-          "name": "@@transmission_i_shift_ato3512f_aso_ulc@@",
+          "name": "@@transmission_ishift_ato3512f_aso_ulc@@",
           "differential_ratio": 3.4,
           "forward_gears": 14,
           "reverse_gears": 4,
@@ -174701,7 +175124,7 @@
         },
         {
           "id": "ato3512f_r.volvo.fh_2021.transmission",
-          "name": "@@transmission_i_shift_ato3512f_r@@",
+          "name": "@@transmission_ishift_ato3512f_r@@",
           "differential_ratio": 3.08,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -174711,7 +175134,7 @@
         },
         {
           "id": "ato3512fr_au.volvo.fh_2021.transmission",
-          "name": "@@transmission_i_shift_ato3512f_r_aso_ulc@@",
+          "name": "@@transmission_ishift_ato3512f_r_aso_ulc@@",
           "differential_ratio": 3.4,
           "forward_gears": 14,
           "reverse_gears": 4,
@@ -174851,62 +175274,62 @@
           "unlock": 0
         }
       ],
-      "kit_price": 54010,
+      "kit_price": 53410,
       "presets": [
         {
           "id": "volvo_fh2021_4x2_420",
-          "price": 118870,
+          "price": 118270,
           "unlock": 0,
           "cabin": "l2h1",
           "chassis": "4x2",
           "engine": "d13k420",
           "transmission": "at2612f",
           "paint": "white",
-          "kit": 54010
+          "kit": 53410
         },
         {
           "id": "volvo_fh2021_6x2_500",
-          "price": 184440,
+          "price": 183840,
           "unlock": 11,
           "cabin": "l2h2",
           "chassis": "6x2_taglift_steer",
           "engine": "d13k540",
           "transmission": "at2612f_r",
           "paint": "v_m_g_b",
-          "kit": 60400
+          "kit": 59800
         },
         {
           "id": "volvo_fh2021_6x4_540",
-          "price": 203565,
+          "price": 202365,
           "unlock": 14,
           "cabin": "l2h2",
           "chassis": "6x4",
           "engine": "d13k540",
           "transmission": "at2612f_r",
           "paint": "white",
-          "kit": 66885
+          "kit": 65685
         },
         {
           "id": "volvo_fh2021_4x2_750",
-          "price": 235310,
+          "price": 234710,
           "unlock": 25,
           "cabin": "l2h3",
           "chassis": "4x2",
           "engine": "d16k750",
           "transmission": "ato3512f_r",
           "paint": "v_m_sil_a",
-          "kit": 100910
+          "kit": 100310
         },
         {
           "id": "volvo_fh2021_8x4_650",
-          "price": 295971,
+          "price": 294771,
           "unlock": 20,
           "cabin": "l2h3_8x4",
           "chassis": "8x4",
           "engine": "d16k650",
           "transmission": "ato3512f_r",
           "paint": "v_m_gys_d",
-          "kit": 89295
+          "kit": 88095
         }
       ]
     },
@@ -175029,7 +175452,7 @@
         },
         {
           "id": "at2812g.volvo.fh_2024.transmission",
-          "name": "@@transmission_i_shift_at2812g@@",
+          "name": "@@transmission_ishift_at2812g@@",
           "differential_ratio": 2.31,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -175039,7 +175462,7 @@
         },
         {
           "id": "at2812g_r.volvo.fh_2024.transmission",
-          "name": "@@transmission_i_shift_at2812g_r@@",
+          "name": "@@transmission_ishift_at2812g_r@@",
           "differential_ratio": 2.31,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -175049,7 +175472,7 @@
         },
         {
           "id": "ato3812g.volvo.fh_2024.transmission",
-          "name": "@@transmission_i_shift_ato3812g@@",
+          "name": "@@transmission_ishift_ato3812g@@",
           "differential_ratio": 2.64,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -175059,7 +175482,7 @@
         },
         {
           "id": "ato3812g_au.volvo.fh_2024.transmission",
-          "name": "@@transmission_i_shift_ato3812g_aso_ulc@@",
+          "name": "@@transmission_ishift_ato3812g_aso_ulc@@",
           "differential_ratio": 3.08,
           "forward_gears": 14,
           "reverse_gears": 4,
@@ -175069,7 +175492,7 @@
         },
         {
           "id": "ato3812g_r.volvo.fh_2024.transmission",
-          "name": "@@transmission_i_shift_ato3812g_r@@",
+          "name": "@@transmission_ishift_ato3812g_r@@",
           "differential_ratio": 2.64,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -175079,7 +175502,7 @@
         },
         {
           "id": "ato3812gr_au.volvo.fh_2024.transmission",
-          "name": "@@transmission_i_shift_ato3812g_r_aso_ulc@@",
+          "name": "@@transmission_ishift_ato3812g_r_aso_ulc@@",
           "differential_ratio": 3.08,
           "forward_gears": 14,
           "reverse_gears": 4,
@@ -175298,12 +175721,6 @@
       ],
       "paints": [
         {
-          "id": "color0.volvo.fh_2024.paint_job",
-          "name": "@@pj_custom_colour@@",
-          "price": 5200,
-          "unlock": 0
-        },
-        {
           "id": "color1.volvo.fh_2024.paint_job",
           "name": "@@pj_black_knight@@",
           "price": 4160,
@@ -175322,62 +175739,62 @@
           "unlock": 0
         }
       ],
-      "kit_price": 51250,
+      "kit_price": 50650,
       "presets": [
         {
           "id": "volvo_fh2024_4x2_420",
-          "price": 117410,
+          "price": 116810,
           "unlock": 0,
           "cabin": "l2h1_aero",
           "chassis": "4x2",
           "engine": "d13k420",
           "transmission": "at2812g",
           "paint": "color2",
-          "kit": 51250
+          "kit": 50650
         },
         {
           "id": "volvo_fh2024_6x2_500",
-          "price": 179475,
+          "price": 178275,
           "unlock": 13,
           "cabin": "l2h2_aero",
           "chassis": "6x2_taglift",
           "engine": "d13t500a",
           "transmission": "at2812g_r",
           "paint": "color1",
-          "kit": 65595
+          "kit": 64395
         },
         {
           "id": "volvo_fh2024_6x4_600",
-          "price": 205435,
+          "price": 204235,
           "unlock": 15,
           "cabin": "l2h2_aero",
           "chassis": "6x4",
           "engine": "d17a600",
           "transmission": "ato3812g_r",
           "paint": "color1",
-          "kit": 65715
+          "kit": 64515
         },
         {
           "id": "volvo_fh2024_4x2_780",
-          "price": 236230,
+          "price": 235630,
           "unlock": 25,
           "cabin": "l2h3_aero",
           "chassis": "4x2",
           "engine": "d17a780",
           "transmission": "ato3812g_r",
           "paint": "v_m_inb_a",
-          "kit": 101830
+          "kit": 101230
         },
         {
           "id": "volvo_fh2024_8x4_700",
-          "price": 268481,
+          "price": 267281,
           "unlock": 20,
           "cabin": "l2h3_8x4_aero",
           "chassis": "8x4",
           "engine": "d17a700",
           "transmission": "ato3812g_r",
           "paint": "color2",
-          "kit": 76905
+          "kit": 75705
         }
       ]
     },
@@ -175462,7 +175879,7 @@
       "transmissions": [
         {
           "id": "12_speed.volvo.fh16.transmission",
-          "name": "@@transmission_i_shift_at2812d@@",
+          "name": "@@transmission_ishift_at2812d@@",
           "differential_ratio": 2.64,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -175472,7 +175889,7 @@
         },
         {
           "id": "12_speed_o.volvo.fh16.transmission",
-          "name": "@@transmission_i_shift_ato3512d@@",
+          "name": "@@transmission_ishift_ato3512d@@",
           "differential_ratio": 3.08,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -175482,7 +175899,7 @@
         },
         {
           "id": "12_speed_r.volvo.fh16.transmission",
-          "name": "@@transmission_i_shift_at2812d_r@@",
+          "name": "@@transmission_ishift_at2812d_r@@",
           "differential_ratio": 2.64,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -175492,7 +175909,7 @@
         },
         {
           "id": "12_speed_ro.volvo.fh16.transmission",
-          "name": "@@transmission_i_shift_ato3512d_r@@",
+          "name": "@@transmission_ishift_ato3512d_r@@",
           "differential_ratio": 3.08,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -175522,7 +175939,7 @@
         },
         {
           "id": "ato3512f_au.volvo.fh16.transmission",
-          "name": "@@transmission_i_shift_ato3512f_aso_ulc@@",
+          "name": "@@transmission_ishift_ato3512f_aso_ulc@@",
           "differential_ratio": 3.4,
           "forward_gears": 14,
           "reverse_gears": 4,
@@ -175532,7 +175949,7 @@
         },
         {
           "id": "ato3512fr_au.volvo.fh16.transmission",
-          "name": "@@transmission_i_shift_ato3512f_r_aso_ulc@@",
+          "name": "@@transmission_ishift_ato3512f_r_aso_ulc@@",
           "differential_ratio": 3.4,
           "forward_gears": 14,
           "reverse_gears": 4,
@@ -177347,7 +177764,7 @@
       "transmissions": [
         {
           "id": "12_speed.volvo.fh16_2012.transmission",
-          "name": "@@transmission_i_shift_at2812d@@",
+          "name": "@@transmission_ishift_at2812d@@",
           "differential_ratio": 2.64,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -177357,7 +177774,7 @@
         },
         {
           "id": "12_speed_o.volvo.fh16_2012.transmission",
-          "name": "@@transmission_i_shift_ato3512d@@",
+          "name": "@@transmission_ishift_ato3512d@@",
           "differential_ratio": 3.08,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -177367,7 +177784,7 @@
         },
         {
           "id": "12_speed_r.volvo.fh16_2012.transmission",
-          "name": "@@transmission_i_shift_at2812d_r@@",
+          "name": "@@transmission_ishift_at2812d_r@@",
           "differential_ratio": 2.64,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -177377,7 +177794,7 @@
         },
         {
           "id": "12_speed_ro.volvo.fh16_2012.transmission",
-          "name": "@@transmission_i_shift_ato3512d_r@@",
+          "name": "@@transmission_ishift_ato3512d_r@@",
           "differential_ratio": 3.08,
           "forward_gears": 12,
           "reverse_gears": 4,
@@ -177407,7 +177824,7 @@
         },
         {
           "id": "ato3512f_au.volvo.fh16_2012.transmission",
-          "name": "@@transmission_i_shift_ato3512f_aso_ulc@@",
+          "name": "@@transmission_ishift_ato3512f_aso_ulc@@",
           "differential_ratio": 3.4,
           "forward_gears": 14,
           "reverse_gears": 4,
@@ -177417,7 +177834,7 @@
         },
         {
           "id": "ato3512fr_au.volvo.fh16_2012.transmission",
-          "name": "@@transmission_i_shift_ato3512f_r_aso_ulc@@",
+          "name": "@@transmission_ishift_ato3512f_r_aso_ulc@@",
           "differential_ratio": 3.4,
           "forward_gears": 14,
           "reverse_gears": 4,
