@@ -1,5 +1,5 @@
 {
   "game_version": "1.62.2.1",
   "refreshed_at": "2026-11-11",
-  "coverage_notes": "Full reparse of a 1.62.2.1 install with every map, cargo-pack and trailer-brand DLC archive present. Diffed against the 1.61.1.1 bundle: new base-game cargo live_sheep (18 exporting companies), 13 companies gaining other exports (c_navale also drops empty_spool), 6 bus skills from the Coaches update, 12 truck kits 600 cheaper and 53 dealer presets 285–2,025 cheaper. Iceland (released 2026-11-10) is not installed and not in this data."
+  "coverage_notes": "Full reparse of a 1.62.2.1 install with every map, cargo-pack and trailer-brand DLC archive present. Diffed against the 1.61.1.1 bundle: new base-game cargo live_sheep (18 exporting companies), 13 companies gaining other exports (c_navale also drops empty_spool), 6 bus skills from the Coaches update, 12 truck kits 600 cheaper and 53 dealer presets 285–2,025 cheaper. Iceland (released 2026-11-10) is not installed and not in this data (#360)."
 }
