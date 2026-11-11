@@ -24,10 +24,12 @@ const JOBS_PER_DEPOT = 3;
 // total axle count, so heavy cargo loads fewer units than volume alone allows —
 // often zero (a dead run). Measured exact on 90.1% of 28,114 ETS2 AI hauls.
 
-/** Truck tare (kg), fitted across the 28,114 hauls: a ~7 t 4x2 tractor. Truck chassis defs carry no mass. */
+/** Truck tare (kg), fitted across the 28,114 hauls: ~7 t. Truck chassis defs carry no mass. */
 const TRUCK_TARE_KG = 7000;
-/** The modelled truck is a 4x2 — 2 axles — added to the trailer's axles for the combination total. */
-const TRUCK_AXLES = 2;
+/** The modelled tractor's axles, added to the trailer's for the combination total. Measured exact on ETS2 hauls (#340). */
+const TRUCK_AXLES = 3;
+/** Axle count of the ladder's first rung: index 0 is 2 axles (ETS2 Germany: 18/26/36/40 t for 2/3/4/5+ axles). */
+const LADDER_BASE_AXLES = 2;
 
 /**
  * Zone rule (#340): a trailer with a non-empty `country_validity` may only run
@@ -62,7 +64,7 @@ function massLimitedUnits(
   const axles = trailer?.axles ?? 0;
   if (!trailer || axles <= 0) return baseUnits;
   const combinationAxles = TRUCK_AXLES + axles;
-  const limit = limits[Math.min(combinationAxles, limits.length) - 1];
+  const limit = limits[Math.min(combinationAxles - LADDER_BASE_AXLES, limits.length - 1)];
   const massAvail = limit - TRUCK_TARE_KG - trailer.chassis_mass - trailer.body_mass;
   const massUnits = Math.floor(massAvail / cargo.mass);
   return massUnits < baseUnits ? Math.max(0, massUnits) : baseUnits;

@@ -100,9 +100,9 @@ Seven body types have no LCV variant at all — `bulkfeed`, `chemtank`, `chipvan
 
 Tiers are **not** strictly ordered. CO/OK lose `bdouble`, so they trail WA/WY on `dumper` (37 vs 41) and `gastank` (55 vs 61) while beating them everywhere else. The CA/IL column is identical to Standard throughout — as the twin analysis above predicts, those two states lose nothing an optimizer can measure.
 
-## Per-state weight caps — present in the game files, absent from `game-defs.json`
+## Per-state weight caps
 
-`def/country/<state>.sui` carries `mass_limit_per_axle_count[]` — whole-combination GVW caps indexed from 2 axles upward, last entry applying to all higher counts. The parser reads `name` only, so `game-defs.json`'s `countries` section holds nothing else.
+`def/country/<state>.sui` carries `mass_limit_per_axle_count[]` — whole-combination GVW caps indexed from 2 axles upward, last entry applying to all higher counts. The parser copies it into `game-defs.json`'s `countries` section (#340).
 
 | state | cap (kg) | cap (lb) | state | cap (kg) | cap (lb) |
 |---|--:|--:|---|--:|--:|
@@ -114,19 +114,16 @@ Tiers are **not** strictly ordered. CO/OK lose `bdouble`, so they trail WA/WY on
 
 New Mexico is the only non-LCV state above the federal 80,000 lb — its whole ladder is raised (43,200 / 64,800 / 87,061 lb, against the federal 40,000 / 60,000 / 80,000).
 
-These caps sit *below* some trailers' own `gross_weight_limit`, which looked like a
-modelling gap — but **the game does not apply them to freight**, so it is not one.
+**Since 1.62.1.1 the advisor applies these caps to ATS freight**, the way it does for ETS2 (#340).
+That release gave 29 heavy cargo an `overweight: true` permit (none had one before), and the
+permit is what switches the cap on (`Lookups.massLimitsActive`). Permitted cargo loads by volume.
+Everything else is capped at the home state's limit. On owned states that costs 2.6% of max-fleet
+earnings; the low-cap Oklahoma garages lose 22–23%. Not yet checked against ATS hauls (#342).
 
-Measured 2026-08-23 at HMS Machinery, San Francisco. California's ladder tops out at
-36,287.4 kg (80,000 lb) for the whole combination. An ordinary board job — Special
-Transport excluded — offered a `scraper` at 90,000 lb: **40,823.3 kg of cargo alone,
-4,536 kg over the entire state cap before adding a truck or trailer.**
-
-So `mass_limit_per_axle_count` governs the player's own overweight/permit handling, not
-job generation. The parser is right to read only `name` from `countries`, units are
-correctly capped on the trailer's own limit alone, and rankings in the low-cap LCV states
-(Oklahoma 90,000 lb, Idaho and Oregon 105,500) need no correction. See Q44 in
-`docs/game-data-questions.md`.
+The 1.61 observation that looked like a counterexample still holds. On 2026-08-23 at HMS
+Machinery, San Francisco, a board job offered a `scraper` at 40,823.3 kg, already over
+California's 36,287.4 kg whole-combination cap before truck or trailer. `scraper` is one of the
+29 cargo that 1.62 permits, so the cap exempts it.
 
 ## Caveats
 
