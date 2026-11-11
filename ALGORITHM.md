@@ -52,7 +52,8 @@ units = min( volume units, ⌊(limit − truck tare − trailer tare) / cargo un
   the board and crowds out better jobs, but earns nothing.
 
 Measured exact on 90.1% of 28,114 ETS2 AI hauls (#340). The cap is inert for datasets that carry no
-overweight flags (ATS until validated — #342), leaving units at the volume/weight baseline.
+overweight flags, leaving units at the volume/weight baseline. ATS gained flags in 1.62.1.1 (29 cargo),
+so the cap applies there too; the ATS side is not yet measured against hauls (#342).
 
 ### Trailer Zones
 

@@ -192,6 +192,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "volvo_ce"
     },
     "auger_wag": {
@@ -328,7 +329,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "beverages": {
       "name": "beverages",
@@ -611,6 +613,7 @@
         "construction"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "cans": {
@@ -1043,6 +1046,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "cott_lint": {
@@ -1119,6 +1123,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "tractor_c2": {
@@ -1541,6 +1546,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "jcb"
     },
     "volvo_ec220e": {
@@ -1579,6 +1585,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "volvo_ce"
     },
     "fertilizer": {
@@ -1798,6 +1805,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "frozen_food": {
@@ -2114,7 +2122,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "hay": {
       "name": "hay",
@@ -2172,6 +2181,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "home_acc": {
@@ -2377,6 +2387,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "lift_truck_s": {
@@ -2396,6 +2407,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "limestone": {
@@ -2509,6 +2521,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "log_loader": {
@@ -2528,6 +2541,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "log_stacker": {
@@ -2547,6 +2561,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "logs": {
@@ -2695,7 +2710,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "meat": {
       "name": "meat",
@@ -2824,6 +2840,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "bob_e10e": {
@@ -2901,6 +2918,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "mob_crusher": {
@@ -2920,6 +2938,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "mob_screener": {
@@ -2939,6 +2958,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "mob_stacker": {
@@ -3011,7 +3031,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "moving_cont": {
       "name": "moving_containers",
@@ -3531,7 +3552,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "rails": {
       "name": "rails",
@@ -3928,6 +3950,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "seed_cont": {
@@ -4058,6 +4081,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "soda_ash": {
@@ -4269,6 +4293,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "forest_machinery"
     },
     "sugar": {
@@ -4407,7 +4432,8 @@
       "groups": [
         "machinery"
       ],
-      "excluded": false
+      "excluded": false,
+      "overweight": true
     },
     "emptytank": {
       "name": "tank",
@@ -4600,6 +4626,7 @@
         "construction"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "heavy_cargo"
     },
     "trees": {
@@ -4880,6 +4907,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "jcb"
     },
     "volvo_l250h": {
@@ -4899,6 +4927,7 @@
         "machinery"
       ],
       "excluded": false,
+      "overweight": true,
       "dlc": "volvo_ce"
     },
     "volvo_rims": {
@@ -8625,8 +8654,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -8650,8 +8681,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -8675,8 +8708,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -8700,8 +8735,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -8809,6 +8846,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -8831,6 +8869,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -8852,7 +8891,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -8875,7 +8916,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -8898,7 +8941,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -8921,7 +8966,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -8944,7 +8991,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -8967,7 +9016,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -9033,8 +9084,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -9058,8 +9111,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -9083,8 +9138,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -9788,8 +9845,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -9822,8 +9881,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -9856,8 +9917,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -9882,6 +9945,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -9904,6 +9968,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -9926,6 +9991,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -9948,6 +10014,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -9970,6 +10037,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -9992,6 +10060,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -10014,6 +10083,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -10037,6 +10107,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -10060,6 +10131,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -10777,8 +10849,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -10811,8 +10885,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -10845,8 +10921,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -10879,8 +10957,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -10913,8 +10993,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -10947,8 +11029,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -10972,7 +11056,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11010,8 +11096,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11035,8 +11123,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11158,6 +11248,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -11179,7 +11270,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11202,7 +11295,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11352,6 +11447,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -11373,7 +11469,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11396,7 +11494,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11419,7 +11519,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11442,7 +11544,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11465,7 +11569,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11488,7 +11594,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11596,8 +11704,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11621,8 +11731,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11646,8 +11758,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11671,8 +11785,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11696,8 +11812,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -11721,8 +11839,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -12300,8 +12420,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -12334,8 +12456,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -12368,8 +12492,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -12486,8 +12612,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -12520,8 +12648,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -12554,8 +12684,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -12588,8 +12720,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -12622,8 +12756,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -12656,8 +12792,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -12682,6 +12820,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -12704,6 +12843,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -12726,6 +12866,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -12748,6 +12889,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -12770,6 +12912,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -12792,6 +12935,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -12814,6 +12958,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -12837,6 +12982,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -12860,6 +13006,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -12883,6 +13030,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -12906,6 +13054,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -12929,6 +13078,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -12980,8 +13130,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -13005,8 +13157,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -13114,6 +13268,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -13136,6 +13291,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -13158,6 +13314,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -13181,6 +13338,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -13203,7 +13361,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -13255,8 +13415,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -13280,8 +13442,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -13445,6 +13609,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -13467,6 +13632,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -13489,6 +13655,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -13512,6 +13679,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -13534,7 +13702,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -13627,7 +13797,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -13650,7 +13822,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -13674,8 +13848,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -13833,8 +14009,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -13867,8 +14045,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -13929,8 +14109,10 @@
         "nebraska",
         "nevada",
         "new_mexico",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "texas",
         "utah",
         "washington",
@@ -13955,6 +14137,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -13977,6 +14160,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -13998,7 +14182,9 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -14050,8 +14236,10 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
+        "south_dakota",
         "utah",
         "washington",
         "wyoming"
@@ -14243,6 +14431,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -14265,6 +14454,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "utah"
       ],
@@ -14287,6 +14477,7 @@
         "idaho",
         "montana",
         "nevada",
+        "north_dakota",
         "oklahoma",
         "oregon",
         "utah"
@@ -39557,7 +39748,10 @@
       "mass_limit_per_axle_count": [
         18143.7,
         27215.6,
-        36287.4
+        36287.4,
+        45359.3,
+        54431.1,
+        58513.5
       ]
     },
     "texas": {
