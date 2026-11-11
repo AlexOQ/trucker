@@ -113,15 +113,15 @@ for the trailer-legality data these sit on top of.
 
 ### Both games
 
-44. [ANSWERED — NO] **Do `mass_limit_per_axle_count` caps apply to freight?**
-    - **Answer**: No. Observed 2026-08-23 at HMS Machinery, San Francisco (California,
-      cap 36,287.4 kg / 80,000 lb whole combination): an ordinary non-Special-Transport
-      board job offered a `scraper` at 90,000 lb = 40,823.3 kg. The **cargo alone exceeds
-      the entire state combination cap by 4,536 kg**, before any truck or trailer. The
-      ladder therefore does not constrain job generation, and the parser is right to
-      ignore it. No backfill needed; `countries` can keep holding only `name`.
-    - Corollary: the "EV overstated in low-cap states" concern is void. Oklahoma,
-      Idaho, Colorado and Oregon rankings need no correction.
+44. [ANSWERED — YES, except cargo with an `overweight` permit] **Do `mass_limit_per_axle_count` caps apply to freight?**
+    - **Answer**: Yes, except cargo with an `overweight: true` permit, which loads by volume.
+      Measured exact on 90.1% of 28,114 ETS2 AI hauls (#340). The parser stores the ladder
+      in `countries`, and `massLimitedUnits` (`optimizer.ts`) applies it. ATS has carried
+      permits since 1.62.1.1 (29 cargo), so the cap runs there too; the ATS check against
+      hauls is #342.
+    - The 2026-08-23 observation that first read as "No" (HMS Machinery, San Francisco: a
+      board `scraper` at 40,823.3 kg, over California's 36,287.4 kg whole-combination cap)
+      is a permitted cargo, so it does not count against the cap.
     - Original question and predictions retained below for provenance.
 
     ~~[OPEN] Do `mass_limit_per_axle_count` caps apply to AI-driver freight?~~ Every

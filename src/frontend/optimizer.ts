@@ -24,9 +24,13 @@ const JOBS_PER_DEPOT = 3;
 // total axle count, so heavy cargo loads fewer units than volume alone allows —
 // often zero (a dead run). Measured exact on 90.1% of 28,114 ETS2 AI hauls.
 
-/** Truck tare (kg), fitted across the 28,114 hauls: a ~7 t 4x2 tractor. Truck chassis defs carry no mass. */
+/** Truck tare (kg), fitted across the 28,114 hauls: ~7 t. Truck chassis defs carry no mass. */
 const TRUCK_TARE_KG = 7000;
-/** The modelled truck is a 4x2 — 2 axles — added to the trailer's axles for the combination total. */
+/**
+ * Added to the trailer's axles before the ladder lookup `limits[TRUCK_AXLES + axles - 1]`. The ladder's
+ * index 0 is the 2-axle rung (ETS2 Germany: 18/26/36/40 t for 2/3/4/5+ axles), so this reads the rung
+ * for a 3-axle tractor plus the trailer. That is the behaviour measured exact on ETS2 hauls (#340).
+ */
 const TRUCK_AXLES = 2;
 
 /**

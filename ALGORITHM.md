@@ -44,7 +44,8 @@ units = min( volume units, ⌊(limit − truck tare − trailer tare) / cargo un
 - **volume units** = `⌊trailer volume / cargo volume⌋`, already capped by the trailer's own gross
   weight limit. Def-derived and country-independent (`cargo_trailer_units` in game-defs.json).
 - **limit** = the country's `mass_limit_per_axle_count` for the combination's total axle count — a
-  4x2 (2-axle) truck plus the trailer's `axles`, clamped to the array. Truck tare is a fitted ~7 t
+  3-axle tractor plus the trailer's `axles`, clamped to the array (index 0 is the 2-axle rung; ETS2
+  Germany reads 18/26/36/40 t for 2/3/4/5+ axles). Truck tare is a fitted ~7 t
   constant (truck chassis defs carry no mass); trailer tare is its chassis + body mass.
 - Cargo with an **overweight permit** (`overweight: true` in the def — 46 ETS2 cargo, e.g.
   `log_stacker`, `tractor_c`) ignores the mass limit and loads by volume.
