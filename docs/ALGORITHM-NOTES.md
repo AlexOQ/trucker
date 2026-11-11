@@ -144,7 +144,10 @@ Job distance is capped by whichever is more restrictive:
 | Double/B-double | DK, FI, DE, NL, NO, PT, ES, SE | ~650 km observed (Stockholm), likely 1,500 km+ from central DE |
 | Standard | unrestricted | unlimited (3,500 km+ observed) |
 
-No cargo has min/max_distance constraints (all 359 cargo types at 0/0) — distance limits come purely from trailer country_validity.
+Distance limits come mostly from trailer country_validity. A few cargo also carry a def `max_distance` (km; `min_distance` is 0 everywhere), stored as `max_distance` in game-defs.json:
+
+- **ETS2:** `coal`, `granite_cube`, `ore`, `sand`, `stone_dust` at 800; `excav_soil`, `live_cattle`, `live_pigs`, `live_sheep` at 600.
+- **ATS:** `soil`, `geo_rolls`, `stones` at 400; `cattle`, `live_pigs`, `live_sheep` at 600.
 
 ### AI driver job mechanics
 
