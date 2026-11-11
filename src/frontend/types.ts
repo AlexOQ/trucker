@@ -115,7 +115,7 @@ export interface GameDefs {
      * Total combination mass cap (kg) by axle count, 0-indexed from 2 axles
      * (index i = i+2 axles), clamped to the last entry beyond its length (#340).
      * The optimizer reads the rung for a 3-axle tractor plus the trailer's
-     * `axles` (see `TRUCK_AXLES`). Present on every ETS2 country and ATS state.
+     * `axles` (`TRUCK_AXLES`, `LADDER_BASE_AXLES`). Present on every ETS2 country and ATS state.
      */
     mass_limit_per_axle_count?: number[];
   }>;

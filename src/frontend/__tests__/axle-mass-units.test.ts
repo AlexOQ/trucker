@@ -10,8 +10,8 @@ import type { AllData, Cargo } from '../types';
 // #340 — country axle-mass loading limit. Fixtures use value=1 and no bonuses so a
 // cargo's bodyHV on a body type equals the units carried, which is what we assert.
 //
-// lb4: a 4-axle lowboy, 24 t tare, no validity → ladder index TRUCK_AXLES + 4 − 1 = 5, the 7-axle
-//   rung (3-axle tractor + 4; index 0 is the 2-axle rung).
+// lb4: a 4-axle lowboy, 24 t tare, no validity → combination = 3 (tractor) + 4 = 7 axles, ladder
+//   index 7 − 2 = 5 (index 0 is the 2-axle rung).
 //   germany clamps to the array's last entry, 40 t; mass free = 40−7−24 = 9 t.
 //   finland index 5 = 60 t; mass free = 60−7−24 = 29 t.
 // Three lowboy cargo: heavy (21.8 t, no permit), permit (54 t, overweight: true), light (2.75 t).
